@@ -1,0 +1,17 @@
+[phases.setup]
+
+[phases.install]
+	dependsOn = ["setup"]
+	cmds = ["rm -rf packages/app && rm -rf packages/web", "yarn install"] 
+
+[phases.build]
+	dependsOn = ["install"]
+	cmds = ["cd packages/api && yarn build"]
+
+[phases.release]
+	dependsOn = ["build"]
+	cmds = ["cd packages/api && prisma migrate deploy"]
+
+[start]
+	dependsOn = ["release"]
+	cmd = "node packages/api/dist"
