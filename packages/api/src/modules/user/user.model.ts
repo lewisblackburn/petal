@@ -26,5 +26,11 @@ export class User extends BaseModel implements Prisma.User {
   @Field(() => Role)
   role: Prisma.Role
 
+  @Field(() => String, { nullable: true })
+  twitter: string | null
+
+  @Field(() => String, { nullable: true })
+  instagram: string | null
+
   avatar: string | null
 }

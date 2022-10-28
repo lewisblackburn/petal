@@ -5,7 +5,7 @@ generator client {
 generator typegraphql {
   provider = "typegraphql-prisma"
   output   = "../../../../node_modules/@generated"
-  emitOnly = "inputs,enums,crudResolvers"
+  emitOnly = "inputs,outputs,models,enums,crudResolvers"
 }
 
 datasource db {
@@ -19,32 +19,111 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email     String   @unique
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email       String    @unique
   /// @TypeGraphQL.omit(output: true)
-  password  String
-  firstName String
-  lastName  String
-  avatar    String?
-  role      Role     @default(USER)
-  bio       String?
+  password    String
+  firstName   String
+  lastName    String
+  twitter     String?
+  instagram   String?
+  avatar      String?
+  role        Role      @default(USER)
+  bio         String?
+  movies      Movie[]
+  ratings     Rating[]
+  lists       List[]
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id])
+  watchlistId String    @unique @db.Uuid
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+}
+
+enum Status {
+  RUMORED
+  PLANNED
+  IN_PRODUCTION
+  POST_PRODUCTION
+  RELEASED
+  CANCELLED
+}
+
+enum Genre {
+  ACTION
+  ADVENTURE
+  ANIMATION
+  COMEDY
+  CRIME
+  MYSTERY
+  FANTASY
+  HISTORICAL
+  HORROR
+  ROMANCE
+  SATIRE
+  SCIENCE_FICTION
+  CYBERPUNK
+  SPECULATIVE
+  THRILLER
+  WESTERN
+}
+
+model Movie {
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  overview    String
+  tagline     String?
+  genres      Genre[]
+  runtime     Int?        @default(0)
+  homepage    String?
+  language    String?
+  backdrop    String?
+  poster      String?
+  adult       Boolean?    @default(false)
+  budget      Int?        @default(0)
+  revenue     Int?        @default(0)
+  status      Status?     @default(PLANNED)
+  locked      Boolean?    @default(false)
+  releaseDate DateTime?   @default(now()) @db.Timestamptz(6)
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String      @db.Uuid
+  lists       List[]
+  ratings     Rating[]
+  watchlists  Watchlist[]
+  createdAt   DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime    @default(now()) @updatedAt @db.Timestamptz(6)
+}
+
+model Rating {
+  value   Int
+  movie   Movie  @relation(fields: [movieId], references: [id])
+  movieId String @db.Uuid
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String @db.Uuid
+
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-  posts     Post[]
+
+  @@unique([userId, movieId])
 }
 
-enum PostStatus {
-  DRAFT
-  PUBLISHED
+model List {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  description String?
+  backdrop    String?
+  public      Boolean? @default(true)
+  movies      Movie[]
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @db.Uuid
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 }
 
-model Post {
-  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title     String
-  content   String
-  status    PostStatus @default(DRAFT)
-  author    User       @relation(fields: [authorId], references: [id])
-  authorId  String     @db.Uuid
-  createdAt DateTime   @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+model Watchlist {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  movies    Movie[]
+  user      User?
+  userId    String   @unique @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 }
