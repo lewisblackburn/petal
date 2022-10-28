@@ -27,6 +27,21 @@ import { useMe } from "lib/hooks/useMe"
 import { Limiter } from "./Limiter"
 import { LinkButton } from "./LinkButton"
 
+interface NavLinkProps {
+  href: string
+  children: React.ReactNode
+}
+export const NavLink: React.FC<NavLinkProps> = ({ href, children, ...props }) => {
+  const router = useRouter()
+  const active = router.asPath === href
+
+  return (
+    <LinkButton href={href} size="sm" variant={active ? "solid" : "transparent"}>
+      {children}
+    </LinkButton>
+  )
+}
+
 export function Nav() {
   const { me, loading } = useMe()
   const logout = useLogout()
@@ -54,15 +69,11 @@ export function Nav() {
       >
         {/* Left link list */}
         <HStack>
-          <HomeLink
-            href="/"
-            color={useColorModeValue("purple.600", "purple.400")}
-            pl={0}
-            textTransform="uppercase"
-            fontWeight="bold"
-          >
-            Home
+          <HomeLink href="/" color="gray.900" _hover={{ color: "gray.600" }} pl={0} fontWeight="bold">
+            petal
           </HomeLink>
+          <NavLink href="/movies">Movies</NavLink>
+          <NavLink href="/lists">Lists</NavLink>
         </HStack>
 
         {/* Right link list */}
@@ -70,10 +81,10 @@ export function Nav() {
         {!me && !loading && (
           <Fade in>
             <HStack spacing={4} display={{ base: "none", md: "flex" }}>
-              <LinkButton href="/login" variant="ghost">
+              <LinkButton href="/login" variant="outline">
                 Login
               </LinkButton>
-              <LinkButton href="/register" variant="solid" colorScheme="purple">
+              <LinkButton href="/register" variant="solid">
                 Register
               </LinkButton>
             </HStack>

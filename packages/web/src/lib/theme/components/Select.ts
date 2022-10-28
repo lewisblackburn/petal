@@ -1,4 +1,4 @@
-const baseFieldStyle = { field: { borderRadius: 2 } }
+const baseFieldStyle = { field: { borderRadius: 2, width: 40 } }
 
 export const Select = {
   parts: ["field", "addon"],

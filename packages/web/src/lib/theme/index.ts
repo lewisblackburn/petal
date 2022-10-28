@@ -12,7 +12,34 @@ export const theme = extendTheme({
   },
   fonts: {
     body: "Poppins, sans-serif",
-    heading: "Poppins, serif",
+    heading: "Poppins, sans-serif",
+  },
+  colors: {
+    brand: {
+      100: "#000929",
+      200: "#7065F0",
+      300: "#384046",
+      400: "#FFFFFF",
+    },
+    purple: {
+      100: "#F7F7FD",
+      200: "#F0EFFB",
+      300: "#E8E6F9",
+      400: "#E0DEF7",
+      500: "#D8D6F5",
+    },
+    gray: {
+      50: "#F9FAFB",
+      100: "#F4F4F6",
+      200: "#E5E6EB",
+      300: "#D3D5DA",
+      400: "#9EA3AE",
+      500: "#6C727F",
+      600: "#4D5461",
+      700: "#394150",
+      800: "#212936",
+      900: "#161D21",
+    },
   },
   components: {
     Button,
