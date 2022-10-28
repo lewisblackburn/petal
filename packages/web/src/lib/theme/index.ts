@@ -14,6 +14,15 @@ export const theme = extendTheme({
     body: "Poppins, sans-serif",
     heading: "Poppins, sans-serif",
   },
+  breakpoints: {
+    sm: "30em",
+    md: "48em",
+    lg: "62em",
+    xl: "80em",
+    "2xl": "96em",
+    "3xl": "130em",
+    "4xl": "148em",
+  },
   colors: {
     brand: {
       100: "#000929",

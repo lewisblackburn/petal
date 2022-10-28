@@ -1,4 +1,4 @@
-const baseFieldStyle = { field: { borderRadius: 2 } }
+const baseFieldStyle = { field: { borderRadius: 6 } }
 
 export const Input = {
   parts: ["field", "addon"],
@@ -10,6 +10,18 @@ export const Input = {
     md: baseFieldStyle,
     sm: baseFieldStyle,
     xs: baseFieldStyle,
+  },
+  variants: {
+    filled: () => ({
+      field: {
+        bg: "white",
+        color: "gray.500",
+        borderColor: "purple.500",
+        _hover: {
+          bg: "white",
+        },
+      },
+    }),
   },
   // The default `size` or `variant` values
   defaultProps: {

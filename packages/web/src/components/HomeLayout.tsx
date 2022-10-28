@@ -11,7 +11,7 @@ export function HomeLayout(props: Props) {
   return (
     <Box>
       <Nav />
-      <Box pt="65px">{props.children}</Box>
+      <Box pt="35px">{props.children}</Box>
     </Box>
   )
 }

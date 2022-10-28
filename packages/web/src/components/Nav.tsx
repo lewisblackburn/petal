@@ -26,6 +26,7 @@ import { useMe } from "lib/hooks/useMe"
 
 import { Limiter } from "./Limiter"
 import { LinkButton } from "./LinkButton"
+import { FiPlus } from "react-icons/fi"
 
 interface NavLinkProps {
   href: string
@@ -87,6 +88,7 @@ export function Nav() {
               <LinkButton href="/register" variant="solid">
                 Register
               </LinkButton>
+              <IconButton variant="outline" aria-label="Add movie" icon={<FiPlus />} />
             </HStack>
           </Fade>
         )}
