@@ -17,6 +17,14 @@ export type Scalars = {
   DateTime: string;
 };
 
+export enum AgeRating {
+  Eighteen = 'EIGHTEEN',
+  Pg = 'PG',
+  Twelve = 'TWELVE',
+  Twelvea = 'TWELVEA',
+  U = 'U'
+}
+
 export type AuthResponse = {
   __typename?: 'AuthResponse';
   refreshToken: Scalars['String'];
@@ -55,11 +63,26 @@ export type DateTimeNullableFilter = {
   notIn?: InputMaybe<Array<Scalars['DateTime']>>;
 };
 
+export type EnumAgeRatingNullableFilter = {
+  equals?: InputMaybe<AgeRating>;
+  in?: InputMaybe<Array<AgeRating>>;
+  not?: InputMaybe<NestedEnumAgeRatingNullableFilter>;
+  notIn?: InputMaybe<Array<AgeRating>>;
+};
+
 export type EnumGenreNullableListFilter = {
   equals?: InputMaybe<Array<Genre>>;
   has?: InputMaybe<Genre>;
   hasEvery?: InputMaybe<Array<Genre>>;
   hasSome?: InputMaybe<Array<Genre>>;
+  isEmpty?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type EnumPlatformNullableListFilter = {
+  equals?: InputMaybe<Array<Platform>>;
+  has?: InputMaybe<Platform>;
+  hasEvery?: InputMaybe<Array<Platform>>;
+  hasSome?: InputMaybe<Array<Platform>>;
   isEmpty?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -408,6 +431,7 @@ export type Movie = {
 
 export type MovieCreateManyUserInput = {
   adult?: InputMaybe<Scalars['Boolean']>;
+  age_rating?: InputMaybe<AgeRating>;
   backdrop?: InputMaybe<Scalars['String']>;
   budget?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -417,6 +441,7 @@ export type MovieCreateManyUserInput = {
   language?: InputMaybe<Scalars['String']>;
   locked?: InputMaybe<Scalars['Boolean']>;
   overview: Scalars['String'];
+  platform?: InputMaybe<MovieCreateplatformInput>;
   poster?: InputMaybe<Scalars['String']>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
   revenue?: InputMaybe<Scalars['Int']>;
@@ -479,6 +504,7 @@ export type MovieCreateOrConnectWithoutWatchlistsInput = {
 
 export type MovieCreateWithoutListsInput = {
   adult?: InputMaybe<Scalars['Boolean']>;
+  age_rating?: InputMaybe<AgeRating>;
   backdrop?: InputMaybe<Scalars['String']>;
   budget?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -488,6 +514,7 @@ export type MovieCreateWithoutListsInput = {
   language?: InputMaybe<Scalars['String']>;
   locked?: InputMaybe<Scalars['Boolean']>;
   overview: Scalars['String'];
+  platform?: InputMaybe<MovieCreateplatformInput>;
   poster?: InputMaybe<Scalars['String']>;
   ratings?: InputMaybe<RatingCreateNestedManyWithoutMovieInput>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
@@ -503,6 +530,7 @@ export type MovieCreateWithoutListsInput = {
 
 export type MovieCreateWithoutRatingsInput = {
   adult?: InputMaybe<Scalars['Boolean']>;
+  age_rating?: InputMaybe<AgeRating>;
   backdrop?: InputMaybe<Scalars['String']>;
   budget?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -513,6 +541,7 @@ export type MovieCreateWithoutRatingsInput = {
   lists?: InputMaybe<ListCreateNestedManyWithoutMoviesInput>;
   locked?: InputMaybe<Scalars['Boolean']>;
   overview: Scalars['String'];
+  platform?: InputMaybe<MovieCreateplatformInput>;
   poster?: InputMaybe<Scalars['String']>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
   revenue?: InputMaybe<Scalars['Int']>;
@@ -527,6 +556,7 @@ export type MovieCreateWithoutRatingsInput = {
 
 export type MovieCreateWithoutUserInput = {
   adult?: InputMaybe<Scalars['Boolean']>;
+  age_rating?: InputMaybe<AgeRating>;
   backdrop?: InputMaybe<Scalars['String']>;
   budget?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -537,6 +567,7 @@ export type MovieCreateWithoutUserInput = {
   lists?: InputMaybe<ListCreateNestedManyWithoutMoviesInput>;
   locked?: InputMaybe<Scalars['Boolean']>;
   overview: Scalars['String'];
+  platform?: InputMaybe<MovieCreateplatformInput>;
   poster?: InputMaybe<Scalars['String']>;
   ratings?: InputMaybe<RatingCreateNestedManyWithoutMovieInput>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
@@ -551,6 +582,7 @@ export type MovieCreateWithoutUserInput = {
 
 export type MovieCreateWithoutWatchlistsInput = {
   adult?: InputMaybe<Scalars['Boolean']>;
+  age_rating?: InputMaybe<AgeRating>;
   backdrop?: InputMaybe<Scalars['String']>;
   budget?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -561,6 +593,7 @@ export type MovieCreateWithoutWatchlistsInput = {
   lists?: InputMaybe<ListCreateNestedManyWithoutMoviesInput>;
   locked?: InputMaybe<Scalars['Boolean']>;
   overview: Scalars['String'];
+  platform?: InputMaybe<MovieCreateplatformInput>;
   poster?: InputMaybe<Scalars['String']>;
   ratings?: InputMaybe<RatingCreateNestedManyWithoutMovieInput>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
@@ -575,6 +608,10 @@ export type MovieCreateWithoutWatchlistsInput = {
 
 export type MovieCreategenresInput = {
   set: Array<Genre>;
+};
+
+export type MovieCreateplatformInput = {
+  set: Array<Platform>;
 };
 
 export type MovieInput = {
@@ -596,6 +633,7 @@ export type MovieOrderByRelationAggregateInput = {
 
 export type MovieOrderByWithRelationInput = {
   adult?: InputMaybe<SortOrder>;
+  age_rating?: InputMaybe<SortOrder>;
   backdrop?: InputMaybe<SortOrder>;
   budget?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
@@ -606,6 +644,7 @@ export type MovieOrderByWithRelationInput = {
   lists?: InputMaybe<ListOrderByRelationAggregateInput>;
   locked?: InputMaybe<SortOrder>;
   overview?: InputMaybe<SortOrder>;
+  platform?: InputMaybe<SortOrder>;
   poster?: InputMaybe<SortOrder>;
   ratings?: InputMaybe<RatingOrderByRelationAggregateInput>;
   releaseDate?: InputMaybe<SortOrder>;
@@ -627,6 +666,7 @@ export type MovieRelationFilter = {
 
 export enum MovieScalarFieldEnum {
   Adult = 'adult',
+  AgeRating = 'age_rating',
   Backdrop = 'backdrop',
   Budget = 'budget',
   CreatedAt = 'createdAt',
@@ -636,6 +676,7 @@ export enum MovieScalarFieldEnum {
   Language = 'language',
   Locked = 'locked',
   Overview = 'overview',
+  Platform = 'platform',
   Poster = 'poster',
   ReleaseDate = 'releaseDate',
   Revenue = 'revenue',
@@ -652,6 +693,7 @@ export type MovieScalarWhereInput = {
   NOT?: InputMaybe<Array<MovieScalarWhereInput>>;
   OR?: InputMaybe<Array<MovieScalarWhereInput>>;
   adult?: InputMaybe<BoolNullableFilter>;
+  age_rating?: InputMaybe<EnumAgeRatingNullableFilter>;
   backdrop?: InputMaybe<StringNullableFilter>;
   budget?: InputMaybe<IntNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
@@ -661,6 +703,7 @@ export type MovieScalarWhereInput = {
   language?: InputMaybe<StringNullableFilter>;
   locked?: InputMaybe<BoolNullableFilter>;
   overview?: InputMaybe<StringFilter>;
+  platform?: InputMaybe<EnumPlatformNullableListFilter>;
   poster?: InputMaybe<StringNullableFilter>;
   releaseDate?: InputMaybe<DateTimeNullableFilter>;
   revenue?: InputMaybe<IntNullableFilter>;
@@ -674,6 +717,7 @@ export type MovieScalarWhereInput = {
 
 export type MovieUpdateManyMutationInput = {
   adult?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
+  age_rating?: InputMaybe<NullableEnumAgeRatingFieldUpdateOperationsInput>;
   backdrop?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   budget?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -683,6 +727,7 @@ export type MovieUpdateManyMutationInput = {
   language?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   locked?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
   overview?: InputMaybe<StringFieldUpdateOperationsInput>;
+  platform?: InputMaybe<MovieUpdateplatformInput>;
   poster?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   releaseDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   revenue?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
@@ -773,6 +818,7 @@ export type MovieUpdateWithWhereUniqueWithoutWatchlistsInput = {
 
 export type MovieUpdateWithoutListsInput = {
   adult?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
+  age_rating?: InputMaybe<NullableEnumAgeRatingFieldUpdateOperationsInput>;
   backdrop?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   budget?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -782,6 +828,7 @@ export type MovieUpdateWithoutListsInput = {
   language?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   locked?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
   overview?: InputMaybe<StringFieldUpdateOperationsInput>;
+  platform?: InputMaybe<MovieUpdateplatformInput>;
   poster?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   ratings?: InputMaybe<RatingUpdateManyWithoutMovieNestedInput>;
   releaseDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
@@ -797,6 +844,7 @@ export type MovieUpdateWithoutListsInput = {
 
 export type MovieUpdateWithoutRatingsInput = {
   adult?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
+  age_rating?: InputMaybe<NullableEnumAgeRatingFieldUpdateOperationsInput>;
   backdrop?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   budget?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -807,6 +855,7 @@ export type MovieUpdateWithoutRatingsInput = {
   lists?: InputMaybe<ListUpdateManyWithoutMoviesNestedInput>;
   locked?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
   overview?: InputMaybe<StringFieldUpdateOperationsInput>;
+  platform?: InputMaybe<MovieUpdateplatformInput>;
   poster?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   releaseDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   revenue?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
@@ -821,6 +870,7 @@ export type MovieUpdateWithoutRatingsInput = {
 
 export type MovieUpdateWithoutUserInput = {
   adult?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
+  age_rating?: InputMaybe<NullableEnumAgeRatingFieldUpdateOperationsInput>;
   backdrop?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   budget?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -831,6 +881,7 @@ export type MovieUpdateWithoutUserInput = {
   lists?: InputMaybe<ListUpdateManyWithoutMoviesNestedInput>;
   locked?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
   overview?: InputMaybe<StringFieldUpdateOperationsInput>;
+  platform?: InputMaybe<MovieUpdateplatformInput>;
   poster?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   ratings?: InputMaybe<RatingUpdateManyWithoutMovieNestedInput>;
   releaseDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
@@ -845,6 +896,7 @@ export type MovieUpdateWithoutUserInput = {
 
 export type MovieUpdateWithoutWatchlistsInput = {
   adult?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
+  age_rating?: InputMaybe<NullableEnumAgeRatingFieldUpdateOperationsInput>;
   backdrop?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   budget?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -855,6 +907,7 @@ export type MovieUpdateWithoutWatchlistsInput = {
   lists?: InputMaybe<ListUpdateManyWithoutMoviesNestedInput>;
   locked?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
   overview?: InputMaybe<StringFieldUpdateOperationsInput>;
+  platform?: InputMaybe<MovieUpdateplatformInput>;
   poster?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   ratings?: InputMaybe<RatingUpdateManyWithoutMovieNestedInput>;
   releaseDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
@@ -870,6 +923,11 @@ export type MovieUpdateWithoutWatchlistsInput = {
 export type MovieUpdategenresInput = {
   push?: InputMaybe<Array<Genre>>;
   set?: InputMaybe<Array<Genre>>;
+};
+
+export type MovieUpdateplatformInput = {
+  push?: InputMaybe<Array<Platform>>;
+  set?: InputMaybe<Array<Platform>>;
 };
 
 export type MovieUpsertWithWhereUniqueWithoutListsInput = {
@@ -900,6 +958,7 @@ export type MovieWhereInput = {
   NOT?: InputMaybe<Array<MovieWhereInput>>;
   OR?: InputMaybe<Array<MovieWhereInput>>;
   adult?: InputMaybe<BoolNullableFilter>;
+  age_rating?: InputMaybe<EnumAgeRatingNullableFilter>;
   backdrop?: InputMaybe<StringNullableFilter>;
   budget?: InputMaybe<IntNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
@@ -910,6 +969,7 @@ export type MovieWhereInput = {
   lists?: InputMaybe<ListListRelationFilter>;
   locked?: InputMaybe<BoolNullableFilter>;
   overview?: InputMaybe<StringFilter>;
+  platform?: InputMaybe<EnumPlatformNullableListFilter>;
   poster?: InputMaybe<StringNullableFilter>;
   ratings?: InputMaybe<RatingListRelationFilter>;
   releaseDate?: InputMaybe<DateTimeNullableFilter>;
@@ -1039,6 +1099,13 @@ export type NestedDateTimeNullableFilter = {
   notIn?: InputMaybe<Array<Scalars['DateTime']>>;
 };
 
+export type NestedEnumAgeRatingNullableFilter = {
+  equals?: InputMaybe<AgeRating>;
+  in?: InputMaybe<Array<AgeRating>>;
+  not?: InputMaybe<NestedEnumAgeRatingNullableFilter>;
+  notIn?: InputMaybe<Array<AgeRating>>;
+};
+
 export type NestedEnumRoleFilter = {
   equals?: InputMaybe<Role>;
   in?: InputMaybe<Array<Role>>;
@@ -1122,6 +1189,10 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: InputMaybe<Scalars['DateTime']>;
 };
 
+export type NullableEnumAgeRatingFieldUpdateOperationsInput = {
+  set?: InputMaybe<AgeRating>;
+};
+
 export type NullableEnumStatusFieldUpdateOperationsInput = {
   set?: InputMaybe<Status>;
 };
@@ -1137,6 +1208,11 @@ export type NullableIntFieldUpdateOperationsInput = {
 export type NullableStringFieldUpdateOperationsInput = {
   set?: InputMaybe<Scalars['String']>;
 };
+
+export enum Platform {
+  Netflix = 'NETFLIX',
+  Youtube = 'YOUTUBE'
+}
 
 export type Query = {
   __typename?: 'Query';

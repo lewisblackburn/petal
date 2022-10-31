@@ -2,8 +2,6 @@ import * as React from "react"
 import {
   Box,
   Center,
-  Heading,
-  Text,
   Spinner,
   Flex,
   Button,
@@ -22,7 +20,8 @@ import { HomeLayout } from "components/HomeLayout"
 import { Limiter } from "components/Limiter"
 import { gql } from "@apollo/client"
 import { useMe } from "lib/hooks/useMe"
-import { useMoviesQuery, Genre } from "lib/graphql"
+import { useMoviesQuery, Genre, AgeRating, Platform } from "lib/graphql"
+import { readableAgeRating } from "lib/helpers/utils"
 
 const _ = gql`
   query Movies {
@@ -83,9 +82,8 @@ export default function Movies() {
             </Box>
             <Box>
               <Select placeholder="Sort By">
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
+                <option value="option1">Popularity ASC</option>
+                <option value="option1">Popularity DESC</option>
               </Select>
             </Box>
             <Box>
@@ -101,16 +99,16 @@ export default function Movies() {
             </Box>
             <Box>
               <Select placeholder="Platform">
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
+                {Object.keys(Platform).map((p) => (
+                  <option value={p}> {p}</option>
+                ))}
               </Select>
             </Box>
             <Box>
               <Select placeholder="Age Rating">
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
+                {Object.keys(AgeRating).map((a: keyof typeof AgeRating) => (
+                  <option value={a}>{readableAgeRating(a)}</option>
+                ))}
               </Select>
             </Box>
             <Button>Search</Button>

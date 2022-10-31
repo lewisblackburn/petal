@@ -67,12 +67,27 @@ enum Genre {
   WESTERN
 }
 
+enum AgeRating {
+  U
+  PG
+  TWELVEA
+  TWELVE
+  EIGHTEEN
+}
+
+enum Platform {
+  NETFLIX
+  YOUTUBE
+}
+
 model Movie {
   id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title       String
   overview    String
   tagline     String?
   genres      Genre[]
+  age_rating  AgeRating?
+  platform    Platform[]
   runtime     Int?        @default(0)
   homepage    String?
   language    String?
