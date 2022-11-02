@@ -12,7 +12,7 @@ export default function Home() {
         <title>Boilerplate</title>
       </Head>
 
-      <Limiter pt={20} minH="calc(100vh - 65px)">
+      <Limiter py={20} minH="calc(100vh - 65px)">
         this is a test
       </Limiter>
     </Box>

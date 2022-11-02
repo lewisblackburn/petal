@@ -24,7 +24,17 @@ export class UserService {
   async register(data: RegisterInput) {
     const email = data.email.toLowerCase().trim()
     await this.checkUserExists({ email: { equals: email } })
-    const user = await prisma.user.create({ data })
+    const user = await prisma.user.create({ data }).then(async (data) => {
+      await prisma.watchlist.create({
+        data: {
+          user: {
+            connect: {
+              id: data.id,
+            },
+          },
+        },
+      })
+    })
     return user
   }
 

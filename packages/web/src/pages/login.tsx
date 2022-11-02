@@ -13,7 +13,6 @@ import Yup from "lib/yup"
 import { Form } from "components/Form"
 import { FormError } from "components/FormError"
 import { withNoAuth } from "components/hoc/withNoAuth"
-import { HomeLayout } from "components/HomeLayout"
 import { Input } from "components/Input"
 
 const _ = gql`
@@ -83,7 +82,5 @@ function Login() {
     </c.Center>
   )
 }
-
-Login.getLayout = (page: React.ReactNode) => <HomeLayout>{page}</HomeLayout>
 
 export default withNoAuth(Login)

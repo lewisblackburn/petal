@@ -74,7 +74,7 @@ export default function Movies() {
         <title>Boilerplate</title>
       </Head>
 
-      <Limiter pt={20} minH="calc(100vh - 65px)">
+      <Limiter py={20} minH="calc(100vh - 65px)">
         <Flex gap="10">
           <Stack width="96" gap="5" py="5">
             <Box>
