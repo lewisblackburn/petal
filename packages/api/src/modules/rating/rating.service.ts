@@ -8,7 +8,26 @@ import { RatingInput } from "./inputs/create.input"
 @Resolver(() => Rating)
 export class RatingService {
   async create(data: RatingInput) {
-    return await prisma.rating.create({ data })
+    return await prisma.rating.create({ data }).then(
+      async (data) =>
+        await prisma.rating
+          .aggregate({
+            where: {
+              movieId: data.movieId,
+            },
+            _avg: {
+              value: true,
+            },
+          })
+          .then(async (result) => {
+            await prisma.movie.update({
+              where: { id: data.movieId },
+              data: { avg_rating: result._avg.value },
+            })
+
+            return data
+          }),
+    )
   }
 
   async delete(args: DeleteOneRatingArgs) {

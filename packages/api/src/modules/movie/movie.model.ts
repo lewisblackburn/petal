@@ -1,5 +1,5 @@
 import * as Prisma from "@prisma/client"
-import { Genre, Status } from "@generated"
+import { Genre, AgeRating, Platform, Status } from "@generated"
 import { Field, ObjectType } from "type-graphql"
 
 import { BaseModel } from "../shared/base.model"
@@ -23,6 +23,12 @@ export class Movie extends BaseModel implements Prisma.Movie {
 
   @Field(() => [Genre])
   genres: Prisma.Genre[]
+
+  @Field(() => [Platform])
+  platform: Prisma.Platform[]
+
+  @Field(() => AgeRating, { nullable: true })
+  age_rating: Prisma.AgeRating | null
 
   @Field(() => Boolean, { nullable: true })
   locked: boolean | null
@@ -53,4 +59,10 @@ export class Movie extends BaseModel implements Prisma.Movie {
 
   @Field(() => Date, { nullable: true })
   releaseDate: Date | null
+
+  @Field(() => [String])
+  keywords: string[]
+
+  @Field(() => Number, { nullable: true })
+  avg_rating: number | null
 }

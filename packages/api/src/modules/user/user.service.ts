@@ -34,6 +34,8 @@ export class UserService {
           },
         },
       })
+
+      return data
     })
     return user
   }

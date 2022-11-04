@@ -18,4 +18,12 @@ export class MovieService {
   async getMovie(id: string) {
     return await prisma.movie.findUnique({ where: { id } })
   }
+
+  async getPopularMovies() {
+    return await prisma.movie.findMany({
+      orderBy: {
+        avg_rating: "desc",
+      },
+    })
+  }
 }

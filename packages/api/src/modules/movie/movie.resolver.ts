@@ -20,6 +20,11 @@ export default class MovieResolver {
     return this.movieService.getMovie(id)
   }
 
+  @Query(() => [Movie])
+  async popularMovies() {
+    return await this.movieService.getPopularMovies()
+  }
+
   @Mutation(() => Movie)
   async createMovie(@Arg("data") data: MovieInput) {
     return await this.movieService.create(data)
