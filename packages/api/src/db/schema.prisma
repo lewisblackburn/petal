@@ -33,6 +33,7 @@ model User {
   movies    Movie[]
   lists     List[]
   ratings   Rating[]
+  edits     Edit[]
   watchlist Watchlist?
   createdAt DateTime   @default(now()) @db.Timestamptz(6)
   updatedAt DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
@@ -96,6 +97,18 @@ model Rating {
   @@unique([userId, movieId])
 }
 
+model Edit {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?  @db.Uuid
+  movie     Movie?   @relation(fields: [movieId], references: [id])
+  movieId   String?  @db.Uuid
+  key       String
+  value     String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+}
+
 model Movie {
   id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title       String
@@ -122,6 +135,7 @@ model Movie {
   releaseDate DateTime?   @default(now()) @db.Timestamptz(6)
   user        User        @relation(fields: [userId], references: [id])
   userId      String      @db.Uuid
+  edits       Edit[]
   createdAt   DateTime    @default(now()) @db.Timestamptz(6)
   updatedAt   DateTime    @default(now()) @updatedAt @db.Timestamptz(6)
 }

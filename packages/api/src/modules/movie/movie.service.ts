@@ -26,4 +26,32 @@ export class MovieService {
       },
     })
   }
+
+  async getTrendingMovies() {
+    // Find many ratings within the last month and return updates movies in respect to the most updated
+    // This won't work as the orderBy statement takes into account all ratings not within the last month
+    return await prisma.rating
+      .findMany({
+        where: {
+          updatedAt: {
+            gt: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+            lt: new Date(),
+          },
+        },
+      })
+      .then(async (data) => {
+        return await prisma.movie.findMany({
+          orderBy: {
+            ratings: {
+              _count: "desc",
+            },
+          },
+          where: {
+            id: {
+              in: data.map((movie) => movie.movieId),
+            },
+          },
+        })
+      })
+  }
 }
