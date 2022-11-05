@@ -22,7 +22,7 @@ export class MovieService {
   async getPopularMovies() {
     return await prisma.movie.findMany({
       orderBy: {
-        avg_rating: "desc",
+        popularity: "desc",
       },
     })
   }

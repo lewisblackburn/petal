@@ -64,5 +64,5 @@ export class Movie extends BaseModel implements Prisma.Movie {
   keywords: string[]
 
   @Field(() => Number, { nullable: true })
-  avg_rating: number | null
+  popularity: number | null
 }

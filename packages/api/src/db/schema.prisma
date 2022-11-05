@@ -118,7 +118,8 @@ model Movie {
   lists       List[]
   watchlists  Watchlist[]
   ratings     Rating[]
-  avg_rating  Float?      @default(0)
+  /// @TypeGraphQL.omit(input: ["update", "where", "orderBy"])
+  popularity  Float?      @default(0)
   platforms   Platform[]
   age_rating  AgeRating?
   runtime     Int?        @default(0)

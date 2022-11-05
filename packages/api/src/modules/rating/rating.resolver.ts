@@ -17,7 +17,7 @@ export default class RatingResolver {
 
   @Mutation(() => Rating)
   async createRating(@Arg("data") data: RatingInput) {
-    return this.ratingService.create(data)
+    return this.ratingService.upsert(data)
   }
 
   @Mutation(() => Rating)
