@@ -6,7 +6,7 @@ import { Genre } from "@generated"
 import { Movie } from "../movie.model"
 
 @InputType()
-export class MovieInput implements Partial<Movie> {
+export class MovieUpdateInput implements Partial<Movie> {
   @IsNotEmpty()
   @Field()
   title: string

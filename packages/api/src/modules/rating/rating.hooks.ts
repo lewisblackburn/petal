@@ -3,6 +3,7 @@ import { prisma } from "../../lib/prisma"
 prisma.$use(async (params, next) => {
   if (params.model !== "Rating") return next(params)
   if (params.action === "upsert") {
+    // Calculates popularity score for movie
     if (params.args.where.userId_movieId) {
       await prisma.rating
         .aggregate({

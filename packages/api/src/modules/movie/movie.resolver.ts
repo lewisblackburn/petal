@@ -1,11 +1,12 @@
-import { Arg, Args, Mutation, Query, Resolver } from "type-graphql"
+import { Arg, Mutation, Query, Resolver } from "type-graphql"
 import { Movie } from "./movie.model"
-import { MovieInput } from "./inputs/create.input"
 import { MovieService } from "./movie.service"
 import { Inject, Service } from "typedi"
-import { UpdateOneMovieArgs } from "@generated"
-import { prisma } from "../../lib/prisma"
-import { ContextUser } from "../shared/contextUser"
+import { MovieWhereUniqueInput } from "@generated"
+import { UseAuth } from "../shared/middleware/UseAuth"
+import { CurrentUser } from "../shared/currentUser"
+import { User } from "../user/user.model"
+import { MovieInput } from "./inputs/create.input"
 
 @Service()
 @Resolver(() => Movie)
@@ -13,47 +14,30 @@ export default class MovieResolver {
   @Inject(() => MovieService)
   movieService: MovieService
 
-  @Query(() => [Movie])
-  async movies() {
-    return await this.movieService.getAllMovies()
-  }
-
   @Query(() => Movie)
   async movie(@Arg("id") id: string) {
-    return this.movieService.getMovie(id)
+    return this.movieService.get(id)
   }
 
   @Query(() => [Movie])
   async popularMovies() {
-    return await this.movieService.getPopularMovies()
+    return await this.movieService.getPopular()
   }
 
   @Query(() => [Movie])
-  async trendingMovies() {
-    return await this.movieService.getTrendingMovies()
+  async movies() {
+    return await this.movieService.getAll()
   }
 
+  @UseAuth()
   @Mutation(() => Movie)
-  async createMovie(@Arg("data") data: MovieInput) {
-    return await this.movieService.create(data)
+  async createMovie(@Arg("data") data: MovieInput, @CurrentUser() user: User) {
+    return await this.movieService.create(data, user)
   }
 
-  // @UseAuth()
+  @UseAuth()
   @Mutation(() => Movie)
-  async updateMovie(@Args() args: UpdateOneMovieArgs, @ContextUser() user: ContextUser) {
-    return await prisma.movie.update(args).then(async (data) => {
-      await prisma.edit.createMany({
-        data: Object.keys(args.data).map((key) => {
-          return {
-            key,
-            // @ts-expect-error I need to fix the type issue
-            value: data[key as any].toString(),
-            movieId: data.id,
-            userId: user?.id || "882c62c7-eb29-4e99-bc8b-25eae2a96f93",
-          }
-        }),
-      })
-      return data
-    })
+  async updateMovie(@Arg("data") data: MovieInput, where: MovieWhereUniqueInput, @CurrentUser() user: User) {
+    return await this.movieService.update(data, where, user)
   }
 }
