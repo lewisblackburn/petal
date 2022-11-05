@@ -1,12 +1,10 @@
 import { prisma } from "../../lib/prisma"
 import { Service } from "typedi"
 import { Arg, Resolver } from "type-graphql"
-import { Movie } from "./movie.model"
 import { MovieInput } from "./inputs/create.input"
 import { CurrentUser } from "../shared/currentUser"
 import { User } from "../user/user.model"
-import { MovieUpdateInput } from "./inputs/update.input"
-import { MovieWhereUniqueInput } from "@generated"
+import { Movie, MovieWhereUniqueInput } from "@generated"
 
 @Service()
 @Resolver(() => Movie)
@@ -51,7 +49,7 @@ export class MovieService {
     })
   }
 
-  async update(@Arg("data") data: MovieUpdateInput, where: MovieWhereUniqueInput, @CurrentUser() user: User) {
+  async update(@Arg("data") data: MovieInput, where: MovieWhereUniqueInput, @CurrentUser() user: User) {
     return await prisma.movie.update({
       data: {
         edits: {

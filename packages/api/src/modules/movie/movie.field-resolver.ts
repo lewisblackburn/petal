@@ -1,8 +1,7 @@
 import { prisma } from "../../lib/prisma"
 import { FieldResolver, Resolver, Root } from "type-graphql"
 import { Service } from "typedi"
-import { Movie } from "../movie/movie.model"
-import { Edit } from "@generated"
+import { Movie, Edit } from "@generated"
 
 @Service()
 @Resolver(() => Movie)

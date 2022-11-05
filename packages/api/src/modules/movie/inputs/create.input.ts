@@ -1,9 +1,7 @@
 import { IsNotEmpty } from "class-validator"
 import { Field, InputType } from "type-graphql"
 import * as Prisma from "@prisma/client"
-import { Genre } from "@generated"
-
-import { Movie } from "../movie.model"
+import { Movie, Genre } from "@generated"
 
 @InputType()
 export class MovieInput implements Partial<Movie> {

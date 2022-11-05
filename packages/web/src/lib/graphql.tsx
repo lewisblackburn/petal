@@ -15,6 +15,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   DateTime: string;
+  JSON: any;
 };
 
 export enum AgeRating {
@@ -63,6 +64,215 @@ export type DateTimeNullableFilter = {
   notIn?: InputMaybe<Array<Scalars['DateTime']>>;
 };
 
+export type Edit = {
+  __typename?: 'Edit';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['String'];
+  key: Scalars['String'];
+  movieId?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+  userId?: Maybe<Scalars['String']>;
+  value: Scalars['JSON'];
+};
+
+export type EditCreateManyMovieInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  key: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  userId?: InputMaybe<Scalars['String']>;
+  value: Scalars['JSON'];
+};
+
+export type EditCreateManyMovieInputEnvelope = {
+  data: Array<EditCreateManyMovieInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type EditCreateManyUserInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  key: Scalars['String'];
+  movieId?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  value: Scalars['JSON'];
+};
+
+export type EditCreateManyUserInputEnvelope = {
+  data: Array<EditCreateManyUserInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type EditCreateNestedManyWithoutMovieInput = {
+  connect?: InputMaybe<Array<EditWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<EditCreateOrConnectWithoutMovieInput>>;
+  create?: InputMaybe<Array<EditCreateWithoutMovieInput>>;
+  createMany?: InputMaybe<EditCreateManyMovieInputEnvelope>;
+};
+
+export type EditCreateNestedManyWithoutUserInput = {
+  connect?: InputMaybe<Array<EditWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<EditCreateOrConnectWithoutUserInput>>;
+  create?: InputMaybe<Array<EditCreateWithoutUserInput>>;
+  createMany?: InputMaybe<EditCreateManyUserInputEnvelope>;
+};
+
+export type EditCreateOrConnectWithoutMovieInput = {
+  create: EditCreateWithoutMovieInput;
+  where: EditWhereUniqueInput;
+};
+
+export type EditCreateOrConnectWithoutUserInput = {
+  create: EditCreateWithoutUserInput;
+  where: EditWhereUniqueInput;
+};
+
+export type EditCreateWithoutMovieInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  key: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  user?: InputMaybe<UserCreateNestedOneWithoutEditsInput>;
+  value: Scalars['JSON'];
+};
+
+export type EditCreateWithoutUserInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  key: Scalars['String'];
+  movie?: InputMaybe<MovieCreateNestedOneWithoutEditsInput>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  value: Scalars['JSON'];
+};
+
+export type EditListRelationFilter = {
+  every?: InputMaybe<EditWhereInput>;
+  none?: InputMaybe<EditWhereInput>;
+  some?: InputMaybe<EditWhereInput>;
+};
+
+export type EditOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export type EditScalarWhereInput = {
+  AND?: InputMaybe<Array<EditScalarWhereInput>>;
+  NOT?: InputMaybe<Array<EditScalarWhereInput>>;
+  OR?: InputMaybe<Array<EditScalarWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<UuidFilter>;
+  key?: InputMaybe<StringFilter>;
+  movieId?: InputMaybe<UuidNullableFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+  userId?: InputMaybe<UuidNullableFilter>;
+  value?: InputMaybe<JsonFilter>;
+};
+
+export type EditUpdateManyMutationInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  key?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  value?: InputMaybe<Scalars['JSON']>;
+};
+
+export type EditUpdateManyWithWhereWithoutMovieInput = {
+  data: EditUpdateManyMutationInput;
+  where: EditScalarWhereInput;
+};
+
+export type EditUpdateManyWithWhereWithoutUserInput = {
+  data: EditUpdateManyMutationInput;
+  where: EditScalarWhereInput;
+};
+
+export type EditUpdateManyWithoutMovieNestedInput = {
+  connect?: InputMaybe<Array<EditWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<EditCreateOrConnectWithoutMovieInput>>;
+  create?: InputMaybe<Array<EditCreateWithoutMovieInput>>;
+  createMany?: InputMaybe<EditCreateManyMovieInputEnvelope>;
+  delete?: InputMaybe<Array<EditWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<EditScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<EditWhereUniqueInput>>;
+  set?: InputMaybe<Array<EditWhereUniqueInput>>;
+  update?: InputMaybe<Array<EditUpdateWithWhereUniqueWithoutMovieInput>>;
+  updateMany?: InputMaybe<Array<EditUpdateManyWithWhereWithoutMovieInput>>;
+  upsert?: InputMaybe<Array<EditUpsertWithWhereUniqueWithoutMovieInput>>;
+};
+
+export type EditUpdateManyWithoutUserNestedInput = {
+  connect?: InputMaybe<Array<EditWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<EditCreateOrConnectWithoutUserInput>>;
+  create?: InputMaybe<Array<EditCreateWithoutUserInput>>;
+  createMany?: InputMaybe<EditCreateManyUserInputEnvelope>;
+  delete?: InputMaybe<Array<EditWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<EditScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<EditWhereUniqueInput>>;
+  set?: InputMaybe<Array<EditWhereUniqueInput>>;
+  update?: InputMaybe<Array<EditUpdateWithWhereUniqueWithoutUserInput>>;
+  updateMany?: InputMaybe<Array<EditUpdateManyWithWhereWithoutUserInput>>;
+  upsert?: InputMaybe<Array<EditUpsertWithWhereUniqueWithoutUserInput>>;
+};
+
+export type EditUpdateWithWhereUniqueWithoutMovieInput = {
+  data: EditUpdateWithoutMovieInput;
+  where: EditWhereUniqueInput;
+};
+
+export type EditUpdateWithWhereUniqueWithoutUserInput = {
+  data: EditUpdateWithoutUserInput;
+  where: EditWhereUniqueInput;
+};
+
+export type EditUpdateWithoutMovieInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  key?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  user?: InputMaybe<UserUpdateOneWithoutEditsNestedInput>;
+  value?: InputMaybe<Scalars['JSON']>;
+};
+
+export type EditUpdateWithoutUserInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  key?: InputMaybe<StringFieldUpdateOperationsInput>;
+  movie?: InputMaybe<MovieUpdateOneWithoutEditsNestedInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  value?: InputMaybe<Scalars['JSON']>;
+};
+
+export type EditUpsertWithWhereUniqueWithoutMovieInput = {
+  create: EditCreateWithoutMovieInput;
+  update: EditUpdateWithoutMovieInput;
+  where: EditWhereUniqueInput;
+};
+
+export type EditUpsertWithWhereUniqueWithoutUserInput = {
+  create: EditCreateWithoutUserInput;
+  update: EditUpdateWithoutUserInput;
+  where: EditWhereUniqueInput;
+};
+
+export type EditWhereInput = {
+  AND?: InputMaybe<Array<EditWhereInput>>;
+  NOT?: InputMaybe<Array<EditWhereInput>>;
+  OR?: InputMaybe<Array<EditWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<UuidFilter>;
+  key?: InputMaybe<StringFilter>;
+  movie?: InputMaybe<MovieRelationFilter>;
+  movieId?: InputMaybe<UuidNullableFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+  user?: InputMaybe<UserRelationFilter>;
+  userId?: InputMaybe<UuidNullableFilter>;
+  value?: InputMaybe<JsonFilter>;
+};
+
+export type EditWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export type EnumAgeRatingNullableFilter = {
   equals?: InputMaybe<AgeRating>;
   in?: InputMaybe<Array<AgeRating>>;
@@ -75,14 +285,6 @@ export type EnumGenreNullableListFilter = {
   has?: InputMaybe<Genre>;
   hasEvery?: InputMaybe<Array<Genre>>;
   hasSome?: InputMaybe<Array<Genre>>;
-  isEmpty?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type EnumPlatformNullableListFilter = {
-  equals?: InputMaybe<Array<Platform>>;
-  has?: InputMaybe<Platform>;
-  hasEvery?: InputMaybe<Array<Platform>>;
-  hasSome?: InputMaybe<Array<Platform>>;
   isEmpty?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -151,6 +353,22 @@ export type IntNullableFilter = {
   lte?: InputMaybe<Scalars['Int']>;
   not?: InputMaybe<NestedIntNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['Int']>>;
+};
+
+export type JsonFilter = {
+  array_contains?: InputMaybe<Scalars['JSON']>;
+  array_ends_with?: InputMaybe<Scalars['JSON']>;
+  array_starts_with?: InputMaybe<Scalars['JSON']>;
+  equals?: InputMaybe<Scalars['JSON']>;
+  gt?: InputMaybe<Scalars['JSON']>;
+  gte?: InputMaybe<Scalars['JSON']>;
+  lt?: InputMaybe<Scalars['JSON']>;
+  lte?: InputMaybe<Scalars['JSON']>;
+  not?: InputMaybe<Scalars['JSON']>;
+  path?: InputMaybe<Array<Scalars['String']>>;
+  string_contains?: InputMaybe<Scalars['String']>;
+  string_ends_with?: InputMaybe<Scalars['String']>;
+  string_starts_with?: InputMaybe<Scalars['String']>;
 };
 
 export type List = {
@@ -409,15 +627,20 @@ export type LoginInput = {
 export type Movie = {
   __typename?: 'Movie';
   adult?: Maybe<Scalars['Boolean']>;
+  age_rating?: Maybe<AgeRating>;
   backdrop?: Maybe<Scalars['String']>;
   budget?: Maybe<Scalars['Boolean']>;
   createdAt: Scalars['DateTime'];
+  edits: Array<Edit>;
   genres: Array<Genre>;
   homepage?: Maybe<Scalars['String']>;
   id: Scalars['String'];
+  keywords: Array<Scalars['String']>;
   language?: Maybe<Scalars['String']>;
   locked?: Maybe<Scalars['Boolean']>;
   overview: Scalars['String'];
+  platform: Array<Platform>;
+  popularity?: Maybe<Scalars['Float']>;
   poster?: Maybe<Scalars['String']>;
   releaseDate?: Maybe<Scalars['DateTime']>;
   revenue?: Maybe<Scalars['Float']>;
@@ -438,10 +661,11 @@ export type MovieCreateManyUserInput = {
   genres?: InputMaybe<MovieCreategenresInput>;
   homepage?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
+  keywords?: InputMaybe<MovieCreatekeywordsInput>;
   language?: InputMaybe<Scalars['String']>;
   locked?: InputMaybe<Scalars['Boolean']>;
   overview: Scalars['String'];
-  platform?: InputMaybe<MovieCreateplatformInput>;
+  popularity?: InputMaybe<Scalars['Float']>;
   poster?: InputMaybe<Scalars['String']>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
   revenue?: InputMaybe<Scalars['Int']>;
@@ -476,10 +700,21 @@ export type MovieCreateNestedManyWithoutWatchlistsInput = {
   create?: InputMaybe<Array<MovieCreateWithoutWatchlistsInput>>;
 };
 
+export type MovieCreateNestedOneWithoutEditsInput = {
+  connect?: InputMaybe<MovieWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<MovieCreateOrConnectWithoutEditsInput>;
+  create?: InputMaybe<MovieCreateWithoutEditsInput>;
+};
+
 export type MovieCreateNestedOneWithoutRatingsInput = {
   connect?: InputMaybe<MovieWhereUniqueInput>;
   connectOrCreate?: InputMaybe<MovieCreateOrConnectWithoutRatingsInput>;
   create?: InputMaybe<MovieCreateWithoutRatingsInput>;
+};
+
+export type MovieCreateOrConnectWithoutEditsInput = {
+  create: MovieCreateWithoutEditsInput;
+  where: MovieWhereUniqueInput;
 };
 
 export type MovieCreateOrConnectWithoutListsInput = {
@@ -502,7 +737,7 @@ export type MovieCreateOrConnectWithoutWatchlistsInput = {
   where: MovieWhereUniqueInput;
 };
 
-export type MovieCreateWithoutListsInput = {
+export type MovieCreateWithoutEditsInput = {
   adult?: InputMaybe<Scalars['Boolean']>;
   age_rating?: InputMaybe<AgeRating>;
   backdrop?: InputMaybe<Scalars['String']>;
@@ -511,10 +746,42 @@ export type MovieCreateWithoutListsInput = {
   genres?: InputMaybe<MovieCreategenresInput>;
   homepage?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
+  keywords?: InputMaybe<MovieCreatekeywordsInput>;
+  language?: InputMaybe<Scalars['String']>;
+  lists?: InputMaybe<ListCreateNestedManyWithoutMoviesInput>;
+  locked?: InputMaybe<Scalars['Boolean']>;
+  overview: Scalars['String'];
+  platforms?: InputMaybe<PlatformCreateNestedManyWithoutMoviesInput>;
+  popularity?: InputMaybe<Scalars['Float']>;
+  poster?: InputMaybe<Scalars['String']>;
+  ratings?: InputMaybe<RatingCreateNestedManyWithoutMovieInput>;
+  releaseDate?: InputMaybe<Scalars['DateTime']>;
+  revenue?: InputMaybe<Scalars['Int']>;
+  runtime?: InputMaybe<Scalars['Int']>;
+  status?: InputMaybe<Status>;
+  tagline?: InputMaybe<Scalars['String']>;
+  title: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  user: UserCreateNestedOneWithoutMoviesInput;
+  watchlists?: InputMaybe<WatchlistCreateNestedManyWithoutMoviesInput>;
+};
+
+export type MovieCreateWithoutListsInput = {
+  adult?: InputMaybe<Scalars['Boolean']>;
+  age_rating?: InputMaybe<AgeRating>;
+  backdrop?: InputMaybe<Scalars['String']>;
+  budget?: InputMaybe<Scalars['Int']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  edits?: InputMaybe<EditCreateNestedManyWithoutMovieInput>;
+  genres?: InputMaybe<MovieCreategenresInput>;
+  homepage?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  keywords?: InputMaybe<MovieCreatekeywordsInput>;
   language?: InputMaybe<Scalars['String']>;
   locked?: InputMaybe<Scalars['Boolean']>;
   overview: Scalars['String'];
-  platform?: InputMaybe<MovieCreateplatformInput>;
+  platforms?: InputMaybe<PlatformCreateNestedManyWithoutMoviesInput>;
+  popularity?: InputMaybe<Scalars['Float']>;
   poster?: InputMaybe<Scalars['String']>;
   ratings?: InputMaybe<RatingCreateNestedManyWithoutMovieInput>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
@@ -534,14 +801,17 @@ export type MovieCreateWithoutRatingsInput = {
   backdrop?: InputMaybe<Scalars['String']>;
   budget?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  edits?: InputMaybe<EditCreateNestedManyWithoutMovieInput>;
   genres?: InputMaybe<MovieCreategenresInput>;
   homepage?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
+  keywords?: InputMaybe<MovieCreatekeywordsInput>;
   language?: InputMaybe<Scalars['String']>;
   lists?: InputMaybe<ListCreateNestedManyWithoutMoviesInput>;
   locked?: InputMaybe<Scalars['Boolean']>;
   overview: Scalars['String'];
-  platform?: InputMaybe<MovieCreateplatformInput>;
+  platforms?: InputMaybe<PlatformCreateNestedManyWithoutMoviesInput>;
+  popularity?: InputMaybe<Scalars['Float']>;
   poster?: InputMaybe<Scalars['String']>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
   revenue?: InputMaybe<Scalars['Int']>;
@@ -560,14 +830,17 @@ export type MovieCreateWithoutUserInput = {
   backdrop?: InputMaybe<Scalars['String']>;
   budget?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  edits?: InputMaybe<EditCreateNestedManyWithoutMovieInput>;
   genres?: InputMaybe<MovieCreategenresInput>;
   homepage?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
+  keywords?: InputMaybe<MovieCreatekeywordsInput>;
   language?: InputMaybe<Scalars['String']>;
   lists?: InputMaybe<ListCreateNestedManyWithoutMoviesInput>;
   locked?: InputMaybe<Scalars['Boolean']>;
   overview: Scalars['String'];
-  platform?: InputMaybe<MovieCreateplatformInput>;
+  platforms?: InputMaybe<PlatformCreateNestedManyWithoutMoviesInput>;
+  popularity?: InputMaybe<Scalars['Float']>;
   poster?: InputMaybe<Scalars['String']>;
   ratings?: InputMaybe<RatingCreateNestedManyWithoutMovieInput>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
@@ -586,14 +859,17 @@ export type MovieCreateWithoutWatchlistsInput = {
   backdrop?: InputMaybe<Scalars['String']>;
   budget?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  edits?: InputMaybe<EditCreateNestedManyWithoutMovieInput>;
   genres?: InputMaybe<MovieCreategenresInput>;
   homepage?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
+  keywords?: InputMaybe<MovieCreatekeywordsInput>;
   language?: InputMaybe<Scalars['String']>;
   lists?: InputMaybe<ListCreateNestedManyWithoutMoviesInput>;
   locked?: InputMaybe<Scalars['Boolean']>;
   overview: Scalars['String'];
-  platform?: InputMaybe<MovieCreateplatformInput>;
+  platforms?: InputMaybe<PlatformCreateNestedManyWithoutMoviesInput>;
+  popularity?: InputMaybe<Scalars['Float']>;
   poster?: InputMaybe<Scalars['String']>;
   ratings?: InputMaybe<RatingCreateNestedManyWithoutMovieInput>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
@@ -610,15 +886,14 @@ export type MovieCreategenresInput = {
   set: Array<Genre>;
 };
 
-export type MovieCreateplatformInput = {
-  set: Array<Platform>;
+export type MovieCreatekeywordsInput = {
+  set: Array<Scalars['String']>;
 };
 
 export type MovieInput = {
   genres: Array<Genre>;
   overview: Scalars['String'];
   title: Scalars['String'];
-  userId: Scalars['String'];
 };
 
 export type MovieListRelationFilter = {
@@ -637,14 +912,16 @@ export type MovieOrderByWithRelationInput = {
   backdrop?: InputMaybe<SortOrder>;
   budget?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
+  edits?: InputMaybe<EditOrderByRelationAggregateInput>;
   genres?: InputMaybe<SortOrder>;
   homepage?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  keywords?: InputMaybe<SortOrder>;
   language?: InputMaybe<SortOrder>;
   lists?: InputMaybe<ListOrderByRelationAggregateInput>;
   locked?: InputMaybe<SortOrder>;
   overview?: InputMaybe<SortOrder>;
-  platform?: InputMaybe<SortOrder>;
+  platforms?: InputMaybe<PlatformOrderByRelationAggregateInput>;
   poster?: InputMaybe<SortOrder>;
   ratings?: InputMaybe<RatingOrderByRelationAggregateInput>;
   releaseDate?: InputMaybe<SortOrder>;
@@ -673,10 +950,11 @@ export enum MovieScalarFieldEnum {
   Genres = 'genres',
   Homepage = 'homepage',
   Id = 'id',
+  Keywords = 'keywords',
   Language = 'language',
   Locked = 'locked',
   Overview = 'overview',
-  Platform = 'platform',
+  Popularity = 'popularity',
   Poster = 'poster',
   ReleaseDate = 'releaseDate',
   Revenue = 'revenue',
@@ -700,10 +978,10 @@ export type MovieScalarWhereInput = {
   genres?: InputMaybe<EnumGenreNullableListFilter>;
   homepage?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<UuidFilter>;
+  keywords?: InputMaybe<StringNullableListFilter>;
   language?: InputMaybe<StringNullableFilter>;
   locked?: InputMaybe<BoolNullableFilter>;
   overview?: InputMaybe<StringFilter>;
-  platform?: InputMaybe<EnumPlatformNullableListFilter>;
   poster?: InputMaybe<StringNullableFilter>;
   releaseDate?: InputMaybe<DateTimeNullableFilter>;
   revenue?: InputMaybe<IntNullableFilter>;
@@ -715,6 +993,35 @@ export type MovieScalarWhereInput = {
   userId?: InputMaybe<UuidFilter>;
 };
 
+export type MovieUpdateInput = {
+  adult?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
+  age_rating?: InputMaybe<NullableEnumAgeRatingFieldUpdateOperationsInput>;
+  backdrop?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  budget?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  edits?: InputMaybe<EditUpdateManyWithoutMovieNestedInput>;
+  genres?: InputMaybe<MovieUpdategenresInput>;
+  homepage?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  keywords?: InputMaybe<MovieUpdatekeywordsInput>;
+  language?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  lists?: InputMaybe<ListUpdateManyWithoutMoviesNestedInput>;
+  locked?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
+  overview?: InputMaybe<StringFieldUpdateOperationsInput>;
+  platforms?: InputMaybe<PlatformUpdateManyWithoutMoviesNestedInput>;
+  poster?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  ratings?: InputMaybe<RatingUpdateManyWithoutMovieNestedInput>;
+  releaseDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  revenue?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
+  runtime?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
+  status?: InputMaybe<NullableEnumStatusFieldUpdateOperationsInput>;
+  tagline?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  title?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  user?: InputMaybe<UserUpdateOneRequiredWithoutMoviesNestedInput>;
+  watchlists?: InputMaybe<WatchlistUpdateManyWithoutMoviesNestedInput>;
+};
+
 export type MovieUpdateManyMutationInput = {
   adult?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
   age_rating?: InputMaybe<NullableEnumAgeRatingFieldUpdateOperationsInput>;
@@ -724,10 +1031,10 @@ export type MovieUpdateManyMutationInput = {
   genres?: InputMaybe<MovieUpdategenresInput>;
   homepage?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  keywords?: InputMaybe<MovieUpdatekeywordsInput>;
   language?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   locked?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
   overview?: InputMaybe<StringFieldUpdateOperationsInput>;
-  platform?: InputMaybe<MovieUpdateplatformInput>;
   poster?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   releaseDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   revenue?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
@@ -801,6 +1108,16 @@ export type MovieUpdateOneRequiredWithoutRatingsNestedInput = {
   upsert?: InputMaybe<MovieUpsertWithoutRatingsInput>;
 };
 
+export type MovieUpdateOneWithoutEditsNestedInput = {
+  connect?: InputMaybe<MovieWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<MovieCreateOrConnectWithoutEditsInput>;
+  create?: InputMaybe<MovieCreateWithoutEditsInput>;
+  delete?: InputMaybe<Scalars['Boolean']>;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+  update?: InputMaybe<MovieUpdateWithoutEditsInput>;
+  upsert?: InputMaybe<MovieUpsertWithoutEditsInput>;
+};
+
 export type MovieUpdateWithWhereUniqueWithoutListsInput = {
   data: MovieUpdateWithoutListsInput;
   where: MovieWhereUniqueInput;
@@ -816,7 +1133,7 @@ export type MovieUpdateWithWhereUniqueWithoutWatchlistsInput = {
   where: MovieWhereUniqueInput;
 };
 
-export type MovieUpdateWithoutListsInput = {
+export type MovieUpdateWithoutEditsInput = {
   adult?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
   age_rating?: InputMaybe<NullableEnumAgeRatingFieldUpdateOperationsInput>;
   backdrop?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
@@ -825,10 +1142,40 @@ export type MovieUpdateWithoutListsInput = {
   genres?: InputMaybe<MovieUpdategenresInput>;
   homepage?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  keywords?: InputMaybe<MovieUpdatekeywordsInput>;
+  language?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  lists?: InputMaybe<ListUpdateManyWithoutMoviesNestedInput>;
+  locked?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
+  overview?: InputMaybe<StringFieldUpdateOperationsInput>;
+  platforms?: InputMaybe<PlatformUpdateManyWithoutMoviesNestedInput>;
+  poster?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  ratings?: InputMaybe<RatingUpdateManyWithoutMovieNestedInput>;
+  releaseDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  revenue?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
+  runtime?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
+  status?: InputMaybe<NullableEnumStatusFieldUpdateOperationsInput>;
+  tagline?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  title?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  user?: InputMaybe<UserUpdateOneRequiredWithoutMoviesNestedInput>;
+  watchlists?: InputMaybe<WatchlistUpdateManyWithoutMoviesNestedInput>;
+};
+
+export type MovieUpdateWithoutListsInput = {
+  adult?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
+  age_rating?: InputMaybe<NullableEnumAgeRatingFieldUpdateOperationsInput>;
+  backdrop?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  budget?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  edits?: InputMaybe<EditUpdateManyWithoutMovieNestedInput>;
+  genres?: InputMaybe<MovieUpdategenresInput>;
+  homepage?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  keywords?: InputMaybe<MovieUpdatekeywordsInput>;
   language?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   locked?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
   overview?: InputMaybe<StringFieldUpdateOperationsInput>;
-  platform?: InputMaybe<MovieUpdateplatformInput>;
+  platforms?: InputMaybe<PlatformUpdateManyWithoutMoviesNestedInput>;
   poster?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   ratings?: InputMaybe<RatingUpdateManyWithoutMovieNestedInput>;
   releaseDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
@@ -848,14 +1195,16 @@ export type MovieUpdateWithoutRatingsInput = {
   backdrop?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   budget?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  edits?: InputMaybe<EditUpdateManyWithoutMovieNestedInput>;
   genres?: InputMaybe<MovieUpdategenresInput>;
   homepage?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  keywords?: InputMaybe<MovieUpdatekeywordsInput>;
   language?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   lists?: InputMaybe<ListUpdateManyWithoutMoviesNestedInput>;
   locked?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
   overview?: InputMaybe<StringFieldUpdateOperationsInput>;
-  platform?: InputMaybe<MovieUpdateplatformInput>;
+  platforms?: InputMaybe<PlatformUpdateManyWithoutMoviesNestedInput>;
   poster?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   releaseDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   revenue?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
@@ -874,14 +1223,16 @@ export type MovieUpdateWithoutUserInput = {
   backdrop?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   budget?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  edits?: InputMaybe<EditUpdateManyWithoutMovieNestedInput>;
   genres?: InputMaybe<MovieUpdategenresInput>;
   homepage?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  keywords?: InputMaybe<MovieUpdatekeywordsInput>;
   language?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   lists?: InputMaybe<ListUpdateManyWithoutMoviesNestedInput>;
   locked?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
   overview?: InputMaybe<StringFieldUpdateOperationsInput>;
-  platform?: InputMaybe<MovieUpdateplatformInput>;
+  platforms?: InputMaybe<PlatformUpdateManyWithoutMoviesNestedInput>;
   poster?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   ratings?: InputMaybe<RatingUpdateManyWithoutMovieNestedInput>;
   releaseDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
@@ -900,14 +1251,16 @@ export type MovieUpdateWithoutWatchlistsInput = {
   backdrop?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   budget?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  edits?: InputMaybe<EditUpdateManyWithoutMovieNestedInput>;
   genres?: InputMaybe<MovieUpdategenresInput>;
   homepage?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  keywords?: InputMaybe<MovieUpdatekeywordsInput>;
   language?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   lists?: InputMaybe<ListUpdateManyWithoutMoviesNestedInput>;
   locked?: InputMaybe<NullableBoolFieldUpdateOperationsInput>;
   overview?: InputMaybe<StringFieldUpdateOperationsInput>;
-  platform?: InputMaybe<MovieUpdateplatformInput>;
+  platforms?: InputMaybe<PlatformUpdateManyWithoutMoviesNestedInput>;
   poster?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   ratings?: InputMaybe<RatingUpdateManyWithoutMovieNestedInput>;
   releaseDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
@@ -925,9 +1278,9 @@ export type MovieUpdategenresInput = {
   set?: InputMaybe<Array<Genre>>;
 };
 
-export type MovieUpdateplatformInput = {
-  push?: InputMaybe<Array<Platform>>;
-  set?: InputMaybe<Array<Platform>>;
+export type MovieUpdatekeywordsInput = {
+  push?: InputMaybe<Array<Scalars['String']>>;
+  set?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type MovieUpsertWithWhereUniqueWithoutListsInput = {
@@ -948,6 +1301,11 @@ export type MovieUpsertWithWhereUniqueWithoutWatchlistsInput = {
   where: MovieWhereUniqueInput;
 };
 
+export type MovieUpsertWithoutEditsInput = {
+  create: MovieCreateWithoutEditsInput;
+  update: MovieUpdateWithoutEditsInput;
+};
+
 export type MovieUpsertWithoutRatingsInput = {
   create: MovieCreateWithoutRatingsInput;
   update: MovieUpdateWithoutRatingsInput;
@@ -962,14 +1320,16 @@ export type MovieWhereInput = {
   backdrop?: InputMaybe<StringNullableFilter>;
   budget?: InputMaybe<IntNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
+  edits?: InputMaybe<EditListRelationFilter>;
   genres?: InputMaybe<EnumGenreNullableListFilter>;
   homepage?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<UuidFilter>;
+  keywords?: InputMaybe<StringNullableListFilter>;
   language?: InputMaybe<StringNullableFilter>;
   lists?: InputMaybe<ListListRelationFilter>;
   locked?: InputMaybe<BoolNullableFilter>;
   overview?: InputMaybe<StringFilter>;
-  platform?: InputMaybe<EnumPlatformNullableListFilter>;
+  platforms?: InputMaybe<PlatformListRelationFilter>;
   poster?: InputMaybe<StringNullableFilter>;
   ratings?: InputMaybe<RatingListRelationFilter>;
   releaseDate?: InputMaybe<DateTimeNullableFilter>;
@@ -994,7 +1354,10 @@ export type Mutation = {
   createMovie: Movie;
   createRating: Rating;
   createUser: User;
+  createWatchlist: Watchlist;
+  deleteList: List;
   deleteRating: Rating;
+  deleteWatchlist: Watchlist;
   destroyAccount: Scalars['Boolean'];
   forgotPassword: Scalars['Boolean'];
   getBulkSignedS3UrlForPut?: Maybe<Array<SignedResponse>>;
@@ -1004,6 +1367,8 @@ export type Mutation = {
   resetPassword: Scalars['Boolean'];
   updateList: List;
   updateMe: User;
+  updateMovie: Movie;
+  updateWatchlist: Watchlist;
 };
 
 
@@ -1027,8 +1392,23 @@ export type MutationCreateUserArgs = {
 };
 
 
+export type MutationCreateWatchlistArgs = {
+  data: WatchlistCreateInput;
+};
+
+
+export type MutationDeleteListArgs = {
+  where: ListWhereUniqueInput;
+};
+
+
 export type MutationDeleteRatingArgs = {
   where: RatingWhereUniqueInput;
+};
+
+
+export type MutationDeleteWatchlistArgs = {
+  where: WatchlistWhereUniqueInput;
 };
 
 
@@ -1070,6 +1450,18 @@ export type MutationUpdateListArgs = {
 
 export type MutationUpdateMeArgs = {
   data: UpdateUserInput;
+};
+
+
+export type MutationUpdateMovieArgs = {
+  data: MovieUpdateInput;
+  where: MovieWhereUniqueInput;
+};
+
+
+export type MutationUpdateWatchlistArgs = {
+  data: WatchlistUpdateInput;
+  where: WatchlistWhereUniqueInput;
 };
 
 export type NestedBoolNullableFilter = {
@@ -1181,6 +1573,17 @@ export type NestedUuidFilter = {
   notIn?: InputMaybe<Array<Scalars['String']>>;
 };
 
+export type NestedUuidNullableFilter = {
+  equals?: InputMaybe<Scalars['String']>;
+  gt?: InputMaybe<Scalars['String']>;
+  gte?: InputMaybe<Scalars['String']>;
+  in?: InputMaybe<Array<Scalars['String']>>;
+  lt?: InputMaybe<Scalars['String']>;
+  lte?: InputMaybe<Scalars['String']>;
+  not?: InputMaybe<NestedUuidNullableFilter>;
+  notIn?: InputMaybe<Array<Scalars['String']>>;
+};
+
 export type NullableBoolFieldUpdateOperationsInput = {
   set?: InputMaybe<Scalars['Boolean']>;
 };
@@ -1209,23 +1612,137 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: InputMaybe<Scalars['String']>;
 };
 
-export enum Platform {
-  Netflix = 'NETFLIX',
-  Youtube = 'YOUTUBE'
-}
+export type Platform = {
+  __typename?: 'Platform';
+  _count?: Maybe<PlatformCount>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['String'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type PlatformCount = {
+  __typename?: 'PlatformCount';
+  movies: Scalars['Int'];
+};
+
+export type PlatformCreateNestedManyWithoutMoviesInput = {
+  connect?: InputMaybe<Array<PlatformWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PlatformCreateOrConnectWithoutMoviesInput>>;
+  create?: InputMaybe<Array<PlatformCreateWithoutMoviesInput>>;
+};
+
+export type PlatformCreateOrConnectWithoutMoviesInput = {
+  create: PlatformCreateWithoutMoviesInput;
+  where: PlatformWhereUniqueInput;
+};
+
+export type PlatformCreateWithoutMoviesInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PlatformListRelationFilter = {
+  every?: InputMaybe<PlatformWhereInput>;
+  none?: InputMaybe<PlatformWhereInput>;
+  some?: InputMaybe<PlatformWhereInput>;
+};
+
+export type PlatformOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export type PlatformScalarWhereInput = {
+  AND?: InputMaybe<Array<PlatformScalarWhereInput>>;
+  NOT?: InputMaybe<Array<PlatformScalarWhereInput>>;
+  OR?: InputMaybe<Array<PlatformScalarWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<UuidFilter>;
+  name?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type PlatformUpdateManyMutationInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PlatformUpdateManyWithWhereWithoutMoviesInput = {
+  data: PlatformUpdateManyMutationInput;
+  where: PlatformScalarWhereInput;
+};
+
+export type PlatformUpdateManyWithoutMoviesNestedInput = {
+  connect?: InputMaybe<Array<PlatformWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PlatformCreateOrConnectWithoutMoviesInput>>;
+  create?: InputMaybe<Array<PlatformCreateWithoutMoviesInput>>;
+  delete?: InputMaybe<Array<PlatformWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<PlatformScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<PlatformWhereUniqueInput>>;
+  set?: InputMaybe<Array<PlatformWhereUniqueInput>>;
+  update?: InputMaybe<Array<PlatformUpdateWithWhereUniqueWithoutMoviesInput>>;
+  updateMany?: InputMaybe<Array<PlatformUpdateManyWithWhereWithoutMoviesInput>>;
+  upsert?: InputMaybe<Array<PlatformUpsertWithWhereUniqueWithoutMoviesInput>>;
+};
+
+export type PlatformUpdateWithWhereUniqueWithoutMoviesInput = {
+  data: PlatformUpdateWithoutMoviesInput;
+  where: PlatformWhereUniqueInput;
+};
+
+export type PlatformUpdateWithoutMoviesInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PlatformUpsertWithWhereUniqueWithoutMoviesInput = {
+  create: PlatformCreateWithoutMoviesInput;
+  update: PlatformUpdateWithoutMoviesInput;
+  where: PlatformWhereUniqueInput;
+};
+
+export type PlatformWhereInput = {
+  AND?: InputMaybe<Array<PlatformWhereInput>>;
+  NOT?: InputMaybe<Array<PlatformWhereInput>>;
+  OR?: InputMaybe<Array<PlatformWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<UuidFilter>;
+  movies?: InputMaybe<MovieListRelationFilter>;
+  name?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type PlatformWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
 
 export type Query = {
   __typename?: 'Query';
+  edit: Edit;
+  edits: Array<Edit>;
   getSignedS3UrlForGet?: Maybe<Scalars['String']>;
   list: List;
   lists: Array<List>;
   me?: Maybe<User>;
   movie: Movie;
   movies: Array<Movie>;
+  popularMovies: Array<Movie>;
   ratings: Array<Rating>;
   refreshToken?: Maybe<RefreshTokenResponse>;
   user?: Maybe<User>;
   users: UsersResponse;
+  watchlist: Watchlist;
+};
+
+
+export type QueryEditArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -1266,6 +1783,11 @@ export type QueryUsersArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<UserWhereInput>;
+};
+
+
+export type QueryWatchlistArgs = {
+  id: Scalars['String'];
 };
 
 export enum QueryMode {
@@ -1561,6 +2083,14 @@ export type StringNullableFilter = {
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
+export type StringNullableListFilter = {
+  equals?: InputMaybe<Array<Scalars['String']>>;
+  has?: InputMaybe<Scalars['String']>;
+  hasEvery?: InputMaybe<Array<Scalars['String']>>;
+  hasSome?: InputMaybe<Array<Scalars['String']>>;
+  isEmpty?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type UpdateUserInput = {
   avatar?: InputMaybe<Scalars['String']>;
   bio?: InputMaybe<Scalars['String']>;
@@ -1590,6 +2120,7 @@ export type UserCreateInput = {
   avatar?: InputMaybe<Scalars['String']>;
   bio?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  edits?: InputMaybe<EditCreateNestedManyWithoutUserInput>;
   email: Scalars['String'];
   firstName: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
@@ -1602,7 +2133,13 @@ export type UserCreateInput = {
   role?: InputMaybe<Role>;
   twitter?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  watchlist: WatchlistCreateNestedOneWithoutUserInput;
+  watchlist?: InputMaybe<WatchlistCreateNestedOneWithoutUserInput>;
+};
+
+export type UserCreateNestedOneWithoutEditsInput = {
+  connect?: InputMaybe<UserWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutEditsInput>;
+  create?: InputMaybe<UserCreateWithoutEditsInput>;
 };
 
 export type UserCreateNestedOneWithoutListsInput = {
@@ -1629,6 +2166,11 @@ export type UserCreateNestedOneWithoutWatchlistInput = {
   create?: InputMaybe<UserCreateWithoutWatchlistInput>;
 };
 
+export type UserCreateOrConnectWithoutEditsInput = {
+  create: UserCreateWithoutEditsInput;
+  where: UserWhereUniqueInput;
+};
+
 export type UserCreateOrConnectWithoutListsInput = {
   create: UserCreateWithoutListsInput;
   where: UserWhereUniqueInput;
@@ -1649,10 +2191,30 @@ export type UserCreateOrConnectWithoutWatchlistInput = {
   where: UserWhereUniqueInput;
 };
 
+export type UserCreateWithoutEditsInput = {
+  avatar?: InputMaybe<Scalars['String']>;
+  bio?: InputMaybe<Scalars['String']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  instagram?: InputMaybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  lists?: InputMaybe<ListCreateNestedManyWithoutUserInput>;
+  movies?: InputMaybe<MovieCreateNestedManyWithoutUserInput>;
+  password: Scalars['String'];
+  ratings?: InputMaybe<RatingCreateNestedManyWithoutUserInput>;
+  role?: InputMaybe<Role>;
+  twitter?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  watchlist?: InputMaybe<WatchlistCreateNestedOneWithoutUserInput>;
+};
+
 export type UserCreateWithoutListsInput = {
   avatar?: InputMaybe<Scalars['String']>;
   bio?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  edits?: InputMaybe<EditCreateNestedManyWithoutUserInput>;
   email: Scalars['String'];
   firstName: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
@@ -1664,13 +2226,14 @@ export type UserCreateWithoutListsInput = {
   role?: InputMaybe<Role>;
   twitter?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  watchlist: WatchlistCreateNestedOneWithoutUserInput;
+  watchlist?: InputMaybe<WatchlistCreateNestedOneWithoutUserInput>;
 };
 
 export type UserCreateWithoutMoviesInput = {
   avatar?: InputMaybe<Scalars['String']>;
   bio?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  edits?: InputMaybe<EditCreateNestedManyWithoutUserInput>;
   email: Scalars['String'];
   firstName: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
@@ -1682,13 +2245,14 @@ export type UserCreateWithoutMoviesInput = {
   role?: InputMaybe<Role>;
   twitter?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  watchlist: WatchlistCreateNestedOneWithoutUserInput;
+  watchlist?: InputMaybe<WatchlistCreateNestedOneWithoutUserInput>;
 };
 
 export type UserCreateWithoutRatingsInput = {
   avatar?: InputMaybe<Scalars['String']>;
   bio?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  edits?: InputMaybe<EditCreateNestedManyWithoutUserInput>;
   email: Scalars['String'];
   firstName: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
@@ -1700,13 +2264,14 @@ export type UserCreateWithoutRatingsInput = {
   role?: InputMaybe<Role>;
   twitter?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  watchlist: WatchlistCreateNestedOneWithoutUserInput;
+  watchlist?: InputMaybe<WatchlistCreateNestedOneWithoutUserInput>;
 };
 
 export type UserCreateWithoutWatchlistInput = {
   avatar?: InputMaybe<Scalars['String']>;
   bio?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  edits?: InputMaybe<EditCreateNestedManyWithoutUserInput>;
   email: Scalars['String'];
   firstName: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
@@ -1725,6 +2290,7 @@ export type UserOrderByWithRelationInput = {
   avatar?: InputMaybe<SortOrder>;
   bio?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
+  edits?: InputMaybe<EditOrderByRelationAggregateInput>;
   email?: InputMaybe<SortOrder>;
   firstName?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
@@ -1738,7 +2304,6 @@ export type UserOrderByWithRelationInput = {
   twitter?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
   watchlist?: InputMaybe<WatchlistOrderByWithRelationInput>;
-  watchlistId?: InputMaybe<SortOrder>;
 };
 
 export type UserRelationFilter = {
@@ -1758,8 +2323,7 @@ export enum UserScalarFieldEnum {
   Password = 'password',
   Role = 'role',
   Twitter = 'twitter',
-  UpdatedAt = 'updatedAt',
-  WatchlistId = 'watchlistId'
+  UpdatedAt = 'updatedAt'
 }
 
 export type UserUpdateOneRequiredWithoutListsNestedInput = {
@@ -1786,20 +2350,48 @@ export type UserUpdateOneRequiredWithoutRatingsNestedInput = {
   upsert?: InputMaybe<UserUpsertWithoutRatingsInput>;
 };
 
-export type UserUpdateOneWithoutWatchlistNestedInput = {
+export type UserUpdateOneRequiredWithoutWatchlistNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
   connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutWatchlistInput>;
   create?: InputMaybe<UserCreateWithoutWatchlistInput>;
-  delete?: InputMaybe<Scalars['Boolean']>;
-  disconnect?: InputMaybe<Scalars['Boolean']>;
   update?: InputMaybe<UserUpdateWithoutWatchlistInput>;
   upsert?: InputMaybe<UserUpsertWithoutWatchlistInput>;
+};
+
+export type UserUpdateOneWithoutEditsNestedInput = {
+  connect?: InputMaybe<UserWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutEditsInput>;
+  create?: InputMaybe<UserCreateWithoutEditsInput>;
+  delete?: InputMaybe<Scalars['Boolean']>;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+  update?: InputMaybe<UserUpdateWithoutEditsInput>;
+  upsert?: InputMaybe<UserUpsertWithoutEditsInput>;
+};
+
+export type UserUpdateWithoutEditsInput = {
+  avatar?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  bio?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  email?: InputMaybe<StringFieldUpdateOperationsInput>;
+  firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  instagram?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  lastName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lists?: InputMaybe<ListUpdateManyWithoutUserNestedInput>;
+  movies?: InputMaybe<MovieUpdateManyWithoutUserNestedInput>;
+  password?: InputMaybe<StringFieldUpdateOperationsInput>;
+  ratings?: InputMaybe<RatingUpdateManyWithoutUserNestedInput>;
+  role?: InputMaybe<EnumRoleFieldUpdateOperationsInput>;
+  twitter?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  watchlist?: InputMaybe<WatchlistUpdateOneWithoutUserNestedInput>;
 };
 
 export type UserUpdateWithoutListsInput = {
   avatar?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   bio?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  edits?: InputMaybe<EditUpdateManyWithoutUserNestedInput>;
   email?: InputMaybe<StringFieldUpdateOperationsInput>;
   firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -1811,13 +2403,14 @@ export type UserUpdateWithoutListsInput = {
   role?: InputMaybe<EnumRoleFieldUpdateOperationsInput>;
   twitter?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  watchlist?: InputMaybe<WatchlistUpdateOneRequiredWithoutUserNestedInput>;
+  watchlist?: InputMaybe<WatchlistUpdateOneWithoutUserNestedInput>;
 };
 
 export type UserUpdateWithoutMoviesInput = {
   avatar?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   bio?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  edits?: InputMaybe<EditUpdateManyWithoutUserNestedInput>;
   email?: InputMaybe<StringFieldUpdateOperationsInput>;
   firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -1829,13 +2422,14 @@ export type UserUpdateWithoutMoviesInput = {
   role?: InputMaybe<EnumRoleFieldUpdateOperationsInput>;
   twitter?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  watchlist?: InputMaybe<WatchlistUpdateOneRequiredWithoutUserNestedInput>;
+  watchlist?: InputMaybe<WatchlistUpdateOneWithoutUserNestedInput>;
 };
 
 export type UserUpdateWithoutRatingsInput = {
   avatar?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   bio?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  edits?: InputMaybe<EditUpdateManyWithoutUserNestedInput>;
   email?: InputMaybe<StringFieldUpdateOperationsInput>;
   firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -1847,13 +2441,14 @@ export type UserUpdateWithoutRatingsInput = {
   role?: InputMaybe<EnumRoleFieldUpdateOperationsInput>;
   twitter?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  watchlist?: InputMaybe<WatchlistUpdateOneRequiredWithoutUserNestedInput>;
+  watchlist?: InputMaybe<WatchlistUpdateOneWithoutUserNestedInput>;
 };
 
 export type UserUpdateWithoutWatchlistInput = {
   avatar?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   bio?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  edits?: InputMaybe<EditUpdateManyWithoutUserNestedInput>;
   email?: InputMaybe<StringFieldUpdateOperationsInput>;
   firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -1866,6 +2461,11 @@ export type UserUpdateWithoutWatchlistInput = {
   role?: InputMaybe<EnumRoleFieldUpdateOperationsInput>;
   twitter?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type UserUpsertWithoutEditsInput = {
+  create: UserCreateWithoutEditsInput;
+  update: UserUpdateWithoutEditsInput;
 };
 
 export type UserUpsertWithoutListsInput = {
@@ -1895,6 +2495,7 @@ export type UserWhereInput = {
   avatar?: InputMaybe<StringNullableFilter>;
   bio?: InputMaybe<StringNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
+  edits?: InputMaybe<EditListRelationFilter>;
   email?: InputMaybe<StringFilter>;
   firstName?: InputMaybe<StringFilter>;
   id?: InputMaybe<UuidFilter>;
@@ -1908,13 +2509,11 @@ export type UserWhereInput = {
   twitter?: InputMaybe<StringNullableFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
   watchlist?: InputMaybe<WatchlistRelationFilter>;
-  watchlistId?: InputMaybe<UuidFilter>;
 };
 
 export type UserWhereUniqueInput = {
   email?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
-  watchlistId?: InputMaybe<Scalars['String']>;
 };
 
 export type UsersResponse = {
@@ -1933,6 +2532,51 @@ export type UuidFilter = {
   mode?: InputMaybe<QueryMode>;
   not?: InputMaybe<NestedUuidFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type UuidNullableFilter = {
+  equals?: InputMaybe<Scalars['String']>;
+  gt?: InputMaybe<Scalars['String']>;
+  gte?: InputMaybe<Scalars['String']>;
+  in?: InputMaybe<Array<Scalars['String']>>;
+  lt?: InputMaybe<Scalars['String']>;
+  lte?: InputMaybe<Scalars['String']>;
+  mode?: InputMaybe<QueryMode>;
+  not?: InputMaybe<NestedUuidNullableFilter>;
+  notIn?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type Watchlist = {
+  __typename?: 'Watchlist';
+  _count?: Maybe<WatchlistCount>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['String'];
+  movies: Array<Movie>;
+  updatedAt: Scalars['DateTime'];
+  userId: Scalars['String'];
+};
+
+
+export type WatchlistMoviesArgs = {
+  cursor?: InputMaybe<MovieWhereUniqueInput>;
+  distinct?: InputMaybe<Array<MovieScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<MovieOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<MovieWhereInput>;
+};
+
+export type WatchlistCount = {
+  __typename?: 'WatchlistCount';
+  movies: Scalars['Int'];
+};
+
+export type WatchlistCreateInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  movies?: InputMaybe<MovieCreateNestedManyWithoutWatchlistsInput>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  user: UserCreateNestedOneWithoutWatchlistInput;
 };
 
 export type WatchlistCreateNestedManyWithoutMoviesInput = {
@@ -1961,8 +2605,7 @@ export type WatchlistCreateWithoutMoviesInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  user?: InputMaybe<UserCreateNestedOneWithoutWatchlistInput>;
-  userId: Scalars['String'];
+  user: UserCreateNestedOneWithoutWatchlistInput;
 };
 
 export type WatchlistCreateWithoutUserInput = {
@@ -1970,7 +2613,6 @@ export type WatchlistCreateWithoutUserInput = {
   id?: InputMaybe<Scalars['String']>;
   movies?: InputMaybe<MovieCreateNestedManyWithoutWatchlistsInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  userId: Scalars['String'];
 };
 
 export type WatchlistListRelationFilter = {
@@ -2007,11 +2649,18 @@ export type WatchlistScalarWhereInput = {
   userId?: InputMaybe<UuidFilter>;
 };
 
+export type WatchlistUpdateInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  movies?: InputMaybe<MovieUpdateManyWithoutWatchlistsNestedInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  user?: InputMaybe<UserUpdateOneRequiredWithoutWatchlistNestedInput>;
+};
+
 export type WatchlistUpdateManyMutationInput = {
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  userId?: InputMaybe<StringFieldUpdateOperationsInput>;
 };
 
 export type WatchlistUpdateManyWithWhereWithoutMoviesInput = {
@@ -2032,10 +2681,12 @@ export type WatchlistUpdateManyWithoutMoviesNestedInput = {
   upsert?: InputMaybe<Array<WatchlistUpsertWithWhereUniqueWithoutMoviesInput>>;
 };
 
-export type WatchlistUpdateOneRequiredWithoutUserNestedInput = {
+export type WatchlistUpdateOneWithoutUserNestedInput = {
   connect?: InputMaybe<WatchlistWhereUniqueInput>;
   connectOrCreate?: InputMaybe<WatchlistCreateOrConnectWithoutUserInput>;
   create?: InputMaybe<WatchlistCreateWithoutUserInput>;
+  delete?: InputMaybe<Scalars['Boolean']>;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
   update?: InputMaybe<WatchlistUpdateWithoutUserInput>;
   upsert?: InputMaybe<WatchlistUpsertWithoutUserInput>;
 };
@@ -2049,8 +2700,7 @@ export type WatchlistUpdateWithoutMoviesInput = {
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  user?: InputMaybe<UserUpdateOneWithoutWatchlistNestedInput>;
-  userId?: InputMaybe<StringFieldUpdateOperationsInput>;
+  user?: InputMaybe<UserUpdateOneRequiredWithoutWatchlistNestedInput>;
 };
 
 export type WatchlistUpdateWithoutUserInput = {
@@ -2058,7 +2708,6 @@ export type WatchlistUpdateWithoutUserInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   movies?: InputMaybe<MovieUpdateManyWithoutWatchlistsNestedInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  userId?: InputMaybe<StringFieldUpdateOperationsInput>;
 };
 
 export type WatchlistUpsertWithWhereUniqueWithoutMoviesInput = {
@@ -2150,6 +2799,13 @@ export type ForgotPasswordMutationVariables = Exact<{
 
 
 export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: boolean };
+
+export type CreateMovieMutationVariables = Exact<{
+  data: MovieInput;
+}>;
+
+
+export type CreateMovieMutation = { __typename?: 'Mutation', createMovie: { __typename?: 'Movie', id: string } };
 
 export type LoginMutationVariables = Exact<{
   data: LoginInput;
@@ -2351,6 +3007,20 @@ export function useForgotPasswordMutation(baseOptions?: Apollo.MutationHookOptio
 export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
 export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
+export const CreateMovieDocument = gql`
+    mutation CreateMovie($data: MovieInput!) {
+  createMovie(data: $data) {
+    id
+  }
+}
+    `;
+export function useCreateMovieMutation(baseOptions?: Apollo.MutationHookOptions<CreateMovieMutation, CreateMovieMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateMovieMutation, CreateMovieMutationVariables>(CreateMovieDocument, options);
+      }
+export type CreateMovieMutationHookResult = ReturnType<typeof useCreateMovieMutation>;
+export type CreateMovieMutationResult = Apollo.MutationResult<CreateMovieMutation>;
+export type CreateMovieMutationOptions = Apollo.BaseMutationOptions<CreateMovieMutation, CreateMovieMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($data: LoginInput!) {
   login(data: $data) {
