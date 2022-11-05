@@ -1,8 +1,7 @@
 import { prisma } from "../../lib/prisma"
 import { Service } from "typedi"
-import { Arg, Resolver } from "type-graphql"
+import { Resolver } from "type-graphql"
 import { MovieInput } from "./inputs/create.input"
-import { CurrentUser } from "../shared/currentUser"
 import { User } from "../user/user.model"
 import { Movie, MovieWhereUniqueInput } from "@generated"
 
@@ -25,7 +24,7 @@ export class MovieService {
     return await prisma.movie.findMany()
   }
 
-  async create(@Arg("data") data: MovieInput, @CurrentUser() user: User) {
+  async create(data: MovieInput, user: User) {
     return await prisma.movie.create({ data: { userId: user.id, ...data } }).then(async (movie) => {
       await prisma.movie.update({
         where: { id: movie.id },
@@ -49,7 +48,7 @@ export class MovieService {
     })
   }
 
-  async update(@Arg("data") data: MovieInput, where: MovieWhereUniqueInput, @CurrentUser() user: User) {
+  async update(data: MovieInput, where: MovieWhereUniqueInput, user: User) {
     return await prisma.movie.update({
       data: {
         edits: {

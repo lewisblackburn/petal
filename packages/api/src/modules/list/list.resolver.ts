@@ -31,7 +31,11 @@ export default class ListResolver {
 
   @UseAuth()
   @Mutation(() => List)
-  async updateList(@Arg("data") data: ListInput, where: ListWhereUniqueInput, @CurrentUser() user: User) {
+  async updateList(
+    @Arg("data") data: ListInput,
+    @Arg("where") where: ListWhereUniqueInput,
+    @CurrentUser() user: User,
+  ) {
     return await this.listService.update(data, where, user)
   }
 

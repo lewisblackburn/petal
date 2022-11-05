@@ -1,7 +1,8 @@
-import { Arg, Args, Mutation, Query, Resolver } from "type-graphql"
-import { Watchlist, CreateOneWatchlistArgs, UpdateOneWatchlistArgs, DeleteOneWatchlistArgs } from "@generated"
+import { Arg, Mutation, Query, Resolver } from "type-graphql"
+import { Watchlist, WatchlistWhereUniqueInput } from "@generated"
 import { Inject, Service } from "typedi"
 import { WatchlistService } from "./watchlist.service"
+import { WatchlistInput } from "./inputs/create.input"
 
 @Service()
 @Resolver(() => Watchlist)
@@ -11,21 +12,11 @@ export default class WatchlistResolver {
 
   @Query(() => Watchlist)
   async watchlist(@Arg("id") id: string) {
-    return this.watchlistService.getWatchlist(id)
+    return this.watchlistService.get(id)
   }
 
   @Mutation(() => Watchlist)
-  async createWatchlist(@Args() args: CreateOneWatchlistArgs) {
-    return await this.watchlistService.create(args)
-  }
-
-  @Mutation(() => Watchlist)
-  async updateWatchlist(@Args() args: UpdateOneWatchlistArgs) {
-    return await this.watchlistService.update(args)
-  }
-
-  @Mutation(() => Watchlist)
-  async deleteWatchlist(@Args() args: DeleteOneWatchlistArgs) {
-    return await this.watchlistService.delete(args)
+  async updateWatchlist(@Arg("data") data: WatchlistInput, @Arg("where") where: WatchlistWhereUniqueInput) {
+    return await this.watchlistService.update(data, where)
   }
 }

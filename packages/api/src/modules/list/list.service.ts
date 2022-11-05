@@ -1,9 +1,8 @@
 import { prisma } from "../../lib/prisma"
 import { Service } from "typedi"
-import { Arg, Resolver } from "type-graphql"
+import { Resolver } from "type-graphql"
 import { List, ListWhereUniqueInput, DeleteOneListArgs } from "@generated"
 import { User } from "../user/user.model"
-import { CurrentUser } from "../shared/currentUser"
 import { ListInput } from "./inputs/create.input"
 
 @Service()
@@ -17,11 +16,11 @@ export class ListService {
     return await prisma.list.findUnique({ where: { id } })
   }
 
-  async create(@Arg("data") data: ListInput, @CurrentUser() user: User) {
+  async create(data: ListInput, user: User) {
     return await prisma.list.create({ data: { userId: user.id, ...data } })
   }
 
-  async update(@Arg("data") data: ListInput, where: ListWhereUniqueInput, @CurrentUser() user: User) {
+  async update(data: ListInput, where: ListWhereUniqueInput, user: User) {
     return await prisma.list.update({ data: { userId: user.id, ...data }, where })
   }
 
