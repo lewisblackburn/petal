@@ -9,13 +9,13 @@ export default class EditResolver {
   @Inject(() => EditService)
   editService: EditService
 
-  @Query(() => [Edit])
-  async edits() {
-    return await this.editService.getAllEdits()
-  }
-
   @Query(() => Edit)
   async edit(@Arg("id") id: string) {
-    return this.editService.getEdit(id)
+    return this.editService.get(id)
+  }
+
+  @Query(() => [Edit])
+  async edits() {
+    return await this.editService.getAll()
   }
 }

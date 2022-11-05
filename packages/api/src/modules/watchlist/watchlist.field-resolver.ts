@@ -1,8 +1,7 @@
 import { prisma } from "../../lib/prisma"
 import { Args, FieldResolver, Resolver, Root } from "type-graphql"
 import { Service } from "typedi"
-import { Movie } from "../movie/movie.model"
-import { Watchlist, FindManyMovieArgs } from "@generated"
+import { Movie, Watchlist, FindManyMovieArgs } from "@generated"
 
 @Service()
 @Resolver(() => Watchlist)

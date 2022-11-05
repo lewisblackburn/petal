@@ -1,13 +1,31 @@
 import { prisma } from "../../lib/prisma"
-import { FieldResolver, Resolver, Root } from "type-graphql"
+import { Field, FieldResolver, ObjectType, Resolver, Root } from "type-graphql"
 import { Service } from "typedi"
-import { Movie, Edit } from "@generated"
+import { Movie, Edit, RatingAvgAggregate, RatingCountAggregate } from "@generated"
+
+@ObjectType()
+export class RatingAverage {
+  @Field({ nullable: true })
+  _avg: RatingAvgAggregate
+
+  @Field({ nullable: true })
+  _count: RatingCountAggregate
+}
 
 @Service()
 @Resolver(() => Movie)
-export default class ListFieldResolver {
+export default class MovieFieldResolver {
   @FieldResolver(() => [Edit])
   edits(@Root() movie: Movie) {
     return prisma.movie.findUnique({ where: { id: movie.id } }).edits()
+  }
+
+  @FieldResolver(() => RatingAverage)
+  rating(@Root() movie: Movie) {
+    return prisma.rating.aggregate({
+      where: { movieId: movie.id },
+      _avg: { value: true },
+      _count: { value: true },
+    })
   }
 }

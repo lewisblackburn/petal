@@ -12,8 +12,4 @@ export class RatingInput implements Partial<Rating> {
   @IsNotEmpty()
   @Field()
   movieId: string
-
-  @IsNotEmpty()
-  @Field()
-  userId: string
 }

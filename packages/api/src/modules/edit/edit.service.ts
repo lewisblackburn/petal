@@ -6,11 +6,11 @@ import { Edit } from "@generated"
 @Service()
 @Resolver(() => Edit)
 export class EditService {
-  async getAllEdits() {
-    return await prisma.edit.findMany()
+  async get(id: string) {
+    return await prisma.edit.findUnique({ where: { id } })
   }
 
-  async getEdit(id: string) {
-    return await prisma.edit.findUnique({ where: { id } })
+  async getAll() {
+    return await prisma.edit.findMany()
   }
 }
