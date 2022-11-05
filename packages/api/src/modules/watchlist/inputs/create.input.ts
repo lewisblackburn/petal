@@ -3,6 +3,6 @@ import { Field, InputType } from "type-graphql"
 
 @InputType()
 export class WatchlistInput {
-  @Field()
+  @Field(() => [String])
   ids: string[]
 }
