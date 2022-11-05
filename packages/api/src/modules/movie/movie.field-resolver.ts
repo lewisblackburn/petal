@@ -1,7 +1,7 @@
 import { prisma } from "../../lib/prisma"
 import { Field, FieldResolver, ObjectType, Resolver, Root } from "type-graphql"
 import { Service } from "typedi"
-import { Movie, Edit, RatingAvgAggregate, RatingCountAggregate } from "@generated"
+import { Movie, RatingAvgAggregate, RatingCountAggregate } from "@generated"
 
 @ObjectType()
 export class RatingAverage {
@@ -15,11 +15,6 @@ export class RatingAverage {
 @Service()
 @Resolver(() => Movie)
 export default class MovieFieldResolver {
-  @FieldResolver(() => [Edit])
-  edits(@Root() movie: Movie) {
-    return prisma.movie.findUnique({ where: { id: movie.id } }).edits()
-  }
-
   @FieldResolver(() => RatingAverage)
   rating(@Root() movie: Movie) {
     return prisma.rating.aggregate({

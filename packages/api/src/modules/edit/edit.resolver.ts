@@ -1,4 +1,4 @@
-import { Arg, Query, Resolver } from "type-graphql"
+import { Query, Resolver } from "type-graphql"
 import { EditService } from "./edit.service"
 import { Inject, Service } from "typedi"
 import { Edit } from "@generated"
@@ -10,10 +10,6 @@ export default class EditResolver {
   editService: EditService
 
   @Query(() => Edit)
-  async edit(@Arg("id") id: string) {
-    return this.editService.get(id)
-  }
-
   @Query(() => [Edit])
   async edits() {
     return await this.editService.getAll()
