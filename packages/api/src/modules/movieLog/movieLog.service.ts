@@ -1,12 +1,12 @@
 import { prisma } from "../../lib/prisma"
 import { Service } from "typedi"
 import { Resolver } from "type-graphql"
-import { Edit } from "@generated"
+import { MovieLog } from "@generated"
 
 @Service()
-@Resolver(() => Edit)
-export class EditService {
+@Resolver(() => MovieLog)
+export class MovieLogService {
   async getAll() {
-    return await prisma.edit.findMany()
+    return await prisma.movieLog.findMany()
   }
 }

@@ -1,14 +1,14 @@
 import { prisma } from "../../lib/prisma"
 import { FieldResolver, Resolver, Root } from "type-graphql"
 import { Service } from "typedi"
-import { Edit } from "@generated"
+import { MovieLog } from "@generated"
 import { User } from "../user/user.model"
 
 @Service()
-@Resolver(() => Edit)
-export default class EditFieldResolver {
+@Resolver(() => MovieLog)
+export default class MovieLogFieldResolver {
   @FieldResolver(() => User)
-  user(@Root() edit: Edit) {
-    return prisma.edit.findUnique({ where: { id: edit.id } }).user()
+  user(@Root() movieLog: MovieLog) {
+    return prisma.movieLog.findUnique({ where: { id: movieLog.id } }).user()
   }
 }

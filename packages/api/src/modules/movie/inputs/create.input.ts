@@ -13,6 +13,7 @@ export class MovieInput implements Partial<Movie> {
   @Field()
   overview: string
 
+  @IsNotEmpty()
   @Field(() => [Genre])
   genres?: Prisma.Genre[]
 }
