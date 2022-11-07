@@ -22,6 +22,8 @@ export const theme = extendTheme({
     "2xl": "96em",
     "3xl": "130em",
     "4xl": "148em",
+    "5xl": "160em",
+    "6xl": "180em",
   },
   colors: {
     brand: {

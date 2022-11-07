@@ -1,9 +1,7 @@
 import * as React from "react"
-import { Box, Button } from "@chakra-ui/react"
-import Head from "next/head"
+import { Button } from "@chakra-ui/react"
 
 import { HomeLayout } from "components/HomeLayout"
-import { Limiter } from "components/Limiter"
 import { gql } from "@apollo/client"
 import { useCreateMovieMutation, Genre } from "lib/graphql"
 
@@ -30,18 +28,7 @@ export default function Home() {
     })
   }
 
-  return (
-    <Box>
-      <Head>
-        <title>Boilerplate</title>
-      </Head>
-
-      <Limiter py={20} minH="calc(100vh - 65px)">
-        this is a test
-        <Button onClick={() => onClick()}>test</Button>
-      </Limiter>
-    </Box>
-  )
+  return <Button onClick={() => onClick()}>test</Button>
 }
 
 Home.getLayout = (page: React.ReactNode) => <HomeLayout>{page}</HomeLayout>

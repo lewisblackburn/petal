@@ -1,41 +1,46 @@
 export const Button = {
   baseStyle: {
-    borderRadius: 4,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: "8px",
     color: "white",
   },
   sizes: {
-    sm: {
-      height: 8,
-      borderRadius: 4,
-      fontSize: 14,
+    md: {
+      gap: "6px",
+      paddingX: "24px",
+      paddingY: "12px",
       fontWeight: 600,
+      fontSize: 14,
     },
     lg: {
-      height: 10,
-      borderRadius: 6,
-      fontSize: 14,
+      gap: "8px",
+      paddingX: "24px",
+      paddingY: "16px",
       fontWeight: 700,
+      fontSize: 14,
     },
   },
   variants: {
-    outline: () => ({}),
-    solid: () => ({
-      bg: "purple.300",
+    primary: () => ({
+      backgroundColor: "brand.200",
+      color: "white",
+    }),
+    secondary: () => ({
+      backgroundColor: "purple.100",
+      borderWidth: "1.5px",
+      borderColor: "purple.400",
       color: "brand.200",
-      _hover: {
-        bg: "purple.500",
-      },
-      _active: {
-        bg: "purple.500",
-      },
+    }),
+    tertiary: () => ({
+      backgroundColor: "white",
+      borderWidth: "2px",
+      color: "brand.100",
+      borderColor: "purple.400",
     }),
     transparent: () => ({
-      bg: "transparent",
       color: "black",
-      _hover: {
-        bg: "purple.100",
-        color: "brand.200",
-      },
     }),
   },
   defaultProps: {

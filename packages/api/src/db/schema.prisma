@@ -143,8 +143,9 @@ model Movie {
   runtime     Int?        @default(0)
   homepage    String?
   language    String?
-  backdrop    String?
-  poster      String?
+  videos      String[]
+  posters     String[]
+  backdrops   String[]
   keywords    String[]
   adult       Boolean?    @default(false)
   budget      Int?        @default(0)

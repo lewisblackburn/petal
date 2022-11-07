@@ -4,6 +4,7 @@ import { GiHamburgerMenu } from "react-icons/gi"
 import {
   Avatar,
   Box,
+  Container,
   Fade,
   HStack,
   IconButton,
@@ -24,7 +25,6 @@ import { Role } from "lib/graphql"
 import { useLogout } from "lib/hooks/useLogout"
 import { useMe } from "lib/hooks/useMe"
 
-import { Limiter } from "./Limiter"
 import { LinkButton } from "./LinkButton"
 import { FiPlus } from "react-icons/fi"
 
@@ -34,10 +34,10 @@ interface NavLinkProps {
 }
 export const NavLink: React.FC<NavLinkProps> = ({ href, children, ...props }) => {
   const router = useRouter()
-  const active = router.asPath === href
+  const active = router.asPath.includes(href)
 
   return (
-    <LinkButton href={href} size="sm" variant={active ? "solid" : "transparent"}>
+    <LinkButton href={href} size="sm" variant={active ? "secondary" : "transparent"}>
       {children}
     </LinkButton>
   )
@@ -59,7 +59,8 @@ export function Nav() {
       borderColor={useColorModeValue("gray.100", "gray.700")}
       zIndex={500}
     >
-      <Limiter
+      <Container
+        maxW="8xl"
         display="flex"
         transition="200ms all"
         py={{ base: 4, md: 3 }}
@@ -74,7 +75,10 @@ export function Nav() {
             petal
           </HomeLink>
           <NavLink href="/movies">Movies</NavLink>
-          <NavLink href="/lists">Lists</NavLink>
+          <NavLink href="/tv">TV</NavLink>
+          <NavLink href="/music">Music</NavLink>
+          <NavLink href="/books">Books</NavLink>
+          <NavLink href="/peopel">People</NavLink>
         </HStack>
 
         {/* Right link list */}
@@ -82,13 +86,13 @@ export function Nav() {
         {!me && !loading && (
           <Fade in>
             <HStack spacing={4} display={{ base: "none", md: "flex" }}>
-              <LinkButton href="/login" variant="outline">
+              <LinkButton href="/login" variant="outline" size="md">
                 Login
               </LinkButton>
-              <LinkButton href="/register" variant="solid">
+              <LinkButton href="/register" variant="primary" size="md">
                 Register
               </LinkButton>
-              <IconButton variant="outline" aria-label="Add movie" icon={<FiPlus />} />
+              <IconButton variant="outline" size="md" aria-label="Add movie" icon={<FiPlus />} />
             </HStack>
           </Fade>
         )}
@@ -137,6 +141,16 @@ export function Nav() {
                   Toggle theme
                 </MenuItem>
                 <MenuDivider />
+                <NextLink passHref href="/watchlist">
+                  <MenuItem>Watchlist</MenuItem>
+                </NextLink>
+                <NextLink passHref href="/ratings">
+                  <MenuItem>Ratings</MenuItem>
+                </NextLink>
+                <NextLink passHref href="/lists">
+                  <MenuItem>Lists</MenuItem>
+                </NextLink>
+                <MenuDivider />
                 <NextLink passHref href="/login">
                   <MenuItem>Login</MenuItem>
                 </NextLink>
@@ -147,7 +161,7 @@ export function Nav() {
             )}
           </MenuList>
         </Menu>
-      </Limiter>
+      </Container>
     </Box>
   )
 }
