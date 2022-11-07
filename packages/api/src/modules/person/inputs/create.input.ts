@@ -8,6 +8,6 @@ export class PersonInput implements Partial<Person> {
   @Field()
   name: string
 
-  @Field({ nullable: true })
-  avatar?: string | null
+  // @Field({ nullable: true })
+  // avatar?: string | null
 }

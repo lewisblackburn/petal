@@ -34,9 +34,13 @@ export default class MovieResolver {
     return await this.movieService.create(data, user)
   }
 
-  // @UseAuth()
+  @UseAuth()
   @Mutation(() => Movie)
-  async updateMovie(@Arg("data") data: MovieInput, @Arg("where") where: MovieWhereUniqueInput) {
-    return await this.movieService.update(data, where)
+  async updateMovie(
+    @Arg("data") data: MovieInput,
+    @Arg("where") where: MovieWhereUniqueInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.movieService.update(data, where, user)
   }
 }

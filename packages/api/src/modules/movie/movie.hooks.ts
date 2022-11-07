@@ -6,20 +6,6 @@ prisma.$use(async (params, next) => {
     // TODO: THIS WON'T WORK AS THE UPDATES WILL ALL BE LKINKED TO WHOMEVER CREATED THE MOVIE
     // E.G. FIND A DIFFERENT WAY AND REMOVE THE LINK BETWEEN THE USER AND MOVIE MODEL AGAIN
     return next(params).then(async (data) => {
-      await prisma.movieLog.createMany({
-        skipDuplicates: true,
-        data: Object.keys(params.args.data)
-          .filter((arg) => arg !== "userId")
-          .map((key) => {
-            return {
-              key,
-              // @ts-ignore
-              value: params.args.data[key],
-              movieId: data.id,
-              userId: data.userId,
-            }
-          }),
-      })
       return data
     })
   }

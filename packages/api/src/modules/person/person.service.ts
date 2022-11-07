@@ -12,7 +12,7 @@ export class PersonService {
   }
 
   async getAll() {
-    return await prisma.movie.findMany()
+    return await prisma.person.findMany()
   }
 
   async create(data: PersonInput) {

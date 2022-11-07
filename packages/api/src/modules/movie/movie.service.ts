@@ -25,13 +25,41 @@ export class MovieService {
   }
 
   async create(data: MovieInput, user: User) {
-    return await prisma.movie.create({ data: { userId: user.id, ...data } })
+    return await prisma.movie.create({ data: { userId: user.id, ...data } }).then(async (movie) => {
+      await prisma.movieLog.createMany({
+        skipDuplicates: true,
+        data: Object.keys(data).map((key) => {
+          return {
+            key,
+            // @ts-ignore
+            value: data[key],
+            movieId: movie.id,
+            userId: user.id,
+          }
+        }),
+      })
+    })
   }
 
-  async update(data: MovieInput, where: MovieWhereUniqueInput) {
-    return await prisma.movie.update({
-      data,
-      where,
-    })
+  async update(data: MovieInput, where: MovieWhereUniqueInput, user: User) {
+    return await prisma.movie
+      .update({
+        data,
+        where,
+      })
+      .then(async (movie) => {
+        await prisma.movieLog.createMany({
+          skipDuplicates: true,
+          data: Object.keys(data).map((key) => {
+            return {
+              key,
+              // @ts-ignore
+              value: data[key],
+              movieId: movie.id,
+              userId: user.id,
+            }
+          }),
+        })
+      })
   }
 }
