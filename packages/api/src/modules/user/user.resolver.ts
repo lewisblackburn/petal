@@ -28,7 +28,7 @@ export default class UserResolver {
   @Inject(() => UserService)
   userService: UserService
 
-  @UseAuth([Role.ADMIN])
+  // @UseAuth()
   @Query(() => User, { nullable: true })
   async user(@Args() args: FindFirstUserArgs): Promise<User | null> {
     return await prisma.user.findFirst(args)

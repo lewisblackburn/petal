@@ -1,9 +1,12 @@
 import { prisma } from "../../lib/prisma"
 import { Service } from "typedi"
 import { Resolver } from "type-graphql"
-import { MovieInput } from "./inputs/create.input"
 import { User } from "../user/user.model"
-import { Movie, MovieWhereUniqueInput } from "@generated"
+import { Movie, MovieWhereUniqueInput, MovieUpdatelockedInput } from "@generated"
+import { MovieUpdateInput } from "./inputs/update.input"
+import { MovieInput } from "./inputs/create.input"
+import { MediaType } from "@prisma/client"
+import log from "../shared/log"
 
 @Service()
 @Resolver(() => Movie)
@@ -24,42 +27,27 @@ export class MovieService {
     return await prisma.movie.findMany()
   }
 
-  async create(data: MovieInput, user: User) {
-    return await prisma.movie.create({ data: { userId: user.id, ...data } }).then(async (movie) => {
-      await prisma.movieLog.createMany({
-        skipDuplicates: true,
-        data: Object.keys(data).map((key) => {
-          return {
-            key,
-            // @ts-ignore
-            value: data[key],
-            movieId: movie.id,
-            userId: user.id,
-          }
-        }),
-      })
+  async lock(data: MovieUpdatelockedInput, where: MovieWhereUniqueInput) {
+    return await prisma.movie.update({
+      where,
+      data: {
+        locked: data,
+      },
     })
   }
 
-  async update(data: MovieInput, where: MovieWhereUniqueInput, user: User) {
+  async create(data: MovieInput, user: User) {
+    return await prisma.movie
+      .create({ data: { userId: user.id, ...data } })
+      .then((movie) => log(movie.id, user.id, MediaType.MOVIE, data))
+  }
+
+  async update(data: MovieUpdateInput, where: MovieWhereUniqueInput, user: User) {
     return await prisma.movie
       .update({
         data,
         where,
       })
-      .then(async (movie) => {
-        await prisma.movieLog.createMany({
-          skipDuplicates: true,
-          data: Object.keys(data).map((key) => {
-            return {
-              key,
-              // @ts-ignore
-              value: data[key],
-              movieId: movie.id,
-              userId: user.id,
-            }
-          }),
-        })
-      })
+      .then((movie) => log(movie.id, user.id, MediaType.MOVIE, data))
   }
 }
