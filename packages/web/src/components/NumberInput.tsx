@@ -1,7 +1,13 @@
 import * as React from "react"
 import { useFormContext } from "react-hook-form"
-import type { InputProps } from "@chakra-ui/react"
-import { FormControl, Input as CInput } from "@chakra-ui/react"
+import {
+  InputProps,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInputField,
+  NumberInputStepper,
+} from "@chakra-ui/react"
+import { FormControl, NumberInput as CNumberInput } from "@chakra-ui/react"
 
 import { InputError } from "./InputError"
 import { InputLabel } from "./InputLabel"
@@ -12,7 +18,7 @@ interface Props extends InputProps {
   subLabel?: string
 }
 
-export const Input = ({ label, subLabel, ...props }: Props) => {
+export const NumberInput = ({ label, subLabel, ...props }: Props) => {
   const {
     register,
     formState: { errors },
@@ -21,7 +27,13 @@ export const Input = ({ label, subLabel, ...props }: Props) => {
   return (
     <FormControl isInvalid={!!fieldError} isRequired={props.isRequired}>
       <InputLabel label={label} subLabel={subLabel} name={props.name} />
-      <CInput {...register(props.name)} {...props} />
+      <CNumberInput>
+        <NumberInputField {...register(props.name)} />
+        <NumberInputStepper>
+          <NumberIncrementStepper />
+          <NumberDecrementStepper />
+        </NumberInputStepper>
+      </CNumberInput>
 
       <InputError error={fieldError} />
     </FormControl>

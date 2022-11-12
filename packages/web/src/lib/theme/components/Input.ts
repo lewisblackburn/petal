@@ -1,4 +1,15 @@
-const baseFieldStyle = { field: { borderRadius: 6 } }
+const baseFieldStyle = {
+  field: {
+    borderRadius: 6,
+    paddingX: 4,
+    paddingY: 6,
+    fontWeight: 500,
+    fontSize: "md",
+    alignSelf: "stretch",
+    flexGrow: 1,
+    borderWidth: 1,
+  },
+}
 
 export const Input = {
   parts: ["field", "addon"],
@@ -14,18 +25,31 @@ export const Input = {
   variants: {
     filled: () => ({
       field: {
-        bg: "white",
-        color: "gray.500",
-        borderColor: "purple.500",
+        backgroundColor: "purple.100",
+        color: "brand.100",
+        borderColor: "purple.400",
         _hover: {
-          bg: "white",
+          backgroundColor: "purple.200",
+        },
+        _focus: {
+          backgroundColor: "purple.200",
+          borderColor: "purple.500",
+        },
+      },
+    }),
+    outline: () => ({
+      field: {
+        backgroundColor: "white",
+        color: "brand.100",
+        borderColor: "purple.400",
+        _focus: {
+          borderColor: "purple.500",
         },
       },
     }),
   },
   // The default `size` or `variant` values
   defaultProps: {
-    variant: "filled",
-    focusBorderColor: "purple.500",
+    variant: "outline",
   },
 }

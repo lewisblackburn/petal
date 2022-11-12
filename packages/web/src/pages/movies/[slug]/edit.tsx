@@ -3,28 +3,25 @@ import {
   Flex,
   Heading,
   Icon,
-  Select,
-  NumberInput,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
   Text,
-  Textarea,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  NumberInputField,
   Grid,
+  GridItem,
 } from "@chakra-ui/react"
 import Card from "components/Card"
 import { DefaultLayout } from "components/DefaultLayout"
 import DotTab from "components/DotTab"
 import { Form } from "components/Form"
 import { Input } from "components/Input"
+import { Select } from "components/Select"
+import { Textarea } from "components/Textarea"
+import { NumberInput } from "components/NumberInput"
 import Yup from "lib/yup"
 import { useForm } from "lib/hooks/useForm"
-import { FiChevronRight } from "react-icons/fi"
+import { FiChevronRight, FiLock } from "react-icons/fi"
 import { Status } from "lib/graphql"
 
 const PrimarySchema = Yup.object().shape({
@@ -64,43 +61,30 @@ export default function Edit() {
               <Card variant="secondary" width="fit-content">
                 <Form {...form}>
                   <Grid gridTemplateColumns="1fr 1fr" gap="5">
-                    <Select name="language" label="Language">
-                      <option value="english">English</option>
-                    </Select>
-                    <Input name="title" label="Title" />
-                    <Input name="tagline" label="Tagline" />
-                    <Textarea name="overview" label="Overview" />
-                    <Select name="status" label="Status">
-                      {Object.keys(Status).map((status: keyof typeof Status) => (
-                        <option value={Status[status]}>{status}</option>
-                      ))}
-                    </Select>
-                    <Select name="adult" label="adult">
-                      <option value="true">Yes</option>
-                      <option value="false">No</option>
-                    </Select>
-                    <NumberInput>
-                      <NumberInputField name="runtime" label="Runtime" />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                    <NumberInput>
-                      <NumberInputField name="revenue" label="Revenue (US Dollars)" />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                    <NumberInput>
-                      <NumberInputField name="budget" label="Budget (US Dollars)" />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                    <Input name="homepage" label="Homepage" />
+                    <Select
+                      name="language"
+                      label="Language"
+                      placeholder="Language"
+                      options={["English", "Russian"]}
+                    />
+                    <Input name="title" label="Title" placeholder="Title" />
+                    <Input name="tagline" label="Tagline" placeholder="Tagline" />
+                    <Select name="status" label="Status" placeholder="Status" options={Object.keys(Status)} />
+                    <GridItem colSpan={2}>
+                      <Textarea name="overview" label="Overview" placeholder="Overview" />
+                    </GridItem>
+                    <Select name="Adult" label="Adult" placeholder="Adult" options={["Yes", "No"]} />
+                    <NumberInput name="runtime" label="Runtime" placeholder="Runtime" />
+                    <NumberInput
+                      name="revenue"
+                      label="Revenue"
+                      placeholder="Revenue"
+                      subLabel="(US Dollars)"
+                    />
+                    <NumberInput name="budget" label="Budget" placeholder="Budget" subLabel="(US Dollars)" />
+                    <GridItem colSpan={2}>
+                      <Input name="homepage" label="Homepage" placeholder="Homepage" />
+                    </GridItem>
                   </Grid>
                 </Form>
               </Card>

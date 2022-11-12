@@ -77,11 +77,18 @@ function Register() {
             </Center>
           </Flex>
           <Flex flexDir="column" gap="16px">
-            <Input name="firstName" label="First Name" placeholder="Lewis" />
-            <Input name="lastName" label="Last Name" placeholder="Blackburn" />
-            <Input name="email" label="Email" type="email" placeholder="jim@gmail.com" />
-            <Input name="password" label="Password" type="password" placeholder="••••••••••" />
+            <Input variant="filled" name="firstName" label="First Name" placeholder="Lewis" />
+            <Input variant="filled" name="lastName" label="Last Name" placeholder="Blackburn" />
+            <Input variant="filled" name="email" label="Email" type="email" placeholder="jim@gmail.com" />
             <Input
+              variant="filled"
+              name="password"
+              label="Password"
+              type="password"
+              placeholder="••••••••••"
+            />
+            <Input
+              variant="filled"
               name="confirmPassword"
               label="Confirm Passoword"
               type="password"

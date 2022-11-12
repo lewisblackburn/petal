@@ -12,7 +12,7 @@ export const InputLabel: React.FC<Props> = ({ subLabel, ...props }) => {
   if (!props.label) return null
 
   return (
-    <FormLabel htmlFor={props.name} {...props} fontSize="sm" mb="1px">
+    <FormLabel htmlFor={props.name} {...props} fontSize="sm" mb="2">
       {props.label}
       {subLabel && (
         <Text ml={2} as="span" fontSize="14px" fontWeight={500} color={subLabelColor}>

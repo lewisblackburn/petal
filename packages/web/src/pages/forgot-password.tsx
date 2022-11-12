@@ -61,7 +61,7 @@ export default function ForgotPassword() {
             </Center>
           </Flex>
           <Flex flexDir="column" gap="16px">
-            <Input autoFocus name="email" placeholder="Email" />
+            <Input variant="filled" autoFocus name="email" placeholder="Email" />
           </Flex>
           <Flex flexDir="column" gap="16px">
             <Button variant="primary" type="submit" isLoading={loading} isDisabled={loading}>

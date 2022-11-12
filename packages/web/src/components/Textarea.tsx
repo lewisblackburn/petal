@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useFormContext } from "react-hook-form"
-import type { TextareaProps } from "@chakra-ui/react";
+import type { TextareaProps } from "@chakra-ui/react"
 import { FormControl, Textarea as CTextarea } from "@chakra-ui/react"
 
 import { InputError } from "./InputError"
@@ -22,7 +22,7 @@ export const Textarea = ({ label, subLabel, ...props }: Props) => {
   return (
     <FormControl isInvalid={!!fieldError} isRequired={props.isRequired}>
       <InputLabel label={label} subLabel={subLabel} name={props.name} />
-      <CTextarea {...register(props.name)} mb={0} variant="outline" bg="transparent" size="sm" {...props} />
+      <CTextarea {...register(props.name)} mb={0} bg="transparent" size="sm" {...props} />
       <InputError error={fieldError} />
     </FormControl>
   )

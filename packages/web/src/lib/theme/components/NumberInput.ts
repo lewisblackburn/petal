@@ -11,8 +11,8 @@ const baseFieldStyle = {
   },
 }
 
-export const Select = {
-  parts: ["field", "icon"],
+export const NumberInput = {
+  parts: ["field", "addon"],
   // Styles for the base style
   baseStyle: {},
   // Styles for the size variations

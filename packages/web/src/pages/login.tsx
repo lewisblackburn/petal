@@ -73,8 +73,14 @@ function Login() {
             </Center>
           </Flex>
           <Flex flexDir="column" gap="16px">
-            <Input name="email" label="Email" type="email" placeholder="jim@gmail.com" />
-            <Input name="password" label="Password" type="password" placeholder="••••••••••" />
+            <Input variant="filled" name="email" label="Email" type="email" placeholder="jim@gmail.com" />
+            <Input
+              variant="filled"
+              name="password"
+              label="Password"
+              type="password"
+              placeholder="••••••••••"
+            />
             <Center fontSize="14px" fontWeight={500} color="#7065f0">
               <Link href="/forgot-password">Forgot password?</Link>
             </Center>

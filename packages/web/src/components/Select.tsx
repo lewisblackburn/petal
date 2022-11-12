@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useFormContext } from "react-hook-form"
-import type { SelectProps } from "@chakra-ui/react";
+import type { SelectProps } from "@chakra-ui/react"
 import { FormControl, Select as CSelect } from "@chakra-ui/react"
 
 import { InputError } from "./InputError"
@@ -22,7 +22,7 @@ export const Select = ({ label, subLabel, placeholder, ...props }: Props) => {
   return (
     <FormControl isInvalid={!!fieldError} isRequired={props.isRequired}>
       <InputLabel label={label} subLabel={subLabel} name={props.name} />
-      <CSelect {...register(props.name)} variant="filled" {...props} mb={0}>
+      <CSelect {...register(props.name)} {...props} mb={0}>
         {placeholder && (
           <option value="" disabled>
             {placeholder}

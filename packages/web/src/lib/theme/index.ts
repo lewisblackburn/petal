@@ -4,6 +4,7 @@ import { Button } from "./components/Button"
 import { Card } from "./components/Card"
 import { Input } from "./components/Input"
 import { Link } from "./components/Link"
+import { NumberInput } from "./components/NumberInput"
 import { Select } from "./components/Select"
 import { Text } from "./components/Text"
 import { Textarea } from "./components/Textarea"
@@ -64,6 +65,7 @@ export const theme = extendTheme({
     Card,
     Input,
     Link,
+    NumberInput,
     Select,
     Text,
     Textarea,
