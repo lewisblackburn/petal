@@ -3,7 +3,7 @@ import { Box, Container } from "@chakra-ui/layout"
 
 import { Nav } from "./Nav"
 import Head from "next/head"
-// import { Footer } from "./Footer"
+import { Footer } from "./Footer"
 
 interface Props {
   children: React.ReactNode
@@ -23,7 +23,7 @@ export function HomeLayout(props: Props) {
           {props.children}
         </Container>
       </Box>
-      {/* <Footer /> */}
+      <Footer />
     </Box>
   )
 }

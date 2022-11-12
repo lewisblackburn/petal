@@ -15,7 +15,7 @@ import { FormError } from "components/FormError"
 import { withNoAuth } from "components/hoc/withNoAuth"
 import { HomeLayout } from "components/HomeLayout"
 import { Input } from "components/Input"
-import { AuthLayout } from "components/AuthLayout"
+import { DefaultLayout } from "components/DefaultLayout"
 
 const _ = gql`
   mutation Register($data: RegisterInput!) {
@@ -107,5 +107,5 @@ function Register() {
   )
 }
 
-Register.getLayout = (page: React.ReactNode) => <AuthLayout>{page}</AuthLayout>
+Register.getLayout = (page: React.ReactNode) => <DefaultLayout>{page}</DefaultLayout>
 export default withNoAuth(Register)

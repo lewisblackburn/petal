@@ -53,7 +53,7 @@ const Tag: React.FC<{ title: string; icon?: IconType }> = ({ title, icon, childr
   )
 }
 
-export default function Movies() {
+export default function Movie() {
   return (
     <Flex flexDir="column" gap="10">
       <Link href="/movies" size="md">
@@ -225,7 +225,7 @@ export default function Movies() {
                   the start of a lesson in learning to appreciate life itself as it is, as it comes, and most
                   importantly, the people living alongside us...
                 </Text>
-                <Flex align="center" justify="space-between">
+                <Flex align="flex-end" justify="space-between">
                   <Flex align="center" gap="4">
                     <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
                     <Flex flexDir="column">
@@ -355,10 +355,10 @@ export default function Movies() {
                   <Icon as={FiAlertTriangle} />
                   Report Issue
                 </Button>
-                <Button variant="secondary">
+                <LinkButton href="movie/edit" variant="secondary">
                   <Icon as={FiEdit} />
                   Edit Page
-                </Button>
+                </LinkButton>
               </Grid>
             </Flex>
           </Flex>
@@ -368,4 +368,4 @@ export default function Movies() {
   )
 }
 
-Movies.getLayout = (page: React.ReactNode) => <HomeLayout>{page}</HomeLayout>
+Movie.getLayout = (page: React.ReactNode) => <HomeLayout>{page}</HomeLayout>

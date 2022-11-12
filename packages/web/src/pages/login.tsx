@@ -1,7 +1,5 @@
 import * as React from "react"
 import { gql, useApolloClient } from "@apollo/client"
-import * as c from "@chakra-ui/react"
-import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
 
@@ -11,12 +9,10 @@ import { MeDocument, useLoginMutation } from "lib/graphql"
 import { useForm } from "lib/hooks/useForm"
 import Yup from "lib/yup"
 import { Form } from "components/Form"
-import { FormError } from "components/FormError"
 import { withNoAuth } from "components/hoc/withNoAuth"
 import { Input } from "components/Input"
-import { Box, Button, Center, Flex, Grid, Text } from "@chakra-ui/react"
-import { Nav } from "components/Nav"
-import { AuthLayout } from "components/AuthLayout"
+import { Button, Center, Flex, Grid, Text } from "@chakra-ui/react"
+import { DefaultLayout } from "components/DefaultLayout"
 
 const _ = gql`
   mutation Login($data: LoginInput!) {
@@ -102,5 +98,5 @@ function Login() {
   )
 }
 
-Login.getLayout = (page: React.ReactNode) => <AuthLayout>{page}</AuthLayout>
+Login.getLayout = (page: React.ReactNode) => <DefaultLayout>{page}</DefaultLayout>
 export default withNoAuth(Login)

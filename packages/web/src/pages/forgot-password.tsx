@@ -13,7 +13,7 @@ import Yup from "lib/yup"
 import { Form } from "components/Form"
 import { HomeLayout } from "components/HomeLayout"
 import { Input } from "components/Input"
-import { AuthLayout } from "components/AuthLayout"
+import { DefaultLayout } from "components/DefaultLayout"
 
 const _ = gql`
   mutation ForgotPassword($email: String!) {
@@ -78,4 +78,4 @@ export default function ForgotPassword() {
     </Grid>
   )
 }
-ForgotPassword.getLayout = (page: React.ReactNode) => <AuthLayout>{page}</AuthLayout>
+ForgotPassword.getLayout = (page: React.ReactNode) => <DefaultLayout>{page}</DefaultLayout>

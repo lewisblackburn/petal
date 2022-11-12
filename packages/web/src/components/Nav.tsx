@@ -6,6 +6,7 @@ import {
   Box,
   Container,
   Fade,
+  Flex,
   HStack,
   IconButton,
   Link,
@@ -26,7 +27,6 @@ import { useLogout } from "lib/hooks/useLogout"
 import { useMe } from "lib/hooks/useMe"
 
 import { LinkButton } from "./LinkButton"
-import { FiPlus } from "react-icons/fi"
 
 interface NavLinkProps {
   href: string
@@ -71,7 +71,7 @@ export function Nav() {
       >
         {/* Left link list */}
         <HStack>
-          <HomeLink href="/" color="gray.900" _hover={{ color: "gray.600" }} pl={0} fontWeight="bold">
+          <HomeLink href="/" color="gray.900" _hover={{ color: "gray.600" }} pl={0} mr={3} fontWeight="bold">
             petal
           </HomeLink>
           <NavLink href="/movies">Movies</NavLink>
@@ -176,8 +176,6 @@ export function HomeLink({ href, ...props }: HomeLinkProps) {
   return (
     <NextLink passHref href={href}>
       <Link
-        px={4}
-        py={2}
         textDecor="none !important"
         _hover={{ color: isActive ? "purple.600" : "purple.500" }}
         color={isActive ? "purple.600" : "gray.500"}
