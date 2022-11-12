@@ -146,6 +146,13 @@ export type EnumGenreNullableListFilter = {
   isEmpty?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type EnumMediaTypeFilter = {
+  equals?: InputMaybe<MediaType>;
+  in?: InputMaybe<Array<MediaType>>;
+  not?: InputMaybe<NestedEnumMediaTypeFilter>;
+  notIn?: InputMaybe<Array<MediaType>>;
+};
+
 export type EnumRoleFilter = {
   equals?: InputMaybe<Role>;
   in?: InputMaybe<Array<Role>>;
@@ -343,18 +350,103 @@ export type ListWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
+export type Log = {
+  __typename?: 'Log';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['String'];
+  key: Scalars['String'];
+  mediaId: Scalars['String'];
+  type: MediaType;
+  updatedAt: Scalars['DateTime'];
+  user: User;
+  userId: Scalars['String'];
+  value: Scalars['JSON'];
+};
+
+export type LogCreateManyUserInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  key: Scalars['String'];
+  mediaId: Scalars['String'];
+  type: MediaType;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  value: Scalars['JSON'];
+};
+
+export type LogCreateManyUserInputEnvelope = {
+  data: Array<LogCreateManyUserInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type LogCreateNestedManyWithoutUserInput = {
+  connect?: InputMaybe<Array<LogWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<LogCreateOrConnectWithoutUserInput>>;
+  create?: InputMaybe<Array<LogCreateWithoutUserInput>>;
+  createMany?: InputMaybe<LogCreateManyUserInputEnvelope>;
+};
+
+export type LogCreateOrConnectWithoutUserInput = {
+  create: LogCreateWithoutUserInput;
+  where: LogWhereUniqueInput;
+};
+
+export type LogCreateWithoutUserInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  key: Scalars['String'];
+  mediaId: Scalars['String'];
+  type: MediaType;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  value: Scalars['JSON'];
+};
+
+export type LogListRelationFilter = {
+  every?: InputMaybe<LogWhereInput>;
+  none?: InputMaybe<LogWhereInput>;
+  some?: InputMaybe<LogWhereInput>;
+};
+
+export type LogOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export type LogWhereInput = {
+  AND?: InputMaybe<Array<LogWhereInput>>;
+  NOT?: InputMaybe<Array<LogWhereInput>>;
+  OR?: InputMaybe<Array<LogWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<UuidFilter>;
+  key?: InputMaybe<StringFilter>;
+  mediaId?: InputMaybe<UuidFilter>;
+  type?: InputMaybe<EnumMediaTypeFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+  user?: InputMaybe<UserRelationFilter>;
+  userId?: InputMaybe<UuidFilter>;
+  value?: InputMaybe<JsonFilter>;
+};
+
+export type LogWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export type LoginInput = {
   email: Scalars['String'];
   password: Scalars['String'];
 };
+
+export enum MediaType {
+  Movie = 'MOVIE',
+  Person = 'PERSON'
+}
 
 export type Movie = {
   __typename?: 'Movie';
   _count?: Maybe<MovieCount>;
   adult?: Maybe<Scalars['Boolean']>;
   age_rating?: Maybe<AgeRating>;
-  backdrop?: Maybe<Scalars['String']>;
+  backdrops: Array<Scalars['String']>;
   budget?: Maybe<Scalars['Int']>;
+  contentScore?: Maybe<Scalars['Int']>;
   createdAt: Scalars['DateTime'];
   genres: Array<Genre>;
   homepage?: Maybe<Scalars['String']>;
@@ -364,7 +456,7 @@ export type Movie = {
   locked?: Maybe<Scalars['Boolean']>;
   overview: Scalars['String'];
   popularity?: Maybe<Scalars['Float']>;
-  poster?: Maybe<Scalars['String']>;
+  posters: Array<Scalars['String']>;
   rating: RatingAverage;
   releaseDate?: Maybe<Scalars['DateTime']>;
   revenue?: Maybe<Scalars['Int']>;
@@ -374,13 +466,13 @@ export type Movie = {
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   userId?: Maybe<Scalars['String']>;
+  videos: Array<Scalars['String']>;
 };
 
 export type MovieCount = {
   __typename?: 'MovieCount';
   charaters: Scalars['Int'];
   lists: Scalars['Int'];
-  movieLogs: Scalars['Int'];
   platforms: Scalars['Int'];
   ratings: Scalars['Int'];
   watchlists: Scalars['Int'];
@@ -389,8 +481,9 @@ export type MovieCount = {
 export type MovieCreateManyUserInput = {
   adult?: InputMaybe<Scalars['Boolean']>;
   age_rating?: InputMaybe<AgeRating>;
-  backdrop?: InputMaybe<Scalars['String']>;
+  backdrops?: InputMaybe<MovieCreatebackdropsInput>;
   budget?: InputMaybe<Scalars['Int']>;
+  contentScore?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   genres?: InputMaybe<MovieCreategenresInput>;
   homepage?: InputMaybe<Scalars['String']>;
@@ -400,7 +493,7 @@ export type MovieCreateManyUserInput = {
   locked?: InputMaybe<Scalars['Boolean']>;
   overview: Scalars['String'];
   popularity?: InputMaybe<Scalars['Float']>;
-  poster?: InputMaybe<Scalars['String']>;
+  posters?: InputMaybe<MovieCreatepostersInput>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
   revenue?: InputMaybe<Scalars['Int']>;
   runtime?: InputMaybe<Scalars['Int']>;
@@ -408,6 +501,7 @@ export type MovieCreateManyUserInput = {
   tagline?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  videos?: InputMaybe<MovieCreatevideosInput>;
 };
 
 export type MovieCreateManyUserInputEnvelope = {
@@ -434,12 +528,6 @@ export type MovieCreateNestedManyWithoutWatchlistsInput = {
   create?: InputMaybe<Array<MovieCreateWithoutWatchlistsInput>>;
 };
 
-export type MovieCreateNestedOneWithoutMovieLogsInput = {
-  connect?: InputMaybe<MovieWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<MovieCreateOrConnectWithoutMovieLogsInput>;
-  create?: InputMaybe<MovieCreateWithoutMovieLogsInput>;
-};
-
 export type MovieCreateNestedOneWithoutRatingsInput = {
   connect?: InputMaybe<MovieWhereUniqueInput>;
   connectOrCreate?: InputMaybe<MovieCreateOrConnectWithoutRatingsInput>;
@@ -448,11 +536,6 @@ export type MovieCreateNestedOneWithoutRatingsInput = {
 
 export type MovieCreateOrConnectWithoutListsInput = {
   create: MovieCreateWithoutListsInput;
-  where: MovieWhereUniqueInput;
-};
-
-export type MovieCreateOrConnectWithoutMovieLogsInput = {
-  create: MovieCreateWithoutMovieLogsInput;
   where: MovieWhereUniqueInput;
 };
 
@@ -474,9 +557,10 @@ export type MovieCreateOrConnectWithoutWatchlistsInput = {
 export type MovieCreateWithoutListsInput = {
   adult?: InputMaybe<Scalars['Boolean']>;
   age_rating?: InputMaybe<AgeRating>;
-  backdrop?: InputMaybe<Scalars['String']>;
+  backdrops?: InputMaybe<MovieCreatebackdropsInput>;
   budget?: InputMaybe<Scalars['Int']>;
   charaters?: InputMaybe<CharacterCreateNestedManyWithoutMovieInput>;
+  contentScore?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   genres?: InputMaybe<MovieCreategenresInput>;
   homepage?: InputMaybe<Scalars['String']>;
@@ -484,11 +568,10 @@ export type MovieCreateWithoutListsInput = {
   keywords?: InputMaybe<MovieCreatekeywordsInput>;
   language?: InputMaybe<Scalars['String']>;
   locked?: InputMaybe<Scalars['Boolean']>;
-  movieLogs?: InputMaybe<MovieLogCreateNestedManyWithoutMovieInput>;
   overview: Scalars['String'];
   platforms?: InputMaybe<PlatformCreateNestedManyWithoutMoviesInput>;
   popularity?: InputMaybe<Scalars['Float']>;
-  poster?: InputMaybe<Scalars['String']>;
+  posters?: InputMaybe<MovieCreatepostersInput>;
   ratings?: InputMaybe<RatingCreateNestedManyWithoutMovieInput>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
   revenue?: InputMaybe<Scalars['Int']>;
@@ -498,45 +581,17 @@ export type MovieCreateWithoutListsInput = {
   title: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   user?: InputMaybe<UserCreateNestedOneWithoutMoviesInput>;
-  watchlists?: InputMaybe<WatchlistCreateNestedManyWithoutMoviesInput>;
-};
-
-export type MovieCreateWithoutMovieLogsInput = {
-  adult?: InputMaybe<Scalars['Boolean']>;
-  age_rating?: InputMaybe<AgeRating>;
-  backdrop?: InputMaybe<Scalars['String']>;
-  budget?: InputMaybe<Scalars['Int']>;
-  charaters?: InputMaybe<CharacterCreateNestedManyWithoutMovieInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  genres?: InputMaybe<MovieCreategenresInput>;
-  homepage?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  keywords?: InputMaybe<MovieCreatekeywordsInput>;
-  language?: InputMaybe<Scalars['String']>;
-  lists?: InputMaybe<ListCreateNestedManyWithoutMoviesInput>;
-  locked?: InputMaybe<Scalars['Boolean']>;
-  overview: Scalars['String'];
-  platforms?: InputMaybe<PlatformCreateNestedManyWithoutMoviesInput>;
-  popularity?: InputMaybe<Scalars['Float']>;
-  poster?: InputMaybe<Scalars['String']>;
-  ratings?: InputMaybe<RatingCreateNestedManyWithoutMovieInput>;
-  releaseDate?: InputMaybe<Scalars['DateTime']>;
-  revenue?: InputMaybe<Scalars['Int']>;
-  runtime?: InputMaybe<Scalars['Int']>;
-  status?: InputMaybe<Status>;
-  tagline?: InputMaybe<Scalars['String']>;
-  title: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  user?: InputMaybe<UserCreateNestedOneWithoutMoviesInput>;
+  videos?: InputMaybe<MovieCreatevideosInput>;
   watchlists?: InputMaybe<WatchlistCreateNestedManyWithoutMoviesInput>;
 };
 
 export type MovieCreateWithoutRatingsInput = {
   adult?: InputMaybe<Scalars['Boolean']>;
   age_rating?: InputMaybe<AgeRating>;
-  backdrop?: InputMaybe<Scalars['String']>;
+  backdrops?: InputMaybe<MovieCreatebackdropsInput>;
   budget?: InputMaybe<Scalars['Int']>;
   charaters?: InputMaybe<CharacterCreateNestedManyWithoutMovieInput>;
+  contentScore?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   genres?: InputMaybe<MovieCreategenresInput>;
   homepage?: InputMaybe<Scalars['String']>;
@@ -545,11 +600,10 @@ export type MovieCreateWithoutRatingsInput = {
   language?: InputMaybe<Scalars['String']>;
   lists?: InputMaybe<ListCreateNestedManyWithoutMoviesInput>;
   locked?: InputMaybe<Scalars['Boolean']>;
-  movieLogs?: InputMaybe<MovieLogCreateNestedManyWithoutMovieInput>;
   overview: Scalars['String'];
   platforms?: InputMaybe<PlatformCreateNestedManyWithoutMoviesInput>;
   popularity?: InputMaybe<Scalars['Float']>;
-  poster?: InputMaybe<Scalars['String']>;
+  posters?: InputMaybe<MovieCreatepostersInput>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
   revenue?: InputMaybe<Scalars['Int']>;
   runtime?: InputMaybe<Scalars['Int']>;
@@ -558,15 +612,17 @@ export type MovieCreateWithoutRatingsInput = {
   title: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   user?: InputMaybe<UserCreateNestedOneWithoutMoviesInput>;
+  videos?: InputMaybe<MovieCreatevideosInput>;
   watchlists?: InputMaybe<WatchlistCreateNestedManyWithoutMoviesInput>;
 };
 
 export type MovieCreateWithoutUserInput = {
   adult?: InputMaybe<Scalars['Boolean']>;
   age_rating?: InputMaybe<AgeRating>;
-  backdrop?: InputMaybe<Scalars['String']>;
+  backdrops?: InputMaybe<MovieCreatebackdropsInput>;
   budget?: InputMaybe<Scalars['Int']>;
   charaters?: InputMaybe<CharacterCreateNestedManyWithoutMovieInput>;
+  contentScore?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   genres?: InputMaybe<MovieCreategenresInput>;
   homepage?: InputMaybe<Scalars['String']>;
@@ -575,11 +631,10 @@ export type MovieCreateWithoutUserInput = {
   language?: InputMaybe<Scalars['String']>;
   lists?: InputMaybe<ListCreateNestedManyWithoutMoviesInput>;
   locked?: InputMaybe<Scalars['Boolean']>;
-  movieLogs?: InputMaybe<MovieLogCreateNestedManyWithoutMovieInput>;
   overview: Scalars['String'];
   platforms?: InputMaybe<PlatformCreateNestedManyWithoutMoviesInput>;
   popularity?: InputMaybe<Scalars['Float']>;
-  poster?: InputMaybe<Scalars['String']>;
+  posters?: InputMaybe<MovieCreatepostersInput>;
   ratings?: InputMaybe<RatingCreateNestedManyWithoutMovieInput>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
   revenue?: InputMaybe<Scalars['Int']>;
@@ -588,15 +643,17 @@ export type MovieCreateWithoutUserInput = {
   tagline?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  videos?: InputMaybe<MovieCreatevideosInput>;
   watchlists?: InputMaybe<WatchlistCreateNestedManyWithoutMoviesInput>;
 };
 
 export type MovieCreateWithoutWatchlistsInput = {
   adult?: InputMaybe<Scalars['Boolean']>;
   age_rating?: InputMaybe<AgeRating>;
-  backdrop?: InputMaybe<Scalars['String']>;
+  backdrops?: InputMaybe<MovieCreatebackdropsInput>;
   budget?: InputMaybe<Scalars['Int']>;
   charaters?: InputMaybe<CharacterCreateNestedManyWithoutMovieInput>;
+  contentScore?: InputMaybe<Scalars['Int']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   genres?: InputMaybe<MovieCreategenresInput>;
   homepage?: InputMaybe<Scalars['String']>;
@@ -605,11 +662,10 @@ export type MovieCreateWithoutWatchlistsInput = {
   language?: InputMaybe<Scalars['String']>;
   lists?: InputMaybe<ListCreateNestedManyWithoutMoviesInput>;
   locked?: InputMaybe<Scalars['Boolean']>;
-  movieLogs?: InputMaybe<MovieLogCreateNestedManyWithoutMovieInput>;
   overview: Scalars['String'];
   platforms?: InputMaybe<PlatformCreateNestedManyWithoutMoviesInput>;
   popularity?: InputMaybe<Scalars['Float']>;
-  poster?: InputMaybe<Scalars['String']>;
+  posters?: InputMaybe<MovieCreatepostersInput>;
   ratings?: InputMaybe<RatingCreateNestedManyWithoutMovieInput>;
   releaseDate?: InputMaybe<Scalars['DateTime']>;
   revenue?: InputMaybe<Scalars['Int']>;
@@ -619,6 +675,11 @@ export type MovieCreateWithoutWatchlistsInput = {
   title: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   user?: InputMaybe<UserCreateNestedOneWithoutMoviesInput>;
+  videos?: InputMaybe<MovieCreatevideosInput>;
+};
+
+export type MovieCreatebackdropsInput = {
+  set: Array<Scalars['String']>;
 };
 
 export type MovieCreategenresInput = {
@@ -626,6 +687,14 @@ export type MovieCreategenresInput = {
 };
 
 export type MovieCreatekeywordsInput = {
+  set: Array<Scalars['String']>;
+};
+
+export type MovieCreatepostersInput = {
+  set: Array<Scalars['String']>;
+};
+
+export type MovieCreatevideosInput = {
   set: Array<Scalars['String']>;
 };
 
@@ -641,117 +710,6 @@ export type MovieListRelationFilter = {
   some?: InputMaybe<MovieWhereInput>;
 };
 
-export type MovieLog = {
-  __typename?: 'MovieLog';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['String'];
-  key: Scalars['String'];
-  movieId?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['DateTime'];
-  user: User;
-  userId?: Maybe<Scalars['String']>;
-  value: Scalars['JSON'];
-};
-
-export type MovieLogCreateManyMovieInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  key: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  userId?: InputMaybe<Scalars['String']>;
-  value: Scalars['JSON'];
-};
-
-export type MovieLogCreateManyMovieInputEnvelope = {
-  data: Array<MovieLogCreateManyMovieInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type MovieLogCreateManyUserInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  key: Scalars['String'];
-  movieId?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  value: Scalars['JSON'];
-};
-
-export type MovieLogCreateManyUserInputEnvelope = {
-  data: Array<MovieLogCreateManyUserInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type MovieLogCreateNestedManyWithoutMovieInput = {
-  connect?: InputMaybe<Array<MovieLogWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<MovieLogCreateOrConnectWithoutMovieInput>>;
-  create?: InputMaybe<Array<MovieLogCreateWithoutMovieInput>>;
-  createMany?: InputMaybe<MovieLogCreateManyMovieInputEnvelope>;
-};
-
-export type MovieLogCreateNestedManyWithoutUserInput = {
-  connect?: InputMaybe<Array<MovieLogWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<MovieLogCreateOrConnectWithoutUserInput>>;
-  create?: InputMaybe<Array<MovieLogCreateWithoutUserInput>>;
-  createMany?: InputMaybe<MovieLogCreateManyUserInputEnvelope>;
-};
-
-export type MovieLogCreateOrConnectWithoutMovieInput = {
-  create: MovieLogCreateWithoutMovieInput;
-  where: MovieLogWhereUniqueInput;
-};
-
-export type MovieLogCreateOrConnectWithoutUserInput = {
-  create: MovieLogCreateWithoutUserInput;
-  where: MovieLogWhereUniqueInput;
-};
-
-export type MovieLogCreateWithoutMovieInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  key: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  user?: InputMaybe<UserCreateNestedOneWithoutMovieLogsInput>;
-  value: Scalars['JSON'];
-};
-
-export type MovieLogCreateWithoutUserInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  key: Scalars['String'];
-  movie?: InputMaybe<MovieCreateNestedOneWithoutMovieLogsInput>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  value: Scalars['JSON'];
-};
-
-export type MovieLogListRelationFilter = {
-  every?: InputMaybe<MovieLogWhereInput>;
-  none?: InputMaybe<MovieLogWhereInput>;
-  some?: InputMaybe<MovieLogWhereInput>;
-};
-
-export type MovieLogOrderByRelationAggregateInput = {
-  _count?: InputMaybe<SortOrder>;
-};
-
-export type MovieLogWhereInput = {
-  AND?: InputMaybe<Array<MovieLogWhereInput>>;
-  NOT?: InputMaybe<Array<MovieLogWhereInput>>;
-  OR?: InputMaybe<Array<MovieLogWhereInput>>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  id?: InputMaybe<UuidFilter>;
-  key?: InputMaybe<StringFilter>;
-  movie?: InputMaybe<MovieRelationFilter>;
-  movieId?: InputMaybe<UuidNullableFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-  user?: InputMaybe<UserRelationFilter>;
-  userId?: InputMaybe<UuidNullableFilter>;
-  value?: InputMaybe<JsonFilter>;
-};
-
-export type MovieLogWhereUniqueInput = {
-  id?: InputMaybe<Scalars['String']>;
-};
-
 export type MovieOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
@@ -759,9 +717,10 @@ export type MovieOrderByRelationAggregateInput = {
 export type MovieOrderByWithRelationInput = {
   adult?: InputMaybe<SortOrder>;
   age_rating?: InputMaybe<SortOrder>;
-  backdrop?: InputMaybe<SortOrder>;
+  backdrops?: InputMaybe<SortOrder>;
   budget?: InputMaybe<SortOrder>;
   charaters?: InputMaybe<CharacterOrderByRelationAggregateInput>;
+  contentScore?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   genres?: InputMaybe<SortOrder>;
   homepage?: InputMaybe<SortOrder>;
@@ -770,10 +729,9 @@ export type MovieOrderByWithRelationInput = {
   language?: InputMaybe<SortOrder>;
   lists?: InputMaybe<ListOrderByRelationAggregateInput>;
   locked?: InputMaybe<SortOrder>;
-  movieLogs?: InputMaybe<MovieLogOrderByRelationAggregateInput>;
   overview?: InputMaybe<SortOrder>;
   platforms?: InputMaybe<PlatformOrderByRelationAggregateInput>;
-  poster?: InputMaybe<SortOrder>;
+  posters?: InputMaybe<SortOrder>;
   ratings?: InputMaybe<RatingOrderByRelationAggregateInput>;
   releaseDate?: InputMaybe<SortOrder>;
   revenue?: InputMaybe<SortOrder>;
@@ -784,6 +742,7 @@ export type MovieOrderByWithRelationInput = {
   updatedAt?: InputMaybe<SortOrder>;
   user?: InputMaybe<UserOrderByWithRelationInput>;
   userId?: InputMaybe<SortOrder>;
+  videos?: InputMaybe<SortOrder>;
   watchlists?: InputMaybe<WatchlistOrderByRelationAggregateInput>;
 };
 
@@ -795,8 +754,9 @@ export type MovieRelationFilter = {
 export enum MovieScalarFieldEnum {
   Adult = 'adult',
   AgeRating = 'age_rating',
-  Backdrop = 'backdrop',
+  Backdrops = 'backdrops',
   Budget = 'budget',
+  ContentScore = 'contentScore',
   CreatedAt = 'createdAt',
   Genres = 'genres',
   Homepage = 'homepage',
@@ -806,7 +766,7 @@ export enum MovieScalarFieldEnum {
   Locked = 'locked',
   Overview = 'overview',
   Popularity = 'popularity',
-  Poster = 'poster',
+  Posters = 'posters',
   ReleaseDate = 'releaseDate',
   Revenue = 'revenue',
   Runtime = 'runtime',
@@ -814,8 +774,15 @@ export enum MovieScalarFieldEnum {
   Tagline = 'tagline',
   Title = 'title',
   UpdatedAt = 'updatedAt',
-  UserId = 'userId'
+  UserId = 'userId',
+  Videos = 'videos'
 }
+
+export type MovieUpdateInput = {
+  genres?: InputMaybe<Array<Genre>>;
+  overview?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+};
 
 export type MovieWhereInput = {
   AND?: InputMaybe<Array<MovieWhereInput>>;
@@ -823,9 +790,10 @@ export type MovieWhereInput = {
   OR?: InputMaybe<Array<MovieWhereInput>>;
   adult?: InputMaybe<BoolNullableFilter>;
   age_rating?: InputMaybe<EnumAgeRatingNullableFilter>;
-  backdrop?: InputMaybe<StringNullableFilter>;
+  backdrops?: InputMaybe<StringNullableListFilter>;
   budget?: InputMaybe<IntNullableFilter>;
   charaters?: InputMaybe<CharacterListRelationFilter>;
+  contentScore?: InputMaybe<IntNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   genres?: InputMaybe<EnumGenreNullableListFilter>;
   homepage?: InputMaybe<StringNullableFilter>;
@@ -834,10 +802,9 @@ export type MovieWhereInput = {
   language?: InputMaybe<StringNullableFilter>;
   lists?: InputMaybe<ListListRelationFilter>;
   locked?: InputMaybe<BoolNullableFilter>;
-  movieLogs?: InputMaybe<MovieLogListRelationFilter>;
   overview?: InputMaybe<StringFilter>;
   platforms?: InputMaybe<PlatformListRelationFilter>;
-  poster?: InputMaybe<StringNullableFilter>;
+  posters?: InputMaybe<StringNullableListFilter>;
   ratings?: InputMaybe<RatingListRelationFilter>;
   releaseDate?: InputMaybe<DateTimeNullableFilter>;
   revenue?: InputMaybe<IntNullableFilter>;
@@ -848,6 +815,7 @@ export type MovieWhereInput = {
   updatedAt?: InputMaybe<DateTimeFilter>;
   user?: InputMaybe<UserRelationFilter>;
   userId?: InputMaybe<UuidNullableFilter>;
+  videos?: InputMaybe<StringNullableListFilter>;
   watchlists?: InputMaybe<WatchlistListRelationFilter>;
 };
 
@@ -969,7 +937,7 @@ export type MutationUpdateMeArgs = {
 
 
 export type MutationUpdateMovieArgs = {
-  data: MovieInput;
+  data: MovieUpdateInput;
   where: MovieWhereUniqueInput;
 };
 
@@ -1017,6 +985,13 @@ export type NestedEnumAgeRatingNullableFilter = {
   in?: InputMaybe<Array<AgeRating>>;
   not?: InputMaybe<NestedEnumAgeRatingNullableFilter>;
   notIn?: InputMaybe<Array<AgeRating>>;
+};
+
+export type NestedEnumMediaTypeFilter = {
+  equals?: InputMaybe<MediaType>;
+  in?: InputMaybe<Array<MediaType>>;
+  not?: InputMaybe<NestedEnumMediaTypeFilter>;
+  notIn?: InputMaybe<Array<MediaType>>;
 };
 
 export type NestedEnumRoleFilter = {
@@ -1207,7 +1182,7 @@ export type Query = {
   getSignedS3UrlForGet?: Maybe<Scalars['String']>;
   list: List;
   lists: Array<List>;
-  logs: MovieLog;
+  logs: Array<Log>;
   me?: Maybe<User>;
   movie: Movie;
   movies: Array<Movie>;
@@ -1228,6 +1203,12 @@ export type QueryGetSignedS3UrlForGetArgs = {
 
 export type QueryListArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryLogsArgs = {
+  mediaId: UuidFilter;
+  type: EnumMediaTypeFilter;
 };
 
 
@@ -1490,11 +1471,6 @@ export type StringNullableListFilter = {
   isEmpty?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type Subscription = {
-  __typename?: 'Subscription';
-  log: Scalars['Float'];
-};
-
 export type UpdateUserInput = {
   avatar?: InputMaybe<Scalars['String']>;
   bio?: InputMaybe<Scalars['String']>;
@@ -1530,7 +1506,7 @@ export type UserCreateInput = {
   instagram?: InputMaybe<Scalars['String']>;
   lastName: Scalars['String'];
   lists?: InputMaybe<ListCreateNestedManyWithoutUserInput>;
-  movieLogs?: InputMaybe<MovieLogCreateNestedManyWithoutUserInput>;
+  logs?: InputMaybe<LogCreateNestedManyWithoutUserInput>;
   movies?: InputMaybe<MovieCreateNestedManyWithoutUserInput>;
   password: Scalars['String'];
   ratings?: InputMaybe<RatingCreateNestedManyWithoutUserInput>;
@@ -1544,12 +1520,6 @@ export type UserCreateNestedOneWithoutListsInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
   connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutListsInput>;
   create?: InputMaybe<UserCreateWithoutListsInput>;
-};
-
-export type UserCreateNestedOneWithoutMovieLogsInput = {
-  connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutMovieLogsInput>;
-  create?: InputMaybe<UserCreateWithoutMovieLogsInput>;
 };
 
 export type UserCreateNestedOneWithoutMoviesInput = {
@@ -1572,11 +1542,6 @@ export type UserCreateNestedOneWithoutWatchlistInput = {
 
 export type UserCreateOrConnectWithoutListsInput = {
   create: UserCreateWithoutListsInput;
-  where: UserWhereUniqueInput;
-};
-
-export type UserCreateOrConnectWithoutMovieLogsInput = {
-  create: UserCreateWithoutMovieLogsInput;
   where: UserWhereUniqueInput;
 };
 
@@ -1604,26 +1569,7 @@ export type UserCreateWithoutListsInput = {
   id?: InputMaybe<Scalars['String']>;
   instagram?: InputMaybe<Scalars['String']>;
   lastName: Scalars['String'];
-  movieLogs?: InputMaybe<MovieLogCreateNestedManyWithoutUserInput>;
-  movies?: InputMaybe<MovieCreateNestedManyWithoutUserInput>;
-  password: Scalars['String'];
-  ratings?: InputMaybe<RatingCreateNestedManyWithoutUserInput>;
-  role?: InputMaybe<Role>;
-  twitter?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  watchlist?: InputMaybe<WatchlistCreateNestedOneWithoutUserInput>;
-};
-
-export type UserCreateWithoutMovieLogsInput = {
-  avatar?: InputMaybe<Scalars['String']>;
-  bio?: InputMaybe<Scalars['String']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  email: Scalars['String'];
-  firstName: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
-  instagram?: InputMaybe<Scalars['String']>;
-  lastName: Scalars['String'];
-  lists?: InputMaybe<ListCreateNestedManyWithoutUserInput>;
+  logs?: InputMaybe<LogCreateNestedManyWithoutUserInput>;
   movies?: InputMaybe<MovieCreateNestedManyWithoutUserInput>;
   password: Scalars['String'];
   ratings?: InputMaybe<RatingCreateNestedManyWithoutUserInput>;
@@ -1643,7 +1589,7 @@ export type UserCreateWithoutMoviesInput = {
   instagram?: InputMaybe<Scalars['String']>;
   lastName: Scalars['String'];
   lists?: InputMaybe<ListCreateNestedManyWithoutUserInput>;
-  movieLogs?: InputMaybe<MovieLogCreateNestedManyWithoutUserInput>;
+  logs?: InputMaybe<LogCreateNestedManyWithoutUserInput>;
   password: Scalars['String'];
   ratings?: InputMaybe<RatingCreateNestedManyWithoutUserInput>;
   role?: InputMaybe<Role>;
@@ -1662,7 +1608,7 @@ export type UserCreateWithoutRatingsInput = {
   instagram?: InputMaybe<Scalars['String']>;
   lastName: Scalars['String'];
   lists?: InputMaybe<ListCreateNestedManyWithoutUserInput>;
-  movieLogs?: InputMaybe<MovieLogCreateNestedManyWithoutUserInput>;
+  logs?: InputMaybe<LogCreateNestedManyWithoutUserInput>;
   movies?: InputMaybe<MovieCreateNestedManyWithoutUserInput>;
   password: Scalars['String'];
   role?: InputMaybe<Role>;
@@ -1681,7 +1627,7 @@ export type UserCreateWithoutWatchlistInput = {
   instagram?: InputMaybe<Scalars['String']>;
   lastName: Scalars['String'];
   lists?: InputMaybe<ListCreateNestedManyWithoutUserInput>;
-  movieLogs?: InputMaybe<MovieLogCreateNestedManyWithoutUserInput>;
+  logs?: InputMaybe<LogCreateNestedManyWithoutUserInput>;
   movies?: InputMaybe<MovieCreateNestedManyWithoutUserInput>;
   password: Scalars['String'];
   ratings?: InputMaybe<RatingCreateNestedManyWithoutUserInput>;
@@ -1700,7 +1646,7 @@ export type UserOrderByWithRelationInput = {
   instagram?: InputMaybe<SortOrder>;
   lastName?: InputMaybe<SortOrder>;
   lists?: InputMaybe<ListOrderByRelationAggregateInput>;
-  movieLogs?: InputMaybe<MovieLogOrderByRelationAggregateInput>;
+  logs?: InputMaybe<LogOrderByRelationAggregateInput>;
   movies?: InputMaybe<MovieOrderByRelationAggregateInput>;
   password?: InputMaybe<SortOrder>;
   ratings?: InputMaybe<RatingOrderByRelationAggregateInput>;
@@ -1743,7 +1689,7 @@ export type UserWhereInput = {
   instagram?: InputMaybe<StringNullableFilter>;
   lastName?: InputMaybe<StringFilter>;
   lists?: InputMaybe<ListListRelationFilter>;
-  movieLogs?: InputMaybe<MovieLogListRelationFilter>;
+  logs?: InputMaybe<LogListRelationFilter>;
   movies?: InputMaybe<MovieListRelationFilter>;
   password?: InputMaybe<StringFilter>;
   ratings?: InputMaybe<RatingListRelationFilter>;
@@ -1956,17 +1902,13 @@ export type ForgotPasswordMutationVariables = Exact<{
 
 export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: boolean };
 
-export type CreateMovieMutationVariables = Exact<{
-  data: MovieInput;
+export type UpdateMovieMutationVariables = Exact<{
+  where: MovieWhereUniqueInput;
+  data: MovieUpdateInput;
 }>;
 
 
-export type CreateMovieMutation = { __typename?: 'Mutation', createMovie: { __typename?: 'Movie', id: string } };
-
-export type SubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type SubscriptionSubscription = { __typename?: 'Subscription', log: number };
+export type UpdateMovieMutation = { __typename?: 'Mutation', updateMovie: { __typename?: 'Movie', id: string, title: string } };
 
 export type LoginMutationVariables = Exact<{
   data: LoginInput;
@@ -1978,7 +1920,7 @@ export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Au
 export type MoviesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MoviesQuery = { __typename?: 'Query', movies: Array<{ __typename?: 'Movie', id: string, createdAt: string, updatedAt: string, title: string, overview: string, userId?: string | null, adult?: boolean | null, budget?: number | null, genres: Array<Genre>, locked?: boolean | null, backdrop?: string | null, poster?: string | null, status?: Status | null, revenue?: number | null, runtime?: number | null, tagline?: string | null, homepage?: string | null, language?: string | null, releaseDate?: string | null }> };
+export type MoviesQuery = { __typename?: 'Query', movies: Array<{ __typename?: 'Movie', id: string, createdAt: string, updatedAt: string, title: string, overview: string, userId?: string | null, adult?: boolean | null, budget?: number | null, genres: Array<Genre>, locked?: boolean | null, backdrops: Array<string>, posters: Array<string>, status?: Status | null, revenue?: number | null, runtime?: number | null, tagline?: string | null, homepage?: string | null, language?: string | null, releaseDate?: string | null }> };
 
 export type UpdateMeMutationVariables = Exact<{
   data: UpdateUserInput;
@@ -2168,31 +2110,21 @@ export function useForgotPasswordMutation(baseOptions?: Apollo.MutationHookOptio
 export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
 export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
-export const CreateMovieDocument = gql`
-    mutation CreateMovie($data: MovieInput!) {
-  createMovie(data: $data) {
+export const UpdateMovieDocument = gql`
+    mutation UpdateMovie($where: MovieWhereUniqueInput!, $data: MovieUpdateInput!) {
+  updateMovie(where: $where, data: $data) {
     id
+    title
   }
 }
     `;
-export function useCreateMovieMutation(baseOptions?: Apollo.MutationHookOptions<CreateMovieMutation, CreateMovieMutationVariables>) {
+export function useUpdateMovieMutation(baseOptions?: Apollo.MutationHookOptions<UpdateMovieMutation, UpdateMovieMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateMovieMutation, CreateMovieMutationVariables>(CreateMovieDocument, options);
+        return Apollo.useMutation<UpdateMovieMutation, UpdateMovieMutationVariables>(UpdateMovieDocument, options);
       }
-export type CreateMovieMutationHookResult = ReturnType<typeof useCreateMovieMutation>;
-export type CreateMovieMutationResult = Apollo.MutationResult<CreateMovieMutation>;
-export type CreateMovieMutationOptions = Apollo.BaseMutationOptions<CreateMovieMutation, CreateMovieMutationVariables>;
-export const SubscriptionDocument = gql`
-    subscription Subscription {
-  log
-}
-    `;
-export function useSubscriptionSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscriptionSubscription, SubscriptionSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<SubscriptionSubscription, SubscriptionSubscriptionVariables>(SubscriptionDocument, options);
-      }
-export type SubscriptionSubscriptionHookResult = ReturnType<typeof useSubscriptionSubscription>;
-export type SubscriptionSubscriptionResult = Apollo.SubscriptionResult<SubscriptionSubscription>;
+export type UpdateMovieMutationHookResult = ReturnType<typeof useUpdateMovieMutation>;
+export type UpdateMovieMutationResult = Apollo.MutationResult<UpdateMovieMutation>;
+export type UpdateMovieMutationOptions = Apollo.BaseMutationOptions<UpdateMovieMutation, UpdateMovieMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($data: LoginInput!) {
   login(data: $data) {
@@ -2224,8 +2156,8 @@ export const MoviesDocument = gql`
     budget
     genres
     locked
-    backdrop
-    poster
+    backdrops
+    posters
     status
     revenue
     runtime

@@ -1,34 +1,43 @@
 import * as React from "react"
-import { Button } from "@chakra-ui/react"
+import { Box, Button } from "@chakra-ui/react"
 
 import { HomeLayout } from "components/HomeLayout"
 import { gql } from "@apollo/client"
-import { useCreateMovieMutation, Genre } from "lib/graphql"
+import { useUpdateMovieMutation } from "lib/graphql"
 
 const _ = gql`
-  mutation CreateMovie($data: MovieInput!) {
-    createMovie(data: $data) {
+  mutation UpdateMovie($where: MovieWhereUniqueInput!, $data: MovieUpdateInput!) {
+    updateMovie(where: $where, data: $data) {
       id
+      title
     }
   }
 `
 
 export default function Home() {
-  const [create] = useCreateMovieMutation()
+  const [update] = useUpdateMovieMutation()
 
   const onClick = async () => {
-    await create({
+    await update({
       variables: {
         data: {
           title: "test",
-          overview: "test",
-          genres: [Genre.Action],
+          overview: "this is a new overview",
+        },
+        where: {
+          id: "33e2c582-84b3-49a8-97f1-03f8366d0515",
         },
       },
     })
   }
 
-  return <Button onClick={() => onClick()}>test</Button>
+  return (
+    <Box>
+      <Button variant="primary" onClick={() => onClick()}>
+        Update Movie
+      </Button>
+    </Box>
+  )
 }
 
 Home.getLayout = (page: React.ReactNode) => <HomeLayout>{page}</HomeLayout>

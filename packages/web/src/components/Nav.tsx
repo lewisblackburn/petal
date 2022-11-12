@@ -92,7 +92,6 @@ export function Nav() {
               <LinkButton href="/register" variant="primary" size="md">
                 Register
               </LinkButton>
-              <IconButton variant="outline" size="md" aria-label="Add movie" icon={<FiPlus />} />
             </HStack>
           </Fade>
         )}
@@ -170,7 +169,7 @@ interface HomeLinkProps extends LinkProps {
   href: string
 }
 
-function HomeLink({ href, ...props }: HomeLinkProps) {
+export function HomeLink({ href, ...props }: HomeLinkProps) {
   const { asPath } = useRouter()
   const isActive = asPath === href
 

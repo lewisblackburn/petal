@@ -14,6 +14,9 @@ import { Form } from "components/Form"
 import { FormError } from "components/FormError"
 import { withNoAuth } from "components/hoc/withNoAuth"
 import { Input } from "components/Input"
+import { Box, Button, Center, Flex, Grid, Text } from "@chakra-ui/react"
+import { Nav } from "components/Nav"
+import { AuthLayout } from "components/AuthLayout"
 
 const _ = gql`
   mutation Login($data: LoginInput!) {
@@ -57,30 +60,47 @@ function Login() {
   }
 
   return (
-    <c.Center flexDir="column" pt={10}>
-      <Head>
-        <title>Login</title>
-      </Head>
-      <c.Box w={["100%", 400]}>
-        <Form onSubmit={onSubmit} {...form}>
-          <c.Stack spacing={2}>
-            <c.Heading as="h1">Login</c.Heading>
+    <Grid placeItems="center" h="full">
+      <Form onSubmit={onSubmit} {...form}>
+        <Flex flexDir="column" gap="32px" width={[96, 96, "500px"]}>
+          <Flex flexDir="column" gap="8px">
+            <Center>
+              <Text fontSize="32px" fontWeight={700} color="brand.100">
+                Welcome back
+              </Text>
+            </Center>
 
-            <Input name="email" label="Email" placeholder="jim@gmail.com" />
-            <Input name="password" label="Password" type="password" placeholder="********" />
-            <c.Button colorScheme="purple" type="submit" w="100%" isLoading={loading} isDisabled={loading}>
-              Login
-            </c.Button>
-            <FormError />
-            <c.Flex justify="space-between">
-              <Link href="/register">Register</Link>
+            <Center>
+              <Text opacity="0.5" fontSize="16px" color="brand.100" fontWeight={500}>
+                Welcome back! Please enter your details.
+              </Text>
+            </Center>
+          </Flex>
+          <Flex flexDir="column" gap="16px">
+            <Input name="email" label="Email" type="email" placeholder="jim@gmail.com" />
+            <Input name="password" label="Password" type="password" placeholder="••••••••••" />
+            <Center fontSize="14px" fontWeight={500} color="#7065f0">
               <Link href="/forgot-password">Forgot password?</Link>
-            </c.Flex>
-          </c.Stack>
-        </Form>
-      </c.Box>
-    </c.Center>
+            </Center>
+          </Flex>
+          <Flex flexDir="column" gap="16px">
+            <Button variant="primary" type="submit" isLoading={loading} isDisabled={loading}>
+              Login
+            </Button>
+          </Flex>
+          <Center fontSize="14px" gap={1}>
+            <Text fontSize="14px" fontWeight={500} textAlign="center" color="#6c727f">
+              Don’t have an account?
+            </Text>
+            <Text fontSize="14px" fontWeight={700} textAlign="center" color="#000929">
+              <Link href="/register">Sign up for free</Link>
+            </Text>
+          </Center>
+        </Flex>
+      </Form>
+    </Grid>
   )
 }
 
+Login.getLayout = (page: React.ReactNode) => <AuthLayout>{page}</AuthLayout>
 export default withNoAuth(Login)

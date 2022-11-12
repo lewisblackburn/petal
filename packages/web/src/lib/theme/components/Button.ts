@@ -21,6 +21,12 @@ export const Button = {
       fontWeight: 700,
       fontSize: 14,
     },
+    xl: {
+      gap: 10,
+      paddingY: 4,
+      paddingX: 3.5,
+      fontSize: "sm",
+    },
   },
   variants: {
     primary: () => ({
@@ -42,8 +48,17 @@ export const Button = {
     transparent: () => ({
       color: "black",
     }),
+    card: () => ({
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: "md",
+      borderWidth: "thin",
+      borderColor: "purple.400",
+      fontWeight: 500,
+      color: "brand.100",
+    }),
   },
-  defaultProps: {
-    size: "lg",
-  },
+  defaultProps: {},
 }

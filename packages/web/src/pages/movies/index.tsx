@@ -19,8 +19,8 @@ const _ = gql`
       budget
       genres
       locked
-      backdrop
-      poster
+      backdrops
+      posters
       status
       revenue
       runtime

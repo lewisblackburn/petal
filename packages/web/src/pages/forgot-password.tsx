@@ -1,6 +1,6 @@
 import * as React from "react"
 import { gql } from "@apollo/client"
-import { Box, Button, Center, Heading, Stack, Text } from "@chakra-ui/react"
+import { Box, Button, Center, Flex, Grid, Heading, Stack, Text } from "@chakra-ui/react"
 import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -13,6 +13,7 @@ import Yup from "lib/yup"
 import { Form } from "components/Form"
 import { HomeLayout } from "components/HomeLayout"
 import { Input } from "components/Input"
+import { AuthLayout } from "components/AuthLayout"
 
 const _ = gql`
   mutation ForgotPassword($email: String!) {
@@ -44,25 +45,37 @@ export default function ForgotPassword() {
     })
   }
   return (
-    <Center flexDir="column" pt={10}>
-      <Head>
-        <title>Forgot password</title>
-      </Head>
-      <Box w={["100%", 400]}>
-        <Form {...form} onSubmit={handleSubmit}>
-          <Stack spacing={4}>
-            <Heading as="h1">Forgot your password?</Heading>
-            <Text>Enter your email below to receive your password reset instructions.</Text>
-
+    <Grid placeItems="center" h="full">
+      <Form onSubmit={handleSubmit} {...form}>
+        <Flex flexDir="column" gap="32px" width={[96, 96, "500px"]}>
+          <Flex flexDir="column" gap="8px">
+            <Center>
+              <Text fontSize="32px" fontWeight={700} color="brand.100">
+                Forgot your password?
+              </Text>
+            </Center>
+            <Center>
+              <Text opacity="0.5" fontSize="16px" color="brand.100" fontWeight={500}>
+                Enter your email below for password reset instructions.
+              </Text>
+            </Center>
+          </Flex>
+          <Flex flexDir="column" gap="16px">
             <Input autoFocus name="email" placeholder="Email" />
-            <Button w="100%" colorScheme="purple" type="submit" isDisabled={loading} isLoading={loading}>
+          </Flex>
+          <Flex flexDir="column" gap="16px">
+            <Button variant="primary" type="submit" isLoading={loading} isDisabled={loading}>
               Send instructions
             </Button>
-            <Link href="/login">Login</Link>
-          </Stack>
-        </Form>
-      </Box>
-    </Center>
+          </Flex>
+          <Center fontSize="14px" gap={1}>
+            <Text fontSize="14px" fontWeight={700} textAlign="center" color="#000929">
+              <Link href="/login">Login</Link>
+            </Text>
+          </Center>
+        </Flex>
+      </Form>
+    </Grid>
   )
 }
-ForgotPassword.getLayout = (page: React.ReactNode) => <HomeLayout>{page}</HomeLayout>
+ForgotPassword.getLayout = (page: React.ReactNode) => <AuthLayout>{page}</AuthLayout>

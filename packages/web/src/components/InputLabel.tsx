@@ -8,14 +8,14 @@ interface Props extends Omit<FormLabelProps, "children"> {
 }
 
 export const InputLabel: React.FC<Props> = ({ subLabel, ...props }) => {
-  const subLabelColor = useColorModeValue("gray.400", "gray.300")
+  const subLabelColor = useColorModeValue("brand.100", "brand.100")
   if (!props.label) return null
 
   return (
     <FormLabel htmlFor={props.name} {...props} fontSize="sm" mb="1px">
       {props.label}
       {subLabel && (
-        <Text ml={2} as="span" fontSize="xs" color={subLabelColor}>
+        <Text ml={2} as="span" fontSize="14px" fontWeight={500} color={subLabelColor}>
           {subLabel}
         </Text>
       )}
