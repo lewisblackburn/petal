@@ -48,6 +48,7 @@ enum Status {
   CANCELLED
 }
 
+// Change to Actual Model Instead (easier for table sorting and such)
 enum Genre {
   ACTION
   ADVENTURE
