@@ -1,12 +1,9 @@
 const baseFieldStyle = {
   field: {
     borderRadius: 6,
-    paddingX: 4,
-    paddingY: 6,
     fontWeight: 500,
+    h: "50px",
     fontSize: "md",
-    alignSelf: "stretch",
-    flexGrow: 1,
     borderWidth: 1,
   },
 }
@@ -33,7 +30,6 @@ export const Select = {
         },
         _focus: {
           backgroundColor: "purple.200",
-          borderColor: "purple.500",
         },
       },
     }),
@@ -42,14 +38,12 @@ export const Select = {
         backgroundColor: "white",
         color: "brand.100",
         borderColor: "purple.400",
-        _focus: {
-          borderColor: "purple.500",
-        },
       },
     }),
   },
   // The default `size` or `variant` values
   defaultProps: {
     variant: "outline",
+    focusBorderColor: "purple.500",
   },
 }

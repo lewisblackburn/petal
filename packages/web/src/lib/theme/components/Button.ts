@@ -7,6 +7,12 @@ export const Button = {
     color: "white",
   },
   sizes: {
+    xs: {
+      gap: 10,
+      paddingY: 4,
+      paddingX: 3.5,
+      fontSize: "sm",
+    },
     md: {
       gap: "6px",
       paddingX: "24px",
@@ -22,10 +28,11 @@ export const Button = {
       fontSize: 14,
     },
     xl: {
-      gap: 10,
-      paddingY: 4,
-      paddingX: 3.5,
-      fontSize: "sm",
+      gap: "8px",
+      paddingX: "32px",
+      paddingY: "16px",
+      fontWeight: 700,
+      fontSize: 14,
     },
   },
   variants: {

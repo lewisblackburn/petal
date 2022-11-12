@@ -1,8 +1,8 @@
 import * as React from "react"
 import { CgArrowLongDown, CgArrowLongUp } from "react-icons/cg"
 import type { FlexProps } from "@chakra-ui/react"
-import { Box, Button, Center, Flex, Spinner, Text, useColorModeValue } from "@chakra-ui/react"
-import Link from "components/Link"
+import { Box, Button, Center, Flex, Spinner, Text, useColorModeValue, Link } from "@chakra-ui/react"
+import NextLink from "next/link"
 
 import { SortOrder } from "lib/graphql"
 import { useToast } from "lib/hooks/useToast"
@@ -183,11 +183,11 @@ function _ColumnField<T>({
     ...props,
   }
   return !!!hasNoLink && !!href ? (
-    <Link href={href}>
+    <NextLink href={href} legacyBehavior passHref>
       <Flex as={Link} _hover={{ textDecor: "none" }} {...sharedProps}>
         {props.children}
       </Flex>
-    </Link>
+    </NextLink>
   ) : (
     <Flex {...sharedProps}>{props.children}</Flex>
   )

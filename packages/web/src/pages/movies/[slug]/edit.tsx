@@ -10,6 +10,8 @@ import {
   Text,
   Grid,
   GridItem,
+  Button,
+  Checkbox,
 } from "@chakra-ui/react"
 import Card from "components/Card"
 import { DefaultLayout } from "components/DefaultLayout"
@@ -21,16 +23,26 @@ import { Textarea } from "components/Textarea"
 import { NumberInput } from "components/NumberInput"
 import Yup from "lib/yup"
 import { useForm } from "lib/hooks/useForm"
-import { FiChevronRight, FiLock } from "react-icons/fi"
-import { Status } from "lib/graphql"
+import { FiChevronRight } from "react-icons/fi"
+import { Genre, SortOrder, Status } from "lib/graphql"
+import { useState } from "react"
+import { Column, Sort, Table } from "components/Table"
 
 const PrimarySchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Required"),
   password: Yup.string().min(8, "Must be at least 8 characters"),
 })
 
+const Genres: { id: string; name: string }[] = Object.keys(Genre).map((genre, index) => {
+  return { id: index.toString(), name: genre }
+})
+
 export default function Edit() {
   const form = useForm({ schema: PrimarySchema })
+  const [sort, setSort] = useState<Sort>({ createdAt: SortOrder.Desc })
+  const [tabIndex, setTabIndex] = useState(0)
+
+  const onSubmit = () => {}
 
   return (
     <Flex flexDir="column" align="center" gap="40px">
@@ -42,7 +54,7 @@ export default function Edit() {
           Make sure you have filled in all the necessary fields and have uploaded all the required files.
         </Text>
       </Flex>
-      <Tabs variant="unstyled">
+      <Tabs variant="unstyled" index={tabIndex} onChange={(index) => setTabIndex(index)}>
         <TabList display="flex" alignItems="center" gap="4">
           <DotTab key={1}>Primary Facts</DotTab>
           <Icon as={FiChevronRight} />
@@ -58,40 +70,125 @@ export default function Edit() {
         <TabPanels>
           <TabPanel>
             <Flex justify="center">
-              <Card variant="secondary" width="fit-content">
-                <Form {...form}>
-                  <Grid gridTemplateColumns="1fr 1fr" gap="5">
-                    <Select
-                      name="language"
-                      label="Language"
-                      placeholder="Language"
-                      options={["English", "Russian"]}
-                    />
-                    <Input name="title" label="Title" placeholder="Title" />
-                    <Input name="tagline" label="Tagline" placeholder="Tagline" />
-                    <Select name="status" label="Status" placeholder="Status" options={Object.keys(Status)} />
-                    <GridItem colSpan={2}>
-                      <Textarea name="overview" label="Overview" placeholder="Overview" />
-                    </GridItem>
-                    <Select name="Adult" label="Adult" placeholder="Adult" options={["Yes", "No"]} />
-                    <NumberInput name="runtime" label="Runtime" placeholder="Runtime" />
-                    <NumberInput
-                      name="revenue"
-                      label="Revenue"
-                      placeholder="Revenue"
-                      subLabel="(US Dollars)"
-                    />
-                    <NumberInput name="budget" label="Budget" placeholder="Budget" subLabel="(US Dollars)" />
-                    <GridItem colSpan={2}>
-                      <Input name="homepage" label="Homepage" placeholder="Homepage" />
-                    </GridItem>
-                  </Grid>
-                </Form>
-              </Card>
+              <Form onSubmit={onSubmit} {...form}>
+                <Flex flexDir="column" gap="10">
+                  <Card variant="secondary" width="fit-content">
+                    <Grid gridTemplateColumns="1fr 1fr" gap="5">
+                      <Select
+                        name="language"
+                        label="Language"
+                        placeholder="Language"
+                        options={[
+                          { label: "English", value: "English" },
+                          { label: "Russian", value: "Russian" },
+                        ]}
+                      />
+                      <Input name="title" label="Title" placeholder="Title" />
+                      <Input name="tagline" label="Tagline" placeholder="Tagline" />
+                      <Select
+                        name="status"
+                        label="Status"
+                        placeholder="Status"
+                        options={Object.keys(Status)}
+                      />
+                      <GridItem colSpan={2}>
+                        <Textarea name="overview" label="Overview" placeholder="Overview" />
+                      </GridItem>
+                      <Select name="Adult" label="Adult" placeholder="Adult" options={["Yes", "No"]} />
+                      <NumberInput name="runtime" label="Runtime" placeholder="Runtime" />
+                      <NumberInput
+                        name="revenue"
+                        label="Revenue"
+                        placeholder="Revenue"
+                        subLabel="(US Dollars)"
+                      />
+                      <NumberInput
+                        name="budget"
+                        label="Budget"
+                        placeholder="Budget"
+                        subLabel="(US Dollars)"
+                      />
+                      <GridItem colSpan={2}>
+                        <Input name="homepage" label="Homepage" placeholder="Homepage" />
+                      </GridItem>
+                    </Grid>
+                  </Card>
+                  <Card variant="secondary" width="fit-content">
+                    <Grid gridTemplateColumns="1fr 1fr" gap="5">
+                      <Input name="imdb" label="IMDB ID" />
+                      <Input name="twitter" label="Twitter" />
+                      <Input name="instagram" label="Instagram" />
+                      <Input name="facebook" label="Facebook" />
+                    </Grid>
+                  </Card>
+                  <Button
+                    onClick={() => setTabIndex((index) => index + 1)}
+                    variant="primary"
+                    size="xl"
+                    type="submit"
+                    alignSelf="flex-end"
+                  >
+                    Continue
+                  </Button>
+                </Flex>
+              </Form>
             </Flex>
           </TabPanel>
           <TabPanel>
-            <p>two!</p>
+            <Flex justify="center">
+              <Form onSubmit={onSubmit} {...form}>
+                <Flex flexDir="column" gap="10">
+                  <Card variant="secondary" width="fit-content">
+                    A Table Here
+                  </Card>
+                </Flex>
+              </Form>
+            </Flex>
+          </TabPanel>
+          <TabPanel>
+            <Flex justify="center">
+              <Form onSubmit={onSubmit} {...form}>
+                <Flex flexDir="column" gap="10">
+                  <Card variant="secondary" width="fit-content">
+                    A Table Here
+                  </Card>
+                </Flex>
+              </Form>
+            </Flex>
+          </TabPanel>
+          <TabPanel>
+            <Flex justify="center">
+              <Form onSubmit={onSubmit} {...form}>
+                <Flex flexDir="column" gap="10">
+                  <Card variant="secondary" width="fit-content">
+                    <Table
+                      noDataText="No geners found"
+                      data={Genres}
+                      count={Genres.length}
+                      sort={sort}
+                      onSort={setSort}
+                      getRowHref={(genre) => `/genres/${genre.name}`}
+                      onFetchMore={() => {}}
+                      isLoading={false}
+                    >
+                      <Column<any> sortKey="id" header="id" row={(genre) => genre.id} />
+                      <Column<any> sortKey="name" header="Name" row={(genre) => genre.name} />
+                    </Table>
+                  </Card>
+                </Flex>
+              </Form>
+            </Flex>
+          </TabPanel>
+          <TabPanel>
+            <Flex justify="center">
+              <Form onSubmit={onSubmit} {...form}>
+                <Flex flexDir="column" gap="10">
+                  <Card variant="secondary" width="fit-content">
+                    A Table Here
+                  </Card>
+                </Flex>
+              </Form>
+            </Flex>
           </TabPanel>
         </TabPanels>
       </Tabs>

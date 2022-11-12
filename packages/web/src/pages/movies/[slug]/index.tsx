@@ -39,7 +39,11 @@ import { Backdrop } from "components/Backdrop"
 import Card from "components/Card"
 import { LinkButton } from "components/LinkButton"
 
-const Tag: React.FC<React.PropsWithChildren<{ title: string; icon?: IconType }>> = ({ title, icon, children }) => {
+const Tag: React.FC<React.PropsWithChildren<{ title: string; icon?: IconType }>> = ({
+  title,
+  icon,
+  children,
+}) => {
   return (
     <Flex flexDir="column" gap="1">
       <Text variant="1" size="md">
@@ -282,7 +286,7 @@ export default function Movie() {
                     "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/qHNjcjKa6VHJsa0Eu0DHl2BaYw3.jpg",
                 },
               ].map((movie) => (
-                <Poster src={movie.image} />
+                <Poster key={movie.name} src={movie.image} />
               ))}
             </Grid>
           </Flex>
@@ -323,7 +327,7 @@ export default function Movie() {
                 {Object.keys(Genre)
                   .slice(0, 4)
                   .map((genre: keyof typeof Genre) => (
-                    <LinkButton href="#" variant="card" size="xl">
+                    <LinkButton key={genre} href="#" variant="card" size="xl">
                       {Object.values(genre)}
                     </LinkButton>
                   ))}
@@ -344,7 +348,7 @@ export default function Movie() {
                   "second chance",
                   "time-manipulation",
                 ].map((keyword: string) => (
-                  <LinkButton href="#" variant="card" size="xl">
+                  <LinkButton key={keyword} href="#" variant="card" size="xs">
                     {keyword}
                   </LinkButton>
                 ))}

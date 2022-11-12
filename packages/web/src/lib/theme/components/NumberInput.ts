@@ -33,7 +33,6 @@ export const NumberInput = {
         },
         _focus: {
           backgroundColor: "purple.200",
-          borderColor: "purple.500",
         },
       },
     }),
@@ -42,14 +41,12 @@ export const NumberInput = {
         backgroundColor: "white",
         color: "brand.100",
         borderColor: "purple.400",
-        _focus: {
-          borderColor: "purple.500",
-        },
       },
     }),
   },
   // The default `size` or `variant` values
   defaultProps: {
     variant: "outline",
+    focusBorderColor: "purple.500",
   },
 }
