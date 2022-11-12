@@ -1,7 +1,7 @@
 import * as React from "react"
 import { gql, useApolloClient } from "@apollo/client"
-import Link from "next/link"
 import { useRouter } from "next/router"
+import Link from "components/Link"
 
 import { ACCESS_TOKEN, REFRESH_TOKEN_KEY } from "lib/config"
 import type { LoginInput, MeQuery } from "lib/graphql"

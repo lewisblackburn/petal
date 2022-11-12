@@ -6,7 +6,7 @@ interface Props {
   error?: FieldError | Merge<FieldError, FieldErrors<any>> | string
 }
 
-export const InputError: React.FC<Props> = (props) => {
+export const InputError: React.FC<React.PropsWithChildren<Props>> = (props) => {
   if (!props.error) return null
   return (
     <>

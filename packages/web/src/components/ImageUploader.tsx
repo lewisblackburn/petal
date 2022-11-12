@@ -15,7 +15,7 @@ interface Props {
   dropzoneOptions?: Omit<DropzoneOptions, "multiple" | "onDrop">
 }
 
-export const ImageUploader: React.FC<Props> = ({ children, path, onSubmit, dropzoneOptions }) => {
+export const ImageUploader: React.FC<React.PropsWithChildren<Props>> = ({ children, path, onSubmit, dropzoneOptions }) => {
   const modalProps = useDisclosure()
   const toast = useToast()
   const [image, setImage] = React.useState<{ file: File; preview: string } | null>(null)

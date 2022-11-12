@@ -11,7 +11,7 @@ interface FormContainerProps {
   onBlur?: (values: any) => Promise<any> | any
 }
 
-const FormContainer: React.FC<FormContainerProps> = (props) => {
+const FormContainer: React.FC<React.PropsWithChildren<FormContainerProps>> = (props) => {
   const toast = useToast()
   const { handleSubmit } = useFormContext()
   const onSubmit = async (values: any) => {

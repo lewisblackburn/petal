@@ -39,7 +39,7 @@ import { Backdrop } from "components/Backdrop"
 import Card from "components/Card"
 import { LinkButton } from "components/LinkButton"
 
-const Tag: React.FC<{ title: string; icon?: IconType }> = ({ title, icon, children }) => {
+const Tag: React.FC<React.PropsWithChildren<{ title: string; icon?: IconType }>> = ({ title, icon, children }) => {
   return (
     <Flex flexDir="column" gap="1">
       <Text variant="1" size="md">

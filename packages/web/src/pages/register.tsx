@@ -2,7 +2,7 @@ import * as React from "react"
 import { gql, useApolloClient } from "@apollo/client"
 import { Box, Button, Center, Flex, Grid, Heading, Stack, Text } from "@chakra-ui/react"
 import Head from "next/head"
-import Link from "next/link"
+import Link from "components/Link"
 import { useRouter } from "next/router"
 
 import { ACCESS_TOKEN, REFRESH_TOKEN_KEY } from "lib/config"

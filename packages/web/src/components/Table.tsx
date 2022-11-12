@@ -1,8 +1,8 @@
 import * as React from "react"
 import { CgArrowLongDown, CgArrowLongUp } from "react-icons/cg"
 import type { FlexProps } from "@chakra-ui/react"
-import { Box, Button, Center, Flex, Link, Spinner, Text, useColorModeValue } from "@chakra-ui/react"
-import NextLink from "next/link"
+import { Box, Button, Center, Flex, Spinner, Text, useColorModeValue } from "@chakra-ui/react"
+import Link from "components/Link"
 
 import { SortOrder } from "lib/graphql"
 import { useToast } from "lib/hooks/useToast"
@@ -176,18 +176,18 @@ function _ColumnField<T>({
     flex: 1,
     align: "center",
     h: "50px",
-    isTruncated: true,
+    // isTruncated: true,
     fontSize: "sm",
     justify: isLast ? "flex-end" : "flex-start",
     overflowX: "auto",
     ...props,
   }
   return !!!hasNoLink && !!href ? (
-    <NextLink passHref href={href}>
+    <Link href={href}>
       <Flex as={Link} _hover={{ textDecor: "none" }} {...sharedProps}>
         {props.children}
       </Flex>
-    </NextLink>
+    </Link>
   ) : (
     <Flex {...sharedProps}>{props.children}</Flex>
   )

@@ -1,6 +1,5 @@
 import * as React from "react"
-import { Box, Container } from "@chakra-ui/layout"
-
+import { Box, Container } from "@chakra-ui/react"
 import { Nav } from "./Nav"
 import Head from "next/head"
 import { Footer } from "./Footer"

@@ -7,7 +7,7 @@ interface Props extends Omit<FormLabelProps, "children"> {
   subLabel?: string
 }
 
-export const InputLabel: React.FC<Props> = ({ subLabel, ...props }) => {
+export const InputLabel: React.FC<React.PropsWithChildren<Props>> = ({ subLabel, ...props }) => {
   const subLabelColor = useColorModeValue("brand.100", "brand.100")
   if (!props.label) return null
 

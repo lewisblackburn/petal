@@ -1,6 +1,5 @@
 import * as React from "react"
-import { Flex, Box, Text, Container } from "@chakra-ui/layout"
-import { Icon, useColorModeValue } from "@chakra-ui/react"
+import { Icon, useColorModeValue, Flex, Box, Text, Container } from "@chakra-ui/react"
 import { FiGithub, FiInstagram, FiTwitter } from "react-icons/fi"
 
 export function Footer() {

@@ -12,7 +12,7 @@ import {
 interface Props extends ModalProps {
   title?: string
 }
-export const Modal: React.FC<Props> = (props) => {
+export const Modal: React.FC<React.PropsWithChildren<Props>> = (props) => {
   return (
     <CModal {...props}>
       <ModalOverlay />

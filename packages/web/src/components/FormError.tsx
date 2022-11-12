@@ -5,7 +5,7 @@ import { FormControl, FormErrorMessage } from "@chakra-ui/react"
 interface Props {
   error?: string
 }
-export const FormError: React.FC<Props> = (props) => {
+export const FormError: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { appError } = useFormContext() as UseFormReturn<Record<string, any>> & {
     appError?: string
   }

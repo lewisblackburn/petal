@@ -9,14 +9,13 @@ import {
   Flex,
   Icon,
   IconButton,
-  Link,
   Spinner,
   Stack,
   Text,
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react"
-import NextLink from "next/link"
+import Link from "components/Link"
 import { useRouter } from "next/router"
 
 import { Role } from "lib/graphql"
@@ -109,20 +108,19 @@ function SidebarLink({ href, icon, ...props }: SidebarLinkProps) {
   const router = useRouter()
   const isActive = router.asPath.includes(href)
   return (
-    <NextLink passHref href={href}>
-      <Link
-        display="flex"
-        alignItems="center"
-        justifyContent={{ base: "center", md: "flex-start" }}
-        fontWeight="semibold"
-        color={isActive ? "purple.500" : undefined}
-        {...props}
-      >
-        <Center w="26px">{icon}</Center>
-        <Text ml={2} display={{ base: "none", md: "block" }}>
-          {props.children}
-        </Text>
-      </Link>
-    </NextLink>
+    <Link
+      display="flex"
+      alignItems="center"
+      justifyContent={{ base: "center", md: "flex-start" }}
+      fontWeight="semibold"
+      color={isActive ? "purple.500" : undefined}
+      href={href}
+      {...props}
+    >
+      <Center w="26px">{icon}</Center>
+      <Text ml={2} display={{ base: "none", md: "block" }}>
+        {props.children}
+      </Text>
+    </Link>
   )
 }

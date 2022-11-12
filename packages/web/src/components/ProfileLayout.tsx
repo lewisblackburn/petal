@@ -1,9 +1,9 @@
 import * as React from "react"
-import { Box, Flex, Heading, Link, LinkProps, Stack, useColorModeValue } from "@chakra-ui/react"
-import NextLink from "next/link"
+import { Box, Flex, Heading, LinkProps, Stack, useColorModeValue } from "@chakra-ui/react"
+import Link from "components/Link"
 import { useRouter } from "next/router"
 
-export const ProfileLayout: React.FC = ({ children }) => {
+export const ProfileLayout: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   return (
     <Box pt={10} pb={20} w="100%">
       <Heading pb={10} fontSize={{ base: "2xl", md: "3xl" }}>
@@ -33,24 +33,22 @@ export const ProfileLayout: React.FC = ({ children }) => {
 interface ProfileLinkProps extends LinkProps {
   href: string
 }
-const ProfileLink: React.FC<ProfileLinkProps> = ({ href, ...props }) => {
+const ProfileLink: React.FC<React.PropsWithChildren<ProfileLinkProps>> = ({ href, ...props }) => {
   const { asPath } = useRouter()
   const isActive = asPath === href
   const activeColor = useColorModeValue("black", "white")
   const inactiveColor = useColorModeValue("gray.600", "gray.500")
   return (
-    <NextLink href={href} passHref>
-      <Link
-        pr={4}
-        h="25px"
-        justifyContent={{ base: "center", md: "flex-start" }}
-        textDecoration="none !important"
-        color={isActive ? activeColor : inactiveColor}
-        _hover={{ color: useColorModeValue("black", "white") }}
-        fontWeight={isActive ? "semibold" : "normal"}
-      >
-        {props.children}
-      </Link>
-    </NextLink>
+    <Link
+      pr={4}
+      h="25px"
+      justifyContent={{ base: "center", md: "flex-start" }}
+      textDecoration="none !important"
+      color={isActive ? activeColor : inactiveColor}
+      _hover={{ color: useColorModeValue("black", "white") }}
+      fontWeight={isActive ? "semibold" : "normal"}
+    >
+      {props.children}
+    </Link>
   )
 }

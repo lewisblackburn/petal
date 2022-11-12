@@ -6,10 +6,8 @@ import {
   Box,
   Container,
   Fade,
-  Flex,
   HStack,
   IconButton,
-  Link,
   LinkProps,
   Menu,
   MenuButton,
@@ -19,7 +17,7 @@ import {
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react"
-import NextLink from "next/link"
+import Link from "./Link"
 import { useRouter } from "next/router"
 
 import { Role } from "lib/graphql"
@@ -32,7 +30,7 @@ interface NavLinkProps {
   href: string
   children: React.ReactNode
 }
-export const NavLink: React.FC<NavLinkProps> = ({ href, children, ...props }) => {
+export const NavLink: React.FC<React.PropsWithChildren<NavLinkProps>> = ({ href, children, ...props }) => {
   const router = useRouter()
   const active = router.asPath.includes(href)
 
@@ -109,13 +107,13 @@ export function Nav() {
           <MenuList fontSize="md">
             {me ? (
               <>
-                <NextLink passHref href="/profile">
+                <Link href="/profile">
                   <MenuItem icon={<Box as={BiUser} boxSize="16px" />}>Profile</MenuItem>
-                </NextLink>
+                </Link>
                 {me.role === Role.Admin && (
-                  <NextLink passHref href="/admin">
+                  <Link href="/admin">
                     <MenuItem icon={<Box as={BiCog} boxSize="16px" />}>Admin</MenuItem>
-                  </NextLink>
+                  </Link>
                 )}
                 <MenuDivider />
                 <MenuItem
@@ -140,22 +138,22 @@ export function Nav() {
                   Toggle theme
                 </MenuItem>
                 <MenuDivider />
-                <NextLink passHref href="/watchlist">
+                <Link href="/watchlist">
                   <MenuItem>Watchlist</MenuItem>
-                </NextLink>
-                <NextLink passHref href="/ratings">
+                </Link>
+                <Link href="/ratings">
                   <MenuItem>Ratings</MenuItem>
-                </NextLink>
-                <NextLink passHref href="/lists">
+                </Link>
+                <Link href="/lists">
                   <MenuItem>Lists</MenuItem>
-                </NextLink>
+                </Link>
                 <MenuDivider />
-                <NextLink passHref href="/login">
+                <Link href="/login">
                   <MenuItem>Login</MenuItem>
-                </NextLink>
-                <NextLink passHref href="/register">
+                </Link>
+                <Link href="/register">
                   <MenuItem fontWeight="semibold">Register</MenuItem>
-                </NextLink>
+                </Link>
               </>
             )}
           </MenuList>
@@ -174,15 +172,14 @@ export function HomeLink({ href, ...props }: HomeLinkProps) {
   const isActive = asPath === href
 
   return (
-    <NextLink passHref href={href}>
-      <Link
-        textDecor="none !important"
-        _hover={{ color: isActive ? "purple.600" : "purple.500" }}
-        color={isActive ? "purple.600" : "gray.500"}
-        {...props}
-      >
-        {props.children}
-      </Link>
-    </NextLink>
+    <Link
+      textDecor="none !important"
+      _hover={{ color: isActive ? "purple.600" : "purple.500" }}
+      color={isActive ? "purple.600" : "gray.500"}
+      href={href}
+      {...props}
+    >
+      {props.children}
+    </Link>
   )
 }
