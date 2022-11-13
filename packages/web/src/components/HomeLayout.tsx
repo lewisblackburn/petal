@@ -18,7 +18,7 @@ export function HomeLayout(props: Props) {
       <Nav />
 
       <Box pt="35px">
-        <Container maxW="8xl" py={20} minH="calc(100vh - 65px)">
+        <Container maxW="8xl" mt={6} py={20}>
           {props.children}
         </Container>
       </Box>

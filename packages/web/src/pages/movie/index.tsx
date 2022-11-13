@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Box, Center, Flex, Image, useBreakpointValue, Grid } from "@chakra-ui/react"
-import Head from "next/head"
+import NextLink from "next/link"
 
 import { HomeLayout } from "components/HomeLayout"
 import { gql } from "@apollo/client"
@@ -56,15 +56,16 @@ export default function Movies() {
       <Center w="full">
         <Grid templateColumns={templateColumns} gap="5">
           {new Array(24).fill(0).map((item) => (
-            <Image
-              key={item}
-              width="48"
-              height="72"
-              borderRadius="6"
-              src="https://via.placeholder.com/1000"
-              fallbackSrc="https://via.placeholder.com/1000"
-              alt="Dan Abramov"
-            />
+            <NextLink key={item} href="/movies/movie" legacyBehavior passHref>
+              <Image
+                width="48"
+                height="72"
+                borderRadius="6"
+                src="https://via.placeholder.com/1000"
+                fallbackSrc="https://via.placeholder.com/1000"
+                alt="Dan Abramov"
+              />
+            </NextLink>
           ))}
         </Grid>
       </Center>

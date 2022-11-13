@@ -1,13 +1,14 @@
 import * as React from "react"
 import { BiCog, BiExit, BiMoon, BiSun, BiUser } from "react-icons/bi"
-import { GiHamburgerMenu } from "react-icons/gi"
 import {
   Avatar,
   Box,
+  Button,
   Container,
   Fade,
   HStack,
-  IconButton,
+  Icon,
+  Text,
   LinkProps,
   Menu,
   MenuButton,
@@ -16,6 +17,7 @@ import {
   MenuList,
   useColorMode,
   useColorModeValue,
+  Flex,
 } from "@chakra-ui/react"
 import Link from "./Link"
 import { useRouter } from "next/router"
@@ -25,6 +27,7 @@ import { useLogout } from "lib/hooks/useLogout"
 import { useMe } from "lib/hooks/useMe"
 
 import { LinkButton } from "./LinkButton"
+import { FiChevronDown } from "react-icons/fi"
 
 interface NavLinkProps {
   href: string
@@ -61,7 +64,7 @@ export function Nav() {
         maxW="8xl"
         display="flex"
         transition="200ms all"
-        py={{ base: 4, md: 3 }}
+        height="24"
         bg={useColorModeValue("white", "gray.800")}
         justifyContent="space-between"
         alignItems="center"
@@ -72,7 +75,7 @@ export function Nav() {
           <HomeLink href="/" color="gray.900" _hover={{ color: "gray.600" }} pl={0} mr={3} fontWeight="bold">
             petal
           </HomeLink>
-          <NavLink href="/movies">Movies</NavLink>
+          <NavLink href="/movie">Movies</NavLink>
           <NavLink href="/tv">TV</NavLink>
           <NavLink href="/music">Music</NavLink>
           <NavLink href="/books">Books</NavLink>
@@ -97,12 +100,17 @@ export function Nav() {
         {/* Right menu list */}
         <Menu placement="bottom-end">
           <MenuButton
-            as={IconButton}
+            as={Button}
+            variant="tertiary"
+            size="lg"
             display={{ base: "flex", md: me ? "flex" : "none" }}
-            variant="ghost"
-            borderRadius="full"
-            icon={me ? <Avatar size="xs" src={me.avatar || undefined} /> : <Box as={GiHamburgerMenu} />}
-          />
+            rightIcon={<Icon as={FiChevronDown} />}
+          >
+            <Flex align="center" gap="3">
+              <Avatar size="xs" name={me?.fullName} src="https://bit.ly/sage-adebayo" />
+              <Text variant="2">{me?.firstName}</Text>
+            </Flex>
+          </MenuButton>
 
           <MenuList fontSize="md">
             {me ? (
