@@ -32,6 +32,7 @@ const Rating = ({ selected, setSelected }: Props) => {
             setHoveredIndex(-1)
           }}
           color={(!hovering && index <= selected - 1) || index <= hoveredIndex ? "yellow.500" : "black"}
+          transition="all 100ms"
         />
       ))}
     </>

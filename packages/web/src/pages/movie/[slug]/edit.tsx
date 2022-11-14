@@ -28,6 +28,24 @@ import { Genre, SortOrder, Status } from "lib/graphql"
 import { useState } from "react"
 import { Column, Sort, Table } from "components/Table"
 
+const _ = gql`
+  fragment PersonItem on Person {
+    id
+    name
+  }
+`
+
+const __ = gql`
+  query GetUsers($orderBy: [UserOrderByWithRelationInput!], $where: UserWhereInput, $skip: Int) {
+    users(take: 10, orderBy: $orderBy, where: $where, skip: $skip) {
+      items {
+        ...UserItem
+      }
+      count
+    }
+  }
+`
+
 const PrimarySchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Required"),
   password: Yup.string().min(8, "Must be at least 8 characters"),
@@ -139,7 +157,56 @@ export default function Edit() {
               <Form onSubmit={onSubmit} {...form}>
                 <Flex flexDir="column" gap="10">
                   <Card variant="secondary" width="fit-content">
-                    A Table Here
+                    <Table
+                      noDataText="No people found"
+                      data={people}
+                      count={data?.users.count}
+                      sort={sort}
+                      onSort={setSort}
+                      getRowHref={(user) => `/admin/users/${user.id}`}
+                      onFetchMore={handleFetchMore}
+                      isLoading={loading && !!!data}
+                    >
+                      <Column<UserItemFragment>
+                        hasNoLink
+                        display={{ base: "none", md: "flex" }}
+                        maxW="30px"
+                        header={
+                          <Checkbox
+                            colorScheme="purple"
+                            zIndex={100}
+                            isChecked={data && data.users.count > 0 && selectedUsers.length > 0}
+                            onChange={toggleAll}
+                            iconColor="white"
+                            {...(isPartialSelection && { icon: <PartialCheckIcon color="white" /> })}
+                          />
+                        }
+                        row={(user) => (
+                          <Checkbox
+                            colorScheme="purple"
+                            isChecked={selectedUsers.includes(user.id)}
+                            iconColor="white"
+                            onChange={() => toggleSelected(user.id)}
+                          />
+                        )}
+                      />
+                      <Column<UserItemFragment>
+                        sortKey="firstName"
+                        header="Name"
+                        row={(user) => user.fullName}
+                      />
+                      <Column<UserItemFragment>
+                        sortKey="email"
+                        display={{ base: "none", md: "flex" }}
+                        header="Email"
+                        row={(user) => user.email}
+                      />
+                      <Column<UserItemFragment>
+                        sortKey="createdAt"
+                        header="Created"
+                        row={(user) => dayjs(user.createdAt).format("DD/MM/YYYY")}
+                      />
+                    </Table>
                   </Card>
                 </Flex>
               </Form>
