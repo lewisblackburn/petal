@@ -6,33 +6,22 @@ import { Input } from "components/Input"
 
 import { HomeLayout } from "components/HomeLayout"
 import Yup from "lib/yup"
-import { gql } from "@apollo/client"
 
-const _ = gql`
-  query Movies {
-    movies {
-      id
-      title
-      poster
-    }
-  }
-`
-
-const SearchMovieSchema = Yup.object().shape({
+const SearchPeopleSchema = Yup.object().shape({
   text: Yup.string(),
 })
 
-export default function Movies() {
-  const searchForm = useForm({ schema: SearchMovieSchema })
+export default function People() {
+  const searchForm = useForm({ schema: SearchPeopleSchema })
 
   return (
     <Flex direction="column" gap={10}>
       <Flex direction="column" gap={2}>
         <Text fontSize="32" fontWeight={700} color="#100a55">
-          Search movies
+          Search people
         </Text>
         <Text fontSize="md" fontWeight={500} color="#100a55">
-          10,325 movies found in 312ms
+          10,325 people found in 312ms
         </Text>
       </Flex>
       <Form {...searchForm}>
@@ -47,4 +36,4 @@ export default function Movies() {
   )
 }
 
-Movies.getLayout = (page: React.ReactNode) => <HomeLayout>{page}</HomeLayout>
+People.getLayout = (page: React.ReactNode) => <HomeLayout>{page}</HomeLayout>

@@ -78,8 +78,8 @@ export function Nav() {
           <NavLink href="/movie">Movies</NavLink>
           <NavLink href="/tv">TV</NavLink>
           <NavLink href="/music">Music</NavLink>
-          <NavLink href="/books">Books</NavLink>
-          <NavLink href="/peopel">People</NavLink>
+          <NavLink href="/book">Books</NavLink>
+          <NavLink href="/person">People</NavLink>
         </HStack>
 
         {/* Right link list */}

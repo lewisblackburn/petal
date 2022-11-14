@@ -11,7 +11,6 @@ import {
   Grid,
   GridItem,
   Button,
-  Checkbox,
 } from "@chakra-ui/react"
 import Card from "components/Card"
 import { DefaultLayout } from "components/DefaultLayout"
@@ -24,7 +23,7 @@ import { NumberInput } from "components/NumberInput"
 import Yup from "lib/yup"
 import { useForm } from "lib/hooks/useForm"
 import { FiChevronRight } from "react-icons/fi"
-import { Genre, SortOrder, Status } from "lib/graphql"
+import { SortOrder, Status } from "lib/graphql"
 import { useState } from "react"
 import { Column, Sort, Table } from "components/Table"
 
@@ -33,9 +32,9 @@ const PrimarySchema = Yup.object().shape({
   password: Yup.string().min(8, "Must be at least 8 characters"),
 })
 
-const Genres: { id: string; name: string }[] = Object.keys(Genre).map((genre, index) => {
-  return { id: index.toString(), name: genre }
-})
+// const Genres: { id: string; name: string }[] = Object.keys(Genre).map((genre, index) => {
+//   return { id: index.toString(), name: genre }
+// })
 
 export default function Edit() {
   const form = useForm({ schema: PrimarySchema })
@@ -160,21 +159,7 @@ export default function Edit() {
             <Flex justify="center">
               <Form onSubmit={onSubmit} {...form}>
                 <Flex flexDir="column" gap="10">
-                  <Card variant="secondary" width="fit-content">
-                    <Table
-                      noDataText="No geners found"
-                      data={Genres}
-                      count={Genres.length}
-                      sort={sort}
-                      onSort={setSort}
-                      getRowHref={(genre) => `/genres/${genre.name}`}
-                      onFetchMore={() => {}}
-                      isLoading={false}
-                    >
-                      <Column<any> sortKey="id" header="id" row={(genre) => genre.id} />
-                      <Column<any> sortKey="name" header="Name" row={(genre) => genre.name} />
-                    </Table>
-                  </Card>
+                  <Card variant="secondary" width="fit-content"></Card>
                 </Flex>
               </Form>
             </Flex>

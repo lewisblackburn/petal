@@ -375,14 +375,12 @@ export default function Movie() {
                   Genres
                 </Text>
                 <Grid gridTemplateColumns="1fr 1fr" gap="4">
-                  {/* Later this will just be movie genres */}
-                  {Object.keys(Genre)
-                    .slice(0, 4)
-                    .map((genre: keyof typeof Genre) => (
-                      <LinkButton key={genre} href="#" variant="card" size="xl">
-                        {Object.values(genre)}
-                      </LinkButton>
-                    ))}
+                  <LinkButton href="#" variant="card" size="xl">
+                    Romance
+                  </LinkButton>
+                  <LinkButton href="#" variant="card" size="xl">
+                    Comedy
+                  </LinkButton>
                 </Grid>
                 <Divider />
                 <Text variant="4" size="lg">

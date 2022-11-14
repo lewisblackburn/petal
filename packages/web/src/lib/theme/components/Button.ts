@@ -67,5 +67,7 @@ export const Button = {
       color: "brand.100",
     }),
   },
-  defaultProps: {},
+  defaultProps: {
+    variant: "primary",
+  },
 }

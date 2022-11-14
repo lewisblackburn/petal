@@ -24,24 +24,30 @@ import { NumberInput } from "components/NumberInput"
 import Yup from "lib/yup"
 import { useForm } from "lib/hooks/useForm"
 import { FiChevronRight } from "react-icons/fi"
-import { Genre, SortOrder, Status } from "lib/graphql"
+import { Genre, PersonItemFragment, SortOrder, Status, usePeopleQuery } from "lib/graphql"
 import { useState } from "react"
-import { Column, Sort, Table } from "components/Table"
+import { Column, getOrderBy, Sort, Table } from "components/Table"
+import { gql } from "@apollo/client"
+import { PartialCheckIcon } from "components/PartialCheckIcon"
+import dayjs from "dayjs"
 
 const _ = gql`
   fragment PersonItem on Person {
     id
     name
+    avatar
+    createdAt
+    updatedAt
   }
 `
 
 const __ = gql`
-  query GetUsers($orderBy: [UserOrderByWithRelationInput!], $where: UserWhereInput, $skip: Int) {
-    users(take: 10, orderBy: $orderBy, where: $where, skip: $skip) {
-      items {
-        ...UserItem
-      }
+  query People($orderBy: [PersonOrderByWithRelationInput!], $where: PersonWhereInput, $skip: Int) {
+    people(orderBy: $orderBy, where: $where, skip: $skip) {
       count
+      items {
+        ...PersonItem
+      }
     }
   }
 `
@@ -51,14 +57,42 @@ const PrimarySchema = Yup.object().shape({
   password: Yup.string().min(8, "Must be at least 8 characters"),
 })
 
-const Genres: { id: string; name: string }[] = Object.keys(Genre).map((genre, index) => {
-  return { id: index.toString(), name: genre }
-})
-
 export default function Edit() {
   const form = useForm({ schema: PrimarySchema })
-  const [sort, setSort] = useState<Sort>({ createdAt: SortOrder.Desc })
   const [tabIndex, setTabIndex] = useState(0)
+
+  const [selectedPeople, setSelectedPeople] = useState<string[]>([])
+  const [sort, setSort] = useState<Sort>({ createdAt: SortOrder.Desc })
+  const { data, loading, fetchMore } = usePeopleQuery({
+    fetchPolicy: "cache-and-network",
+    variables: {
+      orderBy: getOrderBy(sort),
+    },
+  })
+
+  const people = data?.people.items
+
+  const handleFetchMore = () => {
+    if (!people) return
+    return fetchMore({ variables: { skip: people.length } })
+  }
+
+  const toggleSelected = (personId: string) => {
+    if (selectedPeople.includes(personId)) {
+      setSelectedPeople((selected) => selected.filter((d) => d !== personId))
+    } else {
+      setSelectedPeople((selected) => [...selected, personId])
+    }
+  }
+  const toggleAll = () => {
+    if (selectedPeople.length > 0) {
+      setSelectedPeople([])
+    } else if (people) {
+      setSelectedPeople(people.map((person) => person.id))
+    }
+  }
+
+  const isPartialSelection = !!people && selectedPeople.length > 0 && selectedPeople.length < people.length
 
   const onSubmit = () => {}
 
@@ -154,62 +188,53 @@ export default function Edit() {
           </TabPanel>
           <TabPanel>
             <Flex justify="center">
-              <Form onSubmit={onSubmit} {...form}>
-                <Flex flexDir="column" gap="10">
-                  <Card variant="secondary" width="fit-content">
-                    <Table
-                      noDataText="No people found"
-                      data={people}
-                      count={data?.users.count}
-                      sort={sort}
-                      onSort={setSort}
-                      getRowHref={(user) => `/admin/users/${user.id}`}
-                      onFetchMore={handleFetchMore}
-                      isLoading={loading && !!!data}
-                    >
-                      <Column<UserItemFragment>
-                        hasNoLink
-                        display={{ base: "none", md: "flex" }}
-                        maxW="30px"
-                        header={
-                          <Checkbox
-                            colorScheme="purple"
-                            zIndex={100}
-                            isChecked={data && data.users.count > 0 && selectedUsers.length > 0}
-                            onChange={toggleAll}
-                            iconColor="white"
-                            {...(isPartialSelection && { icon: <PartialCheckIcon color="white" /> })}
-                          />
-                        }
-                        row={(user) => (
-                          <Checkbox
-                            colorScheme="purple"
-                            isChecked={selectedUsers.includes(user.id)}
-                            iconColor="white"
-                            onChange={() => toggleSelected(user.id)}
-                          />
-                        )}
+              <Card variant="secondary" w="full">
+                <Table
+                  noDataText="No people found"
+                  data={people}
+                  count={data?.people.count}
+                  sort={sort}
+                  onSort={setSort}
+                  // getRowHref={(person) => `/person/${person.id}`}
+                  onFetchMore={handleFetchMore}
+                  isLoading={loading && !!!data}
+                >
+                  <Column<PersonItemFragment>
+                    hasNoLink
+                    display={{ base: "none", md: "flex" }}
+                    maxW="30px"
+                    header={
+                      <Checkbox
+                        colorScheme="purple"
+                        zIndex={100}
+                        isChecked={data && data.people.count > 0 && selectedPeople.length > 0}
+                        onChange={toggleAll}
+                        iconColor="white"
+                        {...(isPartialSelection && { icon: <PartialCheckIcon color="white" /> })}
                       />
-                      <Column<UserItemFragment>
-                        sortKey="firstName"
-                        header="Name"
-                        row={(user) => user.fullName}
+                    }
+                    row={(person) => (
+                      <Checkbox
+                        colorScheme="purple"
+                        isChecked={selectedPeople.includes(person.id)}
+                        iconColor="white"
+                        onChange={() => toggleSelected(person.id)}
                       />
-                      <Column<UserItemFragment>
-                        sortKey="email"
-                        display={{ base: "none", md: "flex" }}
-                        header="Email"
-                        row={(user) => user.email}
-                      />
-                      <Column<UserItemFragment>
-                        sortKey="createdAt"
-                        header="Created"
-                        row={(user) => dayjs(user.createdAt).format("DD/MM/YYYY")}
-                      />
-                    </Table>
-                  </Card>
-                </Flex>
-              </Form>
+                    )}
+                  />
+                  <Column<PersonItemFragment> sortKey="name" header="Name" row={(person) => person.name} />
+                  <Column<PersonItemFragment>
+                    sortKey="createdAt"
+                    header="Created"
+                    row={(person) => dayjs(person.createdAt).format("DD/MM/YYYY")}
+                  />
+                  <Column<PersonItemFragment>
+                    sortKey="updatedAt"
+                    header="Updated"
+                    row={(person) => dayjs(person.updatedAt).format("DD/MM/YYYY")}
+                  />
+                </Table>
+              </Card>
             </Flex>
           </TabPanel>
           <TabPanel>
@@ -227,21 +252,7 @@ export default function Edit() {
             <Flex justify="center">
               <Form onSubmit={onSubmit} {...form}>
                 <Flex flexDir="column" gap="10">
-                  <Card variant="secondary" width="fit-content">
-                    <Table
-                      noDataText="No geners found"
-                      data={Genres}
-                      count={Genres.length}
-                      sort={sort}
-                      onSort={setSort}
-                      getRowHref={(genre) => `/genres/${genre.name}`}
-                      onFetchMore={() => {}}
-                      isLoading={false}
-                    >
-                      <Column<any> sortKey="id" header="id" row={(genre) => genre.id} />
-                      <Column<any> sortKey="name" header="Name" row={(genre) => genre.name} />
-                    </Table>
-                  </Card>
+                  <Card variant="secondary" width="fit-content"></Card>
                 </Flex>
               </Form>
             </Flex>
