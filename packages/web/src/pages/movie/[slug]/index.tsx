@@ -1,6 +1,5 @@
 import * as React from "react"
 import {
-  Box,
   Button,
   Divider,
   Flex,
@@ -11,6 +10,11 @@ import {
   Text,
   AspectRatio,
   Avatar,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverBody,
 } from "@chakra-ui/react"
 import {
   FiAlertTriangle,
@@ -27,6 +31,7 @@ import {
   FiStar,
   FiTrendingUp,
   FiUser,
+  FiMinus,
 } from "react-icons/fi"
 import { IconType } from "react-icons"
 import { HiLanguage } from "react-icons/hi2"
@@ -38,6 +43,7 @@ import { Poster } from "components/Poster"
 import { Backdrop } from "components/Backdrop"
 import Card from "components/Card"
 import { LinkButton } from "components/LinkButton"
+import Rating from "components/Rating"
 
 const Tag: React.FC<React.PropsWithChildren<{ title: string; icon?: IconType }>> = ({
   title,
@@ -58,6 +64,9 @@ const Tag: React.FC<React.PropsWithChildren<{ title: string; icon?: IconType }>>
 }
 
 export default function Movie() {
+  const [selected, setSelected] = React.useState(-1)
+  console.log(selected)
+
   return (
     <Flex flexDir="column" gap="10">
       <Link href="/movies" size="md">
@@ -76,10 +85,20 @@ export default function Movie() {
           </Text>
         </Flex>
         <Flex gap="4" alignSelf="end">
-          <Button variant="secondary" size="lg">
-            <Icon as={FiStar} />
-            Rate
-          </Button>
+          <Popover placement="top">
+            <PopoverTrigger>
+              <Button variant="secondary" size="lg">
+                <Icon as={FiStar} />
+                Rate
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent width="fit-content">
+              <PopoverArrow />
+              <PopoverBody display="flex" justifyContent="center" alignItems="center">
+                <Rating selected={selected} setSelected={setSelected} />
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
           <Button variant="secondary" size="lg">
             <Icon as={FiHeart} />
             Favourite
