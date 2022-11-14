@@ -1,12 +1,11 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql"
 import { MovieService } from "./movie.service"
 import { Inject, Service } from "typedi"
-import { Movie, MovieWhereUniqueInput, MovieUpdatelockedInput } from "@generated"
+import { Movie, MovieUpdateInput, MovieWhereUniqueInput, MovieUpdatelockedInput } from "@generated"
 import { UseAuth } from "../shared/middleware/UseAuth"
 import { CurrentUser } from "../shared/currentUser"
 import { User } from "../user/user.model"
 import { MovieInput } from "./inputs/create.input"
-import { MovieUpdateInput } from "./inputs/update.input"
 import { Role } from "@prisma/client"
 
 @Service()

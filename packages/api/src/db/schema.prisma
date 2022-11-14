@@ -18,27 +18,6 @@ enum Role {
   ADMIN
 }
 
-model User {
-  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email     String     @unique
-  /// @TypeGraphQL.omit(output: true)
-  password  String
-  firstName String
-  lastName  String
-  twitter   String?
-  instagram String?
-  avatar    String?
-  role      Role       @default(USER)
-  bio       String?
-  movies    Movie[]
-  lists     List[]
-  ratings   Rating[]
-  logs      Log[]
-  watchlist Watchlist?
-  createdAt DateTime   @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
-}
-
 enum Status {
   RUMORED
   PLANNED
@@ -46,26 +25,6 @@ enum Status {
   POST_PRODUCTION
   RELEASED
   CANCELLED
-}
-
-// Change to Actual Model Instead (easier for table sorting and such)
-enum Genre {
-  ACTION
-  ADVENTURE
-  ANIMATION
-  COMEDY
-  CRIME
-  MYSTERY
-  FANTASY
-  HISTORICAL
-  HORROR
-  ROMANCE
-  SATIRE
-  SCIENCE_FICTION
-  CYBERPUNK
-  SPECULATIVE
-  THRILLER
-  WESTERN
 }
 
 enum AgeRating {
@@ -76,15 +35,52 @@ enum AgeRating {
   EIGHTEEN
 }
 
-model Platform {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name      String
-  movies    Movie[]
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+enum MediaType {
+  MOVIE
+  SHOW
+  BOOK
+  SONG
+  PERSON
 }
 
-model Rating {
+model User {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email       String        @unique
+  /// @TypeGraphQL.omit(output: true)
+  password    String
+  firstName   String
+  lastName    String
+  twitter     String?
+  instagram   String?
+  avatar      String?
+  role        Role          @default(USER)
+  bio         String?
+  movies      Movie[]
+  lists       List[]
+  ratings     MovieRating[]
+  logs        Log[]
+  watchlist   Watchlist?
+  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
+  Show        Show[]
+  ShowRating  ShowRating[]
+  MovieReview MovieReview[]
+  ShowReview  ShowReview[]
+}
+
+model ShowRating {
+  value     Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.Uuid
+  show      Show     @relation(fields: [showId], references: [id])
+  showId    String   @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@unique([userId, showId])
+}
+
+model MovieRating {
   value     Int
   user      User     @relation(fields: [userId], references: [id])
   userId    String   @db.Uuid
@@ -94,11 +90,6 @@ model Rating {
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   @@unique([userId, movieId])
-}
-
-enum MediaType {
-  MOVIE
-  PERSON
 }
 
 model Log {
@@ -113,13 +104,18 @@ model Log {
 }
 
 model Person {
-  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id         String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name       String
   avatar     String?
-  characters Character[]
+  movies     MovieCharacter[]
+  shows      ShowCharacter[]
+  movieCrews MovieCrewMember[]
+  showCrews  ShowCrewMember[]
+  createdAt  DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
 }
 
-model Character {
+model MovieCharacter {
   person   Person @relation(fields: [personId], references: [id])
   personId String @db.Uuid
   movie    Movie  @relation(fields: [movieId], references: [id])
@@ -129,38 +125,154 @@ model Character {
   @@unique([personId, movieId])
 }
 
+model CrewMemberRole {
+  id     String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type   String
+  movies MovieCrewMember[]
+  shows  ShowCrewMember[]
+}
+
+model MovieCrewMember {
+  id       String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  person   Person           @relation(fields: [personId], references: [id])
+  personId String           @db.Uuid
+  movie    Movie            @relation(fields: [movieId], references: [id])
+  movieId  String           @db.Uuid
+  name     String
+  role     CrewMemberRole[]
+
+  @@unique([personId, movieId])
+}
+
+model ShowCrewMember {
+  id       String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  person   Person           @relation(fields: [personId], references: [id])
+  personId String           @db.Uuid
+  show     Show             @relation(fields: [showId], references: [id])
+  showId   String           @db.Uuid
+  name     String
+  type     CrewMemberRole[]
+
+  @@unique([personId, showId])
+}
+
+model ShowCharacter {
+  person   Person @relation(fields: [personId], references: [id])
+  personId String @db.Uuid
+  show     Show   @relation(fields: [showId], references: [id])
+  showId   String @db.Uuid
+  name     String
+
+  @@unique([personId, showId])
+}
+
+model MovieReview {
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String @db.Uuid
+  movie   Movie  @relation(fields: [movieId], references: [id])
+  movieId String @db.Uuid
+  comment String
+
+  @@unique([userId, movieId])
+}
+
+model ShowReview {
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String @db.Uuid
+  show    Show   @relation(fields: [showId], references: [id])
+  showId  String @db.Uuid
+  comment String
+
+  @@unique([userId, showId])
+}
+
+model Genre {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  movies    Movie[]
+  shows     Show[]
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+}
+
+model Keyword {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  movies    Movie[]
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  Show      Show?    @relation(fields: [showId], references: [id])
+  showId    String?  @db.Uuid
+}
+
 model Movie {
-  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id           String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title        String
   overview     String
   tagline      String?
   genres       Genre[]
   lists        List[]
   watchlists   Watchlist[]
-  ratings      Rating[]
-  charaters    Character[]
-  /// @TypeGraphQL.omit(input: ["update", "where", "orderBy"])
-  popularity   Float?      @default(0)
-  platforms    Platform[]
+  ratings      MovieRating[]
+  charaters    MovieCharacter[]
+  crew         MovieCrewMember[]
+  reviews      MovieReview[]
+  /// @TypeGraphQL.omit(input: ["create", "update"])
+  popularity   Float?            @default(0)
   age_rating   AgeRating?
-  runtime      Int?        @default(0)
+  runtime      Int?              @default(0)
   homepage     String?
   language     String?
   videos       String[]
   posters      String[]
   backdrops    String[]
-  keywords     String[]
-  contentScore Int?
+  keywords     Keyword[]
+  contentScore Int?              @default(0)
+  /// @TypeGraphQL.omit(input: ["create", "update"])
   locked       String[]
-  adult        Boolean?    @default(false)
-  budget       Int?        @default(0)
-  revenue      Int?        @default(0)
-  status       Status?     @default(PLANNED)
-  releaseDate  DateTime?   @default(now()) @db.Timestamptz(6)
-  user         User?       @relation(fields: [userId], references: [id])
-  userId       String?     @db.Uuid
-  createdAt    DateTime    @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime    @default(now()) @updatedAt @db.Timestamptz(6)
+  adult        Boolean?          @default(false)
+  budget       Int?              @default(0)
+  revenue      Int?              @default(0)
+  status       Status?           @default(PLANNED)
+  releaseDate  DateTime?         @default(now()) @db.Timestamptz(6)
+  user         User              @relation(fields: [userId], references: [id])
+  userId       String            @db.Uuid
+  createdAt    DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+}
+
+model Show {
+  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title        String
+  overview     String
+  tagline      String?
+  genres       Genre[]
+  lists        List[]
+  watchlists   Watchlist[]
+  ratings      ShowRating[]
+  charaters    ShowCharacter[]
+  crew         ShowCrewMember[]
+  reviews      ShowReview[]
+  /// @TypeGraphQL.omit(input: ["create", "update"])
+  popularity   Float?           @default(0)
+  age_rating   AgeRating?
+  runtime      Int?             @default(0)
+  homepage     String?
+  language     String?
+  videos       String[]
+  posters      String[]
+  backdrops    String[]
+  keywords     Keyword[]
+  contentScore Int?             @default(0)
+  /// @TypeGraphQL.omit(input: ["create", "update"])
+  locked       String[]
+  adult        Boolean?         @default(false)
+  status       Status?          @default(PLANNED)
+  releaseDate  DateTime?        @default(now()) @db.Timestamptz(6)
+  user         User             @relation(fields: [userId], references: [id])
+  userId       String           @db.Uuid
+  createdAt    DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
 }
 
 model List {
@@ -170,6 +282,7 @@ model List {
   backdrop    String?
   public      Boolean? @default(true)
   movies      Movie[]
+  shows       Show[]
   user        User     @relation(fields: [userId], references: [id])
   userId      String   @db.Uuid
   createdAt   DateTime @default(now()) @db.Timestamptz(6)
@@ -179,6 +292,7 @@ model List {
 model Watchlist {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   movies    Movie[]
+  shows     Show[]
   user      User     @relation(fields: [userId], references: [id])
   userId    String   @unique @db.Uuid
   createdAt DateTime @default(now()) @db.Timestamptz(6)

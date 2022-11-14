@@ -1,9 +1,10 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql"
-import { Person, PersonWhereUniqueInput } from "@generated"
+import { Args, Arg, Mutation, Query, Resolver } from "type-graphql"
+import { Person, PersonWhereUniqueInput, FindManyPersonArgs } from "@generated"
 import { Inject, Service } from "typedi"
 import { PersonService } from "./person.service"
 import { UseAuth } from "../shared/middleware/UseAuth"
 import { PersonInput } from "./inputs/create.input"
+import { PeopleResponse } from "./responses/people.response"
 
 @Service()
 @Resolver(() => Person)
@@ -16,9 +17,10 @@ export default class PersonResolver {
     return this.personService.get(id)
   }
 
-  @Query(() => [Person])
-  async people() {
-    return await this.personService.getAll()
+  @UseAuth()
+  @Query(() => PeopleResponse)
+  async people(@Args() args: FindManyPersonArgs) {
+    return await this.personService.getAll(args)
   }
 
   @UseAuth()
