@@ -1,60 +1,32 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 
-  - The `age_rating` column on the `Movie` table would be dropped and recreated. This will lead to data loss if there is data in the column.
-  - The `status` column on the `Movie` table would be dropped and recreated. This will lead to data loss if there is data in the column.
-  - The `role` column on the `User` table would be dropped and recreated. This will lead to data loss if there is data in the column.
-  - You are about to drop the `Character` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Rating` table. If the table is not empty, all the data it contains will be lost.
-  - Changed the type of `type` on the `Log` table. No cast exists, the column would be dropped and recreated, which cannot be done if there is data, since the column is required.
+-- CreateEnum
+CREATE TYPE "Status" AS ENUM ('RUMORED', 'PLANNED', 'IN_PRODUCTION', 'POST_PRODUCTION', 'RELEASED', 'CANCELLED');
 
-*/
--- AlterEnum
--- This migration adds more than one value to an enum.
--- With PostgreSQL versions 11 and earlier, this is not possible
--- in a single migration. This can be worked around by creating
--- multiple migrations, each migration adding only one value to
--- the enum.
+-- CreateEnum
+CREATE TYPE "AgeRating" AS ENUM ('U', 'PG', 'TWELVEA', 'TWELVE', 'EIGHTEEN');
 
+-- CreateEnum
+CREATE TYPE "MediaType" AS ENUM ('MOVIE', 'SHOW', 'BOOK', 'SONG', 'PERSON');
 
-ALTER TYPE "MediaType" ADD VALUE 'SHOW';
-ALTER TYPE "MediaType" ADD VALUE 'BOOK';
-ALTER TYPE "MediaType" ADD VALUE 'SONG';
+-- CreateTable
+CREATE TABLE "User" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "firstName" TEXT NOT NULL,
+    "lastName" TEXT NOT NULL,
+    "twitter" TEXT,
+    "instagram" TEXT,
+    "avatar" TEXT,
+    "role" "Role" NOT NULL DEFAULT 'USER',
+    "bio" TEXT,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
--- DropForeignKey
-ALTER TABLE "Character" DROP CONSTRAINT "Character_movieId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Character" DROP CONSTRAINT "Character_personId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Rating" DROP CONSTRAINT "Rating_movieId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Rating" DROP CONSTRAINT "Rating_userId_fkey";
-
--- AlterTable
-ALTER TABLE "Keyword" ADD COLUMN     "showId" UUID;
-
--- AlterTable
-ALTER TABLE "Log" DROP COLUMN "type",
-ADD COLUMN     "type" "MediaType" NOT NULL;
-
--- AlterTable
-ALTER TABLE "Movie" DROP COLUMN "age_rating",
-ADD COLUMN     "age_rating" "AgeRating",
-DROP COLUMN "status",
-ADD COLUMN     "status" "Status" DEFAULT 'PLANNED';
-
--- AlterTable
-ALTER TABLE "User" DROP COLUMN "role",
-ADD COLUMN     "role" "Role" NOT NULL DEFAULT 'USER';
-
--- DropTable
-DROP TABLE "Character";
-
--- DropTable
-DROP TABLE "Rating";
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "ShowRating" (
@@ -72,6 +44,30 @@ CREATE TABLE "MovieRating" (
     "movieId" UUID NOT NULL,
     "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
+CREATE TABLE "Log" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "userId" UUID NOT NULL,
+    "type" "MediaType" NOT NULL,
+    "mediaId" UUID NOT NULL,
+    "key" TEXT NOT NULL,
+    "value" JSONB NOT NULL,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Log_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Person" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "name" TEXT NOT NULL,
+    "avatar" TEXT,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Person_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -131,6 +127,56 @@ CREATE TABLE "ShowReview" (
 );
 
 -- CreateTable
+CREATE TABLE "Genre" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "name" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Genre_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Keyword" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "name" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "showId" UUID,
+
+    CONSTRAINT "Keyword_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Movie" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "title" TEXT NOT NULL,
+    "overview" TEXT NOT NULL,
+    "tagline" TEXT,
+    "popularity" DOUBLE PRECISION DEFAULT 0,
+    "age_rating" "AgeRating",
+    "runtime" INTEGER DEFAULT 0,
+    "homepage" TEXT,
+    "language" TEXT,
+    "videos" TEXT[],
+    "posters" TEXT[],
+    "backdrops" TEXT[],
+    "tags" TEXT[],
+    "contentScore" INTEGER DEFAULT 0,
+    "locked" TEXT[],
+    "adult" BOOLEAN DEFAULT false,
+    "budget" INTEGER DEFAULT 0,
+    "revenue" INTEGER DEFAULT 0,
+    "status" "Status" DEFAULT 'PLANNED',
+    "releaseDate" TIMESTAMPTZ(6) DEFAULT CURRENT_TIMESTAMP,
+    "userId" UUID NOT NULL,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Movie_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Show" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "title" TEXT NOT NULL,
@@ -157,6 +203,30 @@ CREATE TABLE "Show" (
 );
 
 -- CreateTable
+CREATE TABLE "List" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "title" TEXT NOT NULL,
+    "description" TEXT,
+    "backdrop" TEXT,
+    "public" BOOLEAN DEFAULT true,
+    "userId" UUID NOT NULL,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "List_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Watchlist" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "userId" UUID NOT NULL,
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Watchlist_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_CrewMemberRoleToMovieCrewMember" (
     "A" UUID NOT NULL,
     "B" UUID NOT NULL
@@ -169,7 +239,25 @@ CREATE TABLE "_CrewMemberRoleToShowCrewMember" (
 );
 
 -- CreateTable
+CREATE TABLE "_GenreToMovie" (
+    "A" UUID NOT NULL,
+    "B" UUID NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "_GenreToShow" (
+    "A" UUID NOT NULL,
+    "B" UUID NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "_KeywordToMovie" (
+    "A" UUID NOT NULL,
+    "B" UUID NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "_MovieToWatchlist" (
     "A" UUID NOT NULL,
     "B" UUID NOT NULL
 );
@@ -181,10 +269,19 @@ CREATE TABLE "_ShowToWatchlist" (
 );
 
 -- CreateTable
+CREATE TABLE "_ListToMovie" (
+    "A" UUID NOT NULL,
+    "B" UUID NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "_ListToShow" (
     "A" UUID NOT NULL,
     "B" UUID NOT NULL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ShowRating_userId_showId_key" ON "ShowRating"("userId", "showId");
@@ -211,6 +308,9 @@ CREATE UNIQUE INDEX "MovieReview_userId_movieId_key" ON "MovieReview"("userId", 
 CREATE UNIQUE INDEX "ShowReview_userId_showId_key" ON "ShowReview"("userId", "showId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Watchlist_userId_key" ON "Watchlist"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "_CrewMemberRoleToMovieCrewMember_AB_unique" ON "_CrewMemberRoleToMovieCrewMember"("A", "B");
 
 -- CreateIndex
@@ -223,16 +323,40 @@ CREATE UNIQUE INDEX "_CrewMemberRoleToShowCrewMember_AB_unique" ON "_CrewMemberR
 CREATE INDEX "_CrewMemberRoleToShowCrewMember_B_index" ON "_CrewMemberRoleToShowCrewMember"("B");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "_GenreToMovie_AB_unique" ON "_GenreToMovie"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_GenreToMovie_B_index" ON "_GenreToMovie"("B");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "_GenreToShow_AB_unique" ON "_GenreToShow"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_GenreToShow_B_index" ON "_GenreToShow"("B");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "_KeywordToMovie_AB_unique" ON "_KeywordToMovie"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_KeywordToMovie_B_index" ON "_KeywordToMovie"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_MovieToWatchlist_AB_unique" ON "_MovieToWatchlist"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_MovieToWatchlist_B_index" ON "_MovieToWatchlist"("B");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "_ShowToWatchlist_AB_unique" ON "_ShowToWatchlist"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_ShowToWatchlist_B_index" ON "_ShowToWatchlist"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_ListToMovie_AB_unique" ON "_ListToMovie"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_ListToMovie_B_index" ON "_ListToMovie"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_ListToShow_AB_unique" ON "_ListToShow"("A", "B");
@@ -251,6 +375,9 @@ ALTER TABLE "MovieRating" ADD CONSTRAINT "MovieRating_userId_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "MovieRating" ADD CONSTRAINT "MovieRating_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "Movie"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Log" ADD CONSTRAINT "Log_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "MovieCharacter" ADD CONSTRAINT "MovieCharacter_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -292,7 +419,16 @@ ALTER TABLE "ShowReview" ADD CONSTRAINT "ShowReview_showId_fkey" FOREIGN KEY ("s
 ALTER TABLE "Keyword" ADD CONSTRAINT "Keyword_showId_fkey" FOREIGN KEY ("showId") REFERENCES "Show"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Movie" ADD CONSTRAINT "Movie_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Show" ADD CONSTRAINT "Show_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "List" ADD CONSTRAINT "List_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Watchlist" ADD CONSTRAINT "Watchlist_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_CrewMemberRoleToMovieCrewMember" ADD CONSTRAINT "_CrewMemberRoleToMovieCrewMember_A_fkey" FOREIGN KEY ("A") REFERENCES "CrewMemberRole"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -307,16 +443,40 @@ ALTER TABLE "_CrewMemberRoleToShowCrewMember" ADD CONSTRAINT "_CrewMemberRoleToS
 ALTER TABLE "_CrewMemberRoleToShowCrewMember" ADD CONSTRAINT "_CrewMemberRoleToShowCrewMember_B_fkey" FOREIGN KEY ("B") REFERENCES "ShowCrewMember"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "_GenreToMovie" ADD CONSTRAINT "_GenreToMovie_A_fkey" FOREIGN KEY ("A") REFERENCES "Genre"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_GenreToMovie" ADD CONSTRAINT "_GenreToMovie_B_fkey" FOREIGN KEY ("B") REFERENCES "Movie"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "_GenreToShow" ADD CONSTRAINT "_GenreToShow_A_fkey" FOREIGN KEY ("A") REFERENCES "Genre"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_GenreToShow" ADD CONSTRAINT "_GenreToShow_B_fkey" FOREIGN KEY ("B") REFERENCES "Show"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "_KeywordToMovie" ADD CONSTRAINT "_KeywordToMovie_A_fkey" FOREIGN KEY ("A") REFERENCES "Keyword"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_KeywordToMovie" ADD CONSTRAINT "_KeywordToMovie_B_fkey" FOREIGN KEY ("B") REFERENCES "Movie"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_MovieToWatchlist" ADD CONSTRAINT "_MovieToWatchlist_A_fkey" FOREIGN KEY ("A") REFERENCES "Movie"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_MovieToWatchlist" ADD CONSTRAINT "_MovieToWatchlist_B_fkey" FOREIGN KEY ("B") REFERENCES "Watchlist"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "_ShowToWatchlist" ADD CONSTRAINT "_ShowToWatchlist_A_fkey" FOREIGN KEY ("A") REFERENCES "Show"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_ShowToWatchlist" ADD CONSTRAINT "_ShowToWatchlist_B_fkey" FOREIGN KEY ("B") REFERENCES "Watchlist"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ListToMovie" ADD CONSTRAINT "_ListToMovie_A_fkey" FOREIGN KEY ("A") REFERENCES "List"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ListToMovie" ADD CONSTRAINT "_ListToMovie_B_fkey" FOREIGN KEY ("B") REFERENCES "Movie"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_ListToShow" ADD CONSTRAINT "_ListToShow_A_fkey" FOREIGN KEY ("A") REFERENCES "List"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -24,7 +24,7 @@ export const createAuthToken = (payload: Payload): string => {
   const token = jwt.sign(payload, APP_AUTH_SECRET, {
     issuer: "@boilerplate/api",
     audience: ["@boilerplate/app", "@boilerplate/web"],
-    expiresIn: "1 min",
+    expiresIn: "4 weeks",
   })
   return token
 }

@@ -1,7 +1,13 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql"
+import { Arg, Args, Float, Mutation, Query, Resolver } from "type-graphql"
 import { MovieService } from "./movie.service"
 import { Inject, Service } from "typedi"
-import { Movie, MovieUpdateInput, MovieWhereUniqueInput, MovieUpdatelockedInput } from "@generated"
+import {
+  Movie,
+  MovieUpdateInput,
+  MovieWhereUniqueInput,
+  MovieUpdatelockedInput,
+  FindManyMovieArgs,
+} from "@generated"
 import { UseAuth } from "../shared/middleware/UseAuth"
 import { CurrentUser } from "../shared/currentUser"
 import { User } from "../user/user.model"
@@ -20,13 +26,22 @@ export default class MovieResolver {
   }
 
   @Query(() => [Movie])
+  async recommendations(
+    @Arg("id") id: string,
+    @Arg("popularity", () => Float) popularity: number,
+    @Arg("genre") genre: string,
+  ) {
+    return this.movieService.getRecommended(id, popularity, genre)
+  }
+
+  @Query(() => [Movie])
   async popularMovies() {
     return await this.movieService.getPopular()
   }
 
   @Query(() => [Movie])
-  async movies() {
-    return await this.movieService.getAll()
+  async movies(@Args() args: FindManyMovieArgs) {
+    return await this.movieService.getAll(args)
   }
 
   @UseAuth([Role.ADMIN])
