@@ -107,7 +107,7 @@ export function Nav() {
             rightIcon={<Icon as={FiChevronDown} />}
           >
             <Flex align="center" gap="3">
-              <Avatar size="xs" name={me?.fullName} src="https://bit.ly/sage-adebayo" />
+              <Avatar size="xs" name={me?.fullName} src={me?.avatar || ""} />
               <Text variant="2">{me?.firstName}</Text>
             </Flex>
           </MenuButton>

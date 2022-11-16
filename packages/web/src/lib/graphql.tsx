@@ -3714,6 +3714,16 @@ export type QueryMovieArgs = {
 };
 
 
+export type QueryMoviesArgs = {
+  cursor?: InputMaybe<MovieWhereUniqueInput>;
+  distinct?: InputMaybe<Array<MovieScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<MovieOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<MovieWhereInput>;
+};
+
+
 export type QueryPeopleArgs = {
   cursor?: InputMaybe<PersonWhereUniqueInput>;
   distinct?: InputMaybe<Array<PersonScalarFieldEnum>>;
@@ -6678,10 +6688,14 @@ export type PeopleQueryVariables = Exact<{
 
 export type PeopleQuery = { __typename?: 'Query', people: { __typename?: 'PeopleResponse', count: number, items: Array<{ __typename?: 'Person', id: string, name: string, avatar?: string | null, createdAt: string, updatedAt: string }> } };
 
-export type MoviesQueryVariables = Exact<{ [key: string]: never; }>;
+export type MoviesQueryVariables = Exact<{
+  where?: InputMaybe<MovieWhereInput>;
+  orderBy?: InputMaybe<Array<MovieOrderByWithRelationInput> | MovieOrderByWithRelationInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+}>;
 
 
-export type MoviesQuery = { __typename?: 'Query', movies: Array<{ __typename?: 'Movie', id: string, createdAt: string, updatedAt: string, title: string, overview: string, userId: string, adult?: boolean | null, budget?: number | null, locked: Array<string>, backdrops: Array<string>, posters: Array<string>, status?: Status | null, revenue?: number | null, runtime?: number | null, tagline?: string | null, homepage?: string | null, language?: string | null, releaseDate?: string | null }> };
+export type MoviesQuery = { __typename?: 'Query', movies: Array<{ __typename?: 'Movie', id: string, title: string, posters: Array<string> }> };
 
 export type UpdateMeMutationVariables = Exact<{
   data: UpdateUserInput;
@@ -6920,26 +6934,11 @@ export type PeopleQueryHookResult = ReturnType<typeof usePeopleQuery>;
 export type PeopleLazyQueryHookResult = ReturnType<typeof usePeopleLazyQuery>;
 export type PeopleQueryResult = Apollo.QueryResult<PeopleQuery, PeopleQueryVariables>;
 export const MoviesDocument = gql`
-    query Movies {
-  movies {
+    query Movies($where: MovieWhereInput, $orderBy: [MovieOrderByWithRelationInput!], $skip: Int) {
+  movies(where: $where, orderBy: $orderBy, skip: $skip) {
     id
-    createdAt
-    updatedAt
     title
-    overview
-    userId
-    adult
-    budget
-    locked
-    backdrops
     posters
-    status
-    revenue
-    runtime
-    tagline
-    homepage
-    language
-    releaseDate
   }
 }
     `;

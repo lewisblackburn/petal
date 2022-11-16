@@ -8,6 +8,7 @@ import { NumberInput } from "./components/NumberInput"
 import { Select } from "./components/Select"
 import { Text } from "./components/Text"
 import { Textarea } from "./components/Textarea"
+import { Tooltip } from "./components/Tooltip"
 
 // font: 20px -> xl, 16px -> md, 14px -> sm
 // space: 16px -> 4, 14px -> 3.5
@@ -69,5 +70,6 @@ export const theme = extendTheme({
     Select,
     Text,
     Textarea,
+    Tooltip,
   },
 })
