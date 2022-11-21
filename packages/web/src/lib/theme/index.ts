@@ -4,6 +4,7 @@ import { Button } from "./components/Button"
 import { Card } from "./components/Card"
 import { Input } from "./components/Input"
 import { Link } from "./components/Link"
+import { Menu } from "./components/Menu"
 import { NumberInput } from "./components/NumberInput"
 import { Select } from "./components/Select"
 import { Text } from "./components/Text"
@@ -22,6 +23,13 @@ export const theme = extendTheme({
   fonts: {
     body: "Poppins, sans-serif",
     heading: "Poppins, sans-serif",
+  },
+  styles: {
+    global: {
+      "*": {
+        scrollbarWidth: "none",
+      },
+    },
   },
   breakpoints: {
     sm: "30em",
@@ -66,6 +74,7 @@ export const theme = extendTheme({
     Card,
     Input,
     Link,
+    Menu,
     NumberInput,
     Select,
     Text,

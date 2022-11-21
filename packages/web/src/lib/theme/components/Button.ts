@@ -34,6 +34,13 @@ export const Button = {
       fontWeight: 700,
       fontSize: 14,
     },
+    long: {
+      gap: "8px",
+      paddingX: 12,
+      paddingY: 3.5,
+      fontWeight: 700,
+      fontSize: "sm",
+    },
   },
   variants: {
     primary: () => ({

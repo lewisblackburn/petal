@@ -42,7 +42,11 @@ const _ = gql`
 `
 
 const __ = gql`
-  query People($orderBy: [PersonOrderByWithRelationInput!], $where: PersonWhereInput, $skip: Int) {
+  query People(
+    $orderBy: [PersonOrderByWithRelationAndSearchRelevanceInput!]
+    $where: PersonWhereInput
+    $skip: Int
+  ) {
     people(orderBy: $orderBy, where: $where, skip: $skip) {
       count
       items {
@@ -106,7 +110,13 @@ export default function Edit() {
           Make sure you have filled in all the necessary fields and have uploaded all the required files.
         </Text>
       </Flex>
-      <Tabs variant="unstyled" index={tabIndex} onChange={(index) => setTabIndex(index)}>
+      <Tabs
+        variant="unstyled"
+        index={tabIndex}
+        onChange={(index) => setTabIndex(index)}
+        align="center"
+        w="full"
+      >
         <TabList display="flex" alignItems="center" gap="4">
           <DotTab key={1}>Primary Facts</DotTab>
           <Icon as={FiChevronRight} />
@@ -118,7 +128,7 @@ export default function Edit() {
           <Icon as={FiChevronRight} />
           <DotTab key={5}>Misc</DotTab>
         </TabList>
-        <Divider my={10} />
+        <Divider my={20} />
         <TabPanels>
           <TabPanel>
             <Flex justify="center">
@@ -195,7 +205,7 @@ export default function Edit() {
                   count={data?.people.count}
                   sort={sort}
                   onSort={setSort}
-                  // getRowHref={(person) => `/person/${person.id}`}
+                  getRowHref={(person) => `/person/${person.id}`}
                   onFetchMore={handleFetchMore}
                   isLoading={loading && !!!data}
                 >

@@ -705,7 +705,7 @@ export type List = {
 export type ListMoviesArgs = {
   cursor?: InputMaybe<MovieWhereUniqueInput>;
   distinct?: InputMaybe<Array<MovieScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<MovieOrderByWithRelationInput>>;
+  orderBy?: InputMaybe<Array<MovieOrderByWithRelationAndSearchRelevanceInput>>;
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<MovieWhereInput>;
@@ -715,7 +715,7 @@ export type ListMoviesArgs = {
 export type ListShowsArgs = {
   cursor?: InputMaybe<ShowWhereUniqueInput>;
   distinct?: InputMaybe<Array<ShowScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<ShowOrderByWithRelationInput>>;
+  orderBy?: InputMaybe<Array<ShowOrderByWithRelationAndSearchRelevanceInput>>;
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<ShowWhereInput>;
@@ -2030,7 +2030,28 @@ export type MovieOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
 
-export type MovieOrderByWithRelationInput = {
+export enum MovieOrderByRelevanceFieldEnum {
+  Backdrops = 'backdrops',
+  Homepage = 'homepage',
+  Id = 'id',
+  Language = 'language',
+  Locked = 'locked',
+  Overview = 'overview',
+  Posters = 'posters',
+  Tagline = 'tagline',
+  Title = 'title',
+  UserId = 'userId',
+  Videos = 'videos'
+}
+
+export type MovieOrderByRelevanceInput = {
+  fields: Array<MovieOrderByRelevanceFieldEnum>;
+  search: Scalars['String'];
+  sort: SortOrder;
+};
+
+export type MovieOrderByWithRelationAndSearchRelevanceInput = {
+  _relevance?: InputMaybe<MovieOrderByRelevanceInput>;
   adult?: InputMaybe<SortOrder>;
   age_rating?: InputMaybe<SortOrder>;
   backdrops?: InputMaybe<SortOrder>;
@@ -2058,7 +2079,7 @@ export type MovieOrderByWithRelationInput = {
   tagline?: InputMaybe<SortOrder>;
   title?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
-  user?: InputMaybe<UserOrderByWithRelationInput>;
+  user?: InputMaybe<UserOrderByWithRelationAndSearchRelevanceInput>;
   userId?: InputMaybe<SortOrder>;
   videos?: InputMaybe<SortOrder>;
   watchlists?: InputMaybe<WatchlistOrderByRelationAggregateInput>;
@@ -3091,6 +3112,12 @@ export type MovieWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
+export type MoviesResponse = {
+  __typename?: 'MoviesResponse';
+  count: Scalars['Int'];
+  items: Array<Movie>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createGenre: Genre;
@@ -3352,6 +3379,7 @@ export type NestedStringFilter = {
   lte?: InputMaybe<Scalars['String']>;
   not?: InputMaybe<NestedStringFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
+  search?: InputMaybe<Scalars['String']>;
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
@@ -3366,6 +3394,7 @@ export type NestedStringNullableFilter = {
   lte?: InputMaybe<Scalars['String']>;
   not?: InputMaybe<NestedStringNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
+  search?: InputMaybe<Scalars['String']>;
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
@@ -3378,6 +3407,7 @@ export type NestedUuidFilter = {
   lte?: InputMaybe<Scalars['String']>;
   not?: InputMaybe<NestedUuidFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
+  search?: InputMaybe<Scalars['String']>;
 };
 
 export type NestedUuidNullableFilter = {
@@ -3389,6 +3419,7 @@ export type NestedUuidNullableFilter = {
   lte?: InputMaybe<Scalars['String']>;
   not?: InputMaybe<NestedUuidNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
+  search?: InputMaybe<Scalars['String']>;
 };
 
 export type NullableBoolFieldUpdateOperationsInput = {
@@ -3537,7 +3568,20 @@ export type PersonInput = {
   name: Scalars['String'];
 };
 
-export type PersonOrderByWithRelationInput = {
+export enum PersonOrderByRelevanceFieldEnum {
+  Avatar = 'avatar',
+  Id = 'id',
+  Name = 'name'
+}
+
+export type PersonOrderByRelevanceInput = {
+  fields: Array<PersonOrderByRelevanceFieldEnum>;
+  search: Scalars['String'];
+  sort: SortOrder;
+};
+
+export type PersonOrderByWithRelationAndSearchRelevanceInput = {
+  _relevance?: InputMaybe<PersonOrderByRelevanceInput>;
   avatar?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
@@ -3688,10 +3732,11 @@ export type Query = {
   logs: Array<Log>;
   me?: Maybe<User>;
   movie: Movie;
-  movies: Array<Movie>;
+  movies: MoviesResponse;
   people: PeopleResponse;
   person: Person;
   popularMovies: Array<Movie>;
+  recommendations: Array<Movie>;
   refreshToken?: Maybe<RefreshTokenResponse>;
   user?: Maybe<User>;
   users: UsersResponse;
@@ -3717,7 +3762,7 @@ export type QueryMovieArgs = {
 export type QueryMoviesArgs = {
   cursor?: InputMaybe<MovieWhereUniqueInput>;
   distinct?: InputMaybe<Array<MovieScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<MovieOrderByWithRelationInput>>;
+  orderBy?: InputMaybe<Array<MovieOrderByWithRelationAndSearchRelevanceInput>>;
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<MovieWhereInput>;
@@ -3727,7 +3772,7 @@ export type QueryMoviesArgs = {
 export type QueryPeopleArgs = {
   cursor?: InputMaybe<PersonWhereUniqueInput>;
   distinct?: InputMaybe<Array<PersonScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput>>;
+  orderBy?: InputMaybe<Array<PersonOrderByWithRelationAndSearchRelevanceInput>>;
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<PersonWhereInput>;
@@ -3739,6 +3784,13 @@ export type QueryPersonArgs = {
 };
 
 
+export type QueryRecommendationsArgs = {
+  genre: Scalars['String'];
+  id: Scalars['String'];
+  popularity: Scalars['Float'];
+};
+
+
 export type QueryRefreshTokenArgs = {
   refreshToken: Scalars['String'];
 };
@@ -3747,7 +3799,7 @@ export type QueryRefreshTokenArgs = {
 export type QueryUserArgs = {
   cursor?: InputMaybe<UserWhereUniqueInput>;
   distinct?: InputMaybe<Array<UserScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<UserOrderByWithRelationInput>>;
+  orderBy?: InputMaybe<Array<UserOrderByWithRelationAndSearchRelevanceInput>>;
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<UserWhereInput>;
@@ -3757,7 +3809,7 @@ export type QueryUserArgs = {
 export type QueryUsersArgs = {
   cursor?: InputMaybe<UserWhereUniqueInput>;
   distinct?: InputMaybe<Array<UserScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<UserOrderByWithRelationInput>>;
+  orderBy?: InputMaybe<Array<UserOrderByWithRelationAndSearchRelevanceInput>>;
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<UserWhereInput>;
@@ -4639,7 +4691,28 @@ export type ShowOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
 
-export type ShowOrderByWithRelationInput = {
+export enum ShowOrderByRelevanceFieldEnum {
+  Backdrops = 'backdrops',
+  Homepage = 'homepage',
+  Id = 'id',
+  Language = 'language',
+  Locked = 'locked',
+  Overview = 'overview',
+  Posters = 'posters',
+  Tagline = 'tagline',
+  Title = 'title',
+  UserId = 'userId',
+  Videos = 'videos'
+}
+
+export type ShowOrderByRelevanceInput = {
+  fields: Array<ShowOrderByRelevanceFieldEnum>;
+  search: Scalars['String'];
+  sort: SortOrder;
+};
+
+export type ShowOrderByWithRelationAndSearchRelevanceInput = {
+  _relevance?: InputMaybe<ShowOrderByRelevanceInput>;
   adult?: InputMaybe<SortOrder>;
   age_rating?: InputMaybe<SortOrder>;
   backdrops?: InputMaybe<SortOrder>;
@@ -4665,7 +4738,7 @@ export type ShowOrderByWithRelationInput = {
   tagline?: InputMaybe<SortOrder>;
   title?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
-  user?: InputMaybe<UserOrderByWithRelationInput>;
+  user?: InputMaybe<UserOrderByWithRelationAndSearchRelevanceInput>;
   userId?: InputMaybe<SortOrder>;
   videos?: InputMaybe<SortOrder>;
   watchlists?: InputMaybe<WatchlistOrderByRelationAggregateInput>;
@@ -5624,6 +5697,7 @@ export type StringFilter = {
   mode?: InputMaybe<QueryMode>;
   not?: InputMaybe<NestedStringFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
+  search?: InputMaybe<Scalars['String']>;
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
@@ -5639,6 +5713,7 @@ export type StringNullableFilter = {
   mode?: InputMaybe<QueryMode>;
   not?: InputMaybe<NestedStringNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
+  search?: InputMaybe<Scalars['String']>;
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
@@ -5971,11 +6046,30 @@ export type UserCreateWithoutWatchlistInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type UserOrderByWithRelationInput = {
+export enum UserOrderByRelevanceFieldEnum {
+  Avatar = 'avatar',
+  Bio = 'bio',
+  Email = 'email',
+  FirstName = 'firstName',
+  Id = 'id',
+  Instagram = 'instagram',
+  LastName = 'lastName',
+  Password = 'password',
+  Twitter = 'twitter'
+}
+
+export type UserOrderByRelevanceInput = {
+  fields: Array<UserOrderByRelevanceFieldEnum>;
+  search: Scalars['String'];
+  sort: SortOrder;
+};
+
+export type UserOrderByWithRelationAndSearchRelevanceInput = {
   MovieReview?: InputMaybe<MovieReviewOrderByRelationAggregateInput>;
   Show?: InputMaybe<ShowOrderByRelationAggregateInput>;
   ShowRating?: InputMaybe<ShowRatingOrderByRelationAggregateInput>;
   ShowReview?: InputMaybe<ShowReviewOrderByRelationAggregateInput>;
+  _relevance?: InputMaybe<UserOrderByRelevanceInput>;
   avatar?: InputMaybe<SortOrder>;
   bio?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
@@ -5992,7 +6086,7 @@ export type UserOrderByWithRelationInput = {
   role?: InputMaybe<SortOrder>;
   twitter?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
-  watchlist?: InputMaybe<WatchlistOrderByWithRelationInput>;
+  watchlist?: InputMaybe<WatchlistOrderByWithRelationAndSearchRelevanceInput>;
 };
 
 export type UserRelationFilter = {
@@ -6351,6 +6445,7 @@ export type UuidFilter = {
   mode?: InputMaybe<QueryMode>;
   not?: InputMaybe<NestedUuidFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
+  search?: InputMaybe<Scalars['String']>;
 };
 
 export type UuidNullableFilter = {
@@ -6363,6 +6458,7 @@ export type UuidNullableFilter = {
   mode?: InputMaybe<QueryMode>;
   not?: InputMaybe<NestedUuidNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
+  search?: InputMaybe<Scalars['String']>;
 };
 
 export type Watchlist = {
@@ -6379,7 +6475,7 @@ export type Watchlist = {
 export type WatchlistMoviesArgs = {
   cursor?: InputMaybe<MovieWhereUniqueInput>;
   distinct?: InputMaybe<Array<MovieScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<MovieOrderByWithRelationInput>>;
+  orderBy?: InputMaybe<Array<MovieOrderByWithRelationAndSearchRelevanceInput>>;
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<MovieWhereInput>;
@@ -6462,13 +6558,25 @@ export type WatchlistOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
 
-export type WatchlistOrderByWithRelationInput = {
+export enum WatchlistOrderByRelevanceFieldEnum {
+  Id = 'id',
+  UserId = 'userId'
+}
+
+export type WatchlistOrderByRelevanceInput = {
+  fields: Array<WatchlistOrderByRelevanceFieldEnum>;
+  search: Scalars['String'];
+  sort: SortOrder;
+};
+
+export type WatchlistOrderByWithRelationAndSearchRelevanceInput = {
+  _relevance?: InputMaybe<WatchlistOrderByRelevanceInput>;
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   movies?: InputMaybe<MovieOrderByRelationAggregateInput>;
   shows?: InputMaybe<ShowOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
-  user?: InputMaybe<UserOrderByWithRelationInput>;
+  user?: InputMaybe<UserOrderByWithRelationAndSearchRelevanceInput>;
   userId?: InputMaybe<SortOrder>;
 };
 
@@ -6648,7 +6756,7 @@ export type GetUserQuery = { __typename?: 'Query', user?: { __typename?: 'User',
 export type UserItemFragment = { __typename?: 'User', id: string, fullName: string, email: string, createdAt: string };
 
 export type GetUsersQueryVariables = Exact<{
-  orderBy?: InputMaybe<Array<UserOrderByWithRelationInput> | UserOrderByWithRelationInput>;
+  orderBy?: InputMaybe<Array<UserOrderByWithRelationAndSearchRelevanceInput> | UserOrderByWithRelationAndSearchRelevanceInput>;
   where?: InputMaybe<UserWhereInput>;
   skip?: InputMaybe<Scalars['Int']>;
 }>;
@@ -6680,7 +6788,7 @@ export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Au
 export type PersonItemFragment = { __typename?: 'Person', id: string, name: string, avatar?: string | null, createdAt: string, updatedAt: string };
 
 export type PeopleQueryVariables = Exact<{
-  orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput> | PersonOrderByWithRelationInput>;
+  orderBy?: InputMaybe<Array<PersonOrderByWithRelationAndSearchRelevanceInput> | PersonOrderByWithRelationAndSearchRelevanceInput>;
   where?: InputMaybe<PersonWhereInput>;
   skip?: InputMaybe<Scalars['Int']>;
 }>;
@@ -6688,14 +6796,16 @@ export type PeopleQueryVariables = Exact<{
 
 export type PeopleQuery = { __typename?: 'Query', people: { __typename?: 'PeopleResponse', count: number, items: Array<{ __typename?: 'Person', id: string, name: string, avatar?: string | null, createdAt: string, updatedAt: string }> } };
 
+export type MovieItemFragment = { __typename?: 'Movie', id: string, title: string, overview: string, posters: Array<string> };
+
 export type MoviesQueryVariables = Exact<{
+  orderBy?: InputMaybe<Array<MovieOrderByWithRelationAndSearchRelevanceInput> | MovieOrderByWithRelationAndSearchRelevanceInput>;
   where?: InputMaybe<MovieWhereInput>;
-  orderBy?: InputMaybe<Array<MovieOrderByWithRelationInput> | MovieOrderByWithRelationInput>;
   skip?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type MoviesQuery = { __typename?: 'Query', movies: Array<{ __typename?: 'Movie', id: string, title: string, posters: Array<string> }> };
+export type MoviesQuery = { __typename?: 'Query', movies: { __typename?: 'MoviesResponse', count: number, items: Array<{ __typename?: 'Movie', id: string, title: string, overview: string, posters: Array<string> }> } };
 
 export type UpdateMeMutationVariables = Exact<{
   data: UpdateUserInput;
@@ -6759,6 +6869,14 @@ export const PersonItemFragmentDoc = gql`
   avatar
   createdAt
   updatedAt
+}
+    `;
+export const MovieItemFragmentDoc = gql`
+    fragment MovieItem on Movie {
+  id
+  title
+  overview
+  posters
 }
     `;
 export const AdminCreateUserDocument = gql`
@@ -6843,7 +6961,7 @@ export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
 export const GetUsersDocument = gql`
-    query GetUsers($orderBy: [UserOrderByWithRelationInput!], $where: UserWhereInput, $skip: Int) {
+    query GetUsers($orderBy: [UserOrderByWithRelationAndSearchRelevanceInput!], $where: UserWhereInput, $skip: Int) {
   users(take: 10, orderBy: $orderBy, where: $where, skip: $skip) {
     items {
       ...UserItem
@@ -6913,7 +7031,7 @@ export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const PeopleDocument = gql`
-    query People($orderBy: [PersonOrderByWithRelationInput!], $where: PersonWhereInput, $skip: Int) {
+    query People($orderBy: [PersonOrderByWithRelationAndSearchRelevanceInput!], $where: PersonWhereInput, $skip: Int) {
   people(orderBy: $orderBy, where: $where, skip: $skip) {
     count
     items {
@@ -6934,14 +7052,15 @@ export type PeopleQueryHookResult = ReturnType<typeof usePeopleQuery>;
 export type PeopleLazyQueryHookResult = ReturnType<typeof usePeopleLazyQuery>;
 export type PeopleQueryResult = Apollo.QueryResult<PeopleQuery, PeopleQueryVariables>;
 export const MoviesDocument = gql`
-    query Movies($where: MovieWhereInput, $orderBy: [MovieOrderByWithRelationInput!], $skip: Int) {
-  movies(where: $where, orderBy: $orderBy, skip: $skip) {
-    id
-    title
-    posters
+    query Movies($orderBy: [MovieOrderByWithRelationAndSearchRelevanceInput!], $where: MovieWhereInput, $skip: Int) {
+  movies(orderBy: $orderBy, where: $where, skip: $skip) {
+    count
+    items {
+      ...MovieItem
+    }
   }
 }
-    `;
+    ${MovieItemFragmentDoc}`;
 export function useMoviesQuery(baseOptions?: Apollo.QueryHookOptions<MoviesQuery, MoviesQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<MoviesQuery, MoviesQueryVariables>(MoviesDocument, options);

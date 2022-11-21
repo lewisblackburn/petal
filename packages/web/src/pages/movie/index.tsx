@@ -24,17 +24,30 @@ import Link from "components/Link"
 import { HomeLayout } from "components/HomeLayout"
 import Yup from "lib/yup"
 import { gql } from "@apollo/client"
-import { SortOrder, useMoviesQuery } from "lib/graphql"
+import { QueryMode, SortOrder, useMoviesQuery } from "lib/graphql"
 import { Poster } from "components/Poster"
 import { getOrderBy } from "components/Table"
 import { FiEye, FiEyeOff } from "react-icons/fi"
-
 const _ = gql`
-  query Movies($where: MovieWhereInput, $orderBy: [MovieOrderByWithRelationInput!], $skip: Int) {
-    movies(where: $where, orderBy: $orderBy, skip: $skip) {
-      id
-      title
-      posters
+  fragment MovieItem on Movie {
+    id
+    title
+    overview
+    posters
+  }
+`
+
+const __ = gql`
+  query Movies(
+    $orderBy: [MovieOrderByWithRelationAndSearchRelevanceInput!]
+    $where: MovieWhereInput
+    $skip: Int
+  ) {
+    movies(orderBy: $orderBy, where: $where, skip: $skip) {
+      count
+      items {
+        ...MovieItem
+      }
     }
   }
 `
@@ -47,6 +60,7 @@ const SearchMovieSchema = Yup.object().shape({
 })
 
 export default function Movies() {
+  const [predicate, setPredicate] = React.useState("")
   const [sortOrder, setSortOrder] = React.useState({ popularity: SortOrder.Asc })
   const [includeSeenMovies, setIncludeSeenMovies] = React.useState(false)
   const searchForm = useForm({ schema: SearchMovieSchema })
@@ -54,21 +68,27 @@ export default function Movies() {
   const { data, loading } = useMoviesQuery({
     fetchPolicy: "cache-and-network",
     variables: {
+      where: {
+        title: {
+          search: predicate,
+        },
+      },
       orderBy: getOrderBy(sortOrder),
     },
   })
 
   const onSubmit = (d: any) => {
     setSortOrder(JSON.parse(d.sort))
+    setPredicate(d.text)
   }
 
-  if (loading) {
-    return (
-      <Center>
-        <Spinner />
-      </Center>
-    )
-  }
+  // if (loading) {
+  //   return (
+  //     <Center>
+  //       <Spinner />
+  //     </Center>
+  //   )
+  // }
 
   return (
     <Flex direction="column" gap={10}>
@@ -77,7 +97,7 @@ export default function Movies() {
           Search movies
         </Text>
         <Text fontSize="md" fontWeight={500} color="#100a55">
-          10,325 movies found in 312ms
+          Found {data?.movies.count} movies in 312ms
         </Text>
       </Flex>
       <Form onSubmit={onSubmit} {...searchForm}>
@@ -117,7 +137,6 @@ export default function Movies() {
             <Select name="age" options={[{ label: "U", value: "" }]} />
             <Select name="language" options={[{ label: "English", value: "" }]} />
           </Flex>
-
           <Flex direction={["column", "column", "column", "row"]} align="center" gap={5}>
             <Slider defaultValue={60} min={0} max={300} step={30}>
               <SliderTrack bg="purple.100">
@@ -148,9 +167,10 @@ export default function Movies() {
         templateColumns={["1fr", "1fr 1fr", "1fr 1fr 1fr", "1fr 1fr 1fr 1fr", "1fr 1fr 1fr 1fr 1fr"]}
         gap={5}
       >
-        {data?.movies.map((movie) => (
+        {data?.movies.items.map((movie) => (
           <Link key={movie.id} href={`/movie/${movie.id}`}>
             <Poster src={movie.posters[0]} />
+            {movie.title}
           </Link>
         ))}
       </Grid>

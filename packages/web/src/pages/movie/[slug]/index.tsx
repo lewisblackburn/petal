@@ -26,6 +26,9 @@ import {
   ModalFooter,
   Radio,
   RadioGroup,
+  Tabs,
+  TabPanels,
+  TabPanel,
 } from "@chakra-ui/react"
 import {
   FiAlertTriangle,
@@ -46,7 +49,6 @@ import {
 import { HiLanguage } from "react-icons/hi2"
 
 import { HomeLayout } from "components/HomeLayout"
-import { Genre } from "lib/graphql"
 import Link from "components/Link"
 import { Poster } from "components/Poster"
 import { Backdrop } from "components/Backdrop"
@@ -66,7 +68,13 @@ const SearchListSchema = Yup.object().shape({
 })
 
 export default function Movie() {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen: isReportOpen, onOpen: onReportOpen, onClose: onReportClose } = useDisclosure()
+  const { isOpen: isGalleryOpen, onOpen: onGalleryOpen, onClose: onGalleryClose } = useDisclosure()
+
+  const [tabIndex, setTabIndex] = React.useState(0)
+  const nextTab = () => setTabIndex((tab) => tab + 1)
+  const prevTab = () => setTabIndex((tab) => tab - 1)
+
   const [selected, setSelected] = React.useState(-1)
 
   const listForm = useForm({ schema: SearchListSchema })
@@ -142,7 +150,14 @@ export default function Movie() {
           <GridItem bg="gray.50" position="relative">
             <Backdrop src="https://www.themoviedb.org/t/p/original/rc1IUET1dg6GUAwyhcjBIpZtzGW.jpg" />
 
-            <Button position="absolute" bottom={5} right={5} variant="tertiary" size="lg">
+            <Button
+              position="absolute"
+              bottom={5}
+              right={5}
+              variant="tertiary"
+              size="lg"
+              onClick={onGalleryOpen}
+            >
               <Icon as={FiImage} />
               View all photos
             </Button>
@@ -405,7 +420,7 @@ export default function Movie() {
                 </Flex>
                 <Divider />
                 <Grid gridTemplateColumns="1fr 1fr" gap="4">
-                  <Button variant="secondary" onClick={onOpen}>
+                  <Button variant="secondary" onClick={onReportOpen}>
                     <Icon as={FiAlertTriangle} />
                     Report Issue
                   </Button>
@@ -419,7 +434,7 @@ export default function Movie() {
           </Flex>
         </Grid>
       </Flex>
-      <Modal isCentered isOpen={isOpen} onClose={onClose} size="2xl">
+      <Modal isCentered isOpen={isReportOpen} onClose={onReportClose} size="2xl">
         <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
         <ModalContent>
           <ModalHeader>Report an Issue</ModalHeader>
@@ -453,10 +468,54 @@ export default function Movie() {
             </Form>
           </ModalBody>
           <ModalFooter>
-            <Button variant="primary" onClick={onClose}>
+            <Button variant="primary" onClick={onReportClose}>
               Close
             </Button>
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal isCentered isOpen={isGalleryOpen} onClose={onGalleryClose} size="4xl">
+        <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
+        <ModalContent>
+          <ModalBody>
+            <Flex py={5} gap={5}>
+              <Tabs index={tabIndex}>
+                <TabPanels>
+                  <TabPanel>
+                    <AspectRatio minWidth="400px" ratio={3 / 5}>
+                      <Poster src="https://www.themoviedb.org/t/p/original/iR1bVfURbN7r1C46WHFbwCkVve.jpg" />
+                    </AspectRatio>
+                  </TabPanel>
+                  <TabPanel>
+                    <AspectRatio minWidth="400px" ratio={16 / 9}>
+                      <Backdrop src="https://www.themoviedb.org/t/p/original/rc1IUET1dg6GUAwyhcjBIpZtzGW.jpg" />
+                    </AspectRatio>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+              {/* { backdrop: "" }, */}
+              <Flex direction="column" width="full">
+                <Text>Owner: You</Text>
+                <Text>Owner: You</Text>
+                <Text>Owner: You</Text>
+                <Text>Owner: You</Text>
+                <Text>Owner: You</Text>
+                <Text>Owner: You</Text>
+                <Text>Owner: You</Text>
+                <Text>Owner: You</Text>
+                <Text>Owner: You</Text>
+
+                <Flex justify="space-between" align="flex-end" h="full">
+                  <Button variant="secondary" onClick={prevTab}>
+                    Prev
+                  </Button>
+                  <Button variant="primary" onClick={nextTab}>
+                    Next
+                  </Button>
+                </Flex>
+              </Flex>
+            </Flex>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>

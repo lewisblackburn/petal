@@ -25,7 +25,11 @@ const _ = gql`
 `
 
 const __ = gql`
-  query GetUsers($orderBy: [UserOrderByWithRelationInput!], $where: UserWhereInput, $skip: Int) {
+  query GetUsers(
+    $orderBy: [UserOrderByWithRelationAndSearchRelevanceInput!]
+    $where: UserWhereInput
+    $skip: Int
+  ) {
     users(take: 10, orderBy: $orderBy, where: $where, skip: $skip) {
       items {
         ...UserItem

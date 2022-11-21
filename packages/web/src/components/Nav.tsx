@@ -27,7 +27,7 @@ import { useLogout } from "lib/hooks/useLogout"
 import { useMe } from "lib/hooks/useMe"
 
 import { LinkButton } from "./LinkButton"
-import { FiChevronDown } from "react-icons/fi"
+import { FiChevronDown, FiFilm, FiPlus } from "react-icons/fi"
 
 interface NavLinkProps {
   href: string
@@ -101,7 +101,7 @@ export function Nav() {
         <Menu placement="bottom-end">
           <MenuButton
             as={Button}
-            variant="tertiary"
+            variant="transparent"
             size="lg"
             display={{ base: "flex", md: me ? "flex" : "none" }}
             rightIcon={<Icon as={FiChevronDown} />}
@@ -115,14 +115,29 @@ export function Nav() {
           <MenuList fontSize="md">
             {me ? (
               <>
-                <Link href="/profile">
+                <Link href="/profile" textDecor="none !important">
                   <MenuItem icon={<Box as={BiUser} boxSize="16px" />}>Profile</MenuItem>
                 </Link>
                 {me.role === Role.Admin && (
-                  <Link href="/admin">
+                  <Link href="/admin" textDecor="none !important">
                     <MenuItem icon={<Box as={BiCog} boxSize="16px" />}>Admin</MenuItem>
                   </Link>
                 )}
+                <MenuDivider />
+                <Link href="/movie/new" textDecor="none !important">
+                  <MenuItem icon={<Box as={FiPlus} boxSize="16px" />}>Movie</MenuItem>
+                </Link>
+
+                <Link href="/movie/new" textDecor="none !important">
+                  <MenuItem icon={<Box as={FiPlus} boxSize="16px" />}>Show</MenuItem>
+                </Link>
+
+                <Link href="/movie/new" textDecor="none !important">
+                  <MenuItem icon={<Box as={FiPlus} boxSize="16px" />}>Book</MenuItem>
+                </Link>
+                <Link href="/movie/new" textDecor="none !important">
+                  <MenuItem icon={<Box as={FiPlus} boxSize="16px" />}>Person</MenuItem>
+                </Link>
                 <MenuDivider />
                 <MenuItem
                   closeOnSelect={false}
