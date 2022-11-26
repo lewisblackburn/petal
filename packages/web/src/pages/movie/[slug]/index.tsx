@@ -62,12 +62,67 @@ import Yup from "lib/yup"
 import { Input } from "components/Input"
 import { Textarea } from "components/Textarea"
 import { Select } from "components/Select"
+import { gql } from "@apollo/client"
+
+const _ = gql`
+  query Movie($movieId: String!) {
+    movie(id: $movieId) {
+      id
+      title
+      overview
+      tagline
+      popularity
+      age_rating
+      runtime
+      homepage
+      language
+      videos
+      posters
+      backdrops
+      contentScore
+      locked
+      adult
+      budget
+      revenue
+      status
+      releaseDate
+      createdAt
+      updatedAt
+      rating {
+        _avg {
+          value
+        }
+      }
+      genres {
+        name
+      }
+      characters {
+        name
+        person {
+          posters
+        }
+      }
+      keywords {
+        name
+      }
+    }
+  }
+`
 
 const SearchListSchema = Yup.object().shape({
   text: Yup.string(),
 })
 
 export default function Movie() {
+  const { data, loading } = useMovieQuery({
+    fetchPolicy: "cache-and-network",
+    variables: {
+      where: {
+        id: "slug",
+      },
+    },
+  })
+
   const { isOpen: isReportOpen, onOpen: onReportOpen, onClose: onReportClose } = useDisclosure()
   const { isOpen: isGalleryOpen, onOpen: onGalleryOpen, onClose: onGalleryClose } = useDisclosure()
 
@@ -79,6 +134,14 @@ export default function Movie() {
 
   const listForm = useForm({ schema: SearchListSchema })
   const issueForm = useForm({ schema: SearchListSchema })
+
+  // if (loading) {
+  //   return (
+  //     <Center>
+  //       <Spinner />
+  //     </Center>
+  //   )
+  // }
 
   return (
     <>

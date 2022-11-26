@@ -1182,6 +1182,7 @@ export type MovieCharacter = {
   movie: Movie;
   movieId: Scalars['String'];
   name: Scalars['String'];
+  person: Movie;
   personId: Scalars['String'];
 };
 
@@ -6796,6 +6797,13 @@ export type PeopleQueryVariables = Exact<{
 
 export type PeopleQuery = { __typename?: 'Query', people: { __typename?: 'PeopleResponse', count: number, items: Array<{ __typename?: 'Person', id: string, name: string, avatar?: string | null, createdAt: string, updatedAt: string }> } };
 
+export type MovieQueryVariables = Exact<{
+  movieId: Scalars['String'];
+}>;
+
+
+export type MovieQuery = { __typename?: 'Query', movie: { __typename?: 'Movie', id: string, title: string, overview: string, tagline?: string | null, popularity?: number | null, age_rating?: AgeRating | null, runtime?: number | null, homepage?: string | null, language?: string | null, videos: Array<string>, posters: Array<string>, backdrops: Array<string>, contentScore?: number | null, locked: Array<string>, adult?: boolean | null, budget?: number | null, revenue?: number | null, status?: Status | null, releaseDate?: string | null, createdAt: string, updatedAt: string, rating: { __typename?: 'MovieRatingAverage', _avg?: { __typename?: 'MovieRatingAvgAggregate', value?: number | null } | null }, genres: Array<{ __typename?: 'Genre', name: string }>, characters: Array<{ __typename?: 'MovieCharacter', name: string, person: { __typename?: 'Movie', posters: Array<string> } }>, keywords: Array<{ __typename?: 'Keyword', name: string }> } };
+
 export type MovieItemFragment = { __typename?: 'Movie', id: string, title: string, overview: string, posters: Array<string> };
 
 export type MoviesQueryVariables = Exact<{
@@ -7051,6 +7059,61 @@ export function usePeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Peo
 export type PeopleQueryHookResult = ReturnType<typeof usePeopleQuery>;
 export type PeopleLazyQueryHookResult = ReturnType<typeof usePeopleLazyQuery>;
 export type PeopleQueryResult = Apollo.QueryResult<PeopleQuery, PeopleQueryVariables>;
+export const MovieDocument = gql`
+    query Movie($movieId: String!) {
+  movie(id: $movieId) {
+    id
+    title
+    overview
+    tagline
+    popularity
+    age_rating
+    runtime
+    homepage
+    language
+    videos
+    posters
+    backdrops
+    contentScore
+    locked
+    adult
+    budget
+    revenue
+    status
+    releaseDate
+    createdAt
+    updatedAt
+    rating {
+      _avg {
+        value
+      }
+    }
+    genres {
+      name
+    }
+    characters {
+      name
+      person {
+        posters
+      }
+    }
+    keywords {
+      name
+    }
+  }
+}
+    `;
+export function useMovieQuery(baseOptions: Apollo.QueryHookOptions<MovieQuery, MovieQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MovieQuery, MovieQueryVariables>(MovieDocument, options);
+      }
+export function useMovieLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MovieQuery, MovieQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MovieQuery, MovieQueryVariables>(MovieDocument, options);
+        }
+export type MovieQueryHookResult = ReturnType<typeof useMovieQuery>;
+export type MovieLazyQueryHookResult = ReturnType<typeof useMovieLazyQuery>;
+export type MovieQueryResult = Apollo.QueryResult<MovieQuery, MovieQueryVariables>;
 export const MoviesDocument = gql`
     query Movies($orderBy: [MovieOrderByWithRelationAndSearchRelevanceInput!], $where: MovieWhereInput, $skip: Int) {
   movies(orderBy: $orderBy, where: $where, skip: $skip) {

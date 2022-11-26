@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 generator typegraphql {
@@ -199,10 +200,9 @@ model Keyword {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name      String
   movies    Movie[]
+  shows     Show[]
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-  Show      Show?    @relation(fields: [showId], references: [id])
-  showId    String?  @db.Uuid
 }
 
 model Movie {

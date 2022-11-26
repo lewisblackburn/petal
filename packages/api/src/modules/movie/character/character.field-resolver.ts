@@ -14,4 +14,13 @@ export default class MovieCharacterFieldResolver {
       })
       .movie()
   }
+
+  @FieldResolver(() => Movie)
+  person(@Root() character: MovieCharacter) {
+    return prisma.movieCharacter
+      .findUnique({
+        where: { personId_movieId: { personId: character.personId, movieId: character.movieId } },
+      })
+      .person()
+  }
 }

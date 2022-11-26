@@ -13,6 +13,7 @@ import { CurrentUser } from "../shared/currentUser"
 import { User } from "../user/user.model"
 import { MovieInput } from "./inputs/create.input"
 import { Role } from "@prisma/client"
+import { MoviesResponse } from "./responses/movies.response"
 
 @Service()
 @Resolver(() => Movie)
@@ -39,7 +40,7 @@ export default class MovieResolver {
     return await this.movieService.getPopular()
   }
 
-  @Query(() => [Movie])
+  @Query(() => MoviesResponse)
   async movies(@Args() args: FindManyMovieArgs) {
     return await this.movieService.getAll(args)
   }

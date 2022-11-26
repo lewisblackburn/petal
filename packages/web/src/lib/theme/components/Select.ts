@@ -2,7 +2,7 @@ const baseFieldStyle = {
   field: {
     borderRadius: 6,
     fontWeight: 500,
-    h: "50px",
+    height: 12,
     fontSize: "md",
     borderWidth: 1,
   },

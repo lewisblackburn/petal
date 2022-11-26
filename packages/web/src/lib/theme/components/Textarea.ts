@@ -1,8 +1,7 @@
 const baseStyle = {
   field: {
     borderRadius: 6,
-    paddingX: 4,
-    paddingY: 6,
+    height: 12,
     fontWeight: 500,
     fontSize: "md",
     alignSelf: "stretch",

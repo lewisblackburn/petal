@@ -161,7 +161,6 @@ CREATE TABLE "Movie" (
     "videos" TEXT[],
     "posters" TEXT[],
     "backdrops" TEXT[],
-    "tags" TEXT[],
     "contentScore" INTEGER DEFAULT 0,
     "locked" TEXT[],
     "adult" BOOLEAN DEFAULT false,

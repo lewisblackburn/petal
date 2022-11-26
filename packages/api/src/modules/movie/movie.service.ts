@@ -50,7 +50,9 @@ export class MovieService {
   }
 
   async getAll(args: FindManyMovieArgs) {
-    return await prisma.movie.findMany(args)
+    const items = await prisma.movie.findMany(args)
+    const count = await prisma.movie.count({ ...args, take: undefined, skip: undefined })
+    return { items, count }
   }
 
   async lock(data: MovieUpdatelockedInput, where: MovieWhereUniqueInput) {

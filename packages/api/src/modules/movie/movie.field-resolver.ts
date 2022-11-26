@@ -9,6 +9,8 @@ import {
   MovieRatingAvgAggregate,
   MovieRatingCountAggregate,
 } from "@generated"
+import { UseCacheControl } from "../shared/middleware/UseCacheControl"
+import { S3_URL } from "../../lib/config"
 
 @ObjectType()
 export class MovieRatingAverage {
@@ -56,5 +58,19 @@ export default class MovieFieldResolver {
         where: { id: movie.id },
       })
       .keywords()
+  }
+
+  @UseCacheControl({ maxAge: 3600 })
+  @FieldResolver(() => [String], { nullable: true })
+  backdrops(@Root() movie: Movie) {
+    if (movie.backdrops.length < 1) return []
+    return movie.backdrops.map((backdrop) => S3_URL + backdrop)
+  }
+
+  @UseCacheControl({ maxAge: 3600 })
+  @FieldResolver(() => [String])
+  posters(@Root() movie: Movie) {
+    if (movie.posters.length < 1) return []
+    return movie.posters.map((poster) => S3_URL + poster)
   }
 }
