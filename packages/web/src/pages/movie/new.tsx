@@ -23,25 +23,71 @@ import { Textarea } from "components/Textarea"
 import Yup from "lib/yup"
 import { useForm } from "lib/hooks/useForm"
 import { FiChevronRight } from "react-icons/fi"
-import { MovieItemFragment, SortOrder, useMoviesLazyQuery } from "lib/graphql"
+import { MovieItemFragment, SortOrder, useMoviesLazyQuery, useCreateMovieMutation } from "lib/graphql"
 import { useState } from "react"
 import { Column, getOrderBy, Sort, Table } from "components/Table"
+import { gql } from "@apollo/client"
+import { useRouter } from "next/router"
 
-const MovieDetailsSchema = Yup.object().shape({
+const _ = gql`
+mutation CreateMovie($data: MovieInput!) {
+  createMovie(data: $data) {
+      id
+      title
+      overview
+      tagline
+      popularity
+      age_rating
+      runtime
+      homepage
+      language
+      videos
+      posters
+      backdrops
+      contentScore
+      locked
+      adult
+      budget
+      revenue
+      status
+      releaseDate
+      createdAt
+      updatedAt
+      rating {
+        _avg {
+          value
+        }
+      }
+      genres {
+        name
+      }
+      characters {
+        name
+        person {
+          posters
+        }
+      }
+      keywords {
+        name
+      }
+    }
+  }
+`
+
+const MovieSchema = Yup.object().shape({
   title: Yup.string().required("Required"),
   overview: Yup.string().required("Required"),
   tagline: Yup.string(),
-  runtime: Yup.string(),
-  budget: Yup.string(),
-  revenue: Yup.string(),
-  webpage: Yup.string(),
-  imdbid: Yup.string(),
-  tmdbid: Yup.string(),
+  runtime: Yup.number(),
+  budget: Yup.number(),
+  revenue: Yup.number(),
 })
 
-export default function Edit() {
-  const movieDetailsForm = useForm({ schema: MovieDetailsSchema })
-  const [movie, setMovie] = useState({ title: "" })
+export default function New() {
+  const router = useRouter()
+  const form = useForm({ schema: MovieSchema })
+  const [createMovie] = useCreateMovieMutation()
+  const [movie, setMovie] = useState({ title: "", overview: "" })
   const [sort, setSort] = useState<Sort>({ createdAt: SortOrder.Desc })
   const [isDuplicates, setIsDuplicates] = useState(false)
   const [findDuplicates, { data, loading, fetchMore }] = useMoviesLazyQuery({
@@ -68,6 +114,22 @@ export default function Edit() {
         }
       })
     } else nextTab()
+
+    if (tabIndex == 2) {
+      return form.handler(() => createMovie({
+        variables: {
+          data: {
+            title: movie.title,
+            overview: movie.overview
+          }
+        }
+      }), {
+        onSuccess: (res, toast) => {
+          router.push("/movie/" + res.createMovie.id)
+          toast({ description: "Movie created" })
+        },
+      })
+    }
   }
 
   const movies = data?.movies.items
@@ -76,6 +138,7 @@ export default function Edit() {
     if (!movies) return
     return fetchMore({ variables: { skip: movies.length } })
   }
+
 
   return (
     <Flex flexDir="column" align="center" gap="40px">
@@ -87,24 +150,24 @@ export default function Edit() {
           Make sure you have filled in all the necessary fields and have uploaded all the required files.
         </Text>
       </Flex>
-      <Tabs
-        variant="unstyled"
-        index={tabIndex}
-        onChange={(index) => setTabIndex(index)}
-        w="full"
-        align="center"
-      >
-        <TabList display="flex" alignItems="center" gap="4">
-          <DotTab>Movie Details</DotTab>
-          <Icon as={FiChevronRight} />
-          <DotTab isDisabled={!isDuplicates}>Duplicate Check</DotTab>
-          <Icon as={FiChevronRight} />
-          <DotTab>Verify & Save</DotTab>
-        </TabList>
-        <Divider my={20} />
-        <TabPanels>
-          <TabPanel>
-            <Form onSubmit={onSubmit} {...movieDetailsForm}>
+      <Form onSubmit={onSubmit} {...form}>
+        <Tabs
+          variant="unstyled"
+          index={tabIndex}
+          onChange={(index) => setTabIndex(index)}
+          w="full"
+          align="center"
+        >
+          <TabList display="flex" alignItems="center" gap="4">
+            <DotTab>Movie Details</DotTab>
+            <Icon as={FiChevronRight} />
+            <DotTab isDisabled={!isDuplicates}>Duplicate Check</DotTab>
+            <Icon as={FiChevronRight} />
+            <DotTab>Verify & Save</DotTab>
+          </TabList>
+          <Divider my={20} />
+          <TabPanels>
+            <TabPanel>
               <Flex justify="center">
                 <Flex flexDir="column" gap="10">
                   <Card variant="secondary">
@@ -120,7 +183,7 @@ export default function Edit() {
                       <NumberInput name="budget" label="Budget" subLabel="(US Dollars)" />
                       <NumberInput name="revenue" label="Revenue" subLabel="(US Dollars)" />
                       <GridItem colSpan={2}>
-                        <Input name="webpage" label="Webpage (https://www.domain.com)" />
+                        <Input name="homepage" label="Webpage (https://www.domain.com)" />
                       </GridItem>
                       <Select name="age" options={["U", "12", "12A", "15", "18"]} label="Age Rating" />
                       <Select name="language" options={["English"]} label="Language" />
@@ -142,57 +205,57 @@ export default function Edit() {
                   </Button>
                 </Flex>
               </Flex>
-            </Form>
-          </TabPanel>
-          <TabPanel>
-            <Flex flexDir="column" gap="10">
-              <Card variant="secondary" w="full">
-                <Table
-                  noDataText="No movies found"
-                  data={movies}
-                  count={data?.movies.count}
-                  sort={sort}
-                  onSort={setSort}
-                  getRowHref={(movie) => `/movie/${movie.id}`}
-                  onFetchMore={handleFetchMore}
-                  isLoading={loading && !!!data}
-                >
-                  <Column<MovieItemFragment> sortKey="id" header="ID" row={(movie) => movie.id} />
-                  <Column<MovieItemFragment> sortKey="title" header="Title" row={(movie) => movie.title} />
-                  <Column<MovieItemFragment>
-                    sortKey="overview"
-                    header="Overview"
-                    row={(movie) => movie.overview}
-                  />
-                </Table>
-              </Card>
-              <Button onClick={nextTab} variant="primary" size="long" alignSelf="flex-end">
-                Continue
-              </Button>
-            </Flex>
-          </TabPanel>
-          <TabPanel>
-            <Flex justify="center">
+            </TabPanel>
+            <TabPanel>
               <Flex flexDir="column" gap="10">
-                <Card variant="secondary" width="fit-content">
-                  <Grid gridTemplateColumns="1fr 1fr" gap="5">
-                    {Object.keys(movie).map((key, index) => (
-                      <Text>
-                        {key}: {Object.values(movie)[index]}
-                      </Text>
-                    ))}
-                  </Grid>
+                <Card variant="secondary" w="full">
+                  <Table
+                    noDataText="No movies found"
+                    data={movies}
+                    count={data?.movies.count}
+                    sort={sort}
+                    onSort={setSort}
+                    getRowHref={(movie) => `/movie/${movie.id}`}
+                    onFetchMore={handleFetchMore}
+                    isLoading={loading && !!!data}
+                  >
+                    <Column<MovieItemFragment> sortKey="id" header="ID" row={(movie) => movie.id} />
+                    <Column<MovieItemFragment> sortKey="title" header="Title" row={(movie) => movie.title} />
+                    <Column<MovieItemFragment>
+                      sortKey="overview"
+                      header="Overview"
+                      row={(movie) => movie.overview}
+                    />
+                  </Table>
                 </Card>
-                <Button variant="primary" size="long" type="submit" alignSelf="flex-end">
-                  Submit
+                <Button onClick={nextTab} variant="primary" size="long" alignSelf="flex-end">
+                  Continue
                 </Button>
               </Flex>
-            </Flex>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+            </TabPanel>
+            <TabPanel>
+              <Flex justify="center">
+                <Flex flexDir="column" gap="10">
+                  <Card variant="secondary" width="fit-content">
+                    <Grid gridTemplateColumns="1fr 1fr" gap="5">
+                      {Object.keys(movie).map((key, index) => (
+                        <Text>
+                          {key}: {Object.values(movie)[index]}
+                        </Text>
+                      ))}
+                    </Grid>
+                  </Card>
+                  <Button variant="primary" size="long" type="submit" alignSelf="flex-end">
+                    Submit
+                  </Button>
+                </Flex>
+              </Flex>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Form>
     </Flex>
   )
 }
 
-Edit.getLayout = (page: React.ReactNode) => <DefaultLayout>{page}</DefaultLayout>
+New.getLayout = (page: React.ReactNode) => <DefaultLayout>{page}</DefaultLayout>

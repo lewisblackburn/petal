@@ -2017,7 +2017,12 @@ export type MovieCrewMemberWhereUniqueInput = {
 };
 
 export type MovieInput = {
+  budget?: InputMaybe<Scalars['Int']>;
+  homepage?: InputMaybe<Scalars['String']>;
   overview: Scalars['String'];
+  revenue?: InputMaybe<Scalars['Int']>;
+  runtime?: InputMaybe<Scalars['Int']>;
+  tagline?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
 };
 
@@ -6815,6 +6820,13 @@ export type MoviesQueryVariables = Exact<{
 
 export type MoviesQuery = { __typename?: 'Query', movies: { __typename?: 'MoviesResponse', count: number, items: Array<{ __typename?: 'Movie', id: string, title: string, overview: string, posters: Array<string> }> } };
 
+export type CreateMovieMutationVariables = Exact<{
+  data: MovieInput;
+}>;
+
+
+export type CreateMovieMutation = { __typename?: 'Mutation', createMovie: { __typename?: 'Movie', id: string, title: string, overview: string, tagline?: string | null, popularity?: number | null, age_rating?: AgeRating | null, runtime?: number | null, homepage?: string | null, language?: string | null, videos: Array<string>, posters: Array<string>, backdrops: Array<string>, contentScore?: number | null, locked: Array<string>, adult?: boolean | null, budget?: number | null, revenue?: number | null, status?: Status | null, releaseDate?: string | null, createdAt: string, updatedAt: string, rating: { __typename?: 'MovieRatingAverage', _avg?: { __typename?: 'MovieRatingAvgAggregate', value?: number | null } | null }, genres: Array<{ __typename?: 'Genre', name: string }>, characters: Array<{ __typename?: 'MovieCharacter', name: string, person: { __typename?: 'Movie', posters: Array<string> } }>, keywords: Array<{ __typename?: 'Keyword', name: string }> } };
+
 export type UpdateMeMutationVariables = Exact<{
   data: UpdateUserInput;
 }>;
@@ -7135,6 +7147,57 @@ export function useMoviesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Mov
 export type MoviesQueryHookResult = ReturnType<typeof useMoviesQuery>;
 export type MoviesLazyQueryHookResult = ReturnType<typeof useMoviesLazyQuery>;
 export type MoviesQueryResult = Apollo.QueryResult<MoviesQuery, MoviesQueryVariables>;
+export const CreateMovieDocument = gql`
+    mutation CreateMovie($data: MovieInput!) {
+  createMovie(data: $data) {
+    id
+    title
+    overview
+    tagline
+    popularity
+    age_rating
+    runtime
+    homepage
+    language
+    videos
+    posters
+    backdrops
+    contentScore
+    locked
+    adult
+    budget
+    revenue
+    status
+    releaseDate
+    createdAt
+    updatedAt
+    rating {
+      _avg {
+        value
+      }
+    }
+    genres {
+      name
+    }
+    characters {
+      name
+      person {
+        posters
+      }
+    }
+    keywords {
+      name
+    }
+  }
+}
+    `;
+export function useCreateMovieMutation(baseOptions?: Apollo.MutationHookOptions<CreateMovieMutation, CreateMovieMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateMovieMutation, CreateMovieMutationVariables>(CreateMovieDocument, options);
+      }
+export type CreateMovieMutationHookResult = ReturnType<typeof useCreateMovieMutation>;
+export type CreateMovieMutationResult = Apollo.MutationResult<CreateMovieMutation>;
+export type CreateMovieMutationOptions = Apollo.BaseMutationOptions<CreateMovieMutation, CreateMovieMutationVariables>;
 export const UpdateMeDocument = gql`
     mutation UpdateMe($data: UpdateUserInput!) {
   updateMe(data: $data) {

@@ -70,8 +70,8 @@ export default function Movies() {
     variables: {
       where: {
         title: {
-          search: predicate,
-        },
+          contains: predicate
+        }
       },
       orderBy: getOrderBy(sortOrder),
     },
@@ -82,13 +82,13 @@ export default function Movies() {
     setPredicate(d.text)
   }
 
-  // if (loading) {
-  //   return (
-  //     <Center>
-  //       <Spinner />
-  //     </Center>
-  //   )
-  // }
+  if (loading) {
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    )
+  }
 
   return (
     <Flex direction="column" gap={10}>

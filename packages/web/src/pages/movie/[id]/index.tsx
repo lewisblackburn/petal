@@ -29,6 +29,8 @@ import {
   Tabs,
   TabPanels,
   TabPanel,
+  Center,
+  Spinner,
 } from "@chakra-ui/react"
 import {
   FiAlertTriangle,
@@ -63,6 +65,9 @@ import { Input } from "components/Input"
 import { Textarea } from "components/Textarea"
 import { Select } from "components/Select"
 import { gql } from "@apollo/client"
+import { Status, useMovieQuery } from "lib/graphql"
+import { useRouter } from "next/router"
+import { minuteToHour } from "lib/helpers/text"
 
 const _ = gql`
   query Movie($movieId: String!) {
@@ -114,13 +119,13 @@ const SearchListSchema = Yup.object().shape({
 })
 
 export default function Movie() {
+  const router = useRouter()
+  const id = router.query.id as string
   const { data, loading } = useMovieQuery({
-    fetchPolicy: "cache-and-network",
     variables: {
-      where: {
-        id: "slug",
-      },
+      movieId: id,
     },
+    skip: !!!id
   })
 
   const { isOpen: isReportOpen, onOpen: onReportOpen, onClose: onReportClose } = useDisclosure()
@@ -135,13 +140,13 @@ export default function Movie() {
   const listForm = useForm({ schema: SearchListSchema })
   const issueForm = useForm({ schema: SearchListSchema })
 
-  // if (loading) {
-  //   return (
-  //     <Center>
-  //       <Spinner />
-  //     </Center>
-  //   )
-  // }
+  if (loading) {
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    )
+  }
 
   return (
     <>
@@ -155,7 +160,7 @@ export default function Movie() {
         <Flex justify="space-between">
           <Flex flexDir="column">
             <Heading as="h1" fontSize="40" color="brand.100">
-              About Time
+              {data?.movie.title ?? "skeleton"}
             </Heading>
             <Text variant="1" size="xl">
               What if every moment in life came with a second chance?
@@ -208,11 +213,10 @@ export default function Movie() {
         </Flex>
         <Grid templateColumns="400px 3fr" gap="5">
           <GridItem bg="gray.50">
-            <Poster src="https://www.themoviedb.org/t/p/original/iR1bVfURbN7r1C46WHFbwCkVve.jpg" />
+            <Poster src={data?.movie.posters[0]} />
           </GridItem>
           <GridItem bg="gray.50" position="relative">
-            <Backdrop src="https://www.themoviedb.org/t/p/original/rc1IUET1dg6GUAwyhcjBIpZtzGW.jpg" />
-
+            <Backdrop src={data?.movie.backdrops[0]} />
             <Button
               position="absolute"
               bottom={5}
@@ -230,22 +234,23 @@ export default function Movie() {
           <Flex flexDir="column" gap="10">
             <Card variant="secondary" size="sm">
               <Tag title="Runtime" icon={FiClock}>
-                2h 3m
+                {minuteToHour(data?.movie.runtime ?? 0)}
               </Tag>
               <Tag title="Release Date" icon={FiCalendar}>
                 04/09/2013
               </Tag>
               <Tag title="Age Rating" icon={FiUser}>
-                12A
+                {data?.movie.age_rating ?? "N/A"}
               </Tag>
               <Tag title="User Score" icon={FiStar}>
-                76.5%
+                {data?.movie.rating._avg?.value ?? 0}%
               </Tag>
               <Tag title="Language" icon={HiLanguage}>
-                English
+                {/* {data?.movie.langauge ?? "N/A"} */}
+                N/A
               </Tag>
               <Tag title="Status" icon={FiCheckCircle}>
-                Released
+                {data?.movie.status ?? "Unknown"}
               </Tag>
             </Card>
             <Flex flexDirection="column" gap="4">
@@ -253,11 +258,7 @@ export default function Movie() {
                 Overview
               </Heading>
               <Text variant="2" size="md">
-                The night after another unsatisfactory New Year's party, Tim's father tells his son that the
-                men in his family have always had the ability to travel through time. They can't change
-                history, but they can change what happens and has happened in their own lives. Thus begins the
-                start of a lesson in learning to appreciate life itself as it is, as it comes, and most
-                importantly, the people living alongside us.
+                {data?.movie.title ?? "skeleton paragraph"}
               </Text>
             </Flex>
             <Flex flexDirection="column" gap="4">
@@ -440,7 +441,7 @@ export default function Movie() {
 
                 <Grid gridTemplateColumns="1fr 1fr" gap="4">
                   <Tag title="Popularity" icon={FiBarChart2}>
-                    98.4%
+                    {data?.movie.popularity ?? 0}%
                   </Tag>
                   <Tag title="Content Score" icon={FiTrendingUp}>
                     100%
@@ -453,31 +454,20 @@ export default function Movie() {
                   Genres
                 </Text>
                 <Grid gridTemplateColumns="1fr 1fr" gap="4">
-                  <LinkButton href="#" variant="card" size="xl">
-                    Romance
-                  </LinkButton>
-                  <LinkButton href="#" variant="card" size="xl">
-                    Comedy
-                  </LinkButton>
+                  {data?.movie.genres.map(genre => (
+                    <LinkButton key={genre.name} href="#" variant="card" size="xl">
+                      {genre.name}
+                    </LinkButton>
+                  ))}
                 </Grid>
                 <Divider />
                 <Text variant="4" size="lg">
                   Keywords
                 </Text>
                 <Flex wrap="wrap" gap="4">
-                  {[
-                    "london, england",
-                    "parent child relationship",
-                    "time travel",
-                    "family secrets",
-                    "cornwall, england",
-                    "love",
-                    "family",
-                    "second chance",
-                    "time-manipulation",
-                  ].map((keyword: string) => (
-                    <LinkButton key={keyword} href="#" variant="card" size="xs">
-                      {keyword}
+                  {data?.movie.keywords.map((keyword) => (
+                    <LinkButton key={keyword.name} href="#" variant="card" size="xs">
+                      {keyword.name}
                     </LinkButton>
                   ))}
                 </Flex>

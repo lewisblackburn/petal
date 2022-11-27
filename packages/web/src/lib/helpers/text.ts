@@ -16,3 +16,7 @@ export function camelToHuman(name?: string | null): string {
   const words = name.match(/[A-Za-z][a-z]*/g) || []
   return words.map(capitalize).join(" ")
 }
+
+export function minuteToHour(minutes: number): string {
+  return `${Math.floor((minutes / 60))}h ${(minutes % 60)}m`
+}
