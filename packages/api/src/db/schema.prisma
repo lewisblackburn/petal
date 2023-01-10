@@ -300,17 +300,17 @@ model Watchlist {
 }
 
 model Game {
-  id           String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title        String
+  id    String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title String
 }
 
 model Book {
-  id           String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title        String
+  id    String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title String
 }
 
 model Song {
-  id           String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title        String
+  id     String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title  String
+  length Float
 }
-
