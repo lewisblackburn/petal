@@ -298,3 +298,19 @@ model Watchlist {
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 }
+
+model Game {
+  id           String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title        String
+}
+
+model Book {
+  id           String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title        String
+}
+
+model Song {
+  id           String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title        String
+}
+
