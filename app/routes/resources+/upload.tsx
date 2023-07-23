@@ -7,16 +7,16 @@ import { s3UploaderHandler } from '~/utils/s3.server.ts'
 // TODO: Add schema validation and error handling
 
 export const action: ActionFunction = async ({ request }) => {
-  await authenticator.isAuthenticated(request, { failureRedirect: '/login' })
+	await authenticator.isAuthenticated(request, { failureRedirect: '/login' })
 
-  const formData = await unstable_parseMultipartFormData(
-    request,
-    s3UploaderHandler,
-  )
+	const formData = await unstable_parseMultipartFormData(
+		request,
+		s3UploaderHandler,
+	)
 
-  const fileName = formData.get('upload')
+	const fileName = formData.get('upload')
 
-  return redirectWithToast('/', {
-    title: fileName?.toString() + ' uploaded',
-  })
+	return redirectWithToast('/', {
+		title: fileName?.toString() + ' uploaded',
+	})
 }

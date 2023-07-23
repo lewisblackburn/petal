@@ -79,12 +79,12 @@ test('onboarding with link', async ({ page }) => {
 
 	await expect(page).toHaveURL(`/`)
 
-	await page.getByRole('link', { name: onboardingData.name }).click()
+	await page.getByRole('button', { name: onboardingData.name }).click()
 	await page.getByRole('menuitem', { name: /profile/i }).click()
 
 	await expect(page).toHaveURL(`/users/${onboardingData.username}`)
 
-	await page.getByRole('link', { name: onboardingData.name }).click()
+	await page.getByRole('button', { name: onboardingData.name }).click()
 	await page.getByRole('menuitem', { name: /logout/i }).click()
 	await expect(page).toHaveURL(`/`)
 
@@ -133,7 +133,7 @@ test('login as existing user', async ({ page }) => {
 	await page.getByRole('button', { name: /log in/i }).click()
 	await expect(page).toHaveURL(`/`)
 
-	await expect(page.getByRole('link', { name: user.name })).toBeVisible()
+	await expect(page.getByRole('img', { name: user.name })).toBeVisible()
 })
 
 test('reset password with a link', async ({ page }) => {
@@ -186,7 +186,7 @@ test('reset password with a link', async ({ page }) => {
 
 	await expect(page).toHaveURL(`/`)
 
-	await expect(page.getByRole('link', { name: user.name })).toBeVisible()
+	await expect(page.getByRole('img', { name: user.name })).toBeVisible()
 })
 
 test('reset password with a short code', async ({ page }) => {
