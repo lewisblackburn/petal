@@ -52,3 +52,7 @@ assets you can use in your material:
 ## Thanks
 
 You rock 🪨
+
+## Last Sync
+
+https://github.com/epicweb-dev/epic-stack/commit/3199cf7cf198f86dcadf5c606de34054edef80ca
