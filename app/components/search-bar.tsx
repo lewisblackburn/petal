@@ -4,21 +4,28 @@ import { Input } from './ui/input.tsx'
 import { Label } from './ui/label.tsx'
 import { StatusButton } from './ui/status-button.tsx'
 import { useDebounce, useIsSubmitting } from '~/utils/misc.ts'
+import { Button } from './ui/button.tsx'
 
 export function SearchBar({
+	action,
 	status,
 	autoFocus = false,
 	autoSubmit = false,
+	hasType = false,
+	hasButton = false,
 }: {
+	action: string
 	status: 'idle' | 'pending' | 'success' | 'error'
 	autoFocus?: boolean
 	autoSubmit?: boolean
+	hasType?: boolean
+	hasButton?: boolean
 }) {
 	const [searchParams] = useSearchParams()
 	const submit = useSubmit()
 	const isSubmitting = useIsSubmitting({
 		formMethod: 'GET',
-		formAction: '/users',
+		formAction: action,
 	})
 
 	const handleFormChange = useDebounce((form: HTMLFormElement) => {
@@ -28,7 +35,7 @@ export function SearchBar({
 	return (
 		<Form
 			method="GET"
-			action="/users"
+			action={action}
 			className="flex flex-wrap items-center justify-center gap-2"
 			onChange={e => autoSubmit && handleFormChange(e.currentTarget)}
 		>
@@ -42,21 +49,28 @@ export function SearchBar({
 					id="search"
 					defaultValue={searchParams.get('search') ?? ''}
 					placeholder="Search"
-					className="w-full"
+					className="md:w-[100px] lg:w-[300px]"
 					autoFocus={autoFocus}
 				/>
 			</div>
-			<div>
-				<StatusButton
-					type="submit"
-					status={isSubmitting ? 'pending' : status}
-					className="flex w-full items-center justify-center"
-					size="sm"
-				>
-					<Icon name="magnifying-glass" size="sm" />
-					<span className="sr-only">Search</span>
-				</StatusButton>
-			</div>
+			{hasButton && (
+				<div>
+					<StatusButton
+						type="submit"
+						status={isSubmitting ? 'pending' : status}
+						className="flex w-full items-center justify-center"
+						size="sm"
+					>
+						<Icon name="magnifying-glass" size="sm" />
+						<span className="sr-only">Search</span>
+					</StatusButton>
+				</div>
+			)}
+			{hasType && (
+				<Button type="button" size="icon">
+					<Icon name="laptop" size="sm" />
+				</Button>
+			)}
 		</Form>
 	)
 }
