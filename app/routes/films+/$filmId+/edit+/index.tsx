@@ -10,6 +10,7 @@ import { z } from 'zod'
 
 export const PersonSchema = z.object({
   id: z.string(),
+  name: z.string(),
   character: z.string(),
   job: z.string(),
   label: z.string(),
@@ -46,6 +47,7 @@ export default function FilmEdit() {
   const { film } = useLoaderData<typeof loader>()
   const credits = film.credits.map(credit => ({
     id: credit.id,
+    name: credit.person.name,
     character: credit.character,
     job: credit.job,
     label: 'test',

@@ -33,9 +33,16 @@ export const columns: ColumnDef<Partial<CreditMember>>[] = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Person" />
 		),
-		cell: ({ row }) => <div className="w-[80px]">{row.getValue('id')}</div>,
+		cell: ({ row }) => <div className="w-[100px]">{row.getValue('id')}</div>,
 		enableSorting: false,
 		enableHiding: false,
+	},
+	{
+		accessorKey: 'name',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Name" />
+		),
+		cell: ({ row }) => <div className="w-[160px]">{row.getValue('name')}</div>,
 	},
 	{
 		accessorKey: 'character',
