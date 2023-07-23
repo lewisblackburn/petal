@@ -3,10 +3,11 @@ import { parse } from 'cookie'
 import { authenticator, getPasswordHash } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { commitSession, getSession } from '~/utils/session.server.ts'
-import { createUser } from '../tests/db-utils.ts'
+import { createFilm, createUser } from '../tests/db-utils.ts'
 
 export const dataCleanup = {
 	users: new Set<string>(),
+	films: new Set<string>(),
 }
 
 export function deleteUserByUsername(username: string) {
@@ -32,6 +33,19 @@ export async function insertNewUser({
 	})
 	dataCleanup.users.add(user.id)
 	return user
+}
+
+export async function insertNewFilm({ title }: { title?: string } = {}) {
+	const filmData = createFilm()
+	const film = await prisma.film.create({
+		data: {
+			...filmData,
+			title: title ?? filmData.title,
+		},
+		select: { id: true, title: true },
+	})
+	dataCleanup.films.add(film.id)
+	return film
 }
 
 export const test = base.extend<{
