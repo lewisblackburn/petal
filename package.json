@@ -71,6 +71,7 @@
     "eslint-plugin-remix-react-routes": "^1.0.5",
     "execa": "^7.1.1",
     "express": "^4.18.2",
+    "framer-motion": "^10.13.0",
     "get-port": "^7.0.0",
     "helmet": "^7.0.0",
     "intl-parse-accept-language": "^1.0.0",
