@@ -34,3 +34,13 @@ export function createPassword(username: string = faker.internet.userName()) {
 		hash: bcrypt.hashSync(username, 10),
 	}
 }
+
+export function createFilm() {
+	const title = faker.word.noun()
+	const overview = faker.lorem.paragraph()
+
+	return {
+		title,
+		overview,
+	}
+}

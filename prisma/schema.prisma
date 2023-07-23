@@ -125,3 +125,108 @@ model Note {
   // so indexing on the owner ID helps with that (a LOT).
   @@index([ownerId, updatedAt(sort: Desc)])
 }
+
+model Person {
+  id                 String   @id @unique @default(cuid())
+  name               String
+  knownForDepartment String?
+  image              String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  casts CastMember[]
+  crews CrewMember[]
+
+  imageId String? @unique
+}
+
+model Film {
+  id          String    @id @unique @default(cuid())
+  title       String
+  overview    String
+  tagline     String?
+  poster      String?   @default("https://via.placeholder.com/600x900.png?text=No+Poster")
+  backdrop    String?   @default("https://via.placeholder.com/1920x1080.png?text=No+Backdrop")
+  releaseDate DateTime?
+  runtime     Float?
+  budget      Float?
+  revenue     Float?
+  status      String?
+  instagram   String?
+  twitter     String?
+  website     String?
+  tmdbId      String?
+  locked      Boolean?  @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  cast     CastMember[]
+  crew     CrewMember[]
+  videos   Video[]
+  genres   Genre[]      @relation("FilmToGenre")
+  keywords Keyword[]    @relation("FilmToKeyword")
+}
+
+model CastMember {
+  id        String   @id @unique @default(cuid())
+  character String
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  person    Person   @relation(fields: [personId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  filmId   String
+  personId String
+}
+
+model CrewMember {
+  id        String   @id @unique @default(cuid())
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  person    Person   @relation(fields: [personId], references: [id])
+  role      CrewRole @relation(fields: [roleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  filmId   String
+  personId String
+  roleId   String
+}
+
+model CrewRole {
+  id         String   @id @unique @default(cuid())
+  department String
+  job        String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  crews CrewMember[]
+}
+
+model Video {
+  id        String   @id @unique @default(cuid())
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId    String
+  site      String
+  type      String
+  quality   String?
+  sourceKey String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Genre {
+  id        String   @id @unique @default(cuid())
+  name      String
+  films     Film[]   @relation("FilmToGenre")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Keyword {
+  id        String   @id @unique @default(cuid())
+  name      String
+  films     Film[]   @relation("FilmToKeyword")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
