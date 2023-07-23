@@ -224,9 +224,9 @@ export function useDoubleCheck() {
 			doubleCheck
 				? undefined
 				: e => {
-						e.preventDefault()
-						setDoubleCheck(true)
-				  }
+					e.preventDefault()
+					setDoubleCheck(true)
+				}
 
 		return {
 			...props,
@@ -272,4 +272,17 @@ export function useDebounce<
 			),
 		[delay],
 	)
+}
+
+export function formatDate(date: Date) {
+	return date.toLocaleDateString('en-GB', {
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+	})
+}
+
+export function formatDateWithDashes(date: Date) {
+	const formattedDate = formatDate(date)
+	return formattedDate?.split('/').reverse().join('-')
 }

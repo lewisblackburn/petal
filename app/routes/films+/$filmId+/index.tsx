@@ -1,9 +1,11 @@
 import { json, type DataFunctionArgs } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
+import { Container } from '~/components/container.tsx'
 import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { Image } from '~/components/image.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon, type IconName } from '~/components/ui/icon.tsx'
+import { Separator } from '~/components/ui/separator.tsx'
 import { prisma } from '~/utils/db.server.ts'
 
 export async function loader({ params }: DataFunctionArgs) {
@@ -29,7 +31,7 @@ export default function FilmRoute() {
 	const data = useLoaderData<typeof loader>()
 
 	return (
-		<div className="flex flex-col gap-10">
+		<Container className="flex flex-col gap-10">
 			<div className="flex items-center justify-between">
 				<h2 className="text-h2 font-black">About Time</h2>
 				<div className="flex items-center gap-5">
@@ -114,7 +116,7 @@ export default function FilmRoute() {
 							<Icon name="play" className="mr-2" />
 							Play Trailer
 						</Button>
-						{/* <Divider direction="horizontal" /> */}
+						<Separator />
 						<div className="grid grid-cols-2 gap-5">
 							<Status title="Popularity" icon="bar-chart">
 								100%
@@ -129,11 +131,11 @@ export default function FilmRoute() {
 								$87,100,499.00
 							</Status>
 						</div>
-						{/* <Divider direction="horizontal" /> */}
+						<Separator />
 						<h2 className="text-xl font-bold">Genres</h2>
-						{/* <Divider direction="horizontal" /> */}
+						<Separator />
 						<h2 className="text-xl font-bold">Keywords</h2>
-						{/* <Divider direction="horizontal" /> */}
+						<Separator />
 						<div className="flex items-center justify-between gap-5">
 							<Link to="." className="w-full" preventScrollReset>
 								<Button variant="secondary" size="sm" className="w-full">
@@ -151,7 +153,7 @@ export default function FilmRoute() {
 					</div>
 				</div>
 			</div>
-		</div>
+		</Container>
 	)
 }
 

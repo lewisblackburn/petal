@@ -79,7 +79,6 @@ async function seed() {
 					data: {
 						...filmData,
 						...filmCreatedUpdated,
-						poster: 'https://placehold.co/600x900',
 					},
 				})
 				.catch(() => null)

@@ -15,9 +15,7 @@ export default function FilmLayout() {
 					</Link>
 				</Container>
 			</div>
-			<Container>
-				<Outlet />
-			</Container>
+			<Outlet />
 		</div>
 	)
 }

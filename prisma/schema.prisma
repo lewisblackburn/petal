@@ -134,8 +134,7 @@ model Person {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
-  casts CastMember[]
-  crews CrewMember[]
+  credits CreditMember[]
 
   imageId String? @unique
 }
@@ -160,46 +159,25 @@ model Film {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  cast     CastMember[]
-  crew     CrewMember[]
+  credits  CreditMember[]
   videos   Video[]
-  genres   Genre[]      @relation("FilmToGenre")
-  keywords Keyword[]    @relation("FilmToKeyword")
+  genres   Genre[]        @relation("FilmToGenre")
+  keywords Keyword[]      @relation("FilmToKeyword")
 }
 
-model CastMember {
-  id        String   @id @unique @default(cuid())
-  character String
-  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  person    Person   @relation(fields: [personId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  filmId   String
-  personId String
-}
-
-model CrewMember {
-  id        String   @id @unique @default(cuid())
-  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  person    Person   @relation(fields: [personId], references: [id])
-  role      CrewRole @relation(fields: [roleId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  filmId   String
-  personId String
-  roleId   String
-}
-
-model CrewRole {
+model CreditMember {
   id         String   @id @unique @default(cuid())
+  order      Int      @default(0)
+  character  String
+  film       Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  person     Person   @relation(fields: [personId], references: [id])
   department String
-  job        String
+  job        String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  crews CrewMember[]
+  filmId   String
+  personId String
 }
 
 model Video {
