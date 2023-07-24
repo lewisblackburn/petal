@@ -135,8 +135,6 @@ model Person {
   updatedAt          DateTime @updatedAt
 
   credits CreditMember[]
-
-  imageId String? @unique
 }
 
 model Film {

@@ -11,7 +11,7 @@ import {
 	authenticator,
 	getPasswordHash,
 	requireUserId,
-	verifyLogin,
+	verifyUserPassword,
 } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { getUserImgSrc, useIsSubmitting } from '~/utils/misc.ts'
@@ -61,7 +61,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const submission = await parse(formData, {
 		async: true,
 		schema: profileFormSchema.superRefine(
-			async ({ username, currentPassword, newPassword }, ctx) => {
+			async ({ currentPassword, newPassword }, ctx) => {
 				if (newPassword && !currentPassword) {
 					ctx.addIssue({
 						path: ['newPassword'],
@@ -70,7 +70,7 @@ export async function action({ request }: DataFunctionArgs) {
 					})
 				}
 				if (currentPassword && newPassword) {
-					const user = await verifyLogin(username, currentPassword)
+					const user = await verifyUserPassword({ id: userId }, currentPassword)
 					if (!user) {
 						ctx.addIssue({
 							path: ['currentPassword'],
@@ -109,10 +109,10 @@ export async function action({ request }: DataFunctionArgs) {
 			username,
 			password: newPassword
 				? {
-						update: {
-							hash: await getPasswordHash(newPassword),
-						},
-				  }
+					update: {
+						hash: await getPasswordHash(newPassword),
+					},
+				}
 				: undefined,
 		},
 	})
