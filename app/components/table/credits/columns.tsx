@@ -1,10 +1,9 @@
-import { type ColumnDef } from '@tanstack/react-table'
-
-import { Checkbox } from '~/components/ui/checkbox.tsx'
-import { DataTableRowActions } from './data-table-row-actions.tsx'
-import { DataTableColumnHeader } from '~/components/table/data-table-column-header.tsx'
 import { type CreditMember } from '@prisma/client'
-import { departments, jobs } from '~/utils/constants.ts'
+import { type ColumnDef } from '@tanstack/react-table'
+import { Checkbox } from '~/components/ui/checkbox.tsx'
+import { DataTableColumnHeader } from '../data-table-column-header.js'
+import { DataTableRowActions } from './data-table-row-actions.js'
+import { CreditDepartments, CreditJobs } from '~/utils/credit-roles.ts'
 
 export const columns: ColumnDef<Partial<CreditMember>>[] = [
 	{
@@ -25,15 +24,6 @@ export const columns: ColumnDef<Partial<CreditMember>>[] = [
 				className="translate-y-[2px]"
 			/>
 		),
-		enableSorting: false,
-		enableHiding: false,
-	},
-	{
-		accessorKey: 'id',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Person" />
-		),
-		cell: ({ row }) => <div className="w-[100px]">{row.getValue('id')}</div>,
 		enableSorting: false,
 		enableHiding: false,
 	},
@@ -59,20 +49,13 @@ export const columns: ColumnDef<Partial<CreditMember>>[] = [
 			<DataTableColumnHeader column={column} title="Job" />
 		),
 		cell: ({ row }) => {
-			const job = jobs.find(job => job.value === row.getValue('job'))
+			const job = CreditJobs.find(job => job.value === row.getValue('job'))
 
 			if (!job) {
 				return null
 			}
 
-			return (
-				<div className="flex w-[100px] items-center">
-					{/* {job.icon && ( */}
-					{/*   <job.icon className="mr-2 h-4 w-4 text-muted-foreground" /> */}
-					{/* )} */}
-					<span>{job.label}</span>
-				</div>
-			)
+			return <span>{job.label}</span>
 		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
@@ -84,7 +67,7 @@ export const columns: ColumnDef<Partial<CreditMember>>[] = [
 			<DataTableColumnHeader column={column} title="Department" />
 		),
 		cell: ({ row }) => {
-			const department = departments.find(
+			const department = CreditDepartments.find(
 				department => department.value === row.getValue('department'),
 			)
 
@@ -92,14 +75,7 @@ export const columns: ColumnDef<Partial<CreditMember>>[] = [
 				return null
 			}
 
-			return (
-				<div className="flex items-center">
-					{/* {department.icon && ( */}
-					{/*   <department.icon className="mr-2 h-4 w-4 text-muted-foreground" /> */}
-					{/* )} */}
-					<span>{department.label}</span>
-				</div>
-			)
+			return <span>{department.label}</span>
 		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
@@ -107,6 +83,6 @@ export const columns: ColumnDef<Partial<CreditMember>>[] = [
 	},
 	{
 		id: 'actions',
-		cell: ({ row }) => <DataTableRowActions row={row} />,
+		cell: () => <DataTableRowActions />,
 	},
 ]

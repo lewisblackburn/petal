@@ -9,8 +9,8 @@ import {
   getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
+  getSortedRowModel,
 } from '@tanstack/react-table'
 import React from 'react'
 import {
@@ -22,14 +22,14 @@ import {
   TableRow,
 } from '~/components/ui/table.tsx'
 import { DataTablePagination } from '~/components/table/data-table-pagination.tsx'
-import { DataTableToolbar } from './data-table-toolbar.tsx'
+import { DataTableToolbar } from './data-table-toolbar.js'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
-export function DataTable<TData, TValue>({
+export function CreditTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {

@@ -5,7 +5,8 @@ import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { DataTableFacetedFilter } from '~/components/table/data-table-faceted-filter.tsx'
 import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
-import { departments, jobs } from '~/utils/constants.ts'
+import { DataTableAddPerson } from './data-table-add-person.js'
+import { CreditDepartments, CreditJobs } from '~/utils/credit-roles.ts'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -20,7 +21,7 @@ export function DataTableToolbar<TData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Filter people..."
+          placeholder="Filter actors..."
           value={
             (table.getColumn('character')?.getFilterValue() as string) ?? ''
           }
@@ -33,14 +34,14 @@ export function DataTableToolbar<TData>({
           <DataTableFacetedFilter
             column={table.getColumn('department')}
             title="Department"
-            options={departments}
+            options={CreditDepartments}
           />
         )}
         {table.getColumn('job') && (
           <DataTableFacetedFilter
             column={table.getColumn('job')}
             title="Job"
-            options={jobs}
+            options={CreditJobs}
           />
         )}
         {isFiltered && (
@@ -54,7 +55,10 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <DataTableViewOptions table={table} />
+      <div className="flex flex-1 items-center space-x-2">
+        <DataTableViewOptions table={table} />
+        <DataTableAddPerson />
+      </div>
     </div>
   )
 }
