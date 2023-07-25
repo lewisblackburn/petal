@@ -6,9 +6,12 @@ import { formatDateWithDashes } from '~/utils/misc.ts'
 import { Container } from '~/components/container.tsx'
 import { CreditTable } from '~/components/table/credits/data-table.tsx'
 import { columns } from '~/components/table/credits/columns.tsx'
+import { requireUserId } from '~/utils/auth.server.ts'
 
 // TODO: Add timings
-export async function loader({ params }: DataFunctionArgs) {
+export async function loader({ request, params }: DataFunctionArgs) {
+	await requireUserId(request)
+
 	const film = await prisma.film.findFirst({
 		where: {
 			id: params.filmId,
