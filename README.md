@@ -55,4 +55,4 @@ You rock 🪨
 
 ## Last Sync
 
-https://github.com/epicweb-dev/epic-stack/commit/0f593495e503ee6605d10d13fa656f2fb8361b6e
+https://github.com/epicweb-dev/epic-stack/commit/6a57d2b480c612f1deceef3d59c0f2cba06de5c5
