@@ -1,5 +1,4 @@
 import { parse } from '@conform-to/zod'
-import { faker } from '@faker-js/faker'
 import { type DataFunctionArgs, json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
@@ -41,7 +40,7 @@ export async function action({ request }: DataFunctionArgs) {
 							id: personId,
 						},
 					},
-					character: faker.person.fullName(),
+					character: 'character name',
 					// TODO: implement
 					job: 'actor',
 					department: 'acting',
