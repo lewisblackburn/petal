@@ -7,6 +7,7 @@ import { Container } from '~/components/container.tsx'
 import { CreditTable } from '~/components/table/credits/data-table.tsx'
 import { columns } from '~/components/table/credits/columns.tsx'
 
+// TODO: Add timings
 export async function loader({ params }: DataFunctionArgs) {
 	const film = await prisma.film.findFirst({
 		where: {

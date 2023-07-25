@@ -65,6 +65,7 @@ export function DataTableAddPerson() {
 					<input name="filmId" type="hidden" value={filmId} />
 					<PersonSearch />
 					<ErrorList errors={fields.personId.errors} id={fields.personId.id} />
+					{/* TODO: Implement job and department */}
 					<Select name="fruit">
 						<SelectTrigger className="w-[180px]">
 							<SelectValue placeholder="Select a fruit" />

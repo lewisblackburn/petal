@@ -40,6 +40,8 @@ export async function action({ request }: DataFunctionArgs) {
             },
           },
           character: faker.person.fullName(),
+          // TODO: implement
+          job: 'actor',
           department: 'acting',
         },
       },

@@ -65,7 +65,7 @@ export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
 	}
 }
 
-// TODO: Still need to fix the flash, it is due to the combined code
+// FIX: Still need to fix the flash, it is due to the combined code
 export default function FilmsRoute() {
 	const data = useLoaderData<typeof loader>()
 	const location = useLocation()

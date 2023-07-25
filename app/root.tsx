@@ -35,6 +35,12 @@ import { useNonce } from './utils/nonce-provider.ts'
 import { makeTimings, time } from './utils/timing.server.ts'
 import { useToast } from './utils/useToast.tsx'
 import { Header } from './components/header.tsx'
+import rdtStylesheetUrl from 'remix-development-tools/stylesheet.css'
+import { lazy } from 'react'
+const RemixDevTools =
+	process.env.NODE_ENV === 'development'
+		? lazy(() => import('remix-development-tools'))
+		: undefined
 
 export const links: LinksFunction = () => {
 	return [
@@ -44,6 +50,9 @@ export const links: LinksFunction = () => {
 		{ rel: 'preload', href: fontStylestylesheetUrl, as: 'style' },
 		{ rel: 'preload', href: tailwindStylesheetUrl, as: 'style' },
 		cssBundleHref ? { rel: 'preload', href: cssBundleHref, as: 'style' } : null,
+		...(rdtStylesheetUrl && process.env.NODE_ENV === 'development'
+			? [{ rel: 'preload', as: 'style', href: rdtStylesheetUrl }]
+			: []),
 		{ rel: 'mask-icon', href: '/favicons/mask-icon.svg' },
 		{
 			rel: 'alternate icon',
@@ -59,6 +68,10 @@ export const links: LinksFunction = () => {
 		{ rel: 'icon', type: 'image/svg+xml', href: '/favicons/favicon.svg' },
 		{ rel: 'stylesheet', href: fontStylestylesheetUrl },
 		{ rel: 'stylesheet', href: tailwindStylesheetUrl },
+		{ rel: 'stylesheet', href: rdtStylesheetUrl },
+		...(rdtStylesheetUrl && process.env.NODE_ENV === 'development'
+			? [{ rel: 'stylesheet', href: rdtStylesheetUrl }]
+			: []),
 		cssBundleHref ? { rel: 'stylesheet', href: cssBundleHref } : null,
 	].filter(Boolean)
 }
@@ -80,19 +93,19 @@ export async function loader({ request }: DataFunctionArgs) {
 
 	const user = userId
 		? await time(
-			() =>
-				prisma.user.findUnique({
-					where: { id: userId },
-					select: {
-						id: true,
-						name: true,
-						username: true,
-						email: true,
-						imageId: true,
-					},
-				}),
-			{ timings, type: 'find user', desc: 'find user in root' },
-		)
+				() =>
+					prisma.user.findUnique({
+						where: { id: userId },
+						select: {
+							id: true,
+							name: true,
+							username: true,
+							email: true,
+							imageId: true,
+						},
+					}),
+				{ timings, type: 'find user', desc: 'find user in root' },
+		  )
 		: null
 	if (userId && !user) {
 		console.info('something weird happened')
@@ -192,6 +205,7 @@ function App() {
 			</div>
 			<Confetti confetti={data.flash?.confetti} />
 			<Toaster />
+			{RemixDevTools && <RemixDevTools showRouteBoundaries />}
 		</Document>
 	)
 }
