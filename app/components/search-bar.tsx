@@ -57,7 +57,7 @@ export function SearchBar({
 				<div>
 					<StatusButton
 						type="submit"
-						status={isSubmitting ? 'pending' : status}
+						status={isSubmitting ? 'pending' : 'idle'}
 						className="flex w-full items-center justify-center"
 						size="sm"
 					>

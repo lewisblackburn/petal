@@ -28,10 +28,10 @@ export async function loader({ request }: DataFunctionArgs) {
 	const where = {
 		OR: search
 			? [
-					{ title: { contains: search } },
-					{ tagline: { contains: search } },
-					{ overview: { contains: search } },
-			  ]
+				{ title: { contains: search } },
+				{ tagline: { contains: search } },
+				{ overview: { contains: search } },
+			]
 			: undefined,
 	} satisfies Prisma.FilmWhereInput
 

@@ -108,7 +108,7 @@ export async function action({ request }: DataFunctionArgs) {
 			.delete({
 				where: { fileId: previousUserPhoto.imageId },
 			})
-			.catch(() => {}) // ignore the error, maybe it never existed?
+			.catch(() => { }) // ignore the error, maybe it never existed?
 	}
 
 	return redirect('/settings/profile')
@@ -225,6 +225,15 @@ export default function PhotoRoute() {
 				action={deleteImageRoute.ROUTE_PATH}
 				onSubmit={() => setNewImageSrc(null)}
 			>
+				<ServerOnly>
+					{() => (
+						<input
+							name="redirectTo"
+							value="/settings/profile/photo"
+							type="hidden"
+						/>
+					)}
+				</ServerOnly>
 				<input name="intent" type="hidden" value="submit" />
 				<input name="imageId" type="hidden" value={data.user?.imageId ?? ''} />
 			</deleteImageFetcher.Form>

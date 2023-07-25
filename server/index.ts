@@ -106,9 +106,11 @@ app.use(
 				'img-src': [
 					"'self'",
 					'data:',
+					// TODO: Remove uneeded domains
 					'https://petal-image-host.s3.eu-west-2.amazonaws.com',
 					'https://image.tmdb.org',
 					'https://www.themoviedb.org',
+					'https://via.placeholder.com',
 				],
 				'script-src': [
 					"'strict-dynamic'",
@@ -151,8 +153,8 @@ const server = app.listen(portToUse, () => {
 		desiredPort === portToUse
 			? desiredPort
 			: addy && typeof addy === 'object'
-			? addy.port
-			: 0
+				? addy.port
+				: 0
 
 	if (portUsed !== desiredPort) {
 		console.warn(

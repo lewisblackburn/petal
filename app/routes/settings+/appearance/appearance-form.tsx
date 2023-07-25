@@ -1,9 +1,7 @@
 import { useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher } from '@remix-run/react'
-import React from 'react'
 import { z } from 'zod'
-import { useRequestInfo } from '~/utils/request-info.ts'
 import { ErrorList } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Label } from '~/components/ui/label.tsx'
@@ -16,13 +14,7 @@ const ThemeFormSchema = z.object({
 })
 
 export function AppearanceForm() {
-	const requestInfo = useRequestInfo()
 	const fetcher = useFetcher()
-	const [isHydrated, setIsHydrated] = React.useState(false)
-
-	React.useEffect(() => {
-		setIsHydrated(true)
-	}, [])
 
 	const [form] = useForm({
 		id: 'theme-switch',
@@ -35,14 +27,6 @@ export function AppearanceForm() {
 	return (
 		<fetcher.Form method="POST" action={ROUTE_PATH} {...form.props}>
 			<div className="flex gap-2">
-				{/*
-					this is for progressive enhancement so we redirect them to the page
-					they are on if the JavaScript hasn't had a chance to hydrate yet.
-				*/}
-				{isHydrated ? null : (
-					<input type="hidden" name="redirectTo" value={requestInfo.path} />
-				)}
-
 				<div className="space-y-8">
 					<div className="space-y-2">
 						<div>

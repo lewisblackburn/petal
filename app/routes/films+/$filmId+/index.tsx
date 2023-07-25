@@ -1,4 +1,8 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import {
+	json,
+	type DataFunctionArgs,
+	type HeadersFunction,
+} from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 import { Container } from '~/components/container.tsx'
 import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
@@ -7,24 +11,42 @@ import { Button } from '~/components/ui/button.tsx'
 import { Icon, type IconName } from '~/components/ui/icon.tsx'
 import { Separator } from '~/components/ui/separator.tsx'
 import { prisma } from '~/utils/db.server.ts'
+import {
+	combineServerTimings,
+	makeTimings,
+	time,
+} from '~/utils/timing.server.ts'
 
 export async function loader({ params }: DataFunctionArgs) {
-	const film = await prisma.film.findUnique({
-		where: {
-			id: params.filmId,
-		},
-		select: {
-			id: true,
-			title: true,
-			overview: true,
-			poster: true,
-			backdrop: true,
-		},
-	})
+	const timings = makeTimings('film loader')
+
+	const film = await time(
+		() =>
+			prisma.film.findUnique({
+				where: {
+					id: params.filmId,
+				},
+				select: {
+					id: true,
+					title: true,
+					overview: true,
+					poster: true,
+					backdrop: true,
+				},
+			}),
+		{ timings, type: 'find film' },
+	)
+
 	if (!film) {
 		throw new Response('Not found', { status: 404 })
 	}
-	return json({ film })
+	return json({ film }, { headers: { 'Server-Timing': timings.toString() } })
+}
+
+export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
+	return {
+		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
+	}
 }
 
 export default function FilmRoute() {
