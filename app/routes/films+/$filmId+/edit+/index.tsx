@@ -46,6 +46,7 @@ export default function FilmEdit() {
 	return (
 		<>
 			<Container>
+				{/* FIX: Dropdown resetting scroll */}
 				<CreditTable data={credits} columns={columns} />
 			</Container>
 			<FilmEditor

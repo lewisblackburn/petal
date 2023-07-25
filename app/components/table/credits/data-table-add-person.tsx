@@ -1,6 +1,6 @@
 import { useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
-import { useFetcher } from '@remix-run/react'
+import { useFetcher, useParams } from '@remix-run/react'
 import { ErrorList } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
@@ -22,19 +22,18 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '~/components/ui/select.tsx'
-import { AddActorSchema } from '~/routes/resources+/add-actor.tsx'
+import { AddFilmCreditMemberSchema } from '~/routes/resources+/add-film-credit-member.tsx'
 import { PersonSearch } from '~/routes/resources+/people.tsx'
 
-const ROUTE_PATH = '/resources/add-actor'
-
 export function DataTableAddPerson() {
+	const { filmId } = useParams()
 	const fetcher = useFetcher()
 
-	const [form] = useForm({
-		id: 'add-actor-form',
+	const [form, fields] = useForm({
+		id: 'add-film-credit-member-form',
 		lastSubmission: fetcher.data?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddActorSchema })
+			return parse(formData, { schema: AddFilmCreditMemberSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
@@ -52,14 +51,20 @@ export function DataTableAddPerson() {
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
-				<fetcher.Form method="POST" action={ROUTE_PATH} {...form.props}>
+				<fetcher.Form
+					method="POST"
+					action="/resources/add-film-credit-member"
+					{...form.props}
+				>
 					<DialogHeader>
 						<DialogTitle>Add Person</DialogTitle>
 						<DialogDescription>
 							Add a new person to the credits table.
 						</DialogDescription>
 					</DialogHeader>
+					<input name="filmId" type="hidden" value={filmId} />
 					<PersonSearch />
+					<ErrorList errors={fields.personId.errors} id={fields.personId.id} />
 					<Select name="fruit">
 						<SelectTrigger className="w-[180px]">
 							<SelectValue placeholder="Select a fruit" />
@@ -75,6 +80,7 @@ export function DataTableAddPerson() {
 							</SelectGroup>
 						</SelectContent>
 					</Select>
+					<ErrorList errors={fields.fruit.errors} id={fields.fruit.id} />
 					<DialogFooter>
 						<Button type="submit">Add Person</Button>
 					</DialogFooter>

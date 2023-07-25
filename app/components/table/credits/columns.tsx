@@ -40,7 +40,7 @@ export const columns: ColumnDef<Partial<CreditMember>>[] = [
 			<DataTableColumnHeader column={column} title="Character" />
 		),
 		cell: ({ row }) => (
-			<div className="w-[80px]">{row.getValue('character')}</div>
+			<div className="w-[160px]">{row.getValue('character')}</div>
 		),
 	},
 	{

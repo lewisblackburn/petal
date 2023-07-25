@@ -65,7 +65,13 @@ export const PersonSearch = () => {
   return (
     <div>
       <div className="relative">
-        <Input name="personId" type="hidden" value={selectedPerson?.id ?? ''} />
+        {/* NOTE: This can't be type="hidden" as ErrorList won't display the error */}
+        <Input
+          name="personId"
+          type="text"
+          className="hidden"
+          value={selectedPerson?.id ?? ''}
+        />
         <Input
           name="name"
           onClick={() => {
