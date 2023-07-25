@@ -1,29 +1,29 @@
-// THIS FILE IS GENERATED, edit ./other/svg-icon-template.txt instead
-// then run "npm run build:icons"
-
 import { type SVGProps } from 'react'
 import { cn } from '~/utils/misc.ts'
-import href from './icon.svg'
+import href from './icons/sprite.svg'
+
+import { type IconName } from '@/icon-name'
 export { href }
+export { IconName }
 
 const sizeClassName = {
-	font: 'w-[1em] h-[1em]',
-	xs: 'w-3 h-3',
-	sm: 'w-4 h-4',
-	md: 'w-5 h-5',
-	lg: 'w-6 h-6',
-	xl: 'w-7 h-7',
+  font: 'w-[1em] h-[1em]',
+  xs: 'w-3 h-3',
+  sm: 'w-4 h-4',
+  md: 'w-5 h-5',
+  lg: 'w-6 h-6',
+  xl: 'w-7 h-7',
 } as const
 
 type Size = keyof typeof sizeClassName
 
 const childrenSizeClassName = {
-	font: 'gap-1',
-	xs: 'gap-1',
-	sm: 'gap-1',
-	md: 'gap-2',
-	lg: 'gap-2',
-	xl: 'gap-3',
+  font: 'gap-1',
+  xs: 'gap-1',
+  sm: 'gap-1',
+  md: 'gap-2',
+  lg: 'gap-2',
+  xl: 'gap-3',
 } satisfies Record<Size, string>
 
 /**
@@ -35,78 +35,29 @@ const childrenSizeClassName = {
  * aligned.
  */
 export function Icon({
-	name,
-	size = 'font',
-	className,
-	children,
-	...props
+  name,
+  size = 'font',
+  className,
+  children,
+  ...props
 }: SVGProps<SVGSVGElement> & {
-	name: IconName
-	size?: Size
+  name: IconName
+  size?: Size
 }) {
-	if (children) {
-		return (
-			<span className={`inline-flex ${childrenSizeClassName[size]}`}>
-				<Icon name={name} size={size} className={className} {...props} />
-				{children}
-			</span>
-		)
-	}
-	return (
-		<svg
-			{...props}
-			className={cn(sizeClassName[size], 'inline self-center', className)}
-		>
-			<use href={`${href}#${name}`} />
-		</svg>
-	)
+  if (children) {
+    return (
+      <span className={`inline-flex ${childrenSizeClassName[size]}`}>
+        <Icon name={name} size={size} className={className} {...props} />
+        {children}
+      </span>
+    )
+  }
+  return (
+    <svg
+      {...props}
+      className={cn(sizeClassName[size], 'inline self-center', className)}
+    >
+      <use href={`${href}#${name}`} />
+    </svg>
+  )
 }
-
-export type IconName =
-  | "arrow-down"
-  | "arrow-left"
-  | "arrow-right"
-  | "arrow-up"
-  | "arrows-up-down"
-  | "avatar"
-  | "banknote"
-  | "bar-chart"
-  | "bell"
-  | "calendar"
-  | "camera"
-  | "caret-sort"
-  | "check"
-  | "chevron-down"
-  | "chevron-left"
-  | "chevron-right"
-  | "chevron-up"
-  | "circle"
-  | "clock"
-  | "credit-card"
-  | "cross-1"
-  | "dot-filled"
-  | "dots-horizontal"
-  | "exclamation-triangle"
-  | "exit"
-  | "eye-none"
-  | "file-text"
-  | "folder"
-  | "heart"
-  | "language"
-  | "laptop"
-  | "lock-closed"
-  | "lock-open-1"
-  | "magnifying-glass"
-  | "mixer-horizontal"
-  | "moon"
-  | "pencil-1"
-  | "pencil-2"
-  | "person"
-  | "play"
-  | "plus-circle"
-  | "plus"
-  | "reset"
-  | "star"
-  | "sun"
-  | "trash"
-  | "update"

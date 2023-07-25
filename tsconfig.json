@@ -1,7 +1,14 @@
 {
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
@@ -15,8 +22,16 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"],
-      "tests/*": ["./tests/*"]
+      "~/*": [
+        "./app/*"
+      ],
+      "tests/*": [
+        "./tests/*"
+      ],
+      "@/icon-name": [
+        "app/components/ui/icons/name.d.ts",
+        "types/icon-name.d.ts"
+      ]
     },
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
