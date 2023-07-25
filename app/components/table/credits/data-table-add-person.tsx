@@ -1,3 +1,7 @@
+import { useForm } from '@conform-to/react'
+import { parse } from '@conform-to/zod'
+import { useFetcher } from '@remix-run/react'
+import { ErrorList } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
 	Dialog,
@@ -9,18 +13,32 @@ import {
 	DialogTrigger,
 } from '~/components/ui/dialog.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { Input } from '~/components/ui/input.tsx'
-import { Label } from '~/components/ui/label.tsx'
 import {
 	Select,
 	SelectContent,
+	SelectGroup,
 	SelectItem,
+	SelectLabel,
 	SelectTrigger,
 	SelectValue,
 } from '~/components/ui/select.tsx'
-import { CreditDepartments, CreditJobs } from '~/utils/credit-roles.ts'
+import { AddActorSchema } from '~/routes/resources+/add-actor.tsx'
+import { PersonSearch } from '~/routes/resources+/people.tsx'
+
+const ROUTE_PATH = '/resources/add-actor'
 
 export function DataTableAddPerson() {
+	const fetcher = useFetcher()
+
+	const [form] = useForm({
+		id: 'add-actor-form',
+		lastSubmission: fetcher.data?.submission,
+		onValidate({ formData }) {
+			return parse(formData, { schema: AddActorSchema })
+		},
+		shouldRevalidate: 'onBlur',
+	})
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -34,67 +52,34 @@ export function DataTableAddPerson() {
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
-				<DialogHeader>
-					<DialogTitle>Add Person</DialogTitle>
-					<DialogDescription>
-						Add a new person to the credits table.
-					</DialogDescription>
-				</DialogHeader>
-				<div className="grid gap-4 py-4">
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="name" className="text-right">
-							Name
-						</Label>
-						<Input id="name" value="Pedro Duarte" className="col-span-3" />
-					</div>
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="character" className="text-right">
-							Character
-						</Label>
-						<Input id="username" value="@peduarte" className="col-span-3" />
-					</div>
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="username" className="text-right">
-							Job
-						</Label>
-						<div className="col-span-3">
-							<Select>
-								<SelectTrigger>
-									<SelectValue placeholder="Select a job" />
-								</SelectTrigger>
-								<SelectContent>
-									{CreditJobs.map(job => (
-										<SelectItem key={job.value} value={job.value}>
-											{job.label}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
-					</div>
-					<div className="grid grid-cols-4 items-center gap-4">
-						<Label htmlFor="username" className="text-right">
-							Department
-						</Label>
-						<div className="col-span-3">
-							<Select>
-								<SelectTrigger>
-									<SelectValue placeholder="Select a department" />
-								</SelectTrigger>
-								<SelectContent>
-									{CreditDepartments.map(department => (
-										<SelectItem key={department.value} value={department.value}>
-											{department.label}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
-					</div>
-				</div>
-				<DialogFooter>
-					<Button type="submit">Save changes</Button>
-				</DialogFooter>
+				<fetcher.Form method="POST" action={ROUTE_PATH} {...form.props}>
+					<DialogHeader>
+						<DialogTitle>Add Person</DialogTitle>
+						<DialogDescription>
+							Add a new person to the credits table.
+						</DialogDescription>
+					</DialogHeader>
+					<PersonSearch />
+					<Select name="fruit">
+						<SelectTrigger className="w-[180px]">
+							<SelectValue placeholder="Select a fruit" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								<SelectLabel>Fruits</SelectLabel>
+								<SelectItem value="apple">Apple</SelectItem>
+								<SelectItem value="banana">Banana</SelectItem>
+								<SelectItem value="blueberry">Blueberry</SelectItem>
+								<SelectItem value="grapes">Grapes</SelectItem>
+								<SelectItem value="pineapple">Pineapple</SelectItem>
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+					<DialogFooter>
+						<Button type="submit">Add Person</Button>
+					</DialogFooter>
+					<ErrorList errors={form.errors} id={form.errorId} />
+				</fetcher.Form>
 			</DialogContent>
 		</Dialog>
 	)

@@ -66,7 +66,6 @@ export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
 }
 
 // TODO: Still need to fix the flash, it is due to the combined code
-// TODO: Image delete, tyring to think of a better way than creating delete-image and delete-image-with-auth
 export default function FilmsRoute() {
 	const data = useLoaderData<typeof loader>()
 	const location = useLocation()

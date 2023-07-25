@@ -46,14 +46,6 @@ export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
   }
 }
 
-export async function action({ request }: DataFunctionArgs) {
-  const form = await request.formData()
-
-  console.log('here', request, form)
-
-  return json({ status: 'success' })
-}
-
 // TODO: Debounce the search
 export const PersonSearch = () => {
   const peopleFetcher = useFetcher<typeof loader>()
@@ -73,7 +65,7 @@ export const PersonSearch = () => {
   return (
     <div>
       <div className="relative">
-        <input name="personId" type="hidden" value={selectedPerson?.id ?? ''} />
+        <Input name="personId" type="hidden" value={selectedPerson?.id ?? ''} />
         <Input
           name="name"
           onClick={() => {
@@ -95,6 +87,7 @@ export const PersonSearch = () => {
           type="text"
           placeholder="Search people"
           value={value}
+          autoComplete="off"
         />
         <Spinner showSpinner={showSpinner} />
       </div>

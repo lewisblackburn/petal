@@ -168,11 +168,6 @@ function Document({
 	)
 }
 
-// TODO: Any icon with no text should be outlined like this:
-//<Icon name="arrow-right" className="scale-125 max-md:scale-150">
-//  <span className="max-md:hidden">Submit</span>
-//</Icon>
-
 function App() {
 	const data = useLoaderData<typeof loader>()
 	const nonce = useNonce()
