@@ -87,13 +87,7 @@ export async function action({ request }: DataFunctionArgs) {
 			select: { id: true },
 		})
 		if (!existingFilm) {
-			return json(
-				{
-					status: 'error',
-					submission,
-				} as const,
-				{ status: 404 },
-			)
+			return json({ status: 'error', submission } as const, { status: 400 })
 		}
 		film = await prisma.film.update({
 			where: { id },

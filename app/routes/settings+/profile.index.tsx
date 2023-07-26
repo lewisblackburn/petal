@@ -61,7 +61,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const submission = await parse(formData, {
 		async: true,
 		schema: profileFormSchema.superRefine(
-			async ({ currentPassword, newPassword }, ctx) => {
+			async ({ username, currentPassword, newPassword }, ctx) => {
 				if (newPassword && !currentPassword) {
 					ctx.addIssue({
 						path: ['newPassword'],
@@ -87,13 +87,7 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'idle', submission } as const)
 	}
 	if (!submission.value) {
-		return json(
-			{
-				status: 'error',
-				submission,
-			} as const,
-			{ status: 400 },
-		)
+		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 	const { name, username, email, newPassword } = submission.value
 
