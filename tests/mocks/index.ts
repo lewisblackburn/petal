@@ -6,29 +6,29 @@ import { faker } from '@faker-js/faker'
 
 const handlers = [
 	process.env.REMIX_DEV_HTTP_ORIGIN
-		? rest.post(`${process.env.REMIX_DEV_HTTP_ORIGIN}/ping`, req =>
-				req.passthrough(),
-		  )
+		? rest.post(`${process.env.REMIX_DEV_HTTP_ORIGIN}ping`, req =>
+			req.passthrough(),
+		)
 		: null,
 
 	// feel free to remove this conditional from the mock once you've set up resend
 	process.env.RESEND_API_KEY
 		? rest.post(`https://api.resend.com/emails`, async (req, res, ctx) => {
-				requiredHeader(req.headers, 'Authorization')
-				const body = await req.json()
-				console.info('🔶 mocked email contents:', body)
+			requiredHeader(req.headers, 'Authorization')
+			const body = await req.json()
+			console.info('🔶 mocked email contents:', body)
 
-				await writeEmail(body)
+			await writeEmail(body)
 
-				return res(
-					ctx.json({
-						id: faker.string.uuid(),
-						from: body.from,
-						to: body.to,
-						created_at: new Date().toISOString(),
-					}),
-				)
-		  })
+			return res(
+				ctx.json({
+					id: faker.string.uuid(),
+					from: body.from,
+					to: body.to,
+					created_at: new Date().toISOString(),
+				}),
+			)
+		})
 		: null,
 ].filter(Boolean)
 
