@@ -1,215 +1,25 @@
-export const CreditJobs = [
-	{
-		value: 'actor',
-		label: 'Actor',
-	},
-	{
-		value: 'actress',
-		label: 'Actress',
-	},
-	{
-		value: 'writer',
-		label: 'Writer',
-	},
-	{
-		value: 'director',
-		label: 'Director',
-		department: 'directing',
-	},
-	{
-		value: 'producer',
-		label: 'Producer',
-	},
-	{
-		value: 'cinematographer',
-		label: 'Cinematographer',
-	},
-	{
-		value: 'editor',
-		label: 'Editor',
-	},
-	{
-		value: 'production_designer',
-		label: 'Production Designer',
-	},
-	{
-		value: 'costume_designer',
-		label: 'Costume Designer',
-	},
-	{
-		value: 'makeup_artist',
-		label: 'Makeup Artist',
-	},
-	{
-		value: 'hair_stylist',
-		label: 'Hair Stylist',
-	},
-	{
-		value: 'sound_designer',
-		label: 'Sound Designer',
-	},
-	{
-		value: 'composer',
-		label: 'Composer',
-	},
-	{
-		value: 'special_effects_artist',
-		label: 'Special Effects Artist',
-	},
-	{
-		value: 'visual_effects_artist',
-		label: 'Visual Effects Artist',
-	},
-	{
-		value: 'stunt_coordinator',
-		label: 'Stunt Coordinator',
-	},
-	{
-		value: 'casting_director',
-		label: 'Casting Director',
-	},
-	{
-		value: 'location_manager',
-		label: 'Location Manager',
-	},
-	{
-		value: 'script_supervisor',
-		label: 'Script Supervisor',
-	},
-	{
-		value: 'grip',
-		label: 'Grip',
-	},
-	{
-		value: 'gaffer',
-		label: 'Gaffer',
-	},
-	{
-		value: 'production_assistant',
-		label: 'Production Assistant',
-	},
-	{
-		value: 'art_director',
-		label: 'Art Director',
-	},
-	{
-		value: 'set_decorator',
-		label: 'Set Decorator',
-	},
-	{
-		value: 'foley_artist',
-		label: 'Foley Artist',
-	},
-	{
-		value: 'boom_operator',
-		label: 'Boom Operator',
-	},
-	{
-		value: 'dialogue_coach',
-		label: 'Dialogue Coach',
-	},
-	{
-		value: 'colorist',
-		label: 'Colorist',
-	},
-	{
-		value: 'storyboard_artist',
-		label: 'Storyboard Artist',
-	},
-	{
-		value: 'assistant_director',
-		label: 'Assistant Director',
-	},
-	{
-		value: 'unit_production_manager',
-		label: 'Unit Production Manager',
-	},
-	{
-		value: 'camera_operator',
-		label: 'Camera Operator',
-	},
-	{
-		value: 'assistant_camera',
-		label: 'Assistant Camera',
-	},
-	{
-		value: 'key_grip',
-		label: 'Key Grip',
-	},
-	{
-		value: 'best_boy',
-		label: 'Best Boy',
-	},
-	{
-		value: 'rigger',
-		label: 'Rigger',
-	},
-	{
-		value: 'key_makeup_artist',
-		label: 'Key Makeup Artist',
-	},
-	{
-		value: 'prosthetic_makeup_artist',
-		label: 'Prosthetic Makeup Artist',
-	},
-	{
-		value: 'foley_mixer',
-		label: 'Foley Mixer',
-	},
-	{
-		value: 'sound_editor',
-		label: 'Sound Editor',
-	},
-	{
-		value: 'dialogue_editor',
-		label: 'Dialogue Editor',
-	},
-	{
-		value: 're_recording_mixer',
-		label: 'Re-recording Mixer',
-	},
-	{
-		value: 'music_supervisor',
-		label: 'Music Supervisor',
-	},
-	{
-		value: 'production_accountant',
-		label: 'Production Accountant',
-	},
-	{
-		value: 'set_construction',
-		label: 'Set Construction',
-	},
-	{
-		value: 'transportation_coordinator',
-		label: 'Transportation Coordinator',
-	},
-	{
-		value: 'visual_effects_supervisor',
-		label: 'Visual Effects Supervisor',
-	},
-	{
-		value: 'post_production_supervisor',
-		label: 'Post-production Supervisor',
-	},
-	{
-		value: 'marketing_coordinator',
-		label: 'Marketing Coordinator',
-	},
-	{
-		value: 'publicist',
-		label: 'Publicist',
-	},
-	{
-		value: 'distribution_manager',
-		label: 'Distribution Manager',
-	},
-]
-
-// TODO: Tie jobs and departments together
 // TODO: Create one component like /resources/people to handle both departments and jobs as they are tied together like in tmdbs api
 
-export const CreditDepartments = [
+type CreditRole = {
+	value: string
+	label: string
+	jobs: {
+		value: string
+		label: string
+	}[]
+}
+
+export function getAllJobs() {
+	const jobs: CreditRole['jobs'] = []
+	CreditRoles.forEach(department => {
+		department.jobs.forEach(job => {
+			jobs.push(job)
+		})
+	})
+	return jobs
+}
+
+export const CreditRoles: CreditRole[] = [
 	{
 		value: 'acting',
 		label: 'Acting',
@@ -222,94 +32,424 @@ export const CreditDepartments = [
 				value: 'actress',
 				label: 'Actress',
 			},
-			{
-				value: 'voice_actor',
-				label: 'Voice Actor',
-			},
-			{
-				value: 'voice_actress',
-				label: 'Voice Actress',
-			},
 		],
 	},
 	{
 		value: 'writing',
 		label: 'Writing',
+		jobs: [
+			{
+				value: 'screenwriter',
+				label: 'Screenwriter',
+			},
+			{
+				value: 'script writer',
+				label: 'Script Writer',
+			},
+			{
+				value: 'story writer',
+				label: 'Story Writer',
+			},
+			{
+				value: 'dialogue writer',
+				label: 'Dialogue Writer',
+			},
+			{
+				value: 'script editor',
+				label: 'Script Editor',
+			},
+		],
 	},
 	{
 		value: 'directing',
 		label: 'Directing',
+		jobs: [
+			{
+				value: 'director',
+				label: 'Director',
+			},
+			{
+				value: 'assistant director',
+				label: 'Assistant Director',
+			},
+		],
 	},
 	{
 		value: 'production',
 		label: 'Production',
+		jobs: [
+			{
+				value: 'producer',
+				label: 'Producer',
+			},
+			{
+				value: 'production manager',
+				label: 'Production Manager',
+			},
+			{
+				value: 'line producer',
+				label: 'Line Producer',
+			},
+			{
+				value: 'production coordinator',
+				label: 'Production Coordinator',
+			},
+		],
 	},
 	{
 		value: 'cinematography',
 		label: 'Cinematography',
+		jobs: [
+			{
+				value: 'cinematographer',
+				label: 'Cinematographer',
+			},
+			{
+				value: 'camera operator',
+				label: 'Camera Operator',
+			},
+			{
+				value: 'steadicam operator',
+				label: 'Steadicam Operator',
+			},
+			{
+				value: 'drone operator',
+				label: 'Drone Operator',
+			},
+		],
 	},
 	{
 		value: 'editing',
 		label: 'Editing',
+		jobs: [
+			{
+				value: 'editor',
+				label: 'Editor',
+			},
+			{
+				value: 'assistant editor',
+				label: 'Assistant Editor',
+			},
+			{
+				value: 'visual effects editor',
+				label: 'Visual Effects Editor',
+			},
+			{
+				value: 'sound editor',
+				label: 'Sound Editor',
+			},
+		],
 	},
 	{
-		value: 'art_department',
+		value: 'art department',
 		label: 'Art Department',
+		jobs: [
+			{
+				value: 'production designer',
+				label: 'Production Designer',
+			},
+			{
+				value: 'art director',
+				label: 'Art Director',
+			},
+			{
+				value: 'set designer',
+				label: 'Set Designer',
+			},
+			{
+				value: 'prop master',
+				label: 'Prop Master',
+			},
+			{
+				value: 'costume designer',
+				label: 'Costume Designer',
+			},
+			{
+				value: 'costume supervisor',
+				label: 'Costume Supervisor',
+			},
+			{
+				value: 'makeup artist',
+				label: 'Makeup Artist',
+			},
+			{
+				value: 'hair stylist',
+				label: 'Hair Stylist',
+			},
+			{
+				value: 'set decorator',
+				label: 'Set Decorator',
+			},
+			{
+				value: 'storyboard artist',
+				label: 'Storyboard Artist',
+			},
+		],
 	},
 	{
-		value: 'makeup_and_hair_department',
-		label: 'Makeup and Hair Department',
-	},
-	{
-		value: 'sound_department',
+		value: 'sound department',
 		label: 'Sound Department',
+		jobs: [
+			{
+				value: 'sound designer',
+				label: 'Sound Designer',
+			},
+			{
+				value: 're-recording mixer',
+				label: 'Re-recording Mixer',
+			},
+			{
+				value: 'foley artist',
+				label: 'Foley Artist',
+			},
+			{
+				value: 'sound engineer',
+				label: 'Sound Engineer',
+			},
+			{
+				value: 'boom operator',
+				label: 'Boom Operator',
+			},
+			{
+				value: 'dialogue editor',
+				label: 'Dialogue Editor',
+			},
+			{
+				value: 'music editor',
+				label: 'Music Editor',
+			},
+		],
 	},
 	{
-		value: 'music_department',
+		value: 'music department',
 		label: 'Music Department',
+		jobs: [
+			{
+				value: 'composer',
+				label: 'Composer',
+			},
+			{
+				value: 'music supervisor',
+				label: 'Music Supervisor',
+			},
+			{
+				value: 'orchestrator',
+				label: 'Orchestrator',
+			},
+			{
+				value: 'music editor',
+				label: 'Music Editor',
+			},
+			{
+				value: 'music producer',
+				label: 'Music Producer',
+			},
+		],
 	},
 	{
-		value: 'special_effects_department',
+		value: 'special effects department',
 		label: 'Special Effects Department',
+		jobs: [
+			{
+				value: 'special effects artist',
+				label: 'Special Effects Artist',
+			},
+			{
+				value: 'special effects supervisor',
+				label: 'Special Effects Supervisor',
+			},
+			{
+				value: 'practical effects artist',
+				label: 'Practical Effects Artist',
+			},
+		],
 	},
 	{
-		value: 'visual_effects_department',
+		value: 'visual effects department',
 		label: 'Visual Effects Department',
+		jobs: [
+			{
+				value: 'visual effects artist',
+				label: 'Visual Effects Artist',
+			},
+			{
+				value: 'visual effects supervisor',
+				label: 'Visual Effects Supervisor',
+			},
+			{
+				value: 'compositor',
+				label: 'Compositor',
+			},
+			{
+				value: 'matte painter',
+				label: 'Matte Painter',
+			},
+			{
+				value: 'motion graphics artist',
+				label: 'Motion Graphics Artist',
+			},
+		],
 	},
 	{
-		value: 'stunt_department',
+		value: 'stunt department',
 		label: 'Stunt Department',
+		jobs: [
+			{
+				value: 'stunt performer',
+				label: 'Stunt Performer',
+			},
+			{
+				value: 'stunt rigger',
+				label: 'Stunt Rigger',
+			},
+		],
 	},
 	{
-		value: 'casting_department',
+		value: 'casting department',
 		label: 'Casting Department',
+		jobs: [
+			{
+				value: 'casting director',
+				label: 'Casting Director',
+			},
+			{
+				value: 'casting assistant',
+				label: 'Casting Assistant',
+			},
+		],
 	},
 	{
-		value: 'location_department',
+		value: 'location department',
 		label: 'Location Department',
+		jobs: [
+			{
+				value: 'location manager',
+				label: 'Location Manager',
+			},
+			{
+				value: 'location scout',
+				label: 'Location Scout',
+			},
+		],
 	},
 	{
-		value: 'script_department',
+		value: 'script department',
 		label: 'Script Department',
+		jobs: [
+			{
+				value: 'script supervisor',
+				label: 'Script Supervisor',
+			},
+			{
+				value: 'script reader',
+				label: 'Script Reader',
+			},
+		],
 	},
 	{
-		value: 'grip_and_electric_department',
+		value: 'grip and electric department',
 		label: 'Grip and Electric Department',
+		jobs: [
+			{
+				value: 'grip',
+				label: 'Grip',
+			},
+			{
+				value: 'best boy grip',
+				label: 'Best Boy Grip',
+			},
+			{
+				value: 'gaffer',
+				label: 'Gaffer',
+			},
+			{
+				value: 'best boy electric',
+				label: 'Best Boy Electric',
+			},
+			{
+				value: 'electrician',
+				label: 'Electrician',
+			},
+			{
+				value: 'generator operator',
+				label: 'Generator Operator',
+			},
+		],
 	},
 	{
-		value: 'production_office',
+		value: 'production office',
 		label: 'Production Office',
+		jobs: [
+			{
+				value: 'production assistant',
+				label: 'Production Assistant',
+			},
+			{
+				value: 'unit production manager',
+				label: 'Unit Production Manager',
+			},
+			{
+				value: 'production accountant',
+				label: 'Production Accountant',
+			},
+			{
+				value: 'script coordinator',
+				label: 'Script Coordinator',
+			},
+		],
 	},
 	{
-		value: 'post_production_department',
+		value: 'post-production department',
 		label: 'Post-production Department',
+		jobs: [
+			{
+				value: 'post-production supervisor',
+				label: 'Post-production Supervisor',
+			},
+			{
+				value: 'colorist',
+				label: 'Colorist',
+			},
+			{
+				value: 'vfx editor',
+				label: 'VFX Editor',
+			},
+			{
+				value: 'sound post production',
+				label: 'Sound Post Production',
+			},
+		],
 	},
 	{
-		value: 'marketing_and_publicity_department',
+		value: 'marketing and publicity department',
 		label: 'Marketing and Publicity Department',
+		jobs: [
+			{
+				value: 'marketing coordinator',
+				label: 'Marketing Coordinator',
+			},
+			{
+				value: 'publicity manager',
+				label: 'Publicity Manager',
+			},
+			{
+				value: 'social media specialist',
+				label: 'Social Media Specialist',
+			},
+		],
 	},
 	{
-		value: 'distribution_department',
+		value: 'distribution department',
 		label: 'Distribution Department',
+		jobs: [
+			{
+				value: 'distribution manager',
+				label: 'Distribution Manager',
+			},
+			{
+				value: 'sales representative',
+				label: 'Sales Representative',
+			},
+		],
 	},
 ]

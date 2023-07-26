@@ -6,7 +6,7 @@ import { Icon } from '~/components/ui/icon.tsx'
 import { DataTableFacetedFilter } from '~/components/table/data-table-faceted-filter.tsx'
 import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
 import { DataTableAddPerson } from './data-table-add-person.js'
-import { CreditDepartments, CreditJobs } from '~/utils/credit-roles.ts'
+import { CreditRoles, getAllJobs } from '~/utils/credit-roles.ts'
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>
@@ -34,14 +34,14 @@ export function DataTableToolbar<TData>({
 					<DataTableFacetedFilter
 						column={table.getColumn('department')}
 						title="Department"
-						options={CreditDepartments}
+						options={CreditRoles}
 					/>
 				)}
 				{table.getColumn('job') && (
 					<DataTableFacetedFilter
 						column={table.getColumn('job')}
 						title="Job"
-						options={CreditJobs}
+						options={getAllJobs()}
 					/>
 				)}
 				{isFiltered && (

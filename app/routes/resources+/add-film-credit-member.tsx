@@ -8,7 +8,9 @@ import { redirectWithToast } from '~/utils/flash-session.server.ts'
 export const AddFilmCreditMemberSchema = z.object({
 	filmId: z.string().nonempty(),
 	personId: z.string().nonempty({ message: 'You must select a person' }),
-	fruit: z.string().nonempty(),
+	character: z.string().nonempty(),
+	department: z.string().nonempty({ message: 'You must select a department' }),
+	job: z.string().nonempty({ message: 'You must select a job' }),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -28,7 +30,7 @@ export async function action({ request }: DataFunctionArgs) {
 		)
 	}
 
-	let { filmId, personId } = submission.value
+	let { filmId, personId, department, job, character } = submission.value
 
 	await prisma.film.update({
 		where: { id: filmId },
@@ -40,10 +42,9 @@ export async function action({ request }: DataFunctionArgs) {
 							id: personId,
 						},
 					},
-					character: 'character name',
-					// TODO: implement
-					job: 'actor',
-					department: 'acting',
+					character,
+					department,
+					job,
 				},
 			},
 		},

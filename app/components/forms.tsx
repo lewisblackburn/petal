@@ -4,6 +4,17 @@ import { Input } from '~/components/ui/input.tsx'
 import { Label } from '~/components/ui/label.tsx'
 import { Checkbox, type CheckboxProps } from '~/components/ui/checkbox.tsx'
 import { Textarea } from '~/components/ui/textarea.tsx'
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover.tsx'
+import { Button } from './ui/button.tsx'
+import { Icon } from './ui/icon.tsx'
+import {
+	Command,
+	CommandEmpty,
+	CommandGroup,
+	CommandInput,
+	CommandItem,
+} from './ui/command.tsx'
+import { cn } from '~/utils/misc.ts'
 
 export type ListOfErrors = Array<string | null | undefined> | null | undefined
 
@@ -144,5 +155,78 @@ export function CheckboxField({
 				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
 			</div>
 		</div>
+	)
+}
+
+export function SearchSelect({
+	name,
+	inputProps,
+	errors,
+	options,
+}: {
+	name: string
+	inputProps: React.InputHTMLAttributes<HTMLInputElement>
+	errors?: ListOfErrors
+	options: { label: string; value: string }[]
+}) {
+	const [value, setValue] = React.useState('')
+	const fallbackId = useId()
+	const id = inputProps.id ?? fallbackId
+	const errorId = errors?.length ? `${id}-error` : undefined
+
+	return (
+		<>
+			{/* NOTE: This can't be type="hidden" as ErrorList won't display the error */}
+			<Input
+				id={id}
+				aria-invalid={errorId ? true : undefined}
+				aria-describedby={errorId}
+				name={name}
+				type="text"
+				className="hidden"
+				value={value ?? ''}
+			/>
+			<Popover>
+				<PopoverTrigger asChild>
+					<Button variant="outline" className="w-[200px] justify-between">
+						{value
+							? options.find(option => option.value === value)?.label
+							: `Select ${name}...`}
+						<Icon
+							name="caret-sort"
+							className="ml-2 h-4 w-4 shrink-0 opacity-50"
+						/>
+					</Button>
+				</PopoverTrigger>
+				<PopoverContent className="w-[200px] p-0">
+					<Command>
+						<CommandInput placeholder={`Search ${name}...`} className="h-9" />
+						<CommandEmpty>No {name} found.</CommandEmpty>
+						<CommandGroup>
+							{options.map(option => (
+								<CommandItem
+									key={option.value}
+									onSelect={currentValue => {
+										setValue(currentValue === value ? '' : currentValue)
+									}}
+								>
+									{option.label}
+									<Icon
+										name="check"
+										className={cn(
+											'ml-auto h-4 w-4',
+											value === option.value ? 'opacity-100' : 'opacity-0',
+										)}
+									/>
+								</CommandItem>
+							))}
+						</CommandGroup>
+					</Command>
+				</PopoverContent>
+			</Popover>
+			<div className="min-h-[32px] px-4 pb-3 pt-1">
+				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+			</div>
+		</>
 	)
 }

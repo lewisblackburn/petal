@@ -1,7 +1,7 @@
-import { useForm } from '@conform-to/react'
+import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
-import { ErrorList } from '~/components/forms.tsx'
+import { ErrorList, Field, SearchSelect } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
 	Dialog,
@@ -13,17 +13,9 @@ import {
 	DialogTrigger,
 } from '~/components/ui/dialog.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
-} from '~/components/ui/select.tsx'
 import { AddFilmCreditMemberSchema } from '~/routes/resources+/add-film-credit-member.tsx'
 import { PersonSearch } from '~/routes/resources+/people.tsx'
+import { CreditRoles, getAllJobs } from '~/utils/credit-roles.ts'
 
 export function DataTableAddPerson() {
 	const { filmId } = useParams()
@@ -65,23 +57,33 @@ export function DataTableAddPerson() {
 					<input name="filmId" type="hidden" value={filmId} />
 					<PersonSearch />
 					<ErrorList errors={fields.personId.errors} id={fields.personId.id} />
-					{/* TODO: Implement job and department */}
-					<Select name="fruit">
-						<SelectTrigger className="w-[180px]">
-							<SelectValue placeholder="Select a fruit" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-								<SelectLabel>Fruits</SelectLabel>
-								<SelectItem value="apple">Apple</SelectItem>
-								<SelectItem value="banana">Banana</SelectItem>
-								<SelectItem value="blueberry">Blueberry</SelectItem>
-								<SelectItem value="grapes">Grapes</SelectItem>
-								<SelectItem value="pineapple">Pineapple</SelectItem>
-							</SelectGroup>
-						</SelectContent>
-					</Select>
-					<ErrorList errors={fields.fruit.errors} id={fields.fruit.id} />
+					<Field
+						labelProps={{
+							htmlFor: fields.character.id,
+							children: 'Character',
+						}}
+						inputProps={{
+							...conform.input(fields.character, { type: 'text' }),
+							autoComplete: 'off',
+						}}
+						errors={fields.character.errors}
+					/>
+					<SearchSelect
+						name="department"
+						inputProps={{
+							...conform.input(fields.department, { type: 'text' }),
+						}}
+						errors={fields.department.errors}
+						options={CreditRoles}
+					/>
+					<SearchSelect
+						name="job"
+						inputProps={{
+							...conform.input(fields.job, { type: 'text' }),
+						}}
+						errors={fields.job.errors}
+						options={getAllJobs()}
+					/>
 					<DialogFooter>
 						<Button type="submit">Add Person</Button>
 					</DialogFooter>

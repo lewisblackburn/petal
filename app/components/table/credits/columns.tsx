@@ -3,7 +3,7 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../data-table-column-header.js'
 import { DataTableRowActions } from './data-table-row-actions.js'
-import { CreditDepartments, CreditJobs } from '~/utils/credit-roles.ts'
+import { CreditRoles, getAllJobs } from '~/utils/credit-roles.ts'
 
 export const columns: ColumnDef<Partial<CreditMember>>[] = [
 	{
@@ -49,7 +49,7 @@ export const columns: ColumnDef<Partial<CreditMember>>[] = [
 			<DataTableColumnHeader column={column} title="Job" />
 		),
 		cell: ({ row }) => {
-			const job = CreditJobs.find(job => job.value === row.getValue('job'))
+			const job = getAllJobs().find(job => job.value === row.getValue('job'))
 
 			if (!job) {
 				return null
@@ -67,7 +67,7 @@ export const columns: ColumnDef<Partial<CreditMember>>[] = [
 			<DataTableColumnHeader column={column} title="Department" />
 		),
 		cell: ({ row }) => {
-			const department = CreditDepartments.find(
+			const department = CreditRoles.find(
 				department => department.value === row.getValue('department'),
 			)
 
