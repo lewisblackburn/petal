@@ -32,7 +32,7 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 	await expect(nestedMain).toHaveText(
 		/You have enabled two-factor authentication./i,
 	)
-	await expect(main.getByRole('button', { name: /disable 2fa/i })).toBeVisible()
+	await expect(main.getByRole('link', { name: /disable 2fa/i })).toBeVisible()
 
 	await page.getByRole('button', { name: user.name ?? user.username }).click()
 	await page.getByRole('menuitem', { name: /logout/i }).click()
