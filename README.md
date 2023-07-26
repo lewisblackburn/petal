@@ -1,6 +1,6 @@
 # Petal
 
-![MyAppName Logo](/path/to/logo.png)
+![Petal Logo](/path/to/logo.png)
 
 Petal is a comprehensive database that brings together information about films,
 TV shows, books, people, and songs, all in one convenient platform. Just like
