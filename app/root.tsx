@@ -36,7 +36,7 @@ import { makeTimings, time } from './utils/timing.server.ts'
 import { useToast } from './utils/useToast.tsx'
 import { Header } from './components/header.tsx'
 import rdtStylesheetUrl from 'remix-development-tools/stylesheet.css'
-import { lazy } from 'react'
+import { Suspense, lazy } from 'react'
 const RemixDevTools =
 	process.env.NODE_ENV === 'development'
 		? lazy(() => import('remix-development-tools'))
@@ -205,7 +205,11 @@ function App() {
 			</div>
 			<Confetti confetti={data.flash?.confetti} />
 			<Toaster />
-			{RemixDevTools && <RemixDevTools showRouteBoundaries />}
+			{RemixDevTools && (
+				<Suspense>
+					<RemixDevTools showRouteBoundaries />
+				</Suspense>
+			)}
 		</Document>
 	)
 }
