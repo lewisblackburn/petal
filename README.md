@@ -52,7 +52,7 @@ npm run setup
 
 ## Demo
 
-For a live demo of Petal, you can visit Petal.com.
+For a live demo of Petal, you can visit [petal.fly.com](https://petal.fly.com).
 
 ## Contributing
 
