@@ -194,7 +194,7 @@ export function getDateTimeFormat(
 	const locales = parseAcceptLanguage(request.headers.get('accept-language'), {
 		validate: Intl.DateTimeFormat.supportedLocalesOf,
 	})
-	const locale = locales[0] ?? 'en-US'
+	const locale = locales[0] ?? 'en-GB'
 
 	// change your default options here
 	const defaultOptions: Intl.DateTimeFormatOptions = {
@@ -286,9 +286,9 @@ export function useDoubleCheck() {
 			doubleCheck
 				? undefined
 				: e => {
-					e.preventDefault()
-					setDoubleCheck(true)
-				}
+						e.preventDefault()
+						setDoubleCheck(true)
+				  }
 
 		return {
 			...props,
@@ -334,4 +334,16 @@ export function useDebounce<
 			),
 		[delay],
 	)
+}
+export function formatDate(date: Date) {
+	return date.toLocaleDateString('en-GB', {
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+	})
+}
+
+export function formatDateWithDashes(date: Date) {
+	const formattedDate = formatDate(date)
+	return formattedDate?.split('/').reverse().join('-')
 }
