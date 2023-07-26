@@ -69,7 +69,6 @@ export function DataTableAddPerson() {
 						errors={fields.character.errors}
 					/>
 					<SearchSelect
-						name="department"
 						inputProps={{
 							...conform.input(fields.department, { type: 'text' }),
 						}}
@@ -77,8 +76,8 @@ export function DataTableAddPerson() {
 						options={CreditRoles}
 					/>
 					<SearchSelect
-						name="job"
 						inputProps={{
+							// name: 'job',
 							...conform.input(fields.job, { type: 'text' }),
 						}}
 						errors={fields.job.errors}

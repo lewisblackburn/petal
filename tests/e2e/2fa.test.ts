@@ -28,14 +28,10 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 		.fill(generateTOTP(options).otp)
 	await main.getByRole('button', { name: /confirm/i }).click()
 
-	const nestedMain = main.getByRole('main')
-	await expect(nestedMain).toHaveText(
-		/You have enabled two-factor authentication./i,
-	)
-
+	await expect(main).toHaveText(/You have enabled two-factor authentication./i)
 	await expect(main.getByRole('button', { name: /disable 2fa/i })).toBeVisible()
 
-	await page.getByRole('button', { name: user.name ?? user.username }).click()
+	await page.getByRole('link', { name: user.name ?? user.username }).click()
 	await page.getByRole('menuitem', { name: /logout/i }).click()
 	await expect(page).toHaveURL(`/`)
 
@@ -49,9 +45,9 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 		.getByRole('textbox', { name: /code/i })
 		.fill(generateTOTP(options).otp)
 
-	await page.getByRole('button', { name: /confirm/i }).click()
+	await page.getByRole('button', { name: /log in/i }).click()
 
 	await expect(
-		page.getByRole('button', { name: user.name ?? user.username }),
+		page.getByRole('link', { name: user.name ?? user.username }),
 	).toBeVisible()
 })

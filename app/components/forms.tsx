@@ -13,6 +13,7 @@ import {
 	CommandGroup,
 	CommandInput,
 	CommandItem,
+	CommandList,
 } from './ui/command.tsx'
 import { cn } from '~/utils/misc.ts'
 
@@ -159,12 +160,10 @@ export function CheckboxField({
 }
 
 export function SearchSelect({
-	name,
 	inputProps,
 	errors,
 	options,
 }: {
-	name: string
 	inputProps: React.InputHTMLAttributes<HTMLInputElement>
 	errors?: ListOfErrors
 	options: { label: string; value: string }[]
@@ -181,46 +180,51 @@ export function SearchSelect({
 				id={id}
 				aria-invalid={errorId ? true : undefined}
 				aria-describedby={errorId}
-				name={name}
 				type="text"
 				className="hidden"
 				value={value ?? ''}
+				{...inputProps}
 			/>
 			<Popover>
 				<PopoverTrigger asChild>
-					<Button variant="outline" className="w-[200px] justify-between">
+					<Button variant="outline" className="w-full justify-between">
 						{value
 							? options.find(option => option.value === value)?.label
-							: `Select ${name}...`}
+							: `Select ${inputProps.name}...`}
 						<Icon
 							name="caret-sort"
 							className="ml-2 h-4 w-4 shrink-0 opacity-50"
 						/>
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className="w-[200px] p-0">
+				<PopoverContent className="w-full p-0" align="start">
 					<Command>
-						<CommandInput placeholder={`Search ${name}...`} className="h-9" />
-						<CommandEmpty>No {name} found.</CommandEmpty>
-						<CommandGroup>
-							{options.map(option => (
-								<CommandItem
-									key={option.value}
-									onSelect={currentValue => {
-										setValue(currentValue === value ? '' : currentValue)
-									}}
-								>
-									{option.label}
-									<Icon
-										name="check"
-										className={cn(
-											'ml-auto h-4 w-4',
-											value === option.value ? 'opacity-100' : 'opacity-0',
-										)}
-									/>
-								</CommandItem>
-							))}
-						</CommandGroup>
+						<CommandInput
+							placeholder={`Search ${inputProps.name}...`}
+							className="h-9"
+						/>
+						<CommandList>
+							<CommandEmpty>No {inputProps.name} found.</CommandEmpty>
+							<CommandGroup>
+								{options.map(option => (
+									<CommandItem
+										key={option.value}
+										onSelect={currentValue => {
+											setValue(currentValue === value ? '' : currentValue)
+										}}
+									>
+										{option.label}
+										<Icon
+											name="check"
+											className={cn(
+												'ml-auto h-4 w-4',
+												value === option.value ? 'opacity-100' : 'opacity-0',
+											)}
+										/>
+									</CommandItem>
+								))}
+							</CommandGroup>
+						</CommandList>
 					</Command>
 				</PopoverContent>
 			</Popover>
