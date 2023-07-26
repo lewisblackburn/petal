@@ -4,12 +4,17 @@ export const CreditJobs = [
 		label: 'Actor',
 	},
 	{
+		value: 'actress',
+		label: 'Actress',
+	},
+	{
 		value: 'writer',
 		label: 'Writer',
 	},
 	{
 		value: 'director',
 		label: 'Director',
+		department: 'directing',
 	},
 	{
 		value: 'producer',
@@ -201,10 +206,31 @@ export const CreditJobs = [
 	},
 ]
 
+// TODO: Tie jobs and departments together
+// TODO: Create one component like /resources/people to handle both departments and jobs as they are tied together like in tmdbs api
+
 export const CreditDepartments = [
 	{
 		value: 'acting',
 		label: 'Acting',
+		jobs: [
+			{
+				value: 'actor',
+				label: 'Actor',
+			},
+			{
+				value: 'actress',
+				label: 'Actress',
+			},
+			{
+				value: 'voice_actor',
+				label: 'Voice Actor',
+			},
+			{
+				value: 'voice_actress',
+				label: 'Voice Actress',
+			},
+		],
 	},
 	{
 		value: 'writing',
