@@ -1,8 +1,6 @@
 import { type V2_MetaFunction } from '@remix-run/node'
 import { Container } from '~/components/container.tsx'
-import { SearchSelect } from '~/components/forms.tsx'
 import { ImageSlider } from '~/components/image-slider.tsx'
-import { CreditRoles } from '~/utils/credit-roles.ts'
 
 export const meta: V2_MetaFunction = () => [{ title: 'Petal' }]
 
@@ -11,7 +9,6 @@ export default function Index() {
 		<div>
 			<Container>
 				<ImageSlider />
-				<SearchSelect name="test" options={CreditRoles} inputProps={{}} />
 			</Container>
 		</div>
 	)

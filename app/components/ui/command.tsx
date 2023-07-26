@@ -2,7 +2,7 @@ import * as React from 'react'
 import { type DialogProps } from '@radix-ui/react-dialog'
 import { Command as CommandPrimitive } from 'cmdk'
 
-import { cn } from '~/utils/misc.ts'
+import { cn } from '~/utils/misc.tsx'
 import { Dialog, DialogContent } from './dialog.tsx'
 import { Icon } from './icon.tsx'
 

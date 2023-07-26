@@ -15,7 +15,7 @@ import {
 	CommandItem,
 	CommandList,
 } from './ui/command.tsx'
-import { cn } from '~/utils/misc.ts'
+import { cn } from '~/utils/misc.tsx'
 
 export type ListOfErrors = Array<string | null | undefined> | null | undefined
 

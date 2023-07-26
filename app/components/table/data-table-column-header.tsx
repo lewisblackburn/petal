@@ -8,7 +8,7 @@ import {
 	DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { cn } from '~/utils/misc.ts'
+import { cn } from '~/utils/misc.tsx'
 
 interface DataTableColumnHeaderProps<TData, TValue>
 	extends React.HTMLAttributes<HTMLDivElement> {

@@ -77,7 +77,6 @@ export function DataTableAddPerson() {
 					/>
 					<SearchSelect
 						inputProps={{
-							// name: 'job',
 							...conform.input(fields.job, { type: 'text' }),
 						}}
 						errors={fields.job.errors}

@@ -11,7 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar.tsx'
 import { Button } from './ui/button.tsx'
 import { useUser } from '~/utils/user.ts'
-import { getUserImgSrc } from '~/utils/misc.ts'
+import { getUserImgSrc } from '~/utils/misc.tsx'
 import { Form, Link, useSubmit } from '@remix-run/react'
 import { useRef } from 'react'
 

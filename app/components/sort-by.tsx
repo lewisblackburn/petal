@@ -19,7 +19,7 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover.tsx'
 import { Prisma } from '@prisma/client'
 import React from 'react'
 import queryString from 'querystring'
-import { cn } from '~/utils/misc.ts'
+import { cn } from '~/utils/misc.tsx'
 
 const SORT_OPTIONS = [
 	{

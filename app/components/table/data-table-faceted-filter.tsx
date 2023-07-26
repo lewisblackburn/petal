@@ -18,7 +18,7 @@ import {
 	CommandList,
 	CommandSeparator,
 } from '~/components/ui/command.tsx'
-import { cn } from '~/utils/misc.ts'
+import { cn } from '~/utils/misc.tsx'
 
 interface DataTableFacetedFilter<TData, TValue> {
 	column?: Column<TData, TValue>

@@ -4,7 +4,7 @@ import { useOptionalUser } from '~/utils/user.ts'
 import { Button } from './ui/button.tsx'
 import { Icon } from './ui/icon.tsx'
 import { SearchBar } from './search-bar.tsx'
-import { cn } from '~/utils/misc.ts'
+import { cn } from '~/utils/misc.tsx'
 import { NotificationPopover } from './notification-popover.tsx'
 
 const LINKS = [

@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { cn } from '~/utils/misc.ts'
+import { cn } from '~/utils/misc.tsx'
 
 interface ContainerProps {
 	children: ReactNode
