@@ -22,7 +22,7 @@ import {
 } from '~/utils/user-validation.ts'
 import { twoFAVerificationType } from './profile.two-factor.tsx'
 
-const profileFormSchema = z.object({
+const ProfileFormSchema = z.object({
 	name: nameSchema.optional(),
 	username: usernameSchema,
 	currentPassword: z
@@ -58,7 +58,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const submission = await parse(formData, {
 		async: true,
-		schema: profileFormSchema.superRefine(
+		schema: ProfileFormSchema.superRefine(
 			async ({ username, currentPassword, newPassword }, ctx) => {
 				if (newPassword && !currentPassword) {
 					ctx.addIssue({
@@ -116,10 +116,10 @@ export default function EditUserProfile() {
 
 	const [form, fields] = useForm({
 		id: 'edit-profile',
-		constraint: getFieldsetConstraint(profileFormSchema),
+		constraint: getFieldsetConstraint(ProfileFormSchema),
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: profileFormSchema })
+			return parse(formData, { schema: ProfileFormSchema })
 		},
 		defaultValue: {
 			username: data.user.username,
