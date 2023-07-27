@@ -18,7 +18,6 @@ import {
 	CommandItem,
 } from '~/components/ui/command.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { Label } from '~/components/ui/label.tsx'
 import {
 	Popover,
 	PopoverContent,
