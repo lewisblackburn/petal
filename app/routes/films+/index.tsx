@@ -16,7 +16,7 @@ import { SortBy } from '~/components/sort-by.tsx'
 import { Container } from '~/components/container.tsx'
 import { getTableParams } from '~/utils/request.helper.ts'
 
-const TAKE = 30
+const TAKE = 100
 
 export async function loader({ request }: DataFunctionArgs) {
 	const timings = makeTimings('films loader')
@@ -28,10 +28,10 @@ export async function loader({ request }: DataFunctionArgs) {
 	const where = {
 		OR: search
 			? [
-				{ title: { contains: search } },
-				{ tagline: { contains: search } },
-				{ overview: { contains: search } },
-			]
+					{ title: { contains: search } },
+					{ tagline: { contains: search } },
+					{ overview: { contains: search } },
+			  ]
 			: undefined,
 	} satisfies Prisma.FilmWhereInput
 

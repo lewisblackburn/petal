@@ -187,15 +187,20 @@ export function SearchSelect({
 			/>
 			<Popover>
 				<PopoverTrigger asChild>
-					<Button variant="outline" className="w-full justify-between">
-						{value
-							? options.find(option => option.value === value)?.label
-							: `Select ${inputProps.name}...`}
-						<Icon
-							name="caret-sort"
-							className="ml-2 h-4 w-4 shrink-0 opacity-50"
-						/>
-					</Button>
+					<>
+						<Button variant="outline" className="w-full justify-between">
+							{value
+								? options.find(option => option.value === value)?.label
+								: `Select ${inputProps.name}...`}
+							<Icon
+								name="caret-sort"
+								className="ml-2 h-4 w-4 shrink-0 opacity-50"
+							/>
+						</Button>
+						<div className="min-h-[32px] px-4 pb-3 pt-1">
+							{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+						</div>
+					</>
 				</PopoverTrigger>
 				<PopoverContent className="w-full p-0" align="start">
 					<Command>
@@ -228,9 +233,6 @@ export function SearchSelect({
 					</Command>
 				</PopoverContent>
 			</Popover>
-			<div className="min-h-[32px] px-4 pb-3 pt-1">
-				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
-			</div>
 		</>
 	)
 }

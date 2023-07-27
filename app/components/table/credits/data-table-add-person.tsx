@@ -46,6 +46,7 @@ export function DataTableAddPerson() {
 				<fetcher.Form
 					method="POST"
 					action="/resources/add-film-credit-member"
+					name="add-film-credit-member-form"
 					{...form.props}
 				>
 					<DialogHeader>
@@ -54,34 +55,41 @@ export function DataTableAddPerson() {
 							Add a new person to the credits table.
 						</DialogDescription>
 					</DialogHeader>
-					<input name="filmId" type="hidden" value={filmId} />
-					<PersonSearch />
-					<ErrorList errors={fields.personId.errors} id={fields.personId.id} />
-					<Field
-						labelProps={{
-							htmlFor: fields.character.id,
-							children: 'Character',
-						}}
-						inputProps={{
-							...conform.input(fields.character, { type: 'text' }),
-							autoComplete: 'off',
-						}}
-						errors={fields.character.errors}
-					/>
-					<SearchSelect
-						inputProps={{
-							...conform.input(fields.department, { type: 'text' }),
-						}}
-						errors={fields.department.errors}
-						options={CreditRoles}
-					/>
-					<SearchSelect
-						inputProps={{
-							...conform.input(fields.job, { type: 'text' }),
-						}}
-						errors={fields.job.errors}
-						options={getAllJobs()}
-					/>
+					<div className="grid gap-4 py-4">
+						<input name="filmId" type="hidden" value={filmId} />
+						<PersonSearch />
+						<div className="min-h-[32px] px-4 pb-3 pt-1">
+							<ErrorList
+								errors={fields.personId.errors}
+								id={fields.personId.id}
+							/>
+						</div>
+						<Field
+							labelProps={{
+								htmlFor: fields.character.id,
+								children: 'Character',
+							}}
+							inputProps={{
+								...conform.input(fields.character, { type: 'text' }),
+								autoComplete: 'off',
+							}}
+							errors={fields.character.errors}
+						/>
+						<SearchSelect
+							inputProps={{
+								...conform.input(fields.department, { type: 'text' }),
+							}}
+							errors={fields.department.errors}
+							options={CreditRoles}
+						/>
+						<SearchSelect
+							inputProps={{
+								...conform.input(fields.job, { type: 'text' }),
+							}}
+							errors={fields.job.errors}
+							options={getAllJobs()}
+						/>
+					</div>
 					<DialogFooter>
 						<Button type="submit">Add Person</Button>
 					</DialogFooter>
