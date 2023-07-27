@@ -120,22 +120,6 @@ export function FilmEditor({
 
 	return (
 		<div>
-			{/* <div className="h-[500px] w-full bg-[url('https://www.themoviedb.org/t/p/w1920_and_h800_multi_faces/5ZoFGrFCKP0QrcfVwOIHiAwunBg.jpg')] bg-cover bg-center"> */}
-			{/* 	<div className="flex h-full flex-col justify-center backdrop-brightness-[.2]"> */}
-			{/* 		<div className="mx-auto w-full max-w-7xl"> */}
-			{/* 			<h2 className="text-2xl font-bold tracking-tight">About Time</h2> */}
-			{/* 			<p className="text-muted-foreground"> */}
-			{/* 				The night after another unsatisfactory New Year's party, Tim's */}
-			{/* 				father tells his son that the men in his family have always had */}
-			{/* 				the ability to travel through time. They can't change history, but */}
-			{/* 				they can change what happens and has happened in their own lives. */}
-			{/* 				Thus begins the start of a lesson in learning to appreciate life */}
-			{/* 				itself as it is, as it comes, and most importantly, the people */}
-			{/* 				living alongside us. */}
-			{/* 			</p> */}
-			{/* 		</div> */}
-			{/* 	</div> */}
-			{/* </div> */}
 			<Container>
 				<filmEditorFetcher.Form
 					method="post"
@@ -143,22 +127,26 @@ export function FilmEditor({
 					{...form.props}
 				>
 					<input name="id" type="hidden" value={film?.id} />
-					<Field
-						labelProps={{ htmlFor: fields.title.id, children: 'Title' }}
-						inputProps={{
-							...conform.input(fields.title),
-							autoComplete: 'title',
-						}}
-						errors={fields.title.errors}
-					/>
-					<Field
-						labelProps={{ htmlFor: fields.tagline.id, children: 'Tagline' }}
-						inputProps={{
-							...conform.input(fields.tagline),
-							autoComplete: 'tagline',
-						}}
-						errors={fields.tagline.errors}
-					/>
+					<div className="grid grid-cols-6 gap-x-10">
+						<Field
+							className="col-span-3"
+							labelProps={{ htmlFor: fields.title.id, children: 'Title' }}
+							inputProps={{
+								...conform.input(fields.title),
+								autoComplete: 'title',
+							}}
+							errors={fields.title.errors}
+						/>
+						<Field
+							className="col-span-3"
+							labelProps={{ htmlFor: fields.tagline.id, children: 'Tagline' }}
+							inputProps={{
+								...conform.input(fields.tagline),
+								autoComplete: 'tagline',
+							}}
+							errors={fields.tagline.errors}
+						/>
+					</div>
 					<TextareaField
 						labelProps={{ htmlFor: fields.overview.id, children: 'Overview' }}
 						textareaProps={{

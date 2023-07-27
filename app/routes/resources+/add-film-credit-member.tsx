@@ -5,12 +5,12 @@ import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 
+// ({ message: 'You must select a person' }),
 export const AddFilmCreditMemberSchema = z.object({
 	filmId: z.string().nonempty(),
-	personId: z.string().nonempty({ message: 'You must select a person' }),
+	personId: z.string().nonempty(),
+	person: z.string().nonempty(),
 	character: z.string().nonempty(),
-	department: z.string().nonempty({ message: 'You must select a department' }),
-	job: z.string().nonempty({ message: 'You must select a job' }),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -30,7 +30,7 @@ export async function action({ request }: DataFunctionArgs) {
 		)
 	}
 
-	let { filmId, personId, department, job, character } = submission.value
+	let { filmId, personId, character } = submission.value
 
 	await prisma.film.update({
 		where: { id: filmId },
@@ -43,8 +43,8 @@ export async function action({ request }: DataFunctionArgs) {
 						},
 					},
 					character,
-					department,
-					job,
+					department: 'acting',
+					job: 'actor',
 				},
 			},
 		},

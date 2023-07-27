@@ -1,7 +1,7 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
-import { ErrorList, Field, SearchSelect } from '~/components/forms.tsx'
+import { ErrorList, Field } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
 	Dialog,
@@ -15,7 +15,6 @@ import {
 import { Icon } from '~/components/ui/icon.tsx'
 import { AddFilmCreditMemberSchema } from '~/routes/resources+/add-film-credit-member.tsx'
 import { PersonSearch } from '~/routes/resources+/people.tsx'
-import { CreditRoles, getAllJobs } from '~/utils/credit-roles.ts'
 
 export function DataTableAddPerson() {
 	const { filmId } = useParams()
@@ -55,15 +54,14 @@ export function DataTableAddPerson() {
 							Add a new person to the credits table.
 						</DialogDescription>
 					</DialogHeader>
-					<div className="grid gap-4 py-4">
+					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<PersonSearch />
-						<div className="min-h-[32px] px-4 pb-3 pt-1">
-							<ErrorList
-								errors={fields.personId.errors}
-								id={fields.personId.id}
-							/>
-						</div>
+						<PersonSearch
+							inputProps={{
+								...conform.input(fields.personId, { type: 'text' }),
+							}}
+							errors={fields.personId.errors}
+						/>
 						<Field
 							labelProps={{
 								htmlFor: fields.character.id,
@@ -75,25 +73,11 @@ export function DataTableAddPerson() {
 							}}
 							errors={fields.character.errors}
 						/>
-						<SearchSelect
-							inputProps={{
-								...conform.input(fields.department, { type: 'text' }),
-							}}
-							errors={fields.department.errors}
-							options={CreditRoles}
-						/>
-						<SearchSelect
-							inputProps={{
-								...conform.input(fields.job, { type: 'text' }),
-							}}
-							errors={fields.job.errors}
-							options={getAllJobs()}
-						/>
+						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
 						<Button type="submit">Add Person</Button>
 					</DialogFooter>
-					<ErrorList errors={form.errors} id={form.errorId} />
 				</fetcher.Form>
 			</DialogContent>
 		</Dialog>
