@@ -93,7 +93,7 @@ async function seed() {
 	console.timeEnd(`🎞️ Created ${films.length} films...`)
 
 	const totalPeople = 40
-	console.time(`🎞️ Created ${totalFilms} films...`)
+	console.time(`🧍 Created ${totalPeople} people...`)
 	const people = await Promise.all(
 		Array.from({ length: totalPeople }, async () => {
 			const personData = createPerson()
