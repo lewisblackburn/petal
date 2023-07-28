@@ -5,7 +5,6 @@ import {
 } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 import { Container } from '~/components/container.tsx'
-import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { Image } from '~/components/image.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon, type IconName } from '~/components/ui/icon.tsx'
