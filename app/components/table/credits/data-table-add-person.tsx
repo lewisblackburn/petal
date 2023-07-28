@@ -57,6 +57,10 @@ export function DataTableAddPerson() {
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
 						<PersonSearch
+							labelProps={{
+								htmlFor: fields.character.id,
+								children: 'Character',
+							}}
 							inputProps={{
 								...conform.input(fields.personId, { type: 'text' }),
 							}}

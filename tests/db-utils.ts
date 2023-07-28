@@ -44,3 +44,11 @@ export function createFilm() {
 		overview,
 	}
 }
+
+export function createPerson() {
+	const name = faker.person.fullName()
+
+	return {
+		name,
+	}
+}

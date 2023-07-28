@@ -1,6 +1,11 @@
 import fs from 'fs'
 import { faker } from '@faker-js/faker'
-import { createFilm, createPassword, createUser } from 'tests/db-utils.ts'
+import {
+	createFilm,
+	createPassword,
+	createPerson,
+	createUser,
+} from 'tests/db-utils.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { deleteAllData } from 'tests/setup/utils.ts'
 import { getPasswordHash } from '~/utils/auth.server.ts'
@@ -86,6 +91,26 @@ async function seed() {
 		}),
 	).then(films => films.filter(Boolean))
 	console.timeEnd(`🎞️ Created ${films.length} films...`)
+
+	const totalPeople = 40
+	console.time(`🎞️ Created ${totalFilms} films...`)
+	const people = await Promise.all(
+		Array.from({ length: totalPeople }, async () => {
+			const personData = createPerson()
+			const personCreatedUpdated = getCreatedAndUpdated()
+			const person = await prisma.person
+				.create({
+					select: { id: true },
+					data: {
+						...personData,
+						...personCreatedUpdated,
+					},
+				})
+				.catch(() => null)
+			return person
+		}),
+	).then(films => films.filter(Boolean))
+	console.timeEnd(`🧍 Created ${people.length} people...`)
 
 	console.time(
 		`🐨 Created user "kody" with the password "kodylovesyou" and admin role`,

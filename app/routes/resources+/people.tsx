@@ -18,6 +18,7 @@ import {
 	CommandItem,
 } from '~/components/ui/command.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
+import { Label } from '~/components/ui/label.tsx'
 import {
 	Popover,
 	PopoverContent,
@@ -63,9 +64,11 @@ export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
 
 // TODO: Debounce the search
 export const PersonSearch = ({
+	labelProps,
 	inputProps,
 	errors,
 }: {
+	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
 	inputProps: React.InputHTMLAttributes<HTMLInputElement>
 	errors?: ListOfErrors
 }) => {
@@ -90,7 +93,7 @@ export const PersonSearch = ({
 		<>
 			<div className="flex items-center gap-5">
 				<input type="hidden" name="personId" value={selectedPerson?.id ?? ''} />
-				{/* <Label htmlFor={id} {...labelProps} /> */}
+				<Label htmlFor={id} {...labelProps} />
 				<Popover open={open} onOpenChange={setOpen}>
 					<PopoverTrigger asChild>
 						<Button
