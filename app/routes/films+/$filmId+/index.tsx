@@ -197,13 +197,3 @@ function Status({
 		</div>
 	)
 }
-
-export function ErrorBoundary() {
-	return (
-		<GeneralErrorBoundary
-			statusHandlers={{
-				404: () => <p>Film not found</p>,
-			}}
-		/>
-	)
-}
