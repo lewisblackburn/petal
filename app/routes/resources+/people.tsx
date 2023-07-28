@@ -72,10 +72,10 @@ export const PersonSearch = ({
 	inputProps: React.InputHTMLAttributes<HTMLInputElement>
 	errors?: ListOfErrors
 }) => {
+	const [open, setOpen] = useState(false)
 	const fallbackId = useId()
 	const id = inputProps.id ?? inputProps.name ?? fallbackId
 	const errorId = errors?.length ? `${id}-error` : undefined
-	const [open, setOpen] = useState(false)
 	const peopleFetcher = useFetcher<typeof loader>()
 	const people = peopleFetcher.data?.people ?? []
 	type Person = (typeof people)[number]
@@ -91,79 +91,89 @@ export const PersonSearch = ({
 
 	return (
 		<>
-			<div className="flex items-center gap-5">
-				<input type="hidden" name="personId" value={selectedPerson?.id ?? ''} />
-				<Label htmlFor={id} {...labelProps} />
-				<Popover open={open} onOpenChange={setOpen}>
-					<PopoverTrigger asChild>
-						<Button
-							variant="outline"
-							role="combobox"
-							aria-expanded={open}
-							className="w-[200px] justify-between"
-						>
-							{selectedPerson ? selectedPerson.name : 'Select person...'}
-							<Icon
-								name="caret-sort"
-								className="ml-2 h-4 w-4 shrink-0 opacity-50"
-							/>
-						</Button>
-					</PopoverTrigger>
-					<PopoverContent className="w-[200px] p-0">
-						<Command shouldFilter={false}>
-							<CommandInput
-								placeholder="Search people..."
-								className="h-9"
-								onFocus={() => {
-									peopleFetcher.submit(
-										{ search: selectedPerson?.name ?? '' },
-										{ method: 'GET', action: '/resources/people' },
-									)
-								}}
-								onInput={e => {
-									peopleFetcher.submit(
-										{ search: e.currentTarget.value },
-										{ method: 'GET', action: '/resources/people' },
-									)
-								}}
-							/>
-							<Spinner showSpinner={delayedBusy} />
-							<CommandEmpty>No person found.</CommandEmpty>
-							<CommandGroup>
-								{people.map(person => (
-									<CommandItem
-										key={person.name}
-										onSelect={currentValue => {
-											const person = people.find(
-												person => person.name.toLowerCase() === currentValue,
-											)
-											setSelectedPerson(
-												currentValue === selectedPerson?.name
-													? selectedPerson
-													: person,
-											)
-											setOpen(false)
-										}}
-									>
-										{person.name}
-										<Icon
-											name="check"
-											className={cn(
-												'ml-auto h-4 w-4',
-												selectedPerson?.name === person.name
-													? 'opacity-100'
-													: 'opacity-0',
-											)}
-										/>
-									</CommandItem>
-								))}
-							</CommandGroup>
-						</Command>
-					</PopoverContent>
-				</Popover>
-			</div>
+			<input
+				name="personId"
+				// A hack to allow errors to be displayed as type="hidden" is not supported
+				defaultValue={selectedPerson?.id ?? ''}
+				className="hidden"
+			/>
+			<Label htmlFor={id} {...labelProps} />
+			<Popover open={open} onOpenChange={setOpen}>
+				<PopoverTrigger asChild>
+					<Button
+						variant="outline"
+						role="combobox"
+						aria-expanded={open}
+						// A hack to show error border and "revailidate" on blur
+						className={cn(
+							'w-[200px] justify-between ',
+							errorId && selectedPerson === null && 'border-input-invalid',
+						)}
+					>
+						{selectedPerson ? selectedPerson.name : 'Select person...'}
+						<Icon
+							name="caret-sort"
+							className="ml-2 h-4 w-4 shrink-0 opacity-50"
+						/>
+					</Button>
+				</PopoverTrigger>
+				<PopoverContent className="w-[200px] p-0">
+					<Command shouldFilter={false}>
+						<CommandInput
+							placeholder="Search people..."
+							className="h-9"
+							onFocus={() => {
+								peopleFetcher.submit(
+									{ search: selectedPerson?.name ?? '' },
+									{ method: 'GET', action: '/resources/people' },
+								)
+							}}
+							onInput={e => {
+								peopleFetcher.submit(
+									{ search: e.currentTarget.value },
+									{ method: 'GET', action: '/resources/people' },
+								)
+							}}
+						/>
+						<Spinner showSpinner={delayedBusy} />
+						<CommandEmpty>No person found.</CommandEmpty>
+						<CommandGroup>
+							{people.map(person => (
+								<CommandItem
+									key={person.name}
+									onSelect={currentValue => {
+										const person = people.find(
+											person => person.name.toLowerCase() === currentValue,
+										)
+										setSelectedPerson(
+											currentValue === selectedPerson?.name
+												? selectedPerson
+												: person,
+										)
+										setOpen(false)
+									}}
+								>
+									{person.name}
+									<Icon
+										name="check"
+										className={cn(
+											'ml-auto h-4 w-4',
+											selectedPerson?.name === person.name
+												? 'opacity-100'
+												: 'opacity-0',
+										)}
+									/>
+								</CommandItem>
+							))}
+						</CommandGroup>
+					</Command>
+				</PopoverContent>
+			</Popover>
 			<div className="px-4 pb-3 pt-1">
-				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+				{/* // A hack to show error message and "revailidate" on blur */}
+				{errorId && selectedPerson === null ? (
+					<ErrorList id={errorId} errors={errors} />
+				) : null}
 			</div>
 		</>
 	)

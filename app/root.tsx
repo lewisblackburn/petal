@@ -78,8 +78,8 @@ export const links: LinksFunction = () => {
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
 	return [
-		{ title: data ? 'Epic Notes' : 'Error | Epic Notes' },
-		{ name: 'description', content: `Your own captain's log` },
+		{ title: data ? 'Petal' : 'Error | Petal' },
+		{ name: 'description', content: `An entertainment database` },
 	]
 }
 
@@ -93,19 +93,19 @@ export async function loader({ request }: DataFunctionArgs) {
 
 	const user = userId
 		? await time(
-			() =>
-				prisma.user.findUnique({
-					where: { id: userId },
-					select: {
-						id: true,
-						name: true,
-						username: true,
-						email: true,
-						imageId: true,
-					},
-				}),
-			{ timings, type: 'find user', desc: 'find user in root' },
-		)
+				() =>
+					prisma.user.findUnique({
+						where: { id: userId },
+						select: {
+							id: true,
+							name: true,
+							username: true,
+							email: true,
+							imageId: true,
+						},
+					}),
+				{ timings, type: 'find user', desc: 'find user in root' },
+		  )
 		: null
 	if (userId && !user) {
 		console.info('something weird happened')

@@ -8,7 +8,6 @@ import { type Film } from '@prisma/client'
 import { ErrorList, Field, TextareaField } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import { Container } from '~/components/container.tsx'
 
 export const FilmEditorSchema = z.object({
 	id: z.string().optional(),
@@ -119,132 +118,128 @@ export function FilmEditor({
 	})
 
 	return (
-		<div>
-			<Container>
-				<filmEditorFetcher.Form
-					method="post"
-					action="/resources/film-editor"
-					{...form.props}
+		<filmEditorFetcher.Form
+			method="post"
+			action="/resources/film-editor"
+			{...form.props}
+		>
+			<input name="id" type="hidden" value={film?.id} />
+			<div className="grid grid-cols-6 gap-x-10">
+				<Field
+					className="col-span-3"
+					labelProps={{ htmlFor: fields.title.id, children: 'Title' }}
+					inputProps={{
+						...conform.input(fields.title),
+						autoComplete: 'title',
+					}}
+					errors={fields.title.errors}
+				/>
+				<Field
+					className="col-span-3"
+					labelProps={{ htmlFor: fields.tagline.id, children: 'Tagline' }}
+					inputProps={{
+						...conform.input(fields.tagline),
+						autoComplete: 'tagline',
+					}}
+					errors={fields.tagline.errors}
+				/>
+			</div>
+			<TextareaField
+				labelProps={{ htmlFor: fields.overview.id, children: 'Overview' }}
+				textareaProps={{
+					...conform.textarea(fields.overview),
+					autoComplete: 'overview',
+				}}
+				errors={fields.overview.errors}
+			/>
+			<Field
+				labelProps={{
+					htmlFor: fields.releaseDate.id,
+					children: 'Release Date',
+				}}
+				inputProps={{
+					...conform.input(fields.releaseDate),
+					autoComplete: 'releaseDate',
+					type: 'date',
+				}}
+				errors={fields.releaseDate.errors}
+			/>
+			<Field
+				labelProps={{ htmlFor: fields.runtime.id, children: 'Runtime' }}
+				inputProps={{
+					...conform.input(fields.runtime),
+					autoComplete: 'runtime',
+					type: 'number',
+				}}
+				errors={fields.runtime.errors}
+			/>
+			<Field
+				labelProps={{ htmlFor: fields.budget.id, children: 'Budget' }}
+				inputProps={{
+					...conform.input(fields.budget),
+					autoComplete: 'budget',
+					type: 'number',
+				}}
+				errors={fields.runtime.errors}
+			/>
+			<Field
+				labelProps={{ htmlFor: fields.revenue.id, children: 'Revenue' }}
+				inputProps={{
+					...conform.input(fields.revenue),
+					autoComplete: 'revenue',
+					type: 'number',
+				}}
+				errors={fields.runtime.errors}
+			/>
+			<Field
+				labelProps={{ htmlFor: fields.instagram.id, children: 'Instagram' }}
+				inputProps={{
+					...conform.input(fields.instagram),
+					autoComplete: 'instagram',
+				}}
+				errors={fields.instagram.errors}
+			/>
+			<Field
+				labelProps={{ htmlFor: fields.twitter.id, children: 'Twitter' }}
+				inputProps={{
+					...conform.input(fields.twitter),
+					autoComplete: 'twitter',
+				}}
+				errors={fields.twitter.errors}
+			/>
+			<Field
+				labelProps={{ htmlFor: fields.website.id, children: 'Website' }}
+				inputProps={{
+					...conform.input(fields.website),
+					autoComplete: 'website',
+				}}
+				errors={fields.website.errors}
+			/>
+			<Field
+				labelProps={{ htmlFor: fields.tmdbId.id, children: 'TMDBID' }}
+				inputProps={{
+					...conform.input(fields.tmdbId),
+					autoComplete: 'tmdbId',
+				}}
+				errors={fields.tmdbId.errors}
+			/>
+			<ErrorList errors={form.errors} id={form.errorId} />
+			<div className="flex justify-end gap-4">
+				<Button variant="outline" type="reset">
+					Reset
+				</Button>
+				<StatusButton
+					status={
+						filmEditorFetcher.state === 'submitting'
+							? 'pending'
+							: filmEditorFetcher.data?.status ?? 'idle'
+					}
+					type="submit"
+					disabled={filmEditorFetcher.state !== 'idle'}
 				>
-					<input name="id" type="hidden" value={film?.id} />
-					<div className="grid grid-cols-6 gap-x-10">
-						<Field
-							className="col-span-3"
-							labelProps={{ htmlFor: fields.title.id, children: 'Title' }}
-							inputProps={{
-								...conform.input(fields.title),
-								autoComplete: 'title',
-							}}
-							errors={fields.title.errors}
-						/>
-						<Field
-							className="col-span-3"
-							labelProps={{ htmlFor: fields.tagline.id, children: 'Tagline' }}
-							inputProps={{
-								...conform.input(fields.tagline),
-								autoComplete: 'tagline',
-							}}
-							errors={fields.tagline.errors}
-						/>
-					</div>
-					<TextareaField
-						labelProps={{ htmlFor: fields.overview.id, children: 'Overview' }}
-						textareaProps={{
-							...conform.textarea(fields.overview),
-							autoComplete: 'overview',
-						}}
-						errors={fields.overview.errors}
-					/>
-					<Field
-						labelProps={{
-							htmlFor: fields.releaseDate.id,
-							children: 'Release Date',
-						}}
-						inputProps={{
-							...conform.input(fields.releaseDate),
-							autoComplete: 'releaseDate',
-							type: 'date',
-						}}
-						errors={fields.releaseDate.errors}
-					/>
-					<Field
-						labelProps={{ htmlFor: fields.runtime.id, children: 'Runtime' }}
-						inputProps={{
-							...conform.input(fields.runtime),
-							autoComplete: 'runtime',
-							type: 'number',
-						}}
-						errors={fields.runtime.errors}
-					/>
-					<Field
-						labelProps={{ htmlFor: fields.budget.id, children: 'Budget' }}
-						inputProps={{
-							...conform.input(fields.budget),
-							autoComplete: 'budget',
-							type: 'number',
-						}}
-						errors={fields.runtime.errors}
-					/>
-					<Field
-						labelProps={{ htmlFor: fields.revenue.id, children: 'Revenue' }}
-						inputProps={{
-							...conform.input(fields.revenue),
-							autoComplete: 'revenue',
-							type: 'number',
-						}}
-						errors={fields.runtime.errors}
-					/>
-					<Field
-						labelProps={{ htmlFor: fields.instagram.id, children: 'Instagram' }}
-						inputProps={{
-							...conform.input(fields.instagram),
-							autoComplete: 'instagram',
-						}}
-						errors={fields.instagram.errors}
-					/>
-					<Field
-						labelProps={{ htmlFor: fields.twitter.id, children: 'Twitter' }}
-						inputProps={{
-							...conform.input(fields.twitter),
-							autoComplete: 'twitter',
-						}}
-						errors={fields.twitter.errors}
-					/>
-					<Field
-						labelProps={{ htmlFor: fields.website.id, children: 'Website' }}
-						inputProps={{
-							...conform.input(fields.website),
-							autoComplete: 'website',
-						}}
-						errors={fields.website.errors}
-					/>
-					<Field
-						labelProps={{ htmlFor: fields.tmdbId.id, children: 'TMDBID' }}
-						inputProps={{
-							...conform.input(fields.tmdbId),
-							autoComplete: 'tmdbId',
-						}}
-						errors={fields.tmdbId.errors}
-					/>
-					<ErrorList errors={form.errors} id={form.errorId} />
-					<div className="flex justify-end gap-4">
-						<Button variant="outline" type="reset">
-							Reset
-						</Button>
-						<StatusButton
-							status={
-								filmEditorFetcher.state === 'submitting'
-									? 'pending'
-									: filmEditorFetcher.data?.status ?? 'idle'
-							}
-							type="submit"
-							disabled={filmEditorFetcher.state !== 'idle'}
-						>
-							Submit
-						</StatusButton>
-					</div>
-				</filmEditorFetcher.Form>
-			</Container>
-		</div>
+					Submit
+				</StatusButton>
+			</div>
+		</filmEditorFetcher.Form>
 	)
 }
