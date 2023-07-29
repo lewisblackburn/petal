@@ -4,6 +4,27 @@ import { Input } from '~/components/ui/input.tsx'
 import { Label } from '~/components/ui/label.tsx'
 import { Checkbox, type CheckboxProps } from '~/components/ui/checkbox.tsx'
 import { Textarea } from '~/components/ui/textarea.tsx'
+import { type SelectProps } from '@radix-ui/react-select'
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from './ui/select.tsx'
+import { cn } from '~/utils/misc.tsx'
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover.tsx'
+import { Button } from './ui/button.tsx'
+import { Icon } from './ui/icon.tsx'
+import {
+	Command,
+	CommandEmpty,
+	CommandGroup,
+	CommandInput,
+	CommandItem,
+	CommandList,
+} from './ui/command.tsx'
 
 export type ListOfErrors = Array<string | null | undefined> | null | undefined
 
@@ -146,3 +167,261 @@ export function CheckboxField({
 		</div>
 	)
 }
+
+export function SelectField({
+	labelProps,
+	selectProps,
+	options,
+	errors,
+	className,
+}: {
+	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
+	selectProps: SelectProps
+	options: Array<{ label: string; value: string }>
+	errors?: ListOfErrors
+	className?: string
+}) {
+	const [value, setValue] = React.useState<string>('')
+	const fallbackId = useId()
+	const id = selectProps.name ?? fallbackId
+	const errorId = errors?.length ? `${id}-error` : undefined
+	return (
+		<div className={className}>
+			<Label htmlFor={id} {...labelProps} />
+			<Select
+				aria-invalid={errorId ? true : undefined}
+				aria-describedby={errorId}
+				{...selectProps}
+				onValueChange={value => {
+					setValue(value)
+				}}
+			>
+				<SelectTrigger
+					className={cn(
+						'w-[180px]',
+						errorId && value === '' && 'border-input-invalid',
+					)}
+				>
+					<SelectValue placeholder={`Select a ${selectProps.name}`} />
+				</SelectTrigger>
+				<SelectContent>
+					<SelectGroup>
+						{options.map(({ label, value }) => (
+							<SelectItem key={label} value={value}>
+								{label}
+							</SelectItem>
+						))}
+					</SelectGroup>
+				</SelectContent>
+			</Select>
+			<div className="px-4 pb-3 pt-1">
+				{errorId && value === '' ? (
+					<ErrorList id={errorId} errors={errors} />
+				) : null}
+			</div>
+		</div>
+	)
+}
+export function SearchSelectField({
+	labelProps,
+	selectProps,
+	options,
+	errors,
+	className,
+}: {
+	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
+	selectProps: SelectProps
+	options: Array<{ label: string; value: string }>
+	errors?: ListOfErrors
+	className?: string
+}) {
+	const [open, setOpen] = React.useState(false)
+	const [value, setValue] = React.useState('')
+	const fallbackId = useId()
+	const id = selectProps.name ?? fallbackId
+	const errorId = errors?.length ? `${id}-error` : undefined
+	return (
+		<div className={className}>
+			<input
+				name={selectProps.name}
+				// A hack to allow errors to be displayed as type="hidden" is not supported
+				defaultValue={value ?? ''}
+				className="hidden"
+			/>
+			{/* <Label  htmlFor={id} {...labelProps} /> */}
+			<Popover open={open} onOpenChange={setOpen}>
+				<PopoverTrigger asChild>
+					<Button
+						variant="outline"
+						role="combobox"
+						aria-expanded={open}
+						// A hack to show error border and "revailidate" on blur
+						className={cn(
+							'w-fit min-w-[200px] justify-between',
+							errorId && value === '' && 'border-input-invalid',
+						)}
+					>
+						{value
+							? options.find(option => option.value === value)?.label
+							: `Select ${selectProps.name}...`}
+						<Icon
+							name="caret-sort"
+							className="ml-2 h-4 w-4 shrink-0 opacity-50"
+						/>
+					</Button>
+				</PopoverTrigger>
+				<PopoverContent className="w-full p-0" align="start">
+					<Command>
+						<CommandInput
+							placeholder={`Search ${selectProps.name}...`}
+							className="h-9"
+						/>
+						<CommandList>
+							<CommandEmpty>No {selectProps.name} found.</CommandEmpty>
+							<CommandGroup>
+								{options.map(option => (
+									<CommandItem
+										key={option.value}
+										onSelect={currentValue => {
+											setValue(currentValue === value ? '' : currentValue)
+											setOpen(false)
+										}}
+									>
+										{option.label}
+										<Icon
+											name="check"
+											className={cn(
+												'ml-auto h-4 w-4',
+												value === option.value ? 'opacity-100' : 'opacity-0',
+											)}
+										/>
+									</CommandItem>
+								))}
+							</CommandGroup>
+						</CommandList>
+					</Command>
+				</PopoverContent>
+			</Popover>
+			<div className="px-4 pb-3 pt-1">
+				{errorId && value === '' ? (
+					<ErrorList id={errorId} errors={errors} />
+				) : null}
+			</div>
+		</div>
+	)
+}
+// export const PersonSearch = ({
+// 	labelProps,
+// 	inputProps,
+// 	errors,
+// }: {
+// 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
+// 	inputProps: React.InputHTMLAttributes<HTMLInputElement>
+// 	errors?: ListOfErrors
+// }) => {
+// 	const [open, setOpen] = useState(false)
+// 	const fallbackId = useId()
+// 	const id = inputProps.id ?? inputProps.name ?? fallbackId
+// 	const errorId = errors?.length ? `${id}-error` : undefined
+// 	const peopleFetcher = useFetcher<typeof loader>()
+// 	const people = peopleFetcher.data?.people ?? []
+// 	type Person = (typeof people)[number]
+// 	const [selectedPerson, setSelectedPerson] = useState<
+// 		null | undefined | Person
+// 	>(null)
+//
+// 	const busy = peopleFetcher.state !== 'idle'
+// 	const delayedBusy = useSpinDelay(busy, {
+// 		delay: 150,
+// 		minDuration: 500,
+// 	})
+//
+// 	return (
+// 		<>
+// 			<input
+// 				name="personId"
+// 				// A hack to allow errors to be displayed as type="hidden" is not supported
+// 				defaultValue={selectedPerson?.id ?? ''}
+// 				className="hidden"
+// 			/>
+// 			<Label htmlFor={id} {...labelProps} />
+// 			<Popover open={open} onOpenChange={setOpen}>
+// 				<PopoverTrigger asChild>
+// 					<Button
+// 						variant="outline"
+// 						role="combobox"
+// 						aria-expanded={open}
+// 						// A hack to show error border and "revailidate" on blur
+// 						className={cn(
+// 							'w-[200px] justify-between ',
+// 							errorId && selectedPerson === null && 'border-input-invalid',
+// 						)}
+// 					>
+// 						{selectedPerson ? selectedPerson.name : 'Select person...'}
+// 						<Icon
+// 							name="caret-sort"
+// 							className="ml-2 h-4 w-4 shrink-0 opacity-50"
+// 						/>
+// 					</Button>
+// 				</PopoverTrigger>
+// 				<PopoverContent className="w-[200px] p-0">
+// 					<Command shouldFilter={false}>
+// 						<CommandInput
+// 							placeholder="Search people..."
+// 							className="h-9"
+// 							onFocus={() => {
+// 								peopleFetcher.submit(
+// 									{ search: selectedPerson?.name ?? '' },
+// 									{ method: 'GET', action: '/resources/people' },
+// 								)
+// 							}}
+// 							onInput={e => {
+// 								peopleFetcher.submit(
+// 									{ search: e.currentTarget.value },
+// 									{ method: 'GET', action: '/resources/people' },
+// 								)
+// 							}}
+// 						/>
+// 						<Spinner showSpinner={delayedBusy} />
+// 						<CommandEmpty>No person found.</CommandEmpty>
+// 						<CommandGroup>
+// 							{people.map(person => (
+// 								<CommandItem
+// 									key={person.name}
+// 									onSelect={currentValue => {
+// 										const person = people.find(
+// 											person => person.name.toLowerCase() === currentValue,
+// 										)
+// 										setSelectedPerson(
+// 											currentValue === selectedPerson?.name
+// 												? selectedPerson
+// 												: person,
+// 										)
+// 										setOpen(false)
+// 									}}
+// 								>
+// 									{person.name}
+// 									<Icon
+// 										name="check"
+// 										className={cn(
+// 											'ml-auto h-4 w-4',
+// 											selectedPerson?.name === person.name
+// 												? 'opacity-100'
+// 												: 'opacity-0',
+// 										)}
+// 									/>
+// 								</CommandItem>
+// 							))}
+// 						</CommandGroup>
+// 					</Command>
+// 				</PopoverContent>
+// 			</Popover>
+// 			<div className="px-4 pb-3 pt-1">
+// 				{/* // A hack to show error message and "revailidate" on blur */}
+// 				{errorId && selectedPerson === null ? (
+// 					<ErrorList id={errorId} errors={errors} />
+// 				) : null}
+// 			</div>
+// 		</>
+// 	)
+// }

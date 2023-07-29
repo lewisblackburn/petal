@@ -106,7 +106,7 @@ export const PersonSearch = ({
 						aria-expanded={open}
 						// A hack to show error border and "revailidate" on blur
 						className={cn(
-							'w-[200px] justify-between ',
+							'w-fit min-w-[200px] justify-between ',
 							errorId && selectedPerson === null && 'border-input-invalid',
 						)}
 					>
@@ -117,7 +117,7 @@ export const PersonSearch = ({
 						/>
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className="w-[200px] p-0">
+				<PopoverContent className="min-w-fit p-0" align="start">
 					<Command shouldFilter={false}>
 						<CommandInput
 							placeholder="Search people..."

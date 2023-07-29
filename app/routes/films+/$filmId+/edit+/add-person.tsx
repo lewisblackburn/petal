@@ -3,16 +3,19 @@ import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { Form, useActionData } from '@remix-run/react'
 import { type DataFunctionArgs, json } from '@remix-run/server-runtime'
 import { z } from 'zod'
-import { ErrorList, Field } from '~/components/forms.tsx'
+import { ErrorList, Field, SearchSelectField } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { PersonSearch } from '~/routes/resources+/people.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
+import { CreditRoles, getAllJobs } from '~/utils/credit-roles.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 
 export const AddPersonSchema = z.object({
 	personId: z.string().nonempty({ message: 'You must select a person' }),
 	character: z.string().nonempty(),
+	department: z.string().nonempty({ message: 'You must select a department' }),
+	job: z.string().nonempty({ message: 'You must select a job' }),
 })
 
 export async function action({ request, params }: DataFunctionArgs) {
@@ -33,7 +36,7 @@ export async function action({ request, params }: DataFunctionArgs) {
 		)
 	}
 
-	let { personId, character } = submission.value
+	let { personId, character, department, job } = submission.value
 
 	await prisma.film.update({
 		where: { id: filmId },
@@ -46,8 +49,8 @@ export async function action({ request, params }: DataFunctionArgs) {
 						},
 					},
 					character,
-					department: 'acting',
-					job: 'actor',
+					department,
+					job,
 				},
 			},
 		},
@@ -93,6 +96,28 @@ export default function AddPerson() {
 					autoComplete: 'off',
 				}}
 				errors={fields.character.errors}
+			/>
+			<SearchSelectField
+				labelProps={{
+					htmlFor: fields.department.id,
+					children: 'Department',
+				}}
+				selectProps={{
+					...conform.input(fields.department, { type: 'text' }),
+				}}
+				options={CreditRoles}
+				errors={fields.department.errors}
+			/>
+			<SearchSelectField
+				labelProps={{
+					htmlFor: fields.job.id,
+					children: 'Job',
+				}}
+				selectProps={{
+					...conform.input(fields.job, { type: 'text' }),
+				}}
+				options={getAllJobs()}
+				errors={fields.job.errors}
 			/>
 			<Button type="submit">Add Person</Button>
 			<ErrorList errors={form.errors} id={form.errorId} />
