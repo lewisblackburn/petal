@@ -1,5 +1,5 @@
 import { json, type DataFunctionArgs } from '@remix-run/node'
-import { Outlet, useLoaderData } from '@remix-run/react'
+import { useLoaderData } from '@remix-run/react'
 import { prisma } from '~/utils/db.server.ts'
 import { FilmEditor } from '~/routes/resources+/film-editor.tsx'
 import { formatDateWithDashes } from '~/utils/misc.tsx'
@@ -49,7 +49,6 @@ export default function FilmEdit() {
 
 	return (
 		<Container>
-			<Outlet />
 			{/* FIX: Dropdown resetting scroll */}
 			<CreditTable data={credits} columns={columns} />
 			<FilmEditor

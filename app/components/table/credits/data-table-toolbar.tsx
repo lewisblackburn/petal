@@ -6,7 +6,7 @@ import { Icon } from '~/components/ui/icon.tsx'
 import { DataTableFacetedFilter } from '~/components/table/data-table-faceted-filter.tsx'
 import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
 import { CreditRoles, getAllJobs } from '~/utils/credit-roles.ts'
-import { Link } from '@remix-run/react'
+import { DataTableAddCredit } from './data-table-add-credit.tsx'
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>
@@ -57,16 +57,7 @@ export function DataTableToolbar<TData>({
 			</div>
 			<div className="flex flex-1 items-center space-x-2">
 				<DataTableViewOptions table={table} />
-				<Link to="add-person">
-					<Button
-						variant="outline"
-						size="sm"
-						className="ml-auto hidden h-8 lg:flex"
-					>
-						<Icon name="plus" className="mr-2 h-4 w-4" />
-						Add Person
-					</Button>
-				</Link>
+				<DataTableAddCredit />
 			</div>
 		</div>
 	)
