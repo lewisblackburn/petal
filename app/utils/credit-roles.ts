@@ -214,10 +214,6 @@ export const CreditRoles: CreditRole[] = [
 				value: 'dialogue editor',
 				label: 'Dialogue Editor',
 			},
-			{
-				value: 'music editor',
-				label: 'Music Editor',
-			},
 		],
 	},
 	{

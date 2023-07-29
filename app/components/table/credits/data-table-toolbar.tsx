@@ -7,6 +7,7 @@ import { DataTableFacetedFilter } from '~/components/table/data-table-faceted-fi
 import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
 import { CreditRoles, getAllJobs } from '~/utils/credit-roles.ts'
 import { DataTableAddCredit } from './data-table-add-credit.tsx'
+import { DataTableDeleteCredits } from './data-table-delete-credits.tsx'
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>
@@ -58,6 +59,8 @@ export function DataTableToolbar<TData>({
 			<div className="flex flex-1 items-center space-x-2">
 				<DataTableViewOptions table={table} />
 				<DataTableAddCredit />
+				{/* FIX: Error when passing table<TData> */}
+				<DataTableDeleteCredits table={table as any} />
 			</div>
 		</div>
 	)

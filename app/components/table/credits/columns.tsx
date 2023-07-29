@@ -3,8 +3,6 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../data-table-column-header.js'
 import { CreditRoles, getAllJobs } from '~/utils/credit-roles.ts'
-import { Button } from '~/components/ui/button.tsx'
-import { Icon } from '~/components/ui/icon.tsx'
 
 export const columns: ColumnDef<Partial<CreditMember>>[] = [
 	{
@@ -80,25 +78,6 @@ export const columns: ColumnDef<Partial<CreditMember>>[] = [
 		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
-		},
-	},
-
-	{
-		id: 'delete',
-		cell: ({ table, row }) => {
-			return (
-				<Button
-					variant="ghost"
-					className="flex h-8 w-8 p-0 text-foreground-danger"
-					onClick={() => {
-						// TODO: Delete creidt member(s) from film
-						console.log(table.getSelectedRowModel(), row.original.id)
-					}}
-				>
-					<Icon name="trash" className="h-5 w-5" />
-					<span className="sr-only">Delete</span>
-				</Button>
-			)
 		},
 	},
 ]

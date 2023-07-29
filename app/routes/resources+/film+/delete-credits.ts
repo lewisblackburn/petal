@@ -5,8 +5,8 @@ import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 
-export const DeleteFilmCreditSchema = z.object({
-	id: z.string().nonempty(),
+export const DeleteFilmCreditsSchema = z.object({
+	ids: z.string().nonempty(),
 	filmId: z.string().nonempty(),
 })
 
@@ -14,7 +14,7 @@ export async function action({ request }: DataFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
 	const submission = parse(formData, {
-		schema: DeleteFilmCreditSchema,
+		schema: DeleteFilmCreditsSchema,
 		acceptMultipleErrors: () => true,
 	})
 	if (!submission.value) {
@@ -27,21 +27,24 @@ export async function action({ request }: DataFunctionArgs) {
 		)
 	}
 
-	let { filmId, id } = submission.value
+	let { filmId, ids } = submission.value
+	console.log(ids)
 
 	await prisma.film.update({
 		where: { id: filmId },
 		data: {
 			credits: {
-				delete: {
-					id,
+				deleteMany: {
+					id: {
+						in: JSON.parse(ids) as string[],
+					},
 				},
 			},
 		},
 	})
 
 	return redirectWithToast(`/films/${filmId}/edit`, {
-		title: 'Deleted Film Credit Member',
+		title: 'Deleted Film Credit Members',
 		variant: 'destructive',
 	})
 }
