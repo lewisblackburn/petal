@@ -130,7 +130,7 @@ model Person {
   id                 String   @id @unique @default(cuid())
   name               String
   knownForDepartment String?
-  image              String?
+  image              String?  @default("https://via.placeholder.com/300x450.png")
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 

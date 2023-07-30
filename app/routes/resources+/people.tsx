@@ -151,7 +151,13 @@ export const PersonSearch = ({
 										)
 										setOpen(false)
 									}}
+									className="flex items-center gap-3"
 								>
+									<img
+										src={person.image ?? ''}
+										alt={person.name}
+										className="aspect-square h-12 w-12 rounded-md"
+									/>
 									{person.name}
 									<Icon
 										name="check"
