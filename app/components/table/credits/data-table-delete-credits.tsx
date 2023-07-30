@@ -34,7 +34,6 @@ export function DataTableDeleteCredits<TData>({
     id: 'delete-film-credits-form',
     lastSubmission: fetcher.data?.submission,
     onValidate({ formData }) {
-      // FIX: The ids are just being passed as a string, not an array and therefore the zod schema is just checking for a string not an array of valid string
       return parse(formData, { schema: DeleteFilmCreditsSchema })
     },
     shouldRevalidate: 'onBlur',
