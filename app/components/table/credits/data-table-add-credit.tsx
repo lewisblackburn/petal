@@ -16,6 +16,7 @@ import { Icon } from '~/components/ui/icon.tsx'
 import { AddFilmCreditSchema } from '~/routes/resources+/film+/add-credit.ts'
 import { PersonSearch } from '~/routes/resources+/people.tsx'
 import { CreditRoles, getAllJobs } from '~/utils/credit-roles.ts'
+import { EnsurePE } from '~/utils/misc.tsx'
 
 export function DataTableAddCredit() {
 	const { filmId } = useParams()
@@ -49,6 +50,7 @@ export function DataTableAddCredit() {
 					name="add-film-credit-form"
 					{...form.props}
 				>
+					<EnsurePE />
 					<DialogHeader>
 						<DialogTitle>Add Person</DialogTitle>
 						<DialogDescription>

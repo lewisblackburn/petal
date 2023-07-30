@@ -4,8 +4,7 @@ import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
-
-//TODO: add EnsureEP to here and all other routes that require it e.g. delete-credits.ts
+import { ensurePE } from '~/utils/misc.tsx'
 
 export const AddFilmCreditSchema = z.object({
 	filmId: z.string(),
@@ -52,6 +51,7 @@ export async function action({ request, params }: DataFunctionArgs) {
 		},
 	})
 
+	ensurePE(formData, request)
 	return redirectWithToast(`/films/${filmId}/edit`, {
 		title: 'Added Film Credit Member',
 		variant: 'default',

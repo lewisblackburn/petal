@@ -16,6 +16,7 @@ import {
 } from '~/components/ui/dialog.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { DeleteFilmCreditsSchema } from '~/routes/resources+/film+/delete-credits.ts'
+import { EnsurePE } from '~/utils/misc.tsx'
 
 interface DataTableDeleteCredits<TData> {
   table: Table<TData>
@@ -60,6 +61,7 @@ export function DataTableDeleteCredits<TData>({
           name="delete-film-credits-form"
           {...form.props}
         >
+          <EnsurePE />
           <DialogHeader>
             <DialogTitle>Delete Credits</DialogTitle>
             <DialogDescription>

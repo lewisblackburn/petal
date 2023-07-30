@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
+import { ensurePE } from '~/utils/misc.tsx'
 
 export const DeleteFilmCreditsSchema = z.object({
 	ids: z.string().nonempty(),
@@ -43,6 +44,7 @@ export async function action({ request }: DataFunctionArgs) {
 		},
 	})
 
+	ensurePE(formData, request)
 	return redirectWithToast(`/films/${filmId}/edit`, {
 		title: 'Deleted Film Credit Members',
 		variant: 'destructive',

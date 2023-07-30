@@ -1,5 +1,3 @@
-// TODO: Create one component like /resources/people to handle both departments and jobs as they are tied together like in tmdbs api
-
 type CreditRole = {
 	value: string
 	label: string
