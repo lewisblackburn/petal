@@ -52,3 +52,11 @@ export function createPerson() {
 		name,
 	}
 }
+
+export function createGenre() {
+	const name = faker.word.adjective()
+
+	return {
+		name,
+	}
+}

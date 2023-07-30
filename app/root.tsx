@@ -37,6 +37,7 @@ import { useToast } from './utils/useToast.tsx'
 import { Header } from './components/header.tsx'
 import rdtStylesheetUrl from 'remix-development-tools/stylesheet.css'
 import { Suspense, lazy } from 'react'
+import { Container } from './components/container.tsx'
 const RemixDevTools =
 	process.env.NODE_ENV === 'development'
 		? lazy(() => import('remix-development-tools'))
@@ -195,12 +196,12 @@ function App() {
 					<Outlet />
 				</div>
 
-				<div className="container flex justify-between pb-5">
+				<Container className="flex justify-between pb-10">
 					<Link to="/">
 						<div className="font-bold">Petal</div>
 					</Link>
 					<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
-				</div>
+				</Container>
 			</div>
 			<Confetti confetti={data.flash?.confetti} />
 			<Toaster />

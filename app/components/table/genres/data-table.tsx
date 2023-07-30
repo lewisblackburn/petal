@@ -29,7 +29,7 @@ interface DataTableProps<TData, TValue> {
 	data: TData[]
 }
 
-export function CreditTable<TData, TValue>({
+export function GenreTable<TData, TValue>({
 	columns,
 	data,
 }: DataTableProps<TData, TValue>) {

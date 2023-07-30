@@ -2,6 +2,7 @@ import fs from 'fs'
 import { faker } from '@faker-js/faker'
 import {
 	createFilm,
+	createGenre,
 	createPassword,
 	createPerson,
 	createUser,
@@ -109,8 +110,28 @@ async function seed() {
 				.catch(() => null)
 			return person
 		}),
-	).then(films => films.filter(Boolean))
+	).then(people => people.filter(Boolean))
 	console.timeEnd(`🧍 Created ${people.length} people...`)
+
+	const totalGenres = 40
+	console.time(`🗞️ Created ${totalGenres} genres...`)
+	const genres = await Promise.all(
+		Array.from({ length: totalGenres }, async () => {
+			const genreData = createGenre()
+			const genreCreatedUpdated = getCreatedAndUpdated()
+			const genre = await prisma.genre
+				.create({
+					select: { id: true },
+					data: {
+						...genreData,
+						...genreCreatedUpdated,
+					},
+				})
+				.catch(() => null)
+			return genre
+		}),
+	).then(genres => genres.filter(Boolean))
+	console.timeEnd(`🗞️ Created ${genres.length} genres...`)
 
 	console.time(
 		`🐨 Created user "kody" with the password "kodylovesyou" and admin role`,
