@@ -286,9 +286,9 @@ export function useDoubleCheck() {
 			doubleCheck
 				? undefined
 				: e => {
-						e.preventDefault()
-						setDoubleCheck(true)
-				  }
+					e.preventDefault()
+					setDoubleCheck(true)
+				}
 
 		return {
 			...props,
@@ -346,4 +346,15 @@ export function formatDate(date: Date) {
 export function formatDateWithDashes(date: Date) {
 	const formattedDate = formatDate(date)
 	return formattedDate?.split('/').reverse().join('-')
+}
+
+export function computeInitials(name: string) {
+	const names = name.split(' ')
+	const initials = []
+
+	for (let name in names) {
+		initials.push(names[name][0].toUpperCase())
+	}
+
+	return initials.join('')
 }

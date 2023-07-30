@@ -44,8 +44,10 @@ export async function loader({ request, params }: DataFunctionArgs) {
 
 	return json(
 		{
-			...film,
-			releaseDate: film.releaseDate && formatDateWithDashes(film.releaseDate),
+			film: {
+				...film,
+				releaseDate: film.releaseDate && formatDateWithDashes(film.releaseDate),
+			},
 		},
 		{ headers: { 'Server-Timing': timings.toString() } },
 	)

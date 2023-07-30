@@ -11,7 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar.tsx'
 import { Button } from './ui/button.tsx'
 import { useUser } from '~/utils/user.ts'
-import { getUserImgSrc } from '~/utils/misc.tsx'
+import { computeInitials, getUserImgSrc } from '~/utils/misc.tsx'
 import { Form, Link, useSubmit } from '@remix-run/react'
 import { useRef } from 'react'
 
@@ -29,9 +29,8 @@ export function UserDropdown() {
 							className="object-cover"
 							src={getUserImgSrc(user.imageId)}
 							alt={user.name ?? user.username}
-						/>{' '}
-						{/*  TODO: Add fallback to user initials */}
-						<AvatarFallback>SC</AvatarFallback>
+						/>
+						<AvatarFallback>{computeInitials(user.name ?? '')}</AvatarFallback>
 					</Avatar>
 				</Button>
 			</DropdownMenuTrigger>

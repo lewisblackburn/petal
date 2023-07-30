@@ -62,7 +62,6 @@ export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
 	}
 }
 
-// TODO: Debounce the search
 export const PersonSearch = ({
 	labelProps,
 	inputProps,
