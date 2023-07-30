@@ -23,12 +23,8 @@ export function DataTableToolbar<TData>({
 			<div className="flex flex-1 items-center space-x-2">
 				<Input
 					placeholder="Filter credit members..."
-					value={
-						(table.getColumn('character')?.getFilterValue() as string) ?? ''
-					}
-					onChange={event =>
-						table.getColumn('character')?.setFilterValue(event.target.value)
-					}
+					value={table.getState().globalFilter ?? ''}
+					onChange={event => table.setGlobalFilter(event.target.value)}
 					className="h-8 w-[150px] lg:w-[250px]"
 				/>
 				{table.getColumn('department') && (

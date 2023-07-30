@@ -40,6 +40,7 @@ export function CreditTable<TData, TValue>({
 		[],
 	)
 	const [sorting, setSorting] = React.useState<SortingState>([])
+	const [globalFilter, setGlobalFilter] = React.useState('')
 
 	const table = useReactTable({
 		data,
@@ -49,6 +50,7 @@ export function CreditTable<TData, TValue>({
 			columnVisibility,
 			rowSelection,
 			columnFilters,
+			globalFilter,
 		},
 		enableRowSelection: true,
 		onRowSelectionChange: setRowSelection,
@@ -57,6 +59,7 @@ export function CreditTable<TData, TValue>({
 		onColumnVisibilityChange: setColumnVisibility,
 		getCoreRowModel: getCoreRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
+		onGlobalFilterChange: setGlobalFilter,
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getFacetedRowModel: getFacetedRowModel(),
@@ -77,9 +80,9 @@ export function CreditTable<TData, TValue>({
 											{header.isPlaceholder
 												? null
 												: flexRender(
-														header.column.columnDef.header,
-														header.getContext(),
-												  )}
+													header.column.columnDef.header,
+													header.getContext(),
+												)}
 										</TableHead>
 									)
 								})}

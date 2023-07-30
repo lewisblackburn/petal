@@ -348,6 +348,7 @@ export function formatDateWithDashes(date: Date) {
 	return formattedDate?.split('/').reverse().join('-')
 }
 
+// TODO: Change this to a prisma computed field when they are supported
 export function computeInitials(name: string) {
 	const names = name.split(' ')
 	const initials = []

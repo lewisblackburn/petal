@@ -70,9 +70,7 @@ export default function FilmEdit() {
 	}))
 
 	return (
-		<Container>
-			{/* FIX: Dropdown resetting scroll */}
-			<CreditTable data={credits} columns={columns} />
+		<Container className="flex flex-col gap-5">
 			<FilmEditor
 				film={{
 					id: film.id,
@@ -90,6 +88,10 @@ export default function FilmEdit() {
 					tmdbId: film.tmdbId,
 				}}
 			/>
+			{/* FIX: Dropdown resetting scroll */}
+			<div className="my-36">
+				<CreditTable data={credits} columns={columns} />
+			</div>
 		</Container>
 	)
 }

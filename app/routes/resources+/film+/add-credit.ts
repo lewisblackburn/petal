@@ -14,7 +14,7 @@ export const AddFilmCreditSchema = z.object({
 	job: z.string().nonempty({ message: 'You must select a job' }),
 })
 
-export async function action({ request, params }: DataFunctionArgs) {
+export async function action({ request }: DataFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
 	const submission = parse(formData, {
