@@ -17,15 +17,17 @@ import {
 import { Icon } from '~/components/ui/icon.tsx'
 import { DeleteFilmCreditsSchema } from '~/routes/resources+/film+/delete-credits.ts'
 
-interface DataTableDeleteCredits {
-  table: Table<CreditMember>
+interface DataTableDeleteCredits<TData> {
+  table: Table<TData>
 }
 
-export function DataTableDeleteCredits({ table }: DataTableDeleteCredits) {
+export function DataTableDeleteCredits<TData>({
+  table,
+}: DataTableDeleteCredits<TData>) {
   const { filmId } = useParams()
   const peopleSelected = table
     .getSelectedRowModel()
-    .rows.map(row => row.original.id)
+    .rows.map(row => (row.original as CreditMember).id)
   const fetcher = useFetcher()
 
   const [form] = useForm({

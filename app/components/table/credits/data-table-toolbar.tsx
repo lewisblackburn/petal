@@ -59,8 +59,7 @@ export function DataTableToolbar<TData>({
 			<div className="flex flex-1 items-center space-x-2">
 				<DataTableViewOptions table={table} />
 				<DataTableAddCredit />
-				{/* FIX: Error when passing table<TData> */}
-				<DataTableDeleteCredits table={table as any} />
+				<DataTableDeleteCredits table={table} />
 			</div>
 		</div>
 	)
