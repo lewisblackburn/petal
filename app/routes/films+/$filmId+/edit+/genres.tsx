@@ -39,6 +39,8 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	const genres = film.genres.map(genre => ({
 		id: genre.id,
 		name: genre.name,
+		created: genre.createdAt,
+		updated: genre.updatedAt,
 	}))
 
 	return json({ genres }, { headers: { 'Server-Timing': timings.toString() } })

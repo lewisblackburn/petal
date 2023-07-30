@@ -2,6 +2,7 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../data-table-column-header.js'
 import { type Genre } from '@prisma/client'
+import { formatDate } from '~/utils/misc.tsx'
 
 export const columns: ColumnDef<Partial<Genre>>[] = [
 	{
@@ -30,13 +31,35 @@ export const columns: ColumnDef<Partial<Genre>>[] = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="ID" />
 		),
-		cell: ({ row }) => <div className="w-[160px]">{row.getValue('id')}</div>,
+		cell: ({ row }) => <div>{row.getValue('id')}</div>,
 	},
 	{
 		accessorKey: 'name',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Name" />
 		),
-		cell: ({ row }) => <div className="w-[160px]">{row.getValue('name')}</div>,
+		cell: ({ row }) => <div className="w-[400px]">{row.getValue('name')}</div>,
+	},
+	{
+		accessorKey: 'created',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="createdAt" />
+		),
+		cell: ({ row }) => (
+			<div className="w-[250px]">
+				{formatDate(new Date(row.getValue('created')))}
+			</div>
+		),
+	},
+	{
+		accessorKey: 'updated',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="updatedAt" />
+		),
+		cell: ({ row }) => (
+			<div className="w-[250px]">
+				{formatDate(new Date(row.getValue('updated')))}
+			</div>
+		),
 	},
 ]

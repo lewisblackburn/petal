@@ -30,16 +30,27 @@ export async function action({ request }: DataFunctionArgs) {
 
 	let { filmId, genreId } = submission.value
 
-	await prisma.film.update({
-		where: { id: filmId },
-		data: {
-			genres: {
-				connect: {
-					id: genreId,
+	// NOTE: Here it won't return an error if the genre is already connected to the film,
+	// but it will return any other error. I think this is fine as it won't cause any
+	// confusion, but it's worth noting.
+	await prisma.film
+		.update({
+			where: { id: filmId },
+			data: {
+				genres: {
+					connect: {
+						id: genreId,
+					},
 				},
 			},
-		},
-	})
+		})
+		.catch(err => {
+			ensurePE(formData, request)
+			return redirectWithToast(`/films/${filmId}/edit/genres`, {
+				title: err.message,
+				variant: 'destructive',
+			})
+		})
 
 	ensurePE(formData, request)
 	return redirectWithToast(`/films/${filmId}/edit/genres`, {
