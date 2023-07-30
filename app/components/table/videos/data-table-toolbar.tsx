@@ -7,7 +7,7 @@ import { DataTableViewOptions } from '~/components/table/data-table-view-options
 import { DataTableAddVideo } from './data-table-add-video.tsx'
 import { DataTableDeleteVideos } from './data-table-delete-videos.tsx'
 import { DataTableFacetedFilter } from '../data-table-faceted-filter.tsx'
-import { MEDIA_TYPES, QUALITY, SITES } from '~/utils/constants.ts'
+import { VIDEO_TYPES, QUALITY, SITES } from '~/utils/constants.ts'
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>
@@ -39,7 +39,7 @@ export function DataTableToolbar<TData>({
 					<DataTableFacetedFilter
 						column={table.getColumn('type')}
 						title="Type"
-						options={MEDIA_TYPES}
+						options={VIDEO_TYPES}
 					/>
 				)}
 				{table.getColumn('quality') && (

@@ -22,14 +22,17 @@ import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import * as deleteImageRoute from '~/routes/resources+/delete-image.tsx'
 import { authenticator, requireUserId } from '~/utils/auth.server.ts'
+import { MAX_SIZE } from '~/utils/constants.ts'
 import { prisma } from '~/utils/db.server.ts'
-import { getUserImgSrc, useDoubleCheck, useIsSubmitting } from '~/utils/misc.tsx'
+import {
+	getUserImgSrc,
+	useDoubleCheck,
+	useIsSubmitting,
+} from '~/utils/misc.tsx'
 
 export const handle = {
 	breadcrumb: <Icon name="avatar">Photo</Icon>,
 }
-
-const MAX_SIZE = 1024 * 1024 * 3 // 3MB
 
 const PhotoFormSchema = z.object({
 	photoFile: z
@@ -102,7 +105,7 @@ export async function action({ request }: DataFunctionArgs) {
 			.delete({
 				where: { fileId: previousUserPhoto.imageId },
 			})
-			.catch(() => { }) // ignore the error, maybe it never existed?
+			.catch(() => {}) // ignore the error, maybe it never existed?
 	}
 
 	return redirect('/settings/profile')

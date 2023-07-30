@@ -1,7 +1,14 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
-import { ErrorList, Field, SearchSelectField } from '~/components/forms.tsx'
+import { ServerOnly } from 'remix-utils'
+import {
+	Field,
+	CheckboxField,
+	ErrorList,
+	SearchSelectField,
+	SelectField,
+} from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
 	Dialog,
@@ -13,19 +20,19 @@ import {
 	DialogTrigger,
 } from '~/components/ui/dialog.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { AddFilmVideoSchema } from '~/routes/resources+/film+/add-video.ts'
-import { VIDEO_TYPES, QUALITY, SITES } from '~/utils/constants.ts'
+import { AddFilmPhotoSchema } from '~/routes/resources+/film+/add-photo.ts'
+import { LANGUAGES, PHOTO_TYPES } from '~/utils/constants.ts'
 import { EnsurePE } from '~/utils/misc.tsx'
 
-export function DataTableAddVideo() {
+export function DataTableAddPhoto() {
 	const { filmId } = useParams()
 	const fetcher = useFetcher()
 
 	const [form, fields] = useForm({
-		id: 'add-film-video-form',
+		id: 'add-film-photo-form',
 		lastSubmission: fetcher.data?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddFilmVideoSchema })
+			return parse(formData, { schema: AddFilmPhotoSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
@@ -39,86 +46,87 @@ export function DataTableAddVideo() {
 					className="ml-auto hidden h-8 lg:flex"
 				>
 					<Icon name="plus" className="mr-2 h-4 w-4" />
-					Add Video
+					Add Photo
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<fetcher.Form
 					method="POST"
-					action="/resources/film/add-video"
-					name="add-film-video-form"
+					action="/resources/film/add-photo"
+					name="add-film-photo-form"
+					encType="multipart/form-data"
 					{...form.props}
 				>
 					<EnsurePE />
 					<DialogHeader>
-						<DialogTitle>Add Video</DialogTitle>
+						<DialogTitle>Add Photo</DialogTitle>
 						<DialogDescription>
-							Add a new video to the videos table.
+							Add a new photo to the photos table.
 						</DialogDescription>
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
 						<Field
 							labelProps={{
-								htmlFor: fields.url.id,
-								children: 'URL',
+								htmlFor: fields.image.id,
+								children: 'Image',
 							}}
 							inputProps={{
-								...conform.input(fields.url, { type: 'text' }),
-								autoComplete: 'off',
+								...conform.input(fields.image, { type: 'file' }),
+								accept: 'image/*',
 							}}
-							errors={fields.url.errors}
+							errors={fields.image.errors}
 						/>
-						<Field
-							labelProps={{
-								htmlFor: fields.name.id,
-								children: 'Name',
-							}}
-							inputProps={{
-								...conform.input(fields.name, { type: 'text' }),
-								autoComplete: 'off',
-							}}
-							errors={fields.name.errors}
-						/>
-						<SearchSelectField
-							labelProps={{
-								htmlFor: fields.site.id,
-								children: 'Site',
-							}}
-							selectProps={{
-								...conform.input(fields.site, { type: 'text' }),
-							}}
-							options={SITES}
-							errors={fields.site.errors}
-						/>
-						<SearchSelectField
+						<SelectField
 							labelProps={{
 								htmlFor: fields.type.id,
 								children: 'Type',
 							}}
 							selectProps={{
 								...conform.input(fields.type, { type: 'text' }),
+								autoComplete: 'off',
 							}}
-							options={VIDEO_TYPES}
+							options={PHOTO_TYPES}
 							errors={fields.type.errors}
 						/>
 						<SearchSelectField
 							labelProps={{
-								htmlFor: fields.quality.id,
-								children: 'Quality',
+								htmlFor: fields.language.id,
+								children: 'Language',
 							}}
 							selectProps={{
-								...conform.input(fields.quality, { type: 'text' }),
+								...conform.input(fields.language, { type: 'text' }),
+								autoComplete: 'off',
 							}}
-							options={QUALITY}
-							errors={fields.quality.errors}
+							options={LANGUAGES}
+							errors={fields.language.errors}
+						/>
+						<CheckboxField
+							labelProps={{
+								htmlFor: fields.primary.id,
+								children: 'Primary',
+							}}
+							buttonProps={conform.input(fields.primary, {
+								type: 'checkbox',
+							})}
+							errors={fields.primary.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
 						<Button variant="default" type="submit">
-							Add Video
+							Add Photo
 						</Button>
+						{/* This is here for progressive enhancement. If the client doesn't
+						hydrate (or hasn't yet) this button will be available to submit the
+						selected photo. */}
+						<ServerOnly>
+							{() => (
+								<Button type="submit" className="server-only">
+									Add Photo
+								</Button>
+							)}
+						</ServerOnly>
 					</DialogFooter>
 				</fetcher.Form>
 			</DialogContent>

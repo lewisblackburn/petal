@@ -6,6 +6,7 @@ import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
 
+// FIX: Add primary video
 export const AddFilmVideoSchema = z.object({
 	filmId: z.string(),
 	url: z.string().url(),
@@ -51,14 +52,14 @@ export async function action({ request }: DataFunctionArgs) {
 		})
 		.catch(err => {
 			ensurePE(formData, request)
-			return redirectWithToast(`/films/${filmId}/edit/media`, {
+			return redirectWithToast(`/films/${filmId}/edit/video`, {
 				title: err.message,
 				variant: 'destructive',
 			})
 		})
 
 	ensurePE(formData, request)
-	return redirectWithToast(`/films/${filmId}/edit/media`, {
+	return redirectWithToast(`/films/${filmId}/edit/video`, {
 		title: 'Added Film Video',
 		variant: 'default',
 	})

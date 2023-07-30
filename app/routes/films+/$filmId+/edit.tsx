@@ -27,10 +27,11 @@ const NavigationLinks: { name: string; path: string }[] = [
 	{ name: 'External IDs', path: 'external' },
 	{ name: 'Genres', path: 'genres' },
 	{ name: 'Keywords', path: 'keywords' },
-	{ name: 'Production Information', path: 'production' },
-	{ name: 'Release Information', path: 'release' },
+	{ name: 'Production Info', path: 'production' },
+	{ name: 'Release Info', path: 'release' },
 	{ name: 'Taglines', path: 'taglines' },
-	{ name: 'Video & Photo', path: 'media' },
+	{ name: 'Video', path: 'video' },
+	{ name: 'Photo', path: 'photo' },
 ]
 
 export default function FilmEditLayout() {

@@ -1,10 +1,10 @@
+import { type CreditMember } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
-import { type Keyword } from '@prisma/client'
-import { DataTableColumnHeader } from '../data-table-column-header.tsx'
-import { VIDEO_TYPES, QUALITY, SITES } from '~/utils/constants.ts'
+import { DataTableColumnHeader } from '../data-table-column-header.js'
+import { LANGUAGES, PHOTO_TYPES } from '~/utils/constants.ts'
 
-export const columns: ColumnDef<Partial<Keyword>>[] = [
+export const columns: ColumnDef<Partial<CreditMember>>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -27,28 +27,16 @@ export const columns: ColumnDef<Partial<Keyword>>[] = [
 		enableHiding: false,
 	},
 	{
-		accessorKey: 'name',
+		accessorKey: 'image',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Name" />
-		),
-		cell: ({ row }) => <div className="w-[100px]">{row.getValue('name')}</div>,
-	},
-	{
-		accessorKey: 'site',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Site" />
+			<DataTableColumnHeader column={column} title="Image" />
 		),
 		cell: ({ row }) => {
-			const site = SITES.find(site => site.value === row.getValue('site'))
-
-			if (!site) {
-				return null
-			}
-
-			return <span>{site.label}</span>
-		},
-		filterFn: (row, id, value) => {
-			return value.includes(row.getValue(id))
+			return (
+				<div className="w-[300px] truncate">
+					<a href={row.getValue('image')}>{row.getValue('image')}</a>
+				</div>
+			)
 		},
 	},
 	{
@@ -57,36 +45,47 @@ export const columns: ColumnDef<Partial<Keyword>>[] = [
 			<DataTableColumnHeader column={column} title="Type" />
 		),
 		cell: ({ row }) => {
-			const type = VIDEO_TYPES.find(type => type.value === row.getValue('type'))
+			const type = PHOTO_TYPES.find(type => type.value === row.getValue('type'))
 
 			if (!type) {
 				return null
 			}
 
-			return <span>{type.label}</span>
+			return <div className="w-[150px]">{type.label}</div>
 		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
 		},
 	},
 	{
-		accessorKey: 'quality',
+		accessorKey: 'language',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Quality" />
+			<DataTableColumnHeader column={column} title="Language" />
 		),
 		cell: ({ row }) => {
-			const quality = QUALITY.find(
-				quality => quality.value === row.getValue('quality'),
+			const language = LANGUAGES.find(
+				language => language.value === row.getValue('language'),
 			)
 
-			if (!quality) {
+			if (!language) {
 				return null
 			}
 
-			return <span>{quality.label}</span>
+			return <div className="w-[150px]">{language.label}</div>
 		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
 		},
+	},
+	{
+		accessorKey: 'primary',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Primary" />
+		),
+		cell: ({ row }) => (
+			<div className="w-[100px]">
+				{row.getValue('primary') === true ? 'True' : 'False'}
+			</div>
+		),
 	},
 ]

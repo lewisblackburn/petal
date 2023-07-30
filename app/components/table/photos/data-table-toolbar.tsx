@@ -3,11 +3,11 @@ import { type Table } from '@tanstack/react-table'
 import { Input } from '~/components/ui/input.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { DataTableFacetedFilter } from '~/components/table/data-table-faceted-filter.tsx'
 import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
-import { DataTableAddCredit } from './data-table-add-credit.tsx'
-import { DataTableDeleteCredits } from './data-table-delete-credits.tsx'
-import { CREDIT_ROLES, getAllJobs } from '~/utils/constants.ts'
+import { DataTableAddPhoto } from './data-table-add-photo.tsx'
+import { DataTableDeletePhotos } from './data-table-delete-photos.tsx'
+import { DataTableFacetedFilter } from '../data-table-faceted-filter.tsx'
+import { PHOTO_TYPES, LANGUAGES } from '~/utils/constants.ts'
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>
@@ -22,23 +22,24 @@ export function DataTableToolbar<TData>({
 		<div className="flex items-center justify-between">
 			<div className="flex flex-1 items-center space-x-2">
 				<Input
-					placeholder="Filter credit members..."
+					placeholder="Filter photos..."
 					value={table.getState().globalFilter ?? ''}
 					onChange={event => table.setGlobalFilter(event.target.value)}
 					className="h-8 w-[150px] lg:w-[250px]"
 				/>
-				{table.getColumn('department') && (
+				{table.getColumn('type') && (
 					<DataTableFacetedFilter
-						column={table.getColumn('department')}
-						title="Department"
-						options={CREDIT_ROLES}
+						column={table.getColumn('type')}
+						title="Type"
+						options={PHOTO_TYPES}
 					/>
 				)}
-				{table.getColumn('job') && (
+
+				{table.getColumn('language') && (
 					<DataTableFacetedFilter
-						column={table.getColumn('job')}
-						title="Job"
-						options={getAllJobs()}
+						column={table.getColumn('language')}
+						title="Language"
+						options={LANGUAGES}
 					/>
 				)}
 				{isFiltered && (
@@ -54,8 +55,8 @@ export function DataTableToolbar<TData>({
 			</div>
 			<div className="flex flex-1 items-center space-x-2">
 				<DataTableViewOptions table={table} />
-				<DataTableAddCredit />
-				<DataTableDeleteCredits table={table} />
+				<DataTableAddPhoto />
+				<DataTableDeletePhotos table={table} />
 			</div>
 		</div>
 	)

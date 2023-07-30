@@ -142,6 +142,7 @@ model Film {
   title       String
   overview    String
   tagline     String?
+  // todo - remove these as they're not used anymore
   poster      String?   @default("https://via.placeholder.com/600x900.png?text=No+Poster")
   backdrop    String?   @default("https://via.placeholder.com/1920x1080.png?text=No+Backdrop")
   releaseDate DateTime?
@@ -158,6 +159,7 @@ model Film {
   updatedAt   DateTime  @updatedAt
 
   credits  CreditMember[]
+  photos   Photo[]
   videos   Video[]
   genres   Genre[]        @relation("FilmToGenre")
   keywords Keyword[]      @relation("FilmToKeyword")
@@ -178,14 +180,27 @@ model CreditMember {
   personId String
 }
 
+model Photo {
+  id        String   @id @unique @default(cuid())
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId    String
+  type      String
+  primary   Boolean
+  language  String
+  image     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Video {
   id        String   @id @unique @default(cuid())
   film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   filmId    String
-  site      String   @default("youtube")
-  type      String   @default("trailer")
-  quality   String?  @default("HD")
-  name      String   @default("Trailer")
+  primary   Boolean
+  site      String
+  type      String
+  quality   String
+  name      String
   url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

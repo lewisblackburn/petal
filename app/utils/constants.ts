@@ -459,7 +459,7 @@ export const SITES = [
 	},
 ]
 
-export const MEDIA_TYPES = [
+export const VIDEO_TYPES = [
 	{
 		label: 'Trailer',
 		value: 'trailer',
@@ -490,6 +490,17 @@ export const MEDIA_TYPES = [
 	},
 ]
 
+export const PHOTO_TYPES = [
+	{
+		label: 'Poster',
+		value: 'poster',
+	},
+	{
+		label: 'Backdrop',
+		value: 'backdrop',
+	},
+]
+
 export const QUALITY = [
 	{
 		label: 'SD',
@@ -504,3 +515,124 @@ export const QUALITY = [
 		value: '4k',
 	},
 ]
+
+export const LANGUAGES = [
+	{
+		label: 'English',
+		value: 'english',
+	},
+	{
+		label: 'Spanish',
+		value: 'spanish',
+	},
+	{
+		label: 'French',
+		value: 'french',
+	},
+	{
+		label: 'German',
+		value: 'german',
+	},
+	{
+		label: 'Italian',
+		value: 'italian',
+	},
+	{
+		label: 'Japanese',
+		value: 'japanese',
+	},
+	{
+		label: 'Korean',
+		value: 'korean',
+	},
+	{
+		label: 'Chinese',
+		value: 'chinese',
+	},
+	{
+		label: 'Russian',
+		value: 'russian',
+	},
+	{
+		label: 'Portuguese',
+		value: 'portuguese',
+	},
+	{
+		label: 'Arabic',
+		value: 'arabic',
+	},
+	{
+		label: 'Dutch',
+		value: 'dutch',
+	},
+	{
+		label: 'Swedish',
+		value: 'swedish',
+	},
+	{
+		label: 'Turkish',
+		value: 'turkish',
+	},
+	{
+		label: 'Greek',
+		value: 'greek',
+	},
+	{
+		label: 'Polish',
+		value: 'polish',
+	},
+	{
+		label: 'Danish',
+		value: 'danish',
+	},
+	{
+		label: 'Norwegian',
+		value: 'norwegian',
+	},
+	{
+		label: 'Finnish',
+		value: 'finnish',
+	},
+	{
+		label: 'Hungarian',
+		value: 'hungarian',
+	},
+	{
+		label: 'Czech',
+		value: 'czech',
+	},
+	{
+		label: 'Slovak',
+		value: 'slovak',
+	},
+	{
+		label: 'Romanian',
+		value: 'romanian',
+	},
+	{
+		label: 'Bulgarian',
+		value: 'bulgarian',
+	},
+	{
+		label: 'Ukrainian',
+		value: 'ukrainian',
+	},
+	{
+		label: 'Hindi',
+		value: 'hindi',
+	},
+	{
+		label: 'Thai',
+		value: 'thai',
+	},
+	{
+		label: 'Indonesian',
+		value: 'indonesian',
+	},
+	{
+		label: 'Vietnamese',
+		value: 'vietnamese',
+	},
+]
+
+export const MAX_SIZE = 1024 * 1024 * 3 // 3MB

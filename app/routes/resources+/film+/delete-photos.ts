@@ -6,7 +6,7 @@ import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
 
-export const DeleteFilmVideosSchema = z.object({
+export const DeleteFilmPhotosSchema = z.object({
 	ids: z.string().nonempty(),
 	filmId: z.string().nonempty(),
 })
@@ -15,7 +15,7 @@ export async function action({ request }: DataFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
 	const submission = parse(formData, {
-		schema: DeleteFilmVideosSchema,
+		schema: DeleteFilmPhotosSchema,
 		acceptMultipleErrors: () => true,
 	})
 	if (!submission.value) {
@@ -34,7 +34,7 @@ export async function action({ request }: DataFunctionArgs) {
 		.update({
 			where: { id: filmId },
 			data: {
-				videos: {
+				photos: {
 					deleteMany: {
 						id: {
 							in: JSON.parse(ids) as string[],
@@ -45,15 +45,15 @@ export async function action({ request }: DataFunctionArgs) {
 		})
 		.catch(err => {
 			ensurePE(formData, request)
-			return redirectWithToast(`/films/${filmId}/edit/video`, {
+			return redirectWithToast(`/films/${filmId}/edit/photo`, {
 				title: err.message,
 				variant: 'destructive',
 			})
 		})
 
 	ensurePE(formData, request)
-	return redirectWithToast(`/films/${filmId}/edit/video`, {
-		title: 'Deleted Film Videos',
+	return redirectWithToast(`/films/${filmId}/edit/photo`, {
+		title: 'Deleted Film Photos',
 		variant: 'destructive',
 	})
 }

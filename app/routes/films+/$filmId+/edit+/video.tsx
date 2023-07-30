@@ -7,7 +7,6 @@ import {
 import { Container } from '~/components/container.tsx'
 import { columns } from '~/components/table/videos/columns.tsx'
 import { VideoTable } from '~/components/table/videos/data-table.tsx'
-import { Separator } from '~/components/ui/separator.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import {
@@ -18,7 +17,7 @@ import {
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)
-	const timings = makeTimings('media loader')
+	const timings = makeTimings('video loader')
 
 	const film = await time(
 		() =>
@@ -27,12 +26,10 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					id: params.filmId,
 				},
 				select: {
-					poster: true,
-					backdrop: true,
 					videos: true,
 				},
 			}),
-		{ timings, type: 'find media' },
+		{ timings, type: 'find videos' },
 	)
 
 	if (!film) {
@@ -56,28 +53,12 @@ export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
 	}
 }
 
-export default function FilmEditMedia() {
+export default function FilmEditVideo() {
 	const { videos } = useLoaderData<typeof loader>()
 
 	return (
 		<Container>
-			<div className="space-y-6">
-				<div>
-					<h3 className="text-lg font-medium">Photos</h3>
-					<p className="text-sm text-muted-foreground">
-						The photos for the film.
-					</p>
-				</div>
-				<Separator />
-				<div>
-					<h3 className="text-lg font-medium">Videos</h3>
-					<p className="text-sm text-muted-foreground">
-						For any videos related to the film.
-					</p>
-				</div>
-				<Separator />
-				<VideoTable data={videos} columns={columns}></VideoTable>
-			</div>
+			<VideoTable data={videos} columns={columns}></VideoTable>
 		</Container>
 	)
 }
