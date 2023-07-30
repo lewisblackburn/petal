@@ -13,20 +13,19 @@ import {
 	DialogTrigger,
 } from '~/components/ui/dialog.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { AddFilmCreditSchema } from '~/routes/resources+/film+/add-credit.ts'
-import { PersonSearch } from '~/routes/resources+/people.tsx'
-import { CREDIT_ROLES, getAllJobs } from '~/utils/constants.ts'
+import { AddFilmVideoSchema } from '~/routes/resources+/film+/add-video.ts'
+import { MEDIA_TYPES, QUALITY, SITES } from '~/utils/constants.ts'
 import { EnsurePE } from '~/utils/misc.tsx'
 
-export function DataTableAddCredit() {
+export function DataTableAddVideo() {
 	const { filmId } = useParams()
 	const fetcher = useFetcher()
 
 	const [form, fields] = useForm({
-		id: 'add-film-credit-form',
+		id: 'add-film-video-form',
 		lastSubmission: fetcher.data?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddFilmCreditSchema })
+			return parse(formData, { schema: AddFilmVideoSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
@@ -40,72 +39,86 @@ export function DataTableAddCredit() {
 					className="ml-auto hidden h-8 lg:flex"
 				>
 					<Icon name="plus" className="mr-2 h-4 w-4" />
-					Add Person
+					Add Video
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<fetcher.Form
 					method="POST"
-					action="/resources/film/add-credit"
-					name="add-film-credit-form"
+					action="/resources/film/add-video"
+					name="add-film-video-form"
 					{...form.props}
 				>
 					<EnsurePE />
+
 					<DialogHeader>
-						<DialogTitle>Add Person</DialogTitle>
+						<DialogTitle>Add Video</DialogTitle>
 						<DialogDescription>
-							Add a new person to the credits table.
+							Add a new video to the videos table.
 						</DialogDescription>
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<PersonSearch
+						<Field
 							labelProps={{
-								htmlFor: fields.personId.id,
+								htmlFor: fields.url.id,
+								children: 'URL',
 							}}
 							inputProps={{
-								...conform.input(fields.personId, { type: 'text' }),
+								...conform.input(fields.url, { type: 'text' }),
+								autoComplete: 'off',
 							}}
-							errors={fields.personId.errors}
+							errors={fields.url.errors}
 						/>
 						<Field
 							labelProps={{
-								htmlFor: fields.character.id,
-								children: 'Character',
+								htmlFor: fields.name.id,
+								children: 'Name',
 							}}
 							inputProps={{
-								...conform.input(fields.character, { type: 'text' }),
+								...conform.input(fields.name, { type: 'text' }),
 								autoComplete: 'off',
 							}}
-							errors={fields.character.errors}
+							errors={fields.name.errors}
 						/>
 						<SearchSelectField
 							labelProps={{
-								htmlFor: fields.department.id,
-								children: 'Department',
+								htmlFor: fields.site.id,
+								children: 'Site',
 							}}
 							selectProps={{
-								...conform.input(fields.department, { type: 'text' }),
+								...conform.input(fields.site, { type: 'text' }),
 							}}
-							options={CREDIT_ROLES}
-							errors={fields.department.errors}
+							options={SITES}
+							errors={fields.site.errors}
 						/>
 						<SearchSelectField
 							labelProps={{
-								htmlFor: fields.job.id,
-								children: 'Job',
+								htmlFor: fields.type.id,
+								children: 'Type',
 							}}
 							selectProps={{
-								...conform.input(fields.job, { type: 'text' }),
+								...conform.input(fields.type, { type: 'text' }),
 							}}
-							options={getAllJobs()}
-							errors={fields.job.errors}
+							options={MEDIA_TYPES}
+							errors={fields.type.errors}
+						/>
+						<SearchSelectField
+							labelProps={{
+								htmlFor: fields.quality.id,
+								children: 'Quality',
+							}}
+							selectProps={{
+								...conform.input(fields.quality, { type: 'text' }),
+							}}
+							options={QUALITY}
+							errors={fields.quality.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
 						<Button variant="default" type="submit">
-							Add Person
+							Add Video
 						</Button>
 					</DialogFooter>
 				</fetcher.Form>

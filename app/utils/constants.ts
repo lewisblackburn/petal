@@ -9,7 +9,7 @@ type CreditRole = {
 
 export function getAllJobs() {
 	const jobs: CreditRole['jobs'] = []
-	CreditRoles.forEach(department => {
+	CREDIT_ROLES.forEach(department => {
 		department.jobs.forEach(job => {
 			jobs.push(job)
 		})
@@ -17,7 +17,7 @@ export function getAllJobs() {
 	return jobs
 }
 
-export const CreditRoles: CreditRole[] = [
+export const CREDIT_ROLES: CreditRole[] = [
 	{
 		value: 'acting',
 		label: 'Acting',
@@ -445,5 +445,62 @@ export const CreditRoles: CreditRole[] = [
 				label: 'Sales Representative',
 			},
 		],
+	},
+]
+
+export const SITES = [
+	{
+		label: 'YouTube',
+		value: 'youtube',
+	},
+	{
+		label: 'Vimeo',
+		value: 'vimeo',
+	},
+]
+
+export const MEDIA_TYPES = [
+	{
+		label: 'Trailer',
+		value: 'trailer',
+	},
+	{
+		label: 'Teaser',
+		value: 'teaser',
+	},
+	{
+		label: 'Clip',
+		value: 'clip',
+	},
+	{
+		label: 'Featurette',
+		value: 'featurette',
+	},
+	{
+		label: 'Behind the Scenes',
+		value: 'behind the scenes',
+	},
+	{
+		label: 'Bloopers',
+		value: 'bloopers',
+	},
+	{
+		label: 'Interview',
+		value: 'interview',
+	},
+]
+
+export const QUALITY = [
+	{
+		label: 'SD',
+		value: 'sd',
+	},
+	{
+		label: 'HD',
+		value: 'hd',
+	},
+	{
+		label: '4K',
+		value: '4k',
 	},
 ]

@@ -30,18 +30,26 @@ export async function action({ request }: DataFunctionArgs) {
 
 	let { filmId, ids } = submission.value
 
-	await prisma.film.update({
-		where: { id: filmId },
-		data: {
-			genres: {
-				deleteMany: {
-					id: {
-						in: JSON.parse(ids) as string[],
+	await prisma.film
+		.update({
+			where: { id: filmId },
+			data: {
+				genres: {
+					deleteMany: {
+						id: {
+							in: JSON.parse(ids) as string[],
+						},
 					},
 				},
 			},
-		},
-	})
+		})
+		.catch(err => {
+			ensurePE(formData, request)
+			return redirectWithToast(`/films/${filmId}/edit/genres`, {
+				title: err.message,
+				variant: 'destructive',
+			})
+		})
 
 	ensurePE(formData, request)
 	return redirectWithToast(`/films/${filmId}/edit/genres`, {

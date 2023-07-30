@@ -22,7 +22,7 @@ export async function loader({ request }: DataFunctionArgs) {
 const NavigationLinks: { name: string; path: string }[] = [
 	{ name: 'Primary Facts', path: '' },
 	{ name: 'Alternative Titles', path: 'alternative' },
-	{ name: 'Credit Members', path: 'credits' },
+	{ name: 'Credits', path: 'credits' },
 	{ name: 'Soundtrack', path: 'soundtrack' },
 	{ name: 'External IDs', path: 'external' },
 	{ name: 'Genres', path: 'genres' },
@@ -30,7 +30,7 @@ const NavigationLinks: { name: string; path: string }[] = [
 	{ name: 'Production Information', path: 'production' },
 	{ name: 'Release Information', path: 'release' },
 	{ name: 'Taglines', path: 'taglines' },
-	{ name: 'Videos', path: 'videos' },
+	{ name: 'Video & Photo', path: 'media' },
 ]
 
 export default function FilmEditLayout() {

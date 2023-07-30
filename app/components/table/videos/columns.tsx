@@ -1,10 +1,10 @@
-import { type CreditMember } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
-import { DataTableColumnHeader } from '../data-table-column-header.js'
-import { CREDIT_ROLES, getAllJobs } from '~/utils/constants.ts'
+import { type Keyword } from '@prisma/client'
+import { DataTableColumnHeader } from '../data-table-column-header.tsx'
+import { MEDIA_TYPES, QUALITY, SITES } from '~/utils/constants.ts'
 
-export const columns: ColumnDef<Partial<CreditMember>>[] = [
+export const columns: ColumnDef<Partial<Keyword>>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -31,50 +31,59 @@ export const columns: ColumnDef<Partial<CreditMember>>[] = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Name" />
 		),
-		cell: ({ row }) => <div className="w-[160px]">{row.getValue('name')}</div>,
+		cell: ({ row }) => <div className="w-[100px]">{row.getValue('name')}</div>,
 	},
 	{
-		accessorKey: 'character',
+		accessorKey: 'site',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Character" />
-		),
-		cell: ({ row }) => (
-			<div className="w-[160px]">{row.getValue('character')}</div>
-		),
-	},
-	{
-		accessorKey: 'job',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Job" />
+			<DataTableColumnHeader column={column} title="Site" />
 		),
 		cell: ({ row }) => {
-			const job = getAllJobs().find(job => job.value === row.getValue('job'))
+			const site = SITES.find(site => site.value === row.getValue('site'))
 
-			if (!job) {
+			if (!site) {
 				return null
 			}
 
-			return <span>{job.label}</span>
+			return <span>{site.label}</span>
 		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
 		},
 	},
 	{
-		accessorKey: 'department',
+		accessorKey: 'type',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Department" />
+			<DataTableColumnHeader column={column} title="Type" />
 		),
 		cell: ({ row }) => {
-			const department = CREDIT_ROLES.find(
-				department => department.value === row.getValue('department'),
-			)
+			const type = MEDIA_TYPES.find(type => type.value === row.getValue('type'))
 
-			if (!department) {
+			if (!type) {
 				return null
 			}
 
-			return <span>{department.label}</span>
+			return <span>{type.label}</span>
+		},
+		filterFn: (row, id, value) => {
+			return value.includes(row.getValue(id))
+		},
+	},
+	{
+		accessorKey: 'quality',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Quality" />
+		),
+		cell: ({ row }) => {
+			const quality = QUALITY.find(
+				quality => quality.value === row.getValue('quality'),
+			)
+
+			if (!quality) {
+				return null
+			}
+
+			return <span>{quality.label}</span>
 		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))

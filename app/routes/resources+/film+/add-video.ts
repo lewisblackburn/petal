@@ -1,24 +1,25 @@
 import { parse } from '@conform-to/zod'
-import { type DataFunctionArgs, json } from '@remix-run/server-runtime'
+import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
 
-export const AddFilmCreditSchema = z.object({
+export const AddFilmVideoSchema = z.object({
 	filmId: z.string(),
-	personId: z.string().nonempty({ message: 'You must select a person' }),
-	character: z.string().nonempty(),
-	department: z.string().nonempty({ message: 'You must select a department' }),
-	job: z.string().nonempty({ message: 'You must select a job' }),
+	url: z.string().url(),
+	site: z.string().nonempty(),
+	type: z.string().nonempty(),
+	name: z.string().nonempty(),
+	quality: z.string().nonempty(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
 	const submission = parse(formData, {
-		schema: AddFilmCreditSchema,
+		schema: AddFilmVideoSchema,
 		acceptMultipleErrors: () => true,
 	})
 	if (!submission.value) {
@@ -31,37 +32,34 @@ export async function action({ request }: DataFunctionArgs) {
 		)
 	}
 
-	let { filmId, personId, character, department, job } = submission.value
+	let { filmId, url, site, type, name, quality } = submission.value
 
 	await prisma.film
 		.update({
 			where: { id: filmId },
 			data: {
-				credits: {
+				videos: {
 					create: {
-						person: {
-							connect: {
-								id: personId,
-							},
-						},
-						character,
-						department,
-						job,
+						url,
+						site,
+						type,
+						name,
+						quality,
 					},
 				},
 			},
 		})
 		.catch(err => {
 			ensurePE(formData, request)
-			return redirectWithToast(`/films/${filmId}/edit/credits`, {
+			return redirectWithToast(`/films/${filmId}/edit/media`, {
 				title: err.message,
 				variant: 'destructive',
 			})
 		})
 
 	ensurePE(formData, request)
-	return redirectWithToast(`/films/${filmId}/edit/credits`, {
-		title: 'Added Film Credit Member',
+	return redirectWithToast(`/films/${filmId}/edit/media`, {
+		title: 'Added Film Video',
 		variant: 'default',
 	})
 }

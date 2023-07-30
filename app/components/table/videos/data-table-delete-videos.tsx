@@ -1,0 +1,87 @@
+import { useForm } from '@conform-to/react'
+import { parse } from '@conform-to/zod'
+import { type Video } from '@prisma/client'
+import { useFetcher, useParams } from '@remix-run/react'
+import { type Table } from '@tanstack/react-table'
+import { ErrorList } from '~/components/forms.tsx'
+import { Button } from '~/components/ui/button.tsx'
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '~/components/ui/dialog.tsx'
+import { Icon } from '~/components/ui/icon.tsx'
+import { DeleteFilmVideosSchema } from '~/routes/resources+/film+/delete-videos.ts'
+import { EnsurePE } from '~/utils/misc.tsx'
+
+interface DataTableDeleteVideos<TData> {
+	table: Table<TData>
+}
+
+export function DataTableDeleteVideos<TData>({
+	table,
+}: DataTableDeleteVideos<TData>) {
+	const { filmId } = useParams()
+	const videosSelected = table
+		.getSelectedRowModel()
+		.rows.map(row => (row.original as Video).id)
+	const fetcher = useFetcher()
+
+	const [form] = useForm({
+		id: 'delete-film-videos-form',
+		lastSubmission: fetcher.data?.submission,
+		onValidate({ formData }) {
+			return parse(formData, { schema: DeleteFilmVideosSchema })
+		},
+		shouldRevalidate: 'onBlur',
+	})
+
+	return (
+		<Dialog>
+			<DialogTrigger asChild>
+				{videosSelected.length > 0 && (
+					<Button
+						variant="destructive"
+						size="sm"
+						className="ml-auto hidden h-8 lg:flex"
+					>
+						<Icon name="plus" className="mr-2 h-4 w-4" />
+						Delete
+					</Button>
+				)}
+			</DialogTrigger>
+			<DialogContent className="sm:max-w-[425px]">
+				<fetcher.Form
+					method="POST"
+					action="/resources/film/delete-videos"
+					name="delete-film-videos-form"
+					{...form.props}
+				>
+					<EnsurePE />
+					<DialogHeader>
+						<DialogTitle>Delete Videos</DialogTitle>
+						<DialogDescription>
+							Delete videos from the videos table.
+						</DialogDescription>
+					</DialogHeader>
+					<div className="grid py-4">
+						<input
+							name="ids"
+							type="hidden"
+							value={JSON.stringify(videosSelected)}
+						/>
+						<input name="filmId" type="hidden" value={filmId} />
+						<ErrorList errors={form.errors} id={form.errorId} />
+					</div>
+					<DialogFooter>
+						<Button type="submit">Delete Videos</Button>
+					</DialogFooter>
+				</fetcher.Form>
+			</DialogContent>
+		</Dialog>
+	)
+}
