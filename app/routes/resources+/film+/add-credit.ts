@@ -5,6 +5,8 @@ import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 
+//TODO: add EnsureEP to here and all other routes that require it e.g. delete-credits.ts
+
 export const AddFilmCreditSchema = z.object({
 	filmId: z.string(),
 	personId: z.string().nonempty({ message: 'You must select a person' }),

@@ -119,7 +119,7 @@ async function generateSvgSprite({
       svg.removeAttribute('width')
       svg.removeAttribute('height')
 
-      return root.toString().trim()
+      return svg.toString().trim()
     }),
   )
 
@@ -131,6 +131,7 @@ async function generateSvgSprite({
     ...symbols,
     `</defs>`,
     `</svg>`,
+    '', // trailing newline
   ].join('\n')
 
   return writeIfChanged(outputPath, output)
