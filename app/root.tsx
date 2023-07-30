@@ -93,19 +93,19 @@ export async function loader({ request }: DataFunctionArgs) {
 
 	const user = userId
 		? await time(
-			() =>
-				prisma.user.findUnique({
-					where: { id: userId },
-					// select: {
-					// 	id: true,
-					// 	name: true,
-					// 	username: true,
-					// 	email: true,
-					// 	imageId: true,
-					// },
-				}),
-			{ timings, type: 'find user', desc: 'find user in root' },
-		)
+				() =>
+					prisma.user.findUnique({
+						where: { id: userId },
+						select: {
+							id: true,
+							name: true,
+							username: true,
+							email: true,
+							imageId: true,
+						},
+					}),
+				{ timings, type: 'find user', desc: 'find user in root' },
+		  )
 		: null
 	if (userId && !user) {
 		console.info('something weird happened')
@@ -197,8 +197,7 @@ function App() {
 
 				<div className="container flex justify-between pb-5">
 					<Link to="/">
-						<div className="font-light">epic</div>
-						<div className="font-bold">notes</div>
+						<div className="font-bold">Petal</div>
 					</Link>
 					<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
 				</div>

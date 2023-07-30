@@ -1,6 +1,5 @@
 import { Link, Outlet, useLocation } from '@remix-run/react'
 import { Container } from '~/components/container.tsx'
-import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 
 export default function FilmLayout() {
@@ -18,15 +17,5 @@ export default function FilmLayout() {
 			</div>
 			<Outlet />
 		</div>
-	)
-}
-
-export function ErrorBoundary() {
-	return (
-		<GeneralErrorBoundary
-			statusHandlers={{
-				404: () => <p>Film not found</p>,
-			}}
-		/>
 	)
 }

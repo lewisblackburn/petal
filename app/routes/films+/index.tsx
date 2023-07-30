@@ -16,7 +16,7 @@ import { SortBy } from '~/components/sort-by.tsx'
 import { Container } from '~/components/container.tsx'
 import { getTableParams } from '~/utils/request.helper.ts'
 
-const TAKE = 100
+const TAKE = 30
 
 export async function loader({ request }: DataFunctionArgs) {
 	const timings = makeTimings('films loader')
@@ -65,7 +65,6 @@ export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
 	}
 }
 
-// FIX: Still need to fix the flash, it is due to the combined code
 export default function FilmsRoute() {
 	const data = useLoaderData<typeof loader>()
 	const location = useLocation()

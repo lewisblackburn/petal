@@ -45,7 +45,7 @@ export async function action({ request }: DataFunctionArgs) {
 	})
 
 	ensurePE(formData, request)
-	return redirectWithToast(`/films/${filmId}/edit`, {
+	return redirectWithToast(`/films/${filmId}/edit/credits`, {
 		title: 'Deleted Film Credit Members',
 		variant: 'destructive',
 	})

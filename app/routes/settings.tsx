@@ -20,18 +20,18 @@ export async function loader({ request }: DataFunctionArgs) {
 }
 
 const NavigationLinks: { name: string; path: string }[] = [
-	{ name: 'Appearance', path: '/settings/appearance' },
-	{ name: 'Profile', path: '/settings/profile' },
-	{ name: 'Password', path: '/settings/password' },
-	{ name: 'Team', path: '/settings/team' },
-	{ name: 'Sessions', path: '/settings/sessions' },
-	{ name: 'Billing', path: '/settings/billing' },
-	{ name: 'Notifications', path: '/settings/notifications' },
-	{ name: 'Integrations', path: '/settings/integrations' },
-	{ name: 'API', path: '/settings/api' },
+	{ name: 'Appearance', path: 'appearance' },
+	{ name: 'Profile', path: 'profile' },
+	{ name: 'Password', path: 'password' },
+	{ name: 'Team', path: 'team' },
+	{ name: 'Sessions', path: 'sessions' },
+	{ name: 'Billing', path: 'billing' },
+	{ name: 'Notifications', path: 'notifications' },
+	{ name: 'Integrations', path: 'integrations' },
+	{ name: 'API', path: 'api' },
 ]
 
-export default function NotificationSettings() {
+export default function Settings() {
 	return (
 		<Container>
 			<div className="mb-5">

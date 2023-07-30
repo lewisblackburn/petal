@@ -104,7 +104,9 @@ export function DataTableAddCredit() {
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
-						<Button type="submit">Add Person</Button>
+						<Button variant="default" type="submit">
+							Add Person
+						</Button>
 					</DialogFooter>
 				</fetcher.Form>
 			</DialogContent>

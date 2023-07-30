@@ -1,97 +1,51 @@
-import {
-	json,
-	type DataFunctionArgs,
-	type HeadersFunction,
-} from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
-import { prisma } from '~/utils/db.server.ts'
-import { FilmEditor } from '~/routes/resources+/film-editor.tsx'
-import { formatDateWithDashes } from '~/utils/misc.tsx'
+import { json, type DataFunctionArgs } from '@remix-run/node'
+import { Outlet } from '@remix-run/react'
 import { Container } from '~/components/container.tsx'
-import { CreditTable } from '~/components/table/credits/data-table.tsx'
-import { columns } from '~/components/table/credits/columns.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import {
-	combineServerTimings,
-	makeTimings,
-	time,
-} from '~/utils/timing.server.ts'
+import ButtonGroup from '~/components/ui/button-group.tsx'
+import { authenticator, requireUserId } from '~/utils/auth.server.ts'
+import { prisma } from '~/utils/db.server.ts'
 
-export async function loader({ request, params }: DataFunctionArgs) {
-	await requireUserId(request)
-	const timings = makeTimings('film loader')
-
-	const film = await time(
-		() =>
-			prisma.film.findUnique({
-				where: {
-					id: params.filmId,
-				},
-				include: {
-					credits: {
-						include: {
-							person: true,
-						},
-					},
-				},
-			}),
-		{ timings, type: 'find film' },
-	)
-
-	if (!film) {
-		throw new Response('Not found', { status: 404 })
-	}
-
-	return json(
-		{
-			film: {
-				...film,
-				releaseDate: film.releaseDate && formatDateWithDashes(film.releaseDate),
-			},
+export async function loader({ request }: DataFunctionArgs) {
+	const userId = await requireUserId(request)
+	const user = await prisma.user.findUnique({
+		where: { id: userId },
+		select: {
+			username: true,
 		},
-		{ headers: { 'Server-Timing': timings.toString() } },
-	)
-}
-
-export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
-	return {
-		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
+	})
+	if (!user) {
+		throw await authenticator.logout(request, { redirectTo: '/' })
 	}
+	return json({})
 }
 
-export default function FilmEdit() {
-	const { film } = useLoaderData<typeof loader>()
-	const credits = film.credits.map(credit => ({
-		id: credit.id,
-		name: credit.person.name,
-		character: credit.character,
-		job: credit.job,
-		department: credit.department,
-	}))
+const NavigationLinks: { name: string; path: string }[] = [
+	{ name: 'Primary Facts', path: '' },
+	{ name: 'Alternative Titles', path: 'alternative' },
+	{ name: 'Credit Members', path: 'credits' },
+	{ name: 'Soundtrack', path: 'soundtrack' },
+	{ name: 'External IDs', path: 'external' },
+	{ name: 'Genres', path: 'genres' },
+	{ name: 'Keywords', path: 'keywords' },
+	{ name: 'Production Information', path: 'production' },
+	{ name: 'Release Information', path: 'release' },
+	{ name: 'Taglines', path: 'taglines' },
+	{ name: 'Videos', path: 'videos' },
+]
 
+export default function FilmEditLayout() {
 	return (
-		<Container className="flex flex-col gap-5">
-			<FilmEditor
-				film={{
-					id: film.id,
-					title: film.title,
-					tagline: film.tagline,
-					overview: film.overview,
-					releaseDate: film.releaseDate,
-					runtime: film.runtime,
-					budget: film.budget,
-					revenue: film.revenue,
-					status: film.status,
-					twitter: film.twitter,
-					instagram: film.instagram,
-					website: film.website,
-					tmdbId: film.tmdbId,
-				}}
-			/>
-			{/* FIX: Dropdown resetting scroll */}
-			<div className="my-36">
-				<CreditTable data={credits} columns={columns} />
+		<Container>
+			<div className="mb-5">
+				<h2 className="text-2xl font-bold tracking-tight">Edit Film</h2>
+				<p className="text-muted-foreground">Edit the details of this film.</p>
 			</div>
+			<div className="mb-16">
+				<ButtonGroup pages={NavigationLinks} />
+			</div>
+			<main>
+				<Outlet />
+			</main>
 		</Container>
 	)
 }
