@@ -1,6 +1,6 @@
 import { useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
-import { type Genre } from '@prisma/client'
+import { type Keyword } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { ErrorList } from '~/components/forms.tsx'
@@ -15,27 +15,27 @@ import {
 	DialogTrigger,
 } from '~/components/ui/dialog.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { DeleteFilmGenresSchema } from '~/routes/resources+/film+/delete-genres.ts'
+import { DeleteFilmKeywordsSchema } from '~/routes/resources+/film+/delete-keywords.ts'
 import { EnsurePE } from '~/utils/misc.tsx'
 
-interface DataTableDeleteGenres<TData> {
+interface DataTableDeleteKeywords<TData> {
 	table: Table<TData>
 }
 
-export function DataTableDeleteGenres<TData>({
+export function DataTableDeleteKeywords<TData>({
 	table,
-}: DataTableDeleteGenres<TData>) {
+}: DataTableDeleteKeywords<TData>) {
 	const { filmId } = useParams()
-	const genresSelected = table
+	const keywordsSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as Genre).id)
+		.rows.map(row => (row.original as Keyword).id)
 	const fetcher = useFetcher()
 
 	const [form] = useForm({
-		id: 'delete-film-genres-form',
+		id: 'delete-film-keywords-form',
 		lastSubmission: fetcher.data?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: DeleteFilmGenresSchema })
+			return parse(formData, { schema: DeleteFilmKeywordsSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
@@ -43,7 +43,7 @@ export function DataTableDeleteGenres<TData>({
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				{genresSelected.length > 0 && (
+				{keywordsSelected.length > 0 && (
 					<Button
 						variant="destructive"
 						size="sm"
@@ -57,28 +57,28 @@ export function DataTableDeleteGenres<TData>({
 			<DialogContent className="sm:max-w-[425px]">
 				<fetcher.Form
 					method="POST"
-					action="/resources/film/delete-genres"
-					name="delete-film-genres-form"
+					action="/resources/film/delete-keywords"
+					name="delete-film-keywords-form"
 					{...form.props}
 				>
 					<EnsurePE />
 					<DialogHeader>
-						<DialogTitle>Delete Genres</DialogTitle>
+						<DialogTitle>Delete Keywords</DialogTitle>
 						<DialogDescription>
-							Delete genres from the genres table.
+							Delete keywords from the keywords table.
 						</DialogDescription>
 					</DialogHeader>
 					<div className="grid py-4">
 						<input
 							name="ids"
 							type="hidden"
-							value={JSON.stringify(genresSelected)}
+							value={JSON.stringify(keywordsSelected)}
 						/>
 						<input name="filmId" type="hidden" value={filmId} />
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
-						<Button type="submit">Delete Genres</Button>
+						<Button type="submit">Delete Keywords</Button>
 					</DialogFooter>
 				</fetcher.Form>
 			</DialogContent>

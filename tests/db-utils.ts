@@ -60,3 +60,11 @@ export function createGenre() {
 		name,
 	}
 }
+
+export function createKeyword() {
+	const name = faker.word.noun()
+
+	return {
+		name,
+	}
+}
