@@ -1,4 +1,8 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import {
+	json,
+	type DataFunctionArgs,
+	type HeadersFunction,
+} from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { prisma } from '~/utils/db.server.ts'
 import { FilmEditor } from '~/routes/resources+/film-editor.tsx'
@@ -7,34 +11,50 @@ import { Container } from '~/components/container.tsx'
 import { CreditTable } from '~/components/table/credits/data-table.tsx'
 import { columns } from '~/components/table/credits/columns.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
+import {
+	combineServerTimings,
+	makeTimings,
+	time,
+} from '~/utils/timing.server.ts'
 
-// TODO: Add timings
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)
+	const timings = makeTimings('film loader')
 
-	const film = await prisma.film.findFirst({
-		where: {
-			id: params.filmId,
-		},
-		include: {
-			credits: {
-				include: {
-					person: true,
+	const film = await time(
+		() =>
+			prisma.film.findUnique({
+				where: {
+					id: params.filmId,
 				},
-			},
-		},
-	})
+				include: {
+					credits: {
+						include: {
+							person: true,
+						},
+					},
+				},
+			}),
+		{ timings, type: 'find film' },
+	)
 
 	if (!film) {
 		throw new Response('Not found', { status: 404 })
 	}
 
-	return json({
-		film: {
+	return json(
+		{
 			...film,
 			releaseDate: film.releaseDate && formatDateWithDashes(film.releaseDate),
 		},
-	})
+		{ headers: { 'Server-Timing': timings.toString() } },
+	)
+}
+
+export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
+	return {
+		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
+	}
 }
 
 export default function FilmEdit() {
