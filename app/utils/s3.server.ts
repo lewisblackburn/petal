@@ -2,6 +2,7 @@ import AWS from 'aws-sdk'
 import type { UploadHandler } from '@remix-run/node'
 import { writeAsyncIterableToWritable } from '@remix-run/node'
 import { PassThrough } from 'stream'
+import { randomUUID } from 'crypto'
 
 const { STORAGE_ACCESS_KEY, STORAGE_SECRET, STORAGE_REGION, STORAGE_BUCKET } =
 	process.env
@@ -36,6 +37,7 @@ export async function uploadStreamToS3(data: any, filename: string) {
 	return file.Location
 }
 
+// FIX: Secure AWS
 export const s3UploadHandler: UploadHandler = async ({
 	name,
 	filename,
@@ -44,6 +46,9 @@ export const s3UploadHandler: UploadHandler = async ({
 	if (name !== 'image') {
 		return undefined
 	}
-	const uploadedFileLocation = await uploadStreamToS3(data, filename!)
+	const uploadedFileLocation = await uploadStreamToS3(
+		data,
+		randomUUID() + filename!,
+	)
 	return uploadedFileLocation
 }

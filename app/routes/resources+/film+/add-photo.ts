@@ -16,12 +16,8 @@ import { ensurePE } from '~/utils/misc.tsx'
 import { s3UploadHandler } from '~/utils/s3.server.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
 
-// FIX: Other errors are ignored
 export const AddFilmPhotoSchema = z.object({
 	filmId: z.string(),
-	type: z.string(),
-	primary: checkboxSchema(),
-	language: z.string(),
 	image:
 		typeof window === 'undefined'
 			? z.any()
@@ -34,12 +30,19 @@ export const AddFilmPhotoSchema = z.object({
 					.refine(file => {
 						return file.size <= MAX_SIZE
 					}, 'Image size must be less than 3MB'),
+	type: z.string().nonempty({ message: 'You must select a type' }),
+	language: z.string().nonempty({ message: 'You must select a language' }),
+	primary: checkboxSchema(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
 	await requireUserId(request)
 	const uploadHandler: UploadHandler = composeUploadHandlers(
-		s3UploadHandler,
+		params =>
+			s3UploadHandler({
+				...params,
+				filename: `films/${params.filename}`,
+			}),
 		createMemoryUploadHandler({ maxPartSize: MAX_SIZE }),
 	)
 	const formData = await unstable_parseMultipartFormData(request, uploadHandler)
