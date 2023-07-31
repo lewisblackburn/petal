@@ -16,6 +16,7 @@ import { ensurePE } from '~/utils/misc.tsx'
 import { s3UploadHandler } from '~/utils/s3.server.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
 
+// TODO: Change primary variable to order and the primary photo/video will be the first one
 export const AddFilmPhotoSchema = z.object({
 	filmId: z.string(),
 	image:

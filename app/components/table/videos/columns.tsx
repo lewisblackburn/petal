@@ -89,4 +89,15 @@ export const columns: ColumnDef<Partial<Keyword>>[] = [
 			return value.includes(row.getValue(id))
 		},
 	},
+	{
+		accessorKey: 'primary',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Primary" />
+		),
+		cell: ({ row }) => (
+			<div className="w-[50px]">
+				{row.getValue('primary') === true ? 'True' : 'False'}
+			</div>
+		),
+	},
 ]

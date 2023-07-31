@@ -42,6 +42,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		site: video.site,
 		type: video.type,
 		quality: video.quality,
+		primary: video.primary,
 	}))
 
 	return json({ videos }, { headers: { 'Server-Timing': timings.toString() } })
