@@ -5,6 +5,7 @@ import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
+import { checkboxSchema } from '~/utils/zod-extensions.ts'
 
 // FIX: Add primary video
 export const AddFilmVideoSchema = z.object({
@@ -14,6 +15,7 @@ export const AddFilmVideoSchema = z.object({
 	type: z.string().nonempty(),
 	name: z.string().nonempty(),
 	quality: z.string().nonempty(),
+	primary: checkboxSchema(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -33,7 +35,7 @@ export async function action({ request }: DataFunctionArgs) {
 		)
 	}
 
-	let { filmId, url, site, type, name, quality } = submission.value
+	let { filmId, url, site, type, name, quality, primary } = submission.value
 
 	await prisma.film
 		.update({
@@ -46,6 +48,7 @@ export async function action({ request }: DataFunctionArgs) {
 						type,
 						name,
 						quality,
+						primary,
 					},
 				},
 			},
