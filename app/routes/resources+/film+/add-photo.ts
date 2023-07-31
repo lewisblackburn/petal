@@ -7,6 +7,7 @@ import {
 } from '@remix-run/server-runtime'
 import { composeUploadHandlers } from '@remix-run/server-runtime/dist/formData.js'
 import { createMemoryUploadHandler } from '@remix-run/server-runtime/dist/upload/memoryUploadHandler.js'
+import { randomUUID } from 'crypto'
 import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { MAX_SIZE } from '~/utils/constants.ts'
@@ -42,7 +43,7 @@ export async function action({ request }: DataFunctionArgs) {
 		params =>
 			s3UploadHandler({
 				...params,
-				filename: `films/${params.filename}`,
+				filename: `films/${randomUUID()}${params.filename}`,
 			}),
 		createMemoryUploadHandler({ maxPartSize: MAX_SIZE }),
 	)
