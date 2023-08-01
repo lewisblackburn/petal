@@ -128,7 +128,7 @@ export default function TwoFactorRoute() {
 									className="w-full"
 									status={
 										toggle2FAFetcher.state === 'loading' &&
-											toggle2FAFetcher.formData?.get('intent') === 'cancel'
+										toggle2FAFetcher.formData?.get('intent') === 'cancel'
 											? 'pending'
 											: 'idle'
 									}

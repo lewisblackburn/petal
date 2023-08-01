@@ -140,8 +140,8 @@ export default function ResetPasswordPage() {
 					className="w-full"
 					status={
 						navigation.state === 'submitting' &&
-							navigation.formAction === formAction &&
-							navigation.formMethod === 'POST'
+						navigation.formAction === formAction &&
+						navigation.formMethod === 'POST'
 							? 'pending'
 							: actionData?.status ?? 'idle'
 					}

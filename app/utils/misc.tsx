@@ -286,9 +286,9 @@ export function useDoubleCheck() {
 			doubleCheck
 				? undefined
 				: e => {
-					e.preventDefault()
-					setDoubleCheck(true)
-				}
+						e.preventDefault()
+						setDoubleCheck(true)
+				  }
 
 		return {
 			...props,
