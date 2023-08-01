@@ -11,6 +11,18 @@ const handlers = [
 		)
 		: null,
 
+	rest.put(
+		'https://petal-image-host.s3.eu-west-2.amazonaws.com/:route/:filmId/poster/:language/:imageName',
+		(req, res, _ctx) => {
+			const { filmId, language, imageName } = req.params
+			console.log('Film ID:', filmId)
+			console.log('Language:', language)
+			console.log('Image Name:', imageName)
+
+			return res()
+		},
+	),
+
 	// feel free to remove this conditional from the mock once you've set up resend
 	process.env.RESEND_API_KEY
 		? rest.post(`https://api.resend.com/emails`, async (req, res, ctx) => {
