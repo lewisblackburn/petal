@@ -3,10 +3,7 @@ import {
 	json,
 	type DataFunctionArgs,
 	unstable_parseMultipartFormData,
-	type UploadHandler,
 } from '@remix-run/server-runtime'
-import { composeUploadHandlers } from '@remix-run/server-runtime/dist/formData.js'
-import { createMemoryUploadHandler } from '@remix-run/server-runtime/dist/upload/memoryUploadHandler.js'
 import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { MAX_SIZE } from '~/utils/constants.ts'
@@ -38,21 +35,14 @@ export const AddFilmPhotoSchema = z.object({
 
 export async function action({ request }: DataFunctionArgs) {
 	await requireUserId(request)
-	const uploadHandler: UploadHandler = composeUploadHandlers(
-		params =>
-			s3UploadHandler({
-				...params,
-				// TODO: Add randomuuid
-				filename: `films/${params.filename}`,
-			}),
-		createMemoryUploadHandler({ maxPartSize: MAX_SIZE }),
-	)
-	const formData = await unstable_parseMultipartFormData(request, uploadHandler)
+	const clonedRequest = request.clone()
+	const formData = await request.formData()
+
 	const submission = parse(formData, {
 		schema: AddFilmPhotoSchema,
 		acceptMultipleErrors: () => true,
 	})
-	// FIX: Look into if i need to add ensurePE here
+
 	if (!submission.value) {
 		return json(
 			{
@@ -63,7 +53,16 @@ export async function action({ request }: DataFunctionArgs) {
 		)
 	}
 
-	let { filmId, type, primary, language, image } = submission.value
+	let { filmId, type, primary, language } = submission.value
+
+	const image = await unstable_parseMultipartFormData(clonedRequest, params =>
+		s3UploadHandler({
+			...params,
+			filename: `films/${filmId}/${type}/${language}/${params.filename}`,
+		}),
+	)
+
+	const parsedImage = parse(image, { schema: z.string() })
 
 	await prisma.film
 		.update({
@@ -74,7 +73,7 @@ export async function action({ request }: DataFunctionArgs) {
 						type,
 						primary,
 						language,
-						image: image,
+						image: parsedImage.payload.image,
 					},
 				},
 			},

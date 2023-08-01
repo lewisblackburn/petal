@@ -1,6 +1,4 @@
-import type AWS from 'aws-sdk'
-import { Upload } from '@aws-sdk/lib-storage'
-import { S3 } from '@aws-sdk/client-s3'
+import AWS from 'aws-sdk'
 import type { UploadHandler } from '@remix-run/node'
 import { writeAsyncIterableToWritable } from '@remix-run/node'
 import { PassThrough } from 'stream'
@@ -15,7 +13,7 @@ if (
 }
 
 const uploadStream = ({ Key }: Pick<AWS.S3.Types.PutObjectRequest, 'Key'>) => {
-	const s3 = new S3({
+	const s3 = new AWS.S3({
 		credentials: {
 			accessKeyId: STORAGE_ACCESS_KEY,
 			secretAccessKey: STORAGE_SECRET,
@@ -25,10 +23,7 @@ const uploadStream = ({ Key }: Pick<AWS.S3.Types.PutObjectRequest, 'Key'>) => {
 	const pass = new PassThrough()
 	return {
 		writeStream: pass,
-		promise: new Upload({
-			client: s3,
-			params: { Bucket: STORAGE_BUCKET, Key, Body: pass },
-		}).done(),
+		promise: s3.upload({ Bucket: STORAGE_BUCKET, Key, Body: pass }).promise(),
 	}
 }
 
@@ -37,12 +32,10 @@ export async function uploadStreamToS3(data: any, filename: string) {
 		Key: filename,
 	})
 	await writeAsyncIterableToWritable(data, stream.writeStream)
-	//TODO: Fix this type
-	const file = (await stream.promise) as any
+	const file = await stream.promise
 	return file.Location
 }
 
-// FIX: Secure AWS
 export const s3UploadHandler: UploadHandler = async ({
 	name,
 	filename,
