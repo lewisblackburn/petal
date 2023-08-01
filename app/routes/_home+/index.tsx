@@ -13,15 +13,3 @@ export default function Index() {
 		</div>
 	)
 }
-
-// NOTE: File Upload Form
-//
-// <Form
-// 	method="post"
-// 	action="/resources/upload"
-// 	encType="multipart/form-data"
-// >
-// 	<Input type="file" name="upload" />
-// 	<Button type="submit">Upload</Button>
-// </Form>
-//

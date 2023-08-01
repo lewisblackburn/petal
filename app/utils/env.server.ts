@@ -11,6 +11,10 @@ const schema = z.object({
 	// SENTRY_DSN: z.string(),
 	// If you plan to use Resend, uncomment this line
 	// RESEND_API_KEY: z.string(),
+	STORAGE_ACCESS_KEY: z.string(),
+	STORAGE_SECRET: z.string(),
+	STORAGE_BUCKET: z.string(),
+	STORAGE_REGION: z.string(),
 })
 
 declare global {

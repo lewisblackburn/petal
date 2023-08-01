@@ -22,7 +22,7 @@ import {
 	TableRow,
 } from '~/components/ui/table.tsx'
 import { DataTablePagination } from '~/components/table/data-table-pagination.tsx'
-import { DataTableToolbar } from './data-table-toolbar.tsx'
+import { DataTableToolbar } from './data-table-toolbar.js'
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
@@ -80,9 +80,9 @@ export function CreditTable<TData, TValue>({
 											{header.isPlaceholder
 												? null
 												: flexRender(
-														header.column.columnDef.header,
-														header.getContext(),
-												  )}
+													header.column.columnDef.header,
+													header.getContext(),
+												)}
 										</TableHead>
 									)
 								})}
