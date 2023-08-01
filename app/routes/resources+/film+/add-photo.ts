@@ -7,7 +7,6 @@ import {
 } from '@remix-run/server-runtime'
 import { composeUploadHandlers } from '@remix-run/server-runtime/dist/formData.js'
 import { createMemoryUploadHandler } from '@remix-run/server-runtime/dist/upload/memoryUploadHandler.js'
-import { randomUUID } from 'crypto'
 import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { MAX_SIZE } from '~/utils/constants.ts'
@@ -24,14 +23,14 @@ export const AddFilmPhotoSchema = z.object({
 		typeof window === 'undefined'
 			? z.any()
 			: z
-					.instanceof(File)
-					.refine(
-						file => file.name !== '' && file.size !== 0,
-						'Image is required',
-					)
-					.refine(file => {
-						return file.size <= MAX_SIZE
-					}, 'Image size must be less than 3MB'),
+				.instanceof(File)
+				.refine(
+					file => file.name !== '' && file.size !== 0,
+					'Image is required',
+				)
+				.refine(file => {
+					return file.size <= MAX_SIZE
+				}, 'Image size must be less than 3MB'),
 	type: z.string().nonempty({ message: 'You must select a type' }),
 	language: z.string().nonempty({ message: 'You must select a language' }),
 	primary: checkboxSchema(),
@@ -43,7 +42,8 @@ export async function action({ request }: DataFunctionArgs) {
 		params =>
 			s3UploadHandler({
 				...params,
-				filename: `films/${randomUUID()}${params.filename}`,
+				// TODO: Add randomuuid
+				filename: `films/${params.filename}`,
 			}),
 		createMemoryUploadHandler({ maxPartSize: MAX_SIZE }),
 	)
