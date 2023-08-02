@@ -30,6 +30,14 @@ export async function loader({ request, params }: DataFunctionArgs) {
 						include: {
 							person: true,
 						},
+						orderBy: [
+							{
+								order: 'asc',
+							},
+							{
+								updatedAt: 'asc',
+							},
+						],
 					},
 				},
 			}),
