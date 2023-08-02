@@ -23,6 +23,7 @@ import {
 } from '~/components/ui/table.tsx'
 import { DataTablePagination } from '~/components/table/data-table-pagination.tsx'
 import { DataTableToolbar } from './data-table-toolbar.js'
+import { type Person } from '@prisma/client'
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
@@ -41,9 +42,10 @@ export function CreditTable<TData, TValue>({
 	)
 	const [sorting, setSorting] = React.useState<SortingState>([])
 	const [globalFilter, setGlobalFilter] = React.useState('')
+	const [dataCopy, setDataCopy] = React.useState(data)
 
 	const table = useReactTable({
-		data,
+		data: dataCopy,
 		columns,
 		state: {
 			sorting,
@@ -66,8 +68,75 @@ export function CreditTable<TData, TValue>({
 		getFacetedUniqueValues: getFacetedUniqueValues(),
 	})
 
+	function moveRowsUp() {
+		const numRowsToMove = 1 // NOTE: Change this value to the number of rows to move at a time
+		const selectedRows = table.getSelectedRowModel().rows
+		setDataCopy(data => {
+			const newData = [...data]
+
+			for (const selectedRow of selectedRows) {
+				const selectedRowIndex = selectedRow.index
+				const currentRowData = newData[selectedRowIndex]
+				const aboveRowIndex = selectedRowIndex - numRowsToMove
+				const aboveRowData = newData[aboveRowIndex]
+
+				// If there is no row above, skip this row
+				if (!aboveRowData) continue
+
+				newData[selectedRowIndex] = aboveRowData
+				newData[aboveRowIndex] = currentRowData
+			}
+
+			const newSelection = {}
+			selectedRows.forEach(selectedRow => {
+				const selectedRowIndex = selectedRow.index
+				newSelection[selectedRowIndex] = false
+				newSelection[selectedRowIndex - numRowsToMove] = true
+			})
+
+			table.setRowSelection(newSelection)
+			return newData
+		})
+	}
+
+	function moveRowsDown() {
+		const numRowsToMove = 1 // NOTE: Change this value to the number of rows to move at a time
+		const selectedRows = table.getSelectedRowModel().rows
+		setDataCopy(data => {
+			const newData = [...data]
+
+			// Reverse the order of selected rows to start moving from the bottom-most row
+			const reversedSelectedRows = selectedRows.slice().reverse()
+
+			for (const selectedRow of reversedSelectedRows) {
+				const selectedRowIndex = selectedRow.index
+				const currentRowData = newData[selectedRowIndex]
+				const belowRowIndex = selectedRowIndex + numRowsToMove
+				const belowRowData = newData[belowRowIndex]
+
+				// If there is no row below, skip this row
+				if (!belowRowData) continue
+
+				newData[selectedRowIndex] = belowRowData
+				newData[belowRowIndex] = currentRowData
+			}
+
+			const newSelection = {}
+			selectedRows.forEach(selectedRow => {
+				const selectedRowIndex = selectedRow.index
+				newSelection[selectedRowIndex] = false
+				newSelection[selectedRowIndex + numRowsToMove] = true
+			})
+
+			table.setRowSelection(newSelection)
+			return newData
+		})
+	}
+
 	return (
 		<div className="space-y-4">
+			<button onClick={moveRowsUp}>Move up</button>
+			<button onClick={moveRowsDown}>Move Down</button>
 			<DataTableToolbar table={table} />
 			<div className="rounded-md border">
 				<Table>
