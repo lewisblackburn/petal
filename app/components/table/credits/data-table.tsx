@@ -128,7 +128,7 @@ export function CreditTable<TData, TValue>({
 
 		const newIndex = data.findIndex((item: any) => item.id === over.id)
 
-		console.log(filmId, active.id, newIndex)
+		// TODO: Create a copy of the data and update here to remove the flash of the old order
 
 		const formData = new FormData()
 		formData.set('filmId', filmId)

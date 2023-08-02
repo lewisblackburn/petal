@@ -8,14 +8,14 @@ import { Button } from './ui/button.tsx'
 
 export function SearchBar({
 	action,
-	// status,
+	status,
 	autoFocus = false,
 	autoSubmit = false,
 	hasType = false,
 	hasButton = false,
 }: {
 	action: string
-	// status: 'idle' | 'pending' | 'success' | 'error'
+	status: 'idle' | 'pending' | 'success' | 'error'
 	autoFocus?: boolean
 	autoSubmit?: boolean
 	hasType?: boolean
@@ -57,7 +57,7 @@ export function SearchBar({
 				<div>
 					<StatusButton
 						type="submit"
-						status={isSubmitting ? 'pending' : 'idle'}
+						status={isSubmitting ? 'pending' : status}
 						className="flex w-full items-center justify-center"
 						size="sm"
 					>
