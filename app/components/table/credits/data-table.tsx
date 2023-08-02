@@ -36,6 +36,8 @@ import {
 	restrictToWindowEdges,
 } from '@dnd-kit/modifiers'
 import { Icon } from '~/components/ui/icon.tsx'
+import { useParams, useSubmit } from '@remix-run/react'
+import { useIsSubmitting } from '~/utils/misc.tsx'
 
 const SortableRow = ({ row, data }: { row: any; data: any }) => {
 	const {
@@ -84,6 +86,7 @@ export function CreditTable<TData, TValue>({
 	columns,
 	data,
 }: DataTableProps<TData, TValue>) {
+	const { filmId } = useParams()
 	const [dataAsArrayOfIds] = useState(data.map((item: any) => item.id))
 	const [rowSelection, setRowSelection] = React.useState({})
 	const [columnVisibility, setColumnVisibility] =
@@ -118,14 +121,29 @@ export function CreditTable<TData, TValue>({
 		getFacetedUniqueValues: getFacetedUniqueValues(),
 	})
 
+	const submit = useSubmit()
+	const isSubmitting = useIsSubmitting({
+		formMethod: 'POST',
+		formAction: '/resources/film/reorder-credit',
+	})
+
 	const onDragEnd = (event: any) => {
 		const { active, over } = event
-		if (active.id === over.id) return
+		if (active.id === over.id || !filmId) return
 
 		const newIndex = data.findIndex((item: any) => item.id === over.id)
 
-		// set active.id to new index with prisma
-		console.log(active.id, newIndex)
+		console.log(filmId, active.id, newIndex)
+
+		const formData = new FormData()
+		formData.set('filmId', filmId)
+		formData.set('creditId', active.id)
+		formData.set('order', newIndex.toString())
+
+		submit(formData, {
+			method: 'POST',
+			action: '/resources/film/reorder-credit',
+		})
 	}
 
 	return (

@@ -35,7 +35,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 								order: 'asc',
 							},
 							{
-								updatedAt: 'asc',
+								updatedAt: 'desc',
 							},
 						],
 					},

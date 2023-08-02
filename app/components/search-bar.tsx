@@ -8,14 +8,14 @@ import { Button } from './ui/button.tsx'
 
 export function SearchBar({
 	action,
-	status,
+	// status,
 	autoFocus = false,
 	autoSubmit = false,
 	hasType = false,
 	hasButton = false,
 }: {
 	action: string
-	status: 'idle' | 'pending' | 'success' | 'error'
+	// status: 'idle' | 'pending' | 'success' | 'error'
 	autoFocus?: boolean
 	autoSubmit?: boolean
 	hasType?: boolean
