@@ -13,13 +13,22 @@ import {
 	createRequestHandler as _createRequestHandler,
 } from '@remix-run/express'
 import { wrapExpressCreateRequestHandler } from '@sentry/remix'
-import { type ServerBuild, broadcastDevReady } from '@remix-run/node'
+import {
+	type ServerBuild,
+	broadcastDevReady,
+	installGlobals,
+} from '@remix-run/node'
 import getPort, { portNumbers } from 'get-port'
 import chalk from 'chalk'
+import sourceMapSupport from 'source-map-support'
 
 // @ts-ignore - this file may not exist if you haven't built yet, but it will
 // definitely exist by the time the dev or prod server actually runs.
 import * as remixBuild from '../build/index.js'
+
+sourceMapSupport.install()
+installGlobals()
+
 const MODE = process.env.NODE_ENV
 
 const createRequestHandler = wrapExpressCreateRequestHandler(
@@ -104,15 +113,7 @@ app.use(
 				].filter(Boolean),
 				'font-src': ["'self'"],
 				'frame-src': ["'self'"],
-				'img-src': [
-					"'self'",
-					'data:',
-					// TODO: Remove uneeded domains
-					'https://petal-image-host.s3.eu-west-2.amazonaws.com',
-					'https://image.tmdb.org',
-					'https://www.themoviedb.org',
-					'https://via.placeholder.com',
-				],
+				'img-src': ["'self'", 'data:'],
 				'script-src': [
 					"'strict-dynamic'",
 					"'self'",
@@ -154,8 +155,8 @@ const server = app.listen(portToUse, () => {
 		desiredPort === portToUse
 			? desiredPort
 			: addy && typeof addy === 'object'
-			? addy.port
-			: 0
+				? addy.port
+				: 0
 
 	if (portUsed !== desiredPort) {
 		console.warn(
