@@ -37,7 +37,6 @@ import {
 } from '@dnd-kit/modifiers'
 import { Icon } from '~/components/ui/icon.tsx'
 import { useParams, useSubmit } from '@remix-run/react'
-import { useIsSubmitting } from '~/utils/misc.tsx'
 
 const SortableRow = ({ row, data }: { row: any; data: any }) => {
 	const {
@@ -122,10 +121,6 @@ export function CreditTable<TData, TValue>({
 	})
 
 	const submit = useSubmit()
-	const isSubmitting = useIsSubmitting({
-		formMethod: 'POST',
-		formAction: '/resources/film/reorder-credit',
-	})
 
 	const onDragEnd = (event: any) => {
 		const { active, over } = event
