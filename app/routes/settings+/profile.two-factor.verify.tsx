@@ -6,7 +6,7 @@ import { StatusButton } from '~/components/ui/status-button.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { getDomainUrl, invariant, invariantResponse } from '~/utils/misc.tsx'
-import { getTOTPAuthUri } from '~/utils/totp.server.ts'
+import { getTOTPAuthUri } from '@epic-web/totp'
 import { useUser } from '~/utils/user.ts'
 import {
 	type VerificationTypes,
@@ -128,7 +128,7 @@ export default function TwoFactorRoute() {
 									className="w-full"
 									status={
 										toggle2FAFetcher.state === 'loading' &&
-										toggle2FAFetcher.formData?.get('intent') === 'cancel'
+											toggle2FAFetcher.formData?.get('intent') === 'cancel'
 											? 'pending'
 											: 'idle'
 									}

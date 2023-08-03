@@ -44,6 +44,7 @@
     "@dnd-kit/modifiers": "^6.0.1",
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.1",
+    "@epic-web/totp": "^1.0.6",
     "@prisma/client": "^5.0.0",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-checkbox": "^1.0.4",
