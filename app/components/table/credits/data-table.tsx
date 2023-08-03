@@ -69,8 +69,8 @@ const SortableRow = ({ row, data }: { row: any; data: any }) => {
 					{flexRender(cell.column.columnDef.cell, cell.getContext())}
 				</TableCell>
 			))}
-			{/*  FIX: Header not looks weird */}
-			<TableCell ref={setActivatorNodeRef}>
+			{/* TODO: Split table into cast (ordered) and crew tables */}
+			<TableCell key="order" ref={setActivatorNodeRef}>
 				<Icon name="drag-handle-dots-2" cursor="grab" {...listeners} />
 			</TableCell>
 		</TableRow>
@@ -171,6 +171,8 @@ export function CreditTable<TData, TValue>({
 											</TableHead>
 										)
 									})}
+									{/* NOTE: This fixes the length of the table header */}
+									<TableHead key="order" />
 								</TableRow>
 							))}
 						</TableHeader>
