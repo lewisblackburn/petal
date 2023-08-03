@@ -69,6 +69,7 @@ const SortableRow = ({ row, data }: { row: any; data: any }) => {
 					{flexRender(cell.column.columnDef.cell, cell.getContext())}
 				</TableCell>
 			))}
+			{/*  FIX: Header not looks weird */}
 			<TableCell ref={setActivatorNodeRef}>
 				<Icon name="drag-handle-dots-2" cursor="grab" {...listeners} />
 			</TableCell>

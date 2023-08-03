@@ -45,10 +45,14 @@ export async function action({ request }: DataFunctionArgs) {
 		})
 		.catch(err => {
 			ensurePE(formData, request)
-			return redirectWithToast(`/films/${filmId}/edit/video`, {
-				title: err.message,
-				variant: 'destructive',
-			})
+			return redirectWithToast(
+				`/films/${filmId}/edit/video`,
+				{
+					title: err.message,
+					variant: 'destructive',
+				},
+				{ status: 400 },
+			)
 		})
 
 	ensurePE(formData, request)

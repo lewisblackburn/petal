@@ -3,6 +3,7 @@ import { parse } from '@conform-to/zod'
 import { type Genre } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
+import { useEffect } from 'react'
 import { ErrorList } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
@@ -39,6 +40,12 @@ export function DataTableDeleteGenres<TData>({
 		},
 		shouldRevalidate: 'onBlur',
 	})
+
+	useEffect(() => {
+		if (fetcher.state === 'idle') {
+			table.setRowSelection({})
+		}
+	}, [fetcher, table])
 
 	return (
 		<Dialog>

@@ -47,10 +47,14 @@ export async function action({ request }: DataFunctionArgs) {
       },
     })
     .catch(err => {
-      return redirectWithToast(`/films/${filmId}/edit/credits`, {
-        title: err.message,
-        variant: 'destructive',
-      })
+      return redirectWithToast(
+        `/films/${filmId}/edit/credits`,
+        {
+          title: err.message,
+          variant: 'destructive',
+        },
+        { status: 400 },
+      )
     })
 
   return redirectWithToast(`/films/${filmId}/edit/credits`, {

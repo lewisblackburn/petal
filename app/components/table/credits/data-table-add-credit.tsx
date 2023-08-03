@@ -1,7 +1,6 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
-import { useEffect, useState } from 'react'
 import { ErrorList, Field, SearchSelectField } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
@@ -22,7 +21,6 @@ import { EnsurePE } from '~/utils/misc.tsx'
 export function DataTableAddCredit() {
 	const { filmId } = useParams()
 	const fetcher = useFetcher()
-	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({
 		id: 'add-film-credit-form',
@@ -33,19 +31,13 @@ export function DataTableAddCredit() {
 		shouldRevalidate: 'onBlur',
 	})
 
-	useEffect(() => {
-		if (fetcher.state === 'submitting') setOpen(false)
-	}, [fetcher])
-
 	return (
-		// close dialog on form submission
-		<Dialog open={open}>
+		<Dialog>
 			<DialogTrigger asChild>
 				<Button
 					variant="outline"
 					size="sm"
 					className="ml-auto hidden h-8 lg:flex"
-					onClick={() => setOpen(true)}
 				>
 					<Icon name="plus" className="mr-2 h-4 w-4" />
 					Add Person
