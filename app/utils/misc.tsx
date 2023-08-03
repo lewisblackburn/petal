@@ -363,14 +363,19 @@ export function computeInitials(name: string) {
 	return initials.join('')
 }
 
+type NumericRational = {
+	numerator: number
+	denominator: number
+}
+
 /**
  * Returns sorted array of objects by a rational property (numerator / denominator)
  * for ordering with the Stern-Brocot method
  * https://begriffs.com/posts/2018-03-20-user-defined-order.html#approach-3-true-fractions
  */
-export const sortByRationalProperty = (
-	array: Array<{ numerator: number; denominator: number }>,
-) => {
+export const orderByRationalProperty = <T extends NumericRational>(
+	array: Array<T>,
+): Array<T> => {
 	return array.sort((a, b) => {
 		const rationalA = a.numerator / a.denominator
 		const rationalB = b.numerator / b.denominator

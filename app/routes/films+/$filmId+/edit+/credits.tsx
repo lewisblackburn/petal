@@ -14,7 +14,7 @@ import {
 	time,
 } from '~/utils/timing.server.ts'
 import { columns } from '~/components/table/credits/columns.tsx'
-import { sortByRationalProperty } from '~/utils/misc.tsx'
+import { orderByRationalProperty } from '~/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)
@@ -52,7 +52,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	}))
 
 	return json(
-		{ credits: sortByRationalProperty(credits) },
+		{ credits: orderByRationalProperty(credits) },
 		{ headers: { 'Server-Timing': timings.toString() } },
 	)
 }

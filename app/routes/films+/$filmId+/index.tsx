@@ -10,6 +10,7 @@ import { Button } from '~/components/ui/button.tsx'
 import { Icon, type IconName } from '~/components/ui/icon.tsx'
 import { Separator } from '~/components/ui/separator.tsx'
 import { prisma } from '~/utils/db.server.ts'
+import { orderByRationalProperty } from '~/utils/misc.tsx'
 import {
 	combineServerTimings,
 	makeTimings,
@@ -31,6 +32,21 @@ export async function loader({ params }: DataFunctionArgs) {
 					overview: true,
 					poster: true,
 					backdrop: true,
+					credits: {
+						select: {
+							// These needs to be included for ordering
+							id: true,
+							person: {
+								select: {
+									name: true,
+									image: true,
+								},
+							},
+							character: true,
+							numerator: true,
+							denominator: true,
+						},
+					},
 				},
 			}),
 		{ timings, type: 'find film' },
@@ -39,7 +55,13 @@ export async function loader({ params }: DataFunctionArgs) {
 	if (!film) {
 		throw new Response('Not found', { status: 404 })
 	}
-	return json({ film }, { headers: { 'Server-Timing': timings.toString() } })
+
+	const credits = orderByRationalProperty(film.credits)
+
+	return json(
+		{ film: { ...film, credits } },
+		{ headers: { 'Server-Timing': timings.toString() } },
+	)
 }
 
 export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
@@ -121,8 +143,21 @@ export default function FilmRoute() {
 						<h3 className="text-lg font-semibold">Richard Curtis</h3>
 						<p className="text-base font-normal">Director, Writer</p>
 					</div>
-					<div className="flex flex-col space-y-1">
+					<div className="flex flex-col space-y-5">
 						<h2 className="text-xl font-bold">Cast</h2>
+						{/* FIX: Make this scrollable */}
+						<div className="flex gap-5">
+							{data.film.credits.map(credit => (
+								<div key={credit.id}>
+									<Image
+										src={credit.person.image!}
+										alt={credit.person.name}
+										// TODO: Change to aspect-poster
+										className="aspect-[2/3] w-32 rounded-md"
+									/>
+								</div>
+							))}
+						</div>
 					</div>
 					<div className="flex flex-col space-y-1">
 						<h2 className="text-xl font-bold">Reviews</h2>
