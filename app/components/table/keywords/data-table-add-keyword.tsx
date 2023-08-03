@@ -1,6 +1,7 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
+import { useState } from 'react'
 import { ErrorList, Field } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
@@ -19,6 +20,7 @@ import { EnsurePE } from '~/utils/misc.tsx'
 export function DataTableAddKeyword() {
 	const { filmId } = useParams()
 	const fetcher = useFetcher()
+	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({
 		id: 'add-film-keyword-form',
@@ -30,7 +32,7 @@ export function DataTableAddKeyword() {
 	})
 
 	return (
-		<Dialog>
+		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button
 					variant="outline"
@@ -47,6 +49,9 @@ export function DataTableAddKeyword() {
 					action="/resources/film/add-keyword"
 					name="add-film-keyword-form"
 					{...form.props}
+					onSubmit={() => {
+						setOpen(false)
+					}}
 				>
 					<EnsurePE />
 					<DialogHeader>

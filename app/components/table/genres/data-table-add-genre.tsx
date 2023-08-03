@@ -1,6 +1,7 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
+import { useState } from 'react'
 import { ErrorList } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
@@ -20,6 +21,7 @@ import { EnsurePE } from '~/utils/misc.tsx'
 export function DataTableAddGenre() {
 	const { filmId } = useParams()
 	const fetcher = useFetcher()
+	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({
 		id: 'add-film-genre-form',
@@ -31,7 +33,7 @@ export function DataTableAddGenre() {
 	})
 
 	return (
-		<Dialog>
+		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button
 					variant="outline"
@@ -48,6 +50,9 @@ export function DataTableAddGenre() {
 					action="/resources/film/add-genre"
 					name="add-film-genre-form"
 					{...form.props}
+					onSubmit={() => {
+						setOpen(false)
+					}}
 				>
 					<EnsurePE />
 					<DialogHeader>

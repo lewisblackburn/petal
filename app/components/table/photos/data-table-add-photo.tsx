@@ -1,6 +1,7 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
+import { useState } from 'react'
 import { ServerOnly } from 'remix-utils'
 import {
 	CheckboxField,
@@ -27,6 +28,7 @@ import { EnsurePE } from '~/utils/misc.tsx'
 export function DataTableAddPhoto() {
 	const { filmId } = useParams()
 	const fetcher = useFetcher()
+	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({
 		id: 'add-film-photo-form',
@@ -38,7 +40,7 @@ export function DataTableAddPhoto() {
 	})
 
 	return (
-		<Dialog>
+		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button
 					variant="outline"
@@ -56,6 +58,9 @@ export function DataTableAddPhoto() {
 					name="add-film-photo-form"
 					encType="multipart/form-data"
 					{...form.props}
+					onSubmit={() => {
+						setOpen(false)
+					}}
 				>
 					<EnsurePE />
 					<DialogHeader>

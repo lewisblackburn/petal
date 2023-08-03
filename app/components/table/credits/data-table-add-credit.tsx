@@ -1,6 +1,7 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
+import { useState } from 'react'
 import { ErrorList, Field, SearchSelectField } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
@@ -21,6 +22,7 @@ import { EnsurePE } from '~/utils/misc.tsx'
 export function DataTableAddCredit() {
 	const { filmId } = useParams()
 	const fetcher = useFetcher()
+	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({
 		id: 'add-film-credit-form',
@@ -32,7 +34,7 @@ export function DataTableAddCredit() {
 	})
 
 	return (
-		<Dialog>
+		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button
 					variant="outline"
@@ -49,6 +51,9 @@ export function DataTableAddCredit() {
 					action="/resources/film/add-credit"
 					name="add-film-credit-form"
 					{...form.props}
+					onSubmit={() => {
+						setOpen(false)
+					}}
 				>
 					<EnsurePE />
 					<DialogHeader>

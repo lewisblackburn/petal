@@ -3,7 +3,7 @@ import { parse } from '@conform-to/zod'
 import { type Photo } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ErrorList } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
@@ -31,6 +31,7 @@ export function DataTableDeletePhotos<TData>({
 		.getSelectedRowModel()
 		.rows.map(row => (row.original as Photo).id)
 	const fetcher = useFetcher()
+	const [open, setOpen] = useState(false)
 
 	const [form] = useForm({
 		id: 'delete-film-photos-form',
@@ -48,7 +49,7 @@ export function DataTableDeletePhotos<TData>({
 	}, [fetcher, table])
 
 	return (
-		<Dialog>
+		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				{photosSelected.length > 0 && (
 					<Button
@@ -67,6 +68,9 @@ export function DataTableDeletePhotos<TData>({
 					action="/resources/film/delete-photos"
 					name="delete-film-photos-form"
 					{...form.props}
+					onSubmit={() => {
+						setOpen(false)
+					}}
 				>
 					<EnsurePE />
 					<DialogHeader>

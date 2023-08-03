@@ -3,7 +3,7 @@ import { parse } from '@conform-to/zod'
 import { type Video } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ErrorList } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
@@ -31,6 +31,7 @@ export function DataTableDeleteVideos<TData>({
 		.getSelectedRowModel()
 		.rows.map(row => (row.original as Video).id)
 	const fetcher = useFetcher()
+	const [open, setOpen] = useState(false)
 
 	const [form] = useForm({
 		id: 'delete-film-videos-form',
@@ -48,7 +49,7 @@ export function DataTableDeleteVideos<TData>({
 	}, [fetcher, table])
 
 	return (
-		<Dialog>
+		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				{videosSelected.length > 0 && (
 					<Button
@@ -67,6 +68,9 @@ export function DataTableDeleteVideos<TData>({
 					action="/resources/film/delete-videos"
 					name="delete-film-videos-form"
 					{...form.props}
+					onSubmit={() => {
+						setOpen(false)
+					}}
 				>
 					<EnsurePE />
 					<DialogHeader>
