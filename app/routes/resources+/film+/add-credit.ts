@@ -44,6 +44,8 @@ export async function action({ request }: DataFunctionArgs) {
 								id: personId,
 							},
 						},
+						numerator: 1,
+						denominator: 1,
 						character,
 						department,
 						job,

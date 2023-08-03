@@ -286,9 +286,9 @@ export function useDoubleCheck() {
 			doubleCheck
 				? undefined
 				: e => {
-						e.preventDefault()
-						setDoubleCheck(true)
-				  }
+					e.preventDefault()
+					setDoubleCheck(true)
+				}
 
 		return {
 			...props,
@@ -349,6 +349,9 @@ export function formatDateWithDashes(date: Date) {
 }
 
 // TODO: Change this to a prisma computed field when they are supported
+/**
+ * Returns the initials of a name
+ */
 export function computeInitials(name: string) {
 	const names = name.split(' ')
 	const initials = []
@@ -358,4 +361,19 @@ export function computeInitials(name: string) {
 	}
 
 	return initials.join('')
+}
+
+/**
+ * Returns sorted array of objects by a rational property (numerator / denominator)
+ * for ordering with the Stern-Brocot method
+ * https://begriffs.com/posts/2018-03-20-user-defined-order.html#approach-3-true-fractions
+ */
+export const sortByRationalProperty = (
+	array: Array<{ numerator: number; denominator: number }>,
+) => {
+	return array.sort((a, b) => {
+		const rationalA = a.numerator / a.denominator
+		const rationalB = b.numerator / b.denominator
+		return rationalA - rationalB
+	})
 }
