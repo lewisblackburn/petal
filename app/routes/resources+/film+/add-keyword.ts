@@ -7,8 +7,8 @@ import { redirectWithToast } from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
 
 export const AddFilmKeywordSchema = z.object({
-	filmId: z.string(),
-	keywordId: z.string().nonempty({ message: 'You must select a keyword' }),
+	filmId: z.string().nonempty(),
+	keyword: z.string().nonempty(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -28,15 +28,15 @@ export async function action({ request }: DataFunctionArgs) {
 		)
 	}
 
-	let { filmId, keywordId } = submission.value
+	let { filmId, keyword } = submission.value
 
 	await prisma.film
 		.update({
 			where: { id: filmId },
 			data: {
 				keywords: {
-					connect: {
-						id: keywordId,
+					create: {
+						name: keyword,
 					},
 				},
 			},

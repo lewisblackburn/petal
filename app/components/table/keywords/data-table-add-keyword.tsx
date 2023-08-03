@@ -2,7 +2,7 @@ import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { ErrorList } from '~/components/forms.tsx'
+import { ErrorList, Field } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
 	Dialog,
@@ -15,7 +15,6 @@ import {
 } from '~/components/ui/dialog.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { AddFilmKeywordSchema } from '~/routes/resources+/film+/add-keyword.ts'
-import { KeywordSearch } from '~/routes/resources+/keywords.tsx'
 import { EnsurePE } from '~/utils/misc.tsx'
 
 export function DataTableAddKeyword() {
@@ -65,14 +64,14 @@ export function DataTableAddKeyword() {
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<KeywordSearch
+						<Field
 							labelProps={{
-								htmlFor: fields.keywordId.id,
+								htmlFor: fields.keyword.id,
 							}}
 							inputProps={{
-								...conform.input(fields.keywordId, { type: 'text' }),
+								...conform.input(fields.keyword, { type: 'text' }),
 							}}
-							errors={fields.keywordId.errors}
+							errors={fields.keyword.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
