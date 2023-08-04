@@ -140,6 +140,7 @@ export default function FilmRoute() {
 						<h3 className="text-lg font-semibold">Richard Curtis</h3>
 						<p className="text-base font-normal">Director, Writer</p>
 					</div>
+					{/* TODO: Toggleable infinite scroll mode */}
 					<Slider
 						title="Cast"
 						items={data.film.credits.map(credit => {

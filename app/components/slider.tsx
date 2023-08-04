@@ -93,12 +93,18 @@ export function Slider({ title, description, items }: SliderProps) {
 					}}
 				>
 					{clonedItems.map((item, index) => (
-						<Link key={index} to={item.to} className={itemClassName}>
+						<Link
+							key={index}
+							to={item.to}
+							className={itemClassName}
+							draggable={false}
+						>
 							<img
 								ref={imageRef}
 								src={item.image}
 								alt="poster"
 								className="aspect-a4 rounded-lg object-cover"
+								draggable={false}
 							/>
 						</Link>
 					))}

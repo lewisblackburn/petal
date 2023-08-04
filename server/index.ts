@@ -131,7 +131,7 @@ app.use(
 )
 
 function getRequestHandler(build: ServerBuild): RequestHandler {
-	function getLoadContext(_: any, res: avia.placeholder.comny) {
+	function getLoadContext(_: any, res: any) {
 		return { cspNonce: res.locals.cspNonce }
 	}
 	return createRequestHandler({ build, mode: MODE, getLoadContext })
