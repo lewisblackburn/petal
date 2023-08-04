@@ -113,7 +113,7 @@ app.use(
 				].filter(Boolean),
 				'font-src': ["'self'"],
 				'frame-src': ["'self'"],
-				'img-src': ["'self'", 'data:'],
+				'img-src': ["'self'", 'data:', 'via.placeholder.com'],
 				'script-src': [
 					"'strict-dynamic'",
 					"'self'",
@@ -131,7 +131,7 @@ app.use(
 )
 
 function getRequestHandler(build: ServerBuild): RequestHandler {
-	function getLoadContext(_: any, res: any) {
+	function getLoadContext(_: any, res: avia.placeholder.comny) {
 		return { cspNonce: res.locals.cspNonce }
 	}
 	return createRequestHandler({ build, mode: MODE, getLoadContext })

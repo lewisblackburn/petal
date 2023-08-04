@@ -1,5 +1,5 @@
 import { type Prisma } from '@prisma/client'
-import { useFetcher } from '@remix-run/react'
+import { Link, useFetcher } from '@remix-run/react'
 import {
 	json,
 	type DataFunctionArgs,
@@ -16,6 +16,7 @@ import {
 	CommandGroup,
 	CommandInput,
 	CommandItem,
+	CommandList,
 } from '~/components/ui/command.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { Label } from '~/components/ui/label.tsx'
@@ -97,7 +98,7 @@ export const PersonSearch = ({
 				className="hidden"
 			/>
 			<Label htmlFor={id} {...labelProps} />
-			<Popover open={open} onOpenChange={setOpen}>
+			<Popover open={open} onOpenChange={setOpen} modal>
 				<PopoverTrigger asChild>
 					<Button
 						variant="outline"
@@ -105,7 +106,7 @@ export const PersonSearch = ({
 						aria-expanded={open}
 						// A hack to show error border and "revailidate" on blur
 						className={cn(
-							'w-fit min-w-[200px] justify-between ',
+							'w-fit min-w-[200px] justify-between',
 							errorId && selectedPerson === null && 'border-input-invalid',
 						)}
 					>
@@ -135,42 +136,51 @@ export const PersonSearch = ({
 							}}
 						/>
 						<Spinner showSpinner={delayedBusy} />
-						<CommandEmpty>No person found.</CommandEmpty>
-						<CommandGroup>
-							{people.map(person => (
-								<CommandItem
-									key={person.name}
-									onSelect={currentValue => {
-										const person = people.find(
-											person => person.name.toLowerCase() === currentValue,
-										)
-										setSelectedPerson(
-											currentValue === selectedPerson?.name
-												? selectedPerson
-												: person,
-										)
-										setOpen(false)
-									}}
-									className="flex items-center gap-3"
-								>
-									<img
-										src={person.image ?? ''}
-										alt={person.name}
-										className="aspect-square h-12 w-12 rounded-md"
-									/>
-									{person.name}
-									<Icon
-										name="check"
-										className={cn(
-											'ml-auto h-4 w-4',
-											selectedPerson?.name === person.name
-												? 'opacity-100'
-												: 'opacity-0',
-										)}
-									/>
-								</CommandItem>
-							))}
-						</CommandGroup>
+						<CommandList>
+							<CommandEmpty className="-mb-2 p-2">
+								<Link to="/people/new">
+									<Button variant="ghost" size="sm" className="w-full">
+										<Icon name="plus" className="mr-2 h-4 w-4" />
+										Create a person
+									</Button>
+								</Link>
+							</CommandEmpty>
+							<CommandGroup>
+								{people.map(person => (
+									<CommandItem
+										key={person.name}
+										onSelect={currentValue => {
+											const person = people.find(
+												person => person.name.toLowerCase() === currentValue,
+											)
+											setSelectedPerson(
+												currentValue === selectedPerson?.name
+													? selectedPerson
+													: person,
+											)
+											setOpen(false)
+										}}
+										className="flex items-center gap-3"
+									>
+										<img
+											src={person.image ?? ''}
+											alt={person.name}
+											className="aspect-square h-12 w-12 rounded-md"
+										/>
+										{person.name}
+										<Icon
+											name="check"
+											className={cn(
+												'ml-auto h-4 w-4',
+												selectedPerson?.name === person.name
+													? 'opacity-100'
+													: 'opacity-0',
+											)}
+										/>
+									</CommandItem>
+								))}
+							</CommandGroup>
+						</CommandList>
 					</Command>
 				</PopoverContent>
 			</Popover>

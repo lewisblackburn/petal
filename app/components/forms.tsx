@@ -249,7 +249,7 @@ export function SearchSelectField({
 				className="hidden"
 			/>
 			{/* <Label  htmlFor={id} {...labelProps} /> */}
-			<Popover open={open} onOpenChange={setOpen}>
+			<Popover open={open} onOpenChange={setOpen} modal>
 				<PopoverTrigger asChild>
 					<Button
 						variant="outline"

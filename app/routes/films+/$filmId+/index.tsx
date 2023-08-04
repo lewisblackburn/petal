@@ -7,6 +7,7 @@ import { Link, useLoaderData } from '@remix-run/react'
 import { Container } from '~/components/container.tsx'
 import { Image } from '~/components/image.tsx'
 import { Slider } from '~/components/slider.tsx'
+import { Badge } from '~/components/ui/badge.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon, type IconName } from '~/components/ui/icon.tsx'
 import { Separator } from '~/components/ui/separator.tsx'
@@ -127,21 +128,12 @@ export default function FilmRoute() {
 							English
 						</Status>
 						<Status title="Status" icon="check">
-							{' '}
 							Released
 						</Status>
 					</div>
 					<div className="flex flex-col space-y-1">
 						<h2 className="text-xl font-bold">Overview</h2>
-						<p className="text-base font-normal">
-							The night after another unsatisfactory New Year's party, Tim's
-							father tells his son that the men in his family have always had
-							the ability to travel through time. They can't change history, but
-							they can change what happens and has happened in their own lives.
-							Thus begins the start of a lesson in learning to appreciate life
-							itself as it is, as it comes, and most importantly, the people
-							living alongside us.
-						</p>
+						<p className="text-base font-normal">{data.film.overview}</p>
 					</div>
 					{/* TODO: Here will be a list of the crew who a featured */}
 					<div className="flex flex-col space-y-1">
@@ -190,7 +182,30 @@ export default function FilmRoute() {
 						<Separator />
 						<h2 className="text-xl font-bold">Genres</h2>
 						<Separator />
+						<div className="grid grid-cols-2 gap-5">
+							{data.film.genres.map(genre => (
+								<Badge
+									key={genre.id}
+									className="rounded-md p-2"
+									variant="secondary"
+								>
+									{genre.name}
+								</Badge>
+							))}
+						</div>
 						<h2 className="text-xl font-bold">Keywords</h2>
+						<Separator />
+						<div className="flex flex-wrap gap-5">
+							{data.film.keywords.map(keyword => (
+								<Badge
+									key={keyword.id}
+									className="rounded-md p-2"
+									variant="secondary"
+								>
+									{keyword.name}
+								</Badge>
+							))}
+						</div>
 						<Separator />
 						<div className="flex items-center justify-between gap-5">
 							<Link to="." className="w-full" preventScrollReset>
