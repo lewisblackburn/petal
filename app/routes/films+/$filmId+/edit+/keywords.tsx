@@ -60,7 +60,6 @@ export default function FilmEditKeywords() {
 
 	return (
 		<Container>
-			{/* FIX: Dropdown resetting scroll */}
 			<KeywordTable data={keywords} columns={columns} />
 		</Container>
 	)

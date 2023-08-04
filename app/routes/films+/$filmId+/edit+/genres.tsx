@@ -57,7 +57,6 @@ export default function FilmEditGenres() {
 
 	return (
 		<Container>
-			{/* FIX: Dropdown resetting scroll */}
 			<GenreTable data={genres} columns={columns} />
 		</Container>
 	)
