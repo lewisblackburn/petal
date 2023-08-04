@@ -5,8 +5,8 @@ import {
 } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 import { Container } from '~/components/container.tsx'
-import { ImageSlider } from '~/components/image-slider.tsx'
 import { Image } from '~/components/image.tsx'
+import { Slider } from '~/components/slider.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon, type IconName } from '~/components/ui/icon.tsx'
 import { Separator } from '~/components/ui/separator.tsx'
@@ -148,7 +148,7 @@ export default function FilmRoute() {
 						<h3 className="text-lg font-semibold">Richard Curtis</h3>
 						<p className="text-base font-normal">Director, Writer</p>
 					</div>
-					<ImageSlider
+					<Slider
 						title="Cast"
 						items={data.film.credits.map(credit => {
 							return {

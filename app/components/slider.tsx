@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
-import { Icon } from './ui/icon.tsx'
-import { Button } from './ui/button.tsx'
+import { Icon } from './ui/icon.js'
+import { Button } from './ui/button.js'
 import { Link } from '@remix-run/react'
 
-interface ImageSliderProps {
+interface SliderProps {
 	title: string
 	description?: string
 	items: {
@@ -15,7 +15,7 @@ interface ImageSliderProps {
 	}[]
 }
 
-export function ImageSlider({ title, description, items }: ImageSliderProps) {
+export function Slider({ title, description, items }: SliderProps) {
 	const [currentImageIndex, setCurrentImageIndex] = useState(0)
 	const [translateX, setTranslateX] = useState(currentImageIndex)
 	const [animated, setAnimated] = useState(false)
