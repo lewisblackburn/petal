@@ -3,30 +3,13 @@ import { useEffect, useRef, useState } from 'react'
 import { Icon } from './ui/icon.tsx'
 import { Button } from './ui/button.tsx'
 
-const images = [
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/rktDFPbfHfUbArZ6OOOKsXcv0Bm.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/gPbM0MK8CP8A174rmUwGsADNYKD.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/hnzXoDaK346U4ByfvQenu2DZnTg.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/lotWiuWuTGlQ94rzBdy6ZmKZnTA.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/qayga07ICNDswm0cMJ8P3VwklFZ.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/NNxYkU70HPurnNCSiCjYAmacwm.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/7uJkLigRamfHerFSkfFOCMqH0pi.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/szDEqqarPi3YqiPLevm7LObYrDJ.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/evxtv4e8Amm436Y5rW16RkGu8pX.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/luhKkdD80qe62fwop6sdrXK9jUT.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/tiZF8b9T9fMcwvsEEkJ5ik1wCnV.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/u7iHICDItwAoHZjwTwoBmPHql4G.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/tePFnZFw5JvjwjQjaKkqDPNMLPU.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/2Gfjn962aaFSD6eST6QU3oLDZTo.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/iuIWl90qCpoxv6g775JB6Kg0m86.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/4U1SBHmwHkNA0eHZ2n1CuiC1K1g.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/pD1o9B0ibENdNroYrBCQemG2jnr.jpg',
-	'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/9z3hdYnDdfWGKD55kdDmshDojeP.jpg',
-]
+interface ImageSliderProps {
+	title: string
+	description?: string
+	images: string[]
+}
 
-export function ImageSlider() {
+export function ImageSlider({ title, description, images }: ImageSliderProps) {
 	const [currentImageIndex, setCurrentImageIndex] = useState(0)
 	const [translateX, setTranslateX] = useState(currentImageIndex)
 	const [animated, setAnimated] = useState(false)
@@ -66,8 +49,10 @@ export function ImageSlider() {
 		<div className="flex flex-col gap-5">
 			<div className="flex items-center justify-between">
 				<div>
-					<h2 className="text-2xl font-bold tracking-tight">Popular</h2>
-					<p className="text-muted-foreground">What everyone is watching</p>
+					<h2 className="text-xl font-bold">{title}</h2>
+					{description && (
+						<p className="text-muted-foreground">{description}</p>
+					)}
 				</div>
 				<div>
 					<Button onClick={prevImage} size="icon" variant="ghost">

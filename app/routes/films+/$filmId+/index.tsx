@@ -5,6 +5,7 @@ import {
 } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 import { Container } from '~/components/container.tsx'
+import { ImageSlider } from '~/components/image-slider.tsx'
 import { Image } from '~/components/image.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon, type IconName } from '~/components/ui/icon.tsx'
@@ -32,7 +33,10 @@ export async function loader({ params }: DataFunctionArgs) {
 					overview: true,
 					poster: true,
 					backdrop: true,
+					genres: true,
+					keywords: true,
 					credits: {
+						take: 10,
 						select: {
 							// These needs to be included for ordering
 							id: true,
@@ -143,22 +147,10 @@ export default function FilmRoute() {
 						<h3 className="text-lg font-semibold">Richard Curtis</h3>
 						<p className="text-base font-normal">Director, Writer</p>
 					</div>
-					<div className="flex flex-col space-y-5">
-						<h2 className="text-xl font-bold">Cast</h2>
-						{/* FIX: Make this scrollable */}
-						<div className="flex gap-5">
-							{data.film.credits.map(credit => (
-								<div key={credit.id}>
-									<Image
-										src={credit.person.image!}
-										alt={credit.person.name}
-										// TODO: Change to aspect-poster
-										className="aspect-[2/3] w-32 rounded-md"
-									/>
-								</div>
-							))}
-						</div>
-					</div>
+					<ImageSlider
+						title="Cast"
+						images={data.film.credits.map(credit => credit.person.image ?? '')}
+					/>
 					<div className="flex flex-col space-y-1">
 						<h2 className="text-xl font-bold">Reviews</h2>
 					</div>
