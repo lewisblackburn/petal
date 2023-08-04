@@ -21,6 +21,7 @@ import React from 'react'
 import queryString from 'querystring'
 import { cn } from '~/utils/misc.tsx'
 
+// FIX: This should be different for each model maybe try and make it more generic
 const SORT_OPTIONS = [
 	{
 		label: 'Title Ascending',

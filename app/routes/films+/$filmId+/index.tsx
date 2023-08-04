@@ -141,17 +141,19 @@ export default function FilmRoute() {
 						<p className="text-base font-normal">Director, Writer</p>
 					</div>
 					{/* TODO: Toggleable infinite scroll mode */}
-					<Slider
-						title="Cast"
-						items={data.film.credits.map(credit => {
-							return {
-								to: `/people/${credit.id}`,
-								image: credit.person.image!,
-								title: credit.person.name,
-								subtitle: credit.character,
-							}
-						})}
-					/>
+					{data.film.credits.length > 0 && (
+						<Slider
+							title="Cast"
+							items={data.film.credits.map(credit => {
+								return {
+									to: `/people/${credit.id}`,
+									image: credit.person.image!,
+									title: credit.person.name,
+									subtitle: credit.character,
+								}
+							})}
+						/>
+					)}
 					<div className="flex flex-col space-y-1">
 						<h2 className="text-xl font-bold">Reviews</h2>
 					</div>

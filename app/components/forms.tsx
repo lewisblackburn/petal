@@ -263,7 +263,7 @@ export function SearchSelectField({
 					>
 						{value
 							? options.find(option => option.value === value)?.label
-							: `Select ${selectProps.name}...`}
+							: `Select ${labelProps.children?.toString().toLowerCase()}...`}
 						<Icon
 							name="caret-sort"
 							className="ml-2 h-4 w-4 shrink-0 opacity-50"
@@ -273,11 +273,15 @@ export function SearchSelectField({
 				<PopoverContent className="w-full p-0" align="start">
 					<Command>
 						<CommandInput
-							placeholder={`Search ${selectProps.name}...`}
+							placeholder={`Search ${labelProps.children
+								?.toString()
+								.toLowerCase()}...`}
 							className="h-9"
 						/>
 						<CommandList>
-							<CommandEmpty>No {selectProps.name} found.</CommandEmpty>
+							<CommandEmpty>
+								No {labelProps.children?.toString().toLowerCase()} found.
+							</CommandEmpty>
 							<CommandGroup>
 								{options.map(option => (
 									<CommandItem

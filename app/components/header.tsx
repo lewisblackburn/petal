@@ -2,10 +2,10 @@ import { Link, NavLink } from '@remix-run/react'
 import { UserDropdown } from './user-dropdown.tsx'
 import { useOptionalUser } from '~/utils/user.ts'
 import { Button } from './ui/button.tsx'
-import { Icon } from './ui/icon.tsx'
 import { SearchBar } from './search-bar.tsx'
 import { cn } from '~/utils/misc.tsx'
 import { NotificationPopover } from './notification-popover.tsx'
+import { AddMediaDropdown } from './add-media-dropdown.tsx'
 
 const LINKS = [
 	{
@@ -69,11 +69,7 @@ export function Header() {
 						{user ? (
 							<>
 								<div>
-									<Link to="/films/new">
-										<Button variant="ghost" size="icon">
-											<Icon name="plus" className="h-4 w-4" />
-										</Button>
-									</Link>
+									<AddMediaDropdown />
 									<NotificationPopover />
 								</div>
 								<UserDropdown />

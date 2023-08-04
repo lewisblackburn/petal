@@ -103,7 +103,7 @@ export function Slider({ title, description, items }: SliderProps) {
 								ref={imageRef}
 								src={item.image}
 								alt="poster"
-								className="aspect-a4 rounded-lg object-cover"
+								className="aspect-[2/3] rounded-lg object-cover"
 								draggable={false}
 							/>
 						</Link>
