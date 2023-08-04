@@ -2,23 +2,29 @@ import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { Icon } from './ui/icon.tsx'
 import { Button } from './ui/button.tsx'
+import { Link } from '@remix-run/react'
 
 interface ImageSliderProps {
 	title: string
 	description?: string
-	images: string[]
+	items: {
+		to: string
+		image: string
+		title?: string
+		subtitle?: string
+	}[]
 }
 
-export function ImageSlider({ title, description, images }: ImageSliderProps) {
+export function ImageSlider({ title, description, items }: ImageSliderProps) {
 	const [currentImageIndex, setCurrentImageIndex] = useState(0)
 	const [translateX, setTranslateX] = useState(currentImageIndex)
 	const [animated, setAnimated] = useState(false)
 	const [isAnimating, setIsAnimating] = useState(false) // Track ongoing animations
 	// clone the first four images and append them to the end of the array and vice versa
-	const clonedImages = [...images, ...images, ...images]
+	const clonedItems = [...items, ...items, ...items]
 
-	const imageClassName =
-		'aspect-a4 object-cover rounded-lg flex-[0_0_25%] max-w-[25%] md:flex-[0_0_15%] md:max-w-[15%] lg:flex-[0_0_12.5%] lg:max-w-[12.5%]'
+	const itemClassName =
+		'flex-[0_0_25%] max-w-[25%] md:flex-[0_0_15%] md:max-w-[15%] lg:flex-[0_0_12.5%] lg:max-w-[12.5%]'
 
 	const prevImage = () => {
 		if (!isAnimating) {
@@ -75,25 +81,26 @@ export function ImageSlider({ title, description, images }: ImageSliderProps) {
 					}}
 					onAnimationComplete={() => {
 						setIsAnimating(false)
-						if (currentImageIndex === images.length * 2) {
+						if (currentImageIndex === items.length * 2) {
 							setAnimated(false)
-							setCurrentImageIndex(images.length)
+							setCurrentImageIndex(items.length)
 						} else if (currentImageIndex === 0) {
 							setAnimated(false)
-							setCurrentImageIndex(images.length)
+							setCurrentImageIndex(items.length)
 						} else {
 							setAnimated(true)
 						}
 					}}
 				>
-					{clonedImages.map((imageUrl, index) => (
-						<img
-							ref={imageRef}
-							key={index}
-							src={imageUrl}
-							alt="poster"
-							className={imageClassName}
-						/>
+					{clonedItems.map((item, index) => (
+						<Link key={index} to={item.to} className={itemClassName}>
+							<img
+								ref={imageRef}
+								src={item.image}
+								alt="poster"
+								className="aspect-a4 rounded-lg object-cover"
+							/>
+						</Link>
 					))}
 				</motion.div>
 			</div>

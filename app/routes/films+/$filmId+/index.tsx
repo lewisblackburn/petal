@@ -143,13 +143,21 @@ export default function FilmRoute() {
 							living alongside us.
 						</p>
 					</div>
+					{/* TODO: Here will be a list of the crew who a featured */}
 					<div className="flex flex-col space-y-1">
 						<h3 className="text-lg font-semibold">Richard Curtis</h3>
 						<p className="text-base font-normal">Director, Writer</p>
 					</div>
 					<ImageSlider
 						title="Cast"
-						images={data.film.credits.map(credit => credit.person.image ?? '')}
+						items={data.film.credits.map(credit => {
+							return {
+								to: `/people/${credit.id}`,
+								image: credit.person.image!,
+								title: credit.person.name,
+								subtitle: credit.character,
+							}
+						})}
 					/>
 					<div className="flex flex-col space-y-1">
 						<h2 className="text-xl font-bold">Reviews</h2>
