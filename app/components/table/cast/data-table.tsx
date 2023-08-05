@@ -39,7 +39,7 @@ import {
 import { Icon } from '~/components/ui/icon.tsx'
 import { useParams, useSubmit } from '@remix-run/react'
 import { toast } from '~/components/ui/use-toast.ts'
-import { type CastMember } from '@prisma/client'
+import { CastMember } from '@prisma/client'
 
 const SortableRow = ({ row, data }: { row: any; data: any }) => {
 	const {
@@ -153,9 +153,9 @@ export function CastTable<TData, TValue>({
 		// update the dataCopy to the new order
 		setDataCopy(newData)
 		const castMemberBeforeIndex =
-			newData.findIndex(item => item.id === active.id) - 1
+			newData.findIndex((item: any) => item.id === active.id) - 1
 		const castMemberAfterIndex =
-			newData.findIndex(item => item.id === active.id) + 1
+			newData.findIndex((item: any) => item.id === active.id) + 1
 
 		const castMemberBefore = newData[castMemberBeforeIndex]
 		const castMemberAfter = newData[castMemberAfterIndex]
