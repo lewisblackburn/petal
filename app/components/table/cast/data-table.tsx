@@ -38,6 +38,7 @@ import {
 } from '@dnd-kit/modifiers'
 import { Icon } from '~/components/ui/icon.tsx'
 import { useParams, useSubmit } from '@remix-run/react'
+import { toast } from '~/components/ui/use-toast.ts'
 import { type CastMember } from '@prisma/client'
 
 const SortableRow = ({ row, data }: { row: any; data: any }) => {
@@ -49,7 +50,7 @@ const SortableRow = ({ row, data }: { row: any; data: any }) => {
 		transition,
 		setActivatorNodeRef,
 	} = useSortable({
-		id: String(data),
+		id: String(data.id),
 		strategy: verticalListSortingStrategy,
 	})
 	const style = {
@@ -88,9 +89,7 @@ export function CastTable<TData, TValue>({
 	data,
 }: DataTableProps<TData, TValue>) {
 	const { filmId } = useParams()
-	const [dataAsArrayOfIds, setDataAsArrayOfIds] = useState(
-		data.map((item: any) => item.id),
-	)
+	const [dataCopy, setDataCopy] = useState(data)
 	const [rowSelection, setRowSelection] = React.useState({})
 	const [columnVisibility, setColumnVisibility] =
 		React.useState<VisibilityState>({})
@@ -102,11 +101,11 @@ export function CastTable<TData, TValue>({
 
 	// NOTE: Update the dataAsArrayOfIds when the data changes to ensure the order can be updated
 	React.useEffect(() => {
-		setDataAsArrayOfIds(data.map((item: any) => item.id))
+		setDataCopy(data)
 	}, [data])
 
 	const table = useReactTable({
-		data,
+		data: dataCopy,
 		columns,
 		state: {
 			sorting,
@@ -131,27 +130,37 @@ export function CastTable<TData, TValue>({
 
 	const submit = useSubmit()
 
-	// NOTE: I coule create a copy of the data and update here to remove the flash of the old order
 	const onDragEnd = (event: any) => {
-		// FIX: I need to implemnt ordering with getSortedRowModel instead of dataAsArrayOfIds as ordering doesn't work when the table is sorted
-		// console.log(table.getSortedRowModel().rows)
 		const { active, over } = event
 		if (active.id === over.id || !filmId) return
 
+		// if sorted rows not in same order as dataCopy then return
+		const sortedRows = table
+			.getSortedRowModel()
+			.rows.map((row: any) => row.original.id)
+		const dataCopyIds = dataCopy.map((item: any) => item.id)
+		if (sortedRows.join() !== dataCopyIds.join()) {
+			return toast({
+				title: "Can't reorder when table is sorted",
+				description: 'Please remove sorting and try again',
+				variant: 'destructive',
+			})
+		}
+
 		const oldIndex = data.findIndex((item: any) => item.id === active.id)
 		const newIndex = data.findIndex((item: any) => item.id === over.id)
-		const newData = arrayMove(dataAsArrayOfIds, oldIndex, newIndex)
-		// update the dataAsArrayOfIds to the new order
-		setDataAsArrayOfIds(newData)
-		const castMemberBeforeId = newData[newData.indexOf(active.id) - 1]
-		const castMemberAfterId = newData[newData.indexOf(active.id) + 1]
+		const newData = arrayMove(dataCopy, oldIndex, newIndex)
+		// update the dataCopy to the new order
+		setDataCopy(newData)
+		const castMemberBeforeIndex =
+			newData.findIndex(item => item.id === active.id) - 1
+		const castMemberAfterIndex =
+			newData.findIndex(item => item.id === active.id) + 1
 
-		const castMemberBefore = data.find(
-			(item: any) => item.id === castMemberBeforeId,
-		) as CastMember
-		const castMemberAfter = data.find(
-			(item: any) => item.id === castMemberAfterId,
-		) as CastMember
+		const castMemberBefore = newData[castMemberBeforeIndex]
+		const castMemberAfter = newData[castMemberAfterIndex]
+
+		console.log(castMemberBefore, active.id, castMemberAfter, dataCopy)
 
 		const formData = new FormData()
 		formData.set('filmId', filmId.toString())
@@ -176,6 +185,18 @@ export function CastTable<TData, TValue>({
 				restrictToParentElement,
 			]}
 		>
+			<button
+				onClick={() => {
+					const dataSorted = table
+						.getSortedRowModel()
+						.rows.map((row: any) => row.original)
+						.sort((a: any, b: any) => a.index - b.index)
+
+					setDataCopy(dataSorted)
+				}}
+			>
+				update
+			</button>
 			<div className="space-y-4">
 				<DataTableToolbar table={table} />
 				<div className="rounded-md border">
@@ -202,7 +223,7 @@ export function CastTable<TData, TValue>({
 						</TableHeader>
 						<TableBody>
 							<SortableContext
-								items={dataAsArrayOfIds}
+								items={dataCopy.map((item: any) => item.id)}
 								strategy={verticalListSortingStrategy}
 							>
 								{table.getRowModel().rows?.length ? (
@@ -212,7 +233,7 @@ export function CastTable<TData, TValue>({
 											<SortableRow
 												key={row.id}
 												row={row}
-												data={dataAsArrayOfIds[index]}
+												data={dataCopy[index]}
 											/>
 										))
 								) : (
