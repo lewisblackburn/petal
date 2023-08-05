@@ -1,6 +1,6 @@
 import { useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
-import { type Genre } from '@prisma/client'
+import { type CastMember } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
@@ -16,28 +16,28 @@ import {
 	DialogTrigger,
 } from '~/components/ui/dialog.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { DeleteFilmGenresSchema } from '~/routes/resources+/film+/delete-genres.ts'
+import { DeleteFilmCastMembersSchema } from '~/routes/resources+/film+/delete-cast-members.ts'
 import { EnsurePE } from '~/utils/misc.tsx'
 
-interface DataTableDeleteGenres<TData> {
+interface DataTableDeleteCastMembers<TData> {
 	table: Table<TData>
 }
 
-export function DataTableDeleteGenres<TData>({
+export function DataTableDeleteCastMembers<TData>({
 	table,
-}: DataTableDeleteGenres<TData>) {
+}: DataTableDeleteCastMembers<TData>) {
 	const { filmId } = useParams()
-	const genresSelected = table
+	const peopleSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as Genre).id)
+		.rows.map(row => (row.original as CastMember).id)
 	const fetcher = useFetcher()
 	const [open, setOpen] = useState(false)
 
 	const [form] = useForm({
-		id: 'delete-film-genres-form',
+		id: 'delete-film-cast-members-form',
 		lastSubmission: fetcher.data?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: DeleteFilmGenresSchema })
+			return parse(formData, { schema: DeleteFilmCastMembersSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
@@ -46,13 +46,12 @@ export function DataTableDeleteGenres<TData>({
 		if (fetcher.state === 'idle') {
 			table.setRowSelection({})
 		}
-		if (fetcher.data?.status !== 'error') setOpen(false)
 	}, [fetcher, table])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				{genresSelected.length > 0 && (
+				{peopleSelected.length > 0 && (
 					<Button
 						variant="destructive"
 						size="sm"
@@ -66,8 +65,8 @@ export function DataTableDeleteGenres<TData>({
 			<DialogContent className="sm:max-w-[425px]">
 				<fetcher.Form
 					method="POST"
-					action="/resources/film/delete-genres"
-					name="delete-film-genres-form"
+					action="/resources/film/delete-cast-members"
+					name="delete-film-cast-members-form"
 					{...form.props}
 					onSubmit={() => {
 						setOpen(false)
@@ -75,22 +74,22 @@ export function DataTableDeleteGenres<TData>({
 				>
 					<EnsurePE />
 					<DialogHeader>
-						<DialogTitle>Delete Genres</DialogTitle>
+						<DialogTitle>Delete Cast Member</DialogTitle>
 						<DialogDescription>
-							Delete genres from the genres table.
+							Delete cast members from the cast table.
 						</DialogDescription>
 					</DialogHeader>
 					<div className="grid py-4">
 						<input
 							name="ids"
 							type="hidden"
-							value={JSON.stringify(genresSelected)}
+							value={JSON.stringify(peopleSelected)}
 						/>
 						<input name="filmId" type="hidden" value={filmId} />
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
-						<Button type="submit">Delete Genres</Button>
+						<Button type="submit">Delete Cast Member</Button>
 					</DialogFooter>
 				</fetcher.Form>
 			</DialogContent>

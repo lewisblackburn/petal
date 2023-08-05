@@ -1,7 +1,7 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ServerOnly } from 'remix-utils'
 import {
 	CheckboxField,
@@ -39,6 +39,10 @@ export function DataTableAddPhoto() {
 		shouldRevalidate: 'onBlur',
 	})
 
+	useEffect(() => {
+		if (fetcher.data?.status !== 'error') setOpen(false)
+	}, [fetcher])
+
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
@@ -58,9 +62,6 @@ export function DataTableAddPhoto() {
 					name="add-film-photo-form"
 					encType="multipart/form-data"
 					{...form.props}
-					onSubmit={() => {
-						setOpen(false)
-					}}
 				>
 					<EnsurePE />
 					<DialogHeader>

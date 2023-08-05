@@ -6,19 +6,19 @@ import {
 import { useLoaderData } from '@remix-run/react'
 import { prisma } from '~/utils/db.server.ts'
 import { Container } from '~/components/container.tsx'
-import { CreditTable } from '~/components/table/credits/data-table.tsx'
+import { CastTable } from '~/components/table/cast/data-table.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
 import {
 	combineServerTimings,
 	makeTimings,
 	time,
 } from '~/utils/timing.server.ts'
-import { columns } from '~/components/table/credits/columns.tsx'
+import { columns } from '~/components/table/cast/columns.tsx'
 import { orderByRationalProperty } from '~/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)
-	const timings = makeTimings('credit loader')
+	const timings = makeTimings('cast loader')
 
 	const film = await time(
 		() =>
@@ -27,32 +27,30 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					id: params.filmId,
 				},
 				select: {
-					credits: {
+					cast: {
 						include: {
 							person: true,
 						},
 					},
 				},
 			}),
-		{ timings, type: 'find credits' },
+		{ timings, type: 'find cast' },
 	)
 
 	if (!film) {
 		throw new Response('Not found', { status: 404 })
 	}
 
-	const credits = film.credits.map(credit => ({
-		id: credit.id,
-		name: credit.person.name,
-		character: credit.character,
-		job: credit.job,
-		department: credit.department,
-		numerator: credit.numerator,
-		denominator: credit.denominator,
+	const cast = film.cast.map(cast => ({
+		id: cast.id,
+		name: cast.person.name,
+		character: cast.character,
+		numerator: cast.numerator,
+		denominator: cast.denominator,
 	}))
 
 	return json(
-		{ credits: orderByRationalProperty(credits) },
+		{ cast: orderByRationalProperty(cast) },
 		{ headers: { 'Server-Timing': timings.toString() } },
 	)
 }
@@ -63,13 +61,13 @@ export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
 	}
 }
 
-export default function FilmEditCredits() {
-	const { credits } = useLoaderData<typeof loader>()
+export default function FilmEditCast() {
+	const { cast } = useLoaderData<typeof loader>()
 
 	return (
 		<Container>
 			{/* FIX: Dropdown resetting scroll */}
-			<CreditTable data={credits} columns={columns} />
+			<CastTable data={cast} columns={columns} />
 		</Container>
 	)
 }

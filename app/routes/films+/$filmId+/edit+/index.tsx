@@ -33,7 +33,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		throw new Response('Not found', { status: 404 })
 	}
 
-	const releaseDate = new Date(film.releaseDate ?? '')
+	const releaseDate = new Date(film.releaseDate ?? 0)
 
 	return json(
 		{

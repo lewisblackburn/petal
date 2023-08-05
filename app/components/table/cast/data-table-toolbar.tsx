@@ -3,11 +3,9 @@ import { type Table } from '@tanstack/react-table'
 import { Input } from '~/components/ui/input.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { DataTableFacetedFilter } from '~/components/table/data-table-faceted-filter.tsx'
 import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
-import { DataTableAddCredit } from './data-table-add-credit.tsx'
-import { DataTableDeleteCredits } from './data-table-delete-credits.tsx'
-import { CREDIT_ROLES, getAllJobs } from '~/utils/constants.ts'
+import { DataTableAddCastMember } from './data-table-add-cast-member.tsx'
+import { DataTableDeleteCastMembers } from './data-table-delete-cast-members.tsx'
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>
@@ -22,25 +20,11 @@ export function DataTableToolbar<TData>({
 		<div className="flex items-center justify-between">
 			<div className="flex flex-1 items-center space-x-2">
 				<Input
-					placeholder="Filter credit members..."
+					placeholder="Filter cast members..."
 					value={table.getState().globalFilter ?? ''}
 					onChange={event => table.setGlobalFilter(event.target.value)}
 					className="h-8 w-[150px] lg:w-[250px]"
 				/>
-				{table.getColumn('department') && (
-					<DataTableFacetedFilter
-						column={table.getColumn('department')}
-						title="Department"
-						options={CREDIT_ROLES}
-					/>
-				)}
-				{table.getColumn('job') && (
-					<DataTableFacetedFilter
-						column={table.getColumn('job')}
-						title="Job"
-						options={getAllJobs()}
-					/>
-				)}
 				{isFiltered && (
 					<Button
 						variant="ghost"
@@ -54,8 +38,8 @@ export function DataTableToolbar<TData>({
 			</div>
 			<div className="flex flex-1 items-center space-x-2">
 				<DataTableViewOptions table={table} />
-				<DataTableAddCredit />
-				<DataTableDeleteCredits table={table} />
+				<DataTableAddCastMember />
+				<DataTableDeleteCastMembers table={table} />
 			</div>
 		</div>
 	)

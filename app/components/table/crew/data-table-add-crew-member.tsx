@@ -1,8 +1,8 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
-import { useState } from 'react'
-import { ErrorList, Field, SearchSelectField } from '~/components/forms.tsx'
+import { useEffect, useState } from 'react'
+import { ErrorList, SearchSelectField } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
 	Dialog,
@@ -14,24 +14,28 @@ import {
 	DialogTrigger,
 } from '~/components/ui/dialog.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { AddFilmCreditSchema } from '~/routes/resources+/film+/add-credit.ts'
+import { AddFilmCrewMemberSchema } from '~/routes/resources+/film+/add-crew-member.ts'
 import { PersonSearch } from '~/routes/resources+/people.tsx'
-import { CREDIT_ROLES, getAllJobs } from '~/utils/constants.ts'
+import { CREW_ROLES, getAllJobs } from '~/utils/constants.ts'
 import { EnsurePE } from '~/utils/misc.tsx'
 
-export function DataTableAddCredit() {
+export function DataTableAddCrewMember() {
 	const { filmId } = useParams()
 	const fetcher = useFetcher()
 	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({
-		id: 'add-film-credit-form',
+		id: 'add-film-crew-member-form',
 		lastSubmission: fetcher.data?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddFilmCreditSchema })
+			return parse(formData, { schema: AddFilmCrewMemberSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
+
+	useEffect(() => {
+		if (fetcher.data?.status !== 'error') setOpen(false)
+	}, [fetcher])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -48,18 +52,15 @@ export function DataTableAddCredit() {
 			<DialogContent className="sm:max-w-[425px]">
 				<fetcher.Form
 					method="POST"
-					action="/resources/film/add-credit"
-					name="add-film-credit-form"
+					action="/resources/film/add-crew-member"
+					name="add-film-crew-member-form"
 					{...form.props}
-					onSubmit={() => {
-						setOpen(false)
-					}}
 				>
 					<EnsurePE />
 					<DialogHeader>
 						<DialogTitle>Add Person</DialogTitle>
 						<DialogDescription>
-							Add a new person to the credits table.
+							Add a new crew member to the crew table.
 						</DialogDescription>
 					</DialogHeader>
 					<div className="grid py-4">
@@ -73,17 +74,6 @@ export function DataTableAddCredit() {
 							}}
 							errors={fields.personId.errors}
 						/>
-						<Field
-							labelProps={{
-								htmlFor: fields.character.id,
-								children: 'Character',
-							}}
-							inputProps={{
-								...conform.input(fields.character, { type: 'text' }),
-								autoComplete: 'off',
-							}}
-							errors={fields.character.errors}
-						/>
 						<SearchSelectField
 							labelProps={{
 								htmlFor: fields.department.id,
@@ -92,7 +82,7 @@ export function DataTableAddCredit() {
 							selectProps={{
 								...conform.input(fields.department, { type: 'text' }),
 							}}
-							options={CREDIT_ROLES}
+							options={CREW_ROLES}
 							errors={fields.department.errors}
 						/>
 						<SearchSelectField

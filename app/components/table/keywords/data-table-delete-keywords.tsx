@@ -46,6 +46,7 @@ export function DataTableDeleteKeywords<TData>({
 		if (fetcher.state === 'idle') {
 			table.setRowSelection({})
 		}
+		if (fetcher.data?.status !== 'error') setOpen(false)
 	}, [fetcher, table])
 
 	return (

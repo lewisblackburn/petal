@@ -1,7 +1,7 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
 	CheckboxField,
 	ErrorList,
@@ -37,6 +37,10 @@ export function DataTableAddVideo() {
 		shouldRevalidate: 'onBlur',
 	})
 
+	useEffect(() => {
+		if (fetcher.data?.status !== 'error') setOpen(false)
+	}, [fetcher])
+
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
@@ -55,9 +59,6 @@ export function DataTableAddVideo() {
 					action="/resources/film/add-video"
 					name="add-film-video-form"
 					{...form.props}
-					onSubmit={() => {
-						setOpen(false)
-					}}
 				>
 					<EnsurePE />
 					<DialogHeader>

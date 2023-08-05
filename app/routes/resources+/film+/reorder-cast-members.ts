@@ -1,23 +1,23 @@
 import { parse } from '@conform-to/zod'
-import { type CreditMember } from '@prisma/client'
+import { type CastMember } from '@prisma/client'
 import { type DataFunctionArgs, json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 
-export const ReorderFilmCreditSchema = z.object({
+export const ReorderFilmCastSchema = z.object({
   filmId: z.string(),
-  creditBefore: z.string(),
-  creditId: z.string(),
-  creditAfter: z.string(),
+  castBefore: z.string(),
+  castId: z.string(),
+  castAfter: z.string(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
   await requireUserId(request)
   const formData = await request.formData()
   const submission = parse(formData, {
-    schema: ReorderFilmCreditSchema,
+    schema: ReorderFilmCastSchema,
     acceptMultipleErrors: () => true,
   })
   if (!submission.value) {
@@ -30,27 +30,26 @@ export async function action({ request }: DataFunctionArgs) {
     )
   }
 
-  let { filmId, creditBefore, creditId, creditAfter } = submission.value
+  let { filmId, castBefore, castId, castAfter } = submission.value
 
-  const creditBeforeParsed = JSON.parse(creditBefore) as CreditMember
-  const creditAfterParsed = JSON.parse(creditAfter) as CreditMember
+  const castBeforeParsed = JSON.parse(castBefore) as CastMember
+  const castAfterParsed = JSON.parse(castAfter) as CastMember
 
   // Calculate the new Numerator and Denominator values
   const numerator =
-    (creditBeforeParsed?.numerator ?? 0) + (creditAfterParsed?.numerator ?? 1)
+    (castBeforeParsed?.numerator ?? 0) + (castAfterParsed?.numerator ?? 1)
   const denominator =
-    (creditBeforeParsed?.denominator ?? 1) +
-    (creditAfterParsed?.denominator ?? 0)
+    (castBeforeParsed?.denominator ?? 1) + (castAfterParsed?.denominator ?? 0)
 
   // TODO: at some point the values will need to be reindexed to prevent duplicate order values
-  await prisma.creditMember
+  await prisma.castMember
     .update({
-      where: { id: creditId },
+      where: { id: castId },
       data: { numerator: numerator, denominator: denominator },
     })
     .catch(err => {
       return redirectWithToast(
-        `/films/${filmId}/edit/credits`,
+        `/films/${filmId}/edit/cast`,
         {
           title: err.message,
           variant: 'destructive',
@@ -59,8 +58,8 @@ export async function action({ request }: DataFunctionArgs) {
       )
     })
 
-  return redirectWithToast(`/films/${filmId}/edit/credits`, {
-    title: 'Reordered Film Credit Member',
+  return redirectWithToast(`/films/${filmId}/edit/cast`, {
+    title: 'Reordered Film Cast Member',
     variant: 'default',
   })
 }

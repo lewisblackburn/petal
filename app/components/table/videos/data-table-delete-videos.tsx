@@ -46,6 +46,7 @@ export function DataTableDeleteVideos<TData>({
 		if (fetcher.state === 'idle') {
 			table.setRowSelection({})
 		}
+		if (fetcher.data?.status !== 'error') setOpen(false)
 	}, [fetcher, table])
 
 	return (
@@ -68,9 +69,6 @@ export function DataTableDeleteVideos<TData>({
 					action="/resources/film/delete-videos"
 					name="delete-film-videos-form"
 					{...form.props}
-					onSubmit={() => {
-						setOpen(false)
-					}}
 				>
 					<EnsurePE />
 					<DialogHeader>

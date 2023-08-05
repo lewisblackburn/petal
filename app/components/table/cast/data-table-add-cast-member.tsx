@@ -1,8 +1,8 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
-import { useEffect, useState } from 'react'
-import { ErrorList } from '~/components/forms.tsx'
+import { useState } from 'react'
+import { ErrorList, Field } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
 	Dialog,
@@ -14,27 +14,23 @@ import {
 	DialogTrigger,
 } from '~/components/ui/dialog.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { AddFilmGenreSchema } from '~/routes/resources+/film+/add-genre.ts'
-import { GenreSearch } from '~/routes/resources+/genres.tsx'
+import { AddFilmCastMemberSchema } from '~/routes/resources+/film+/add-cast-member.ts'
+import { PersonSearch } from '~/routes/resources+/people.tsx'
 import { EnsurePE } from '~/utils/misc.tsx'
 
-export function DataTableAddGenre() {
+export function DataTableAddCastMember() {
 	const { filmId } = useParams()
 	const fetcher = useFetcher()
 	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({
-		id: 'add-film-genre-form',
+		id: 'add-film-cast-member-form',
 		lastSubmission: fetcher.data?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddFilmGenreSchema })
+			return parse(formData, { schema: AddFilmCastMemberSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
-
-	useEffect(() => {
-		if (fetcher.data?.status !== 'error') setOpen(false)
-	}, [fetcher])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -45,39 +41,53 @@ export function DataTableAddGenre() {
 					className="ml-auto hidden h-8 lg:flex"
 				>
 					<Icon name="plus" className="mr-2 h-4 w-4" />
-					Add Genre
+					Add Person
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<fetcher.Form
 					method="POST"
-					action="/resources/film/add-genre"
-					name="add-film-genre-form"
+					action="/resources/film/add-cast-member"
+					name="add-film-cast-member-form"
 					{...form.props}
+					onSubmit={() => {
+						setOpen(false)
+					}}
 				>
 					<EnsurePE />
 					<DialogHeader>
-						<DialogTitle>Add Genre</DialogTitle>
+						<DialogTitle>Add Person</DialogTitle>
 						<DialogDescription>
-							Add a new genre to the genres table.
+							Add a new cast member to the cast table.
 						</DialogDescription>
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<GenreSearch
+						<PersonSearch
 							labelProps={{
-								htmlFor: fields.genreId.id,
+								htmlFor: fields.personId.id,
 							}}
 							inputProps={{
-								...conform.input(fields.genreId, { type: 'text' }),
+								...conform.input(fields.personId, { type: 'text' }),
 							}}
-							errors={fields.genreId.errors}
+							errors={fields.personId.errors}
+						/>
+						<Field
+							labelProps={{
+								htmlFor: fields.character.id,
+								children: 'Character',
+							}}
+							inputProps={{
+								...conform.input(fields.character, { type: 'text' }),
+								autoComplete: 'off',
+							}}
+							errors={fields.character.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
 						<Button variant="default" type="submit">
-							Add Genre
+							Add Person
 						</Button>
 					</DialogFooter>
 				</fetcher.Form>

@@ -1,4 +1,4 @@
-type CreditRole = {
+type CrewRole = {
 	value: string
 	label: string
 	jobs: {
@@ -8,8 +8,8 @@ type CreditRole = {
 }
 
 export function getAllJobs() {
-	const jobs: CreditRole['jobs'] = []
-	CREDIT_ROLES.forEach(department => {
+	const jobs: CrewRole['jobs'] = []
+	CREW_ROLES.forEach(department => {
 		department.jobs.forEach(job => {
 			jobs.push(job)
 		})
@@ -17,8 +17,8 @@ export function getAllJobs() {
 	return jobs
 }
 
-export const CREDIT_ROLES: CreditRole[] = [
-	{
+export function crewRolesWithActing() {
+	const ACTING_ROLE = {
 		value: 'acting',
 		label: 'Acting',
 		jobs: [
@@ -31,7 +31,12 @@ export const CREDIT_ROLES: CreditRole[] = [
 				label: 'Actress',
 			},
 		],
-	},
+	}
+
+	return [ACTING_ROLE, ...CREW_ROLES]
+}
+
+export const CREW_ROLES: CrewRole[] = [
 	{
 		value: 'writing',
 		label: 'Writing',

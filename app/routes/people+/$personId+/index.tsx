@@ -30,7 +30,7 @@ export async function loader({ params }: DataFunctionArgs) {
 					name: true,
 					image: true,
 					knownForDepartment: true,
-					credits: {
+					casts: {
 						take: 10,
 						select: {
 							film: {
@@ -99,14 +99,14 @@ export default function PersonRoute() {
 					Best Rising Star.
 				</p>
 				<div>
-					{data.person.credits.length > 0 && (
+					{data.person.casts.length > 0 && (
 						<Carousel
 							title="Known For"
-							items={data.person.credits.map(credit => {
+							items={data.person.casts.map(cast => {
 								return {
-									to: `/films/${credit.film.id}`,
-									image: credit.film.poster!,
-									title: credit.film.title,
+									to: `/films/${cast.film.id}`,
+									image: cast.film.poster!,
+									title: cast.film.title,
 								}
 							})}
 						/>

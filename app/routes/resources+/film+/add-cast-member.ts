@@ -6,16 +6,18 @@ import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
 
-export const DeleteFilmCreditsSchema = z.object({
-	ids: z.string().nonempty(),
-	filmId: z.string().nonempty(),
+export const AddFilmCastMemberSchema = z.object({
+	filmId: z.string(),
+	personId: z.string().nonempty({ message: 'You must select a person' }),
+	character: z.string().min(1),
 })
 
 export async function action({ request }: DataFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
+
 	const submission = parse(formData, {
-		schema: DeleteFilmCreditsSchema,
+		schema: AddFilmCastMemberSchema,
 		acceptMultipleErrors: () => true,
 	})
 	if (!submission.value) {
@@ -28,17 +30,22 @@ export async function action({ request }: DataFunctionArgs) {
 		)
 	}
 
-	let { filmId, ids } = submission.value
+	let { filmId, personId, character } = submission.value
 
 	await prisma.film
 		.update({
 			where: { id: filmId },
 			data: {
-				credits: {
-					deleteMany: {
-						id: {
-							in: JSON.parse(ids) as string[],
+				cast: {
+					create: {
+						person: {
+							connect: {
+								id: personId,
+							},
 						},
+						numerator: 1,
+						denominator: 1,
+						character,
 					},
 				},
 			},
@@ -46,7 +53,7 @@ export async function action({ request }: DataFunctionArgs) {
 		.catch(err => {
 			ensurePE(formData, request)
 			return redirectWithToast(
-				`/films/${filmId}/edit/credits`,
+				`/films/${filmId}/edit/cast`,
 				{
 					title: err.message,
 					variant: 'destructive',
@@ -56,8 +63,8 @@ export async function action({ request }: DataFunctionArgs) {
 		})
 
 	ensurePE(formData, request)
-	return redirectWithToast(`/films/${filmId}/edit/credits`, {
-		title: 'Deleted Film Credit Members',
-		variant: 'destructive',
+	return redirectWithToast(`/films/${filmId}/edit/cast`, {
+		title: 'Added Film Cast Member',
+		variant: 'default',
 	})
 }

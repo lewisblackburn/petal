@@ -42,7 +42,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					releaseDate: true,
 					genres: true,
 					keywords: true,
-					credits: {
+					cast: {
 						take: 10,
 						select: {
 							// These needs to be included for ordering
@@ -67,8 +67,8 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		throw new Response('Not found', { status: 404 })
 	}
 
-	const releaseDate = new Date(film.releaseDate ?? '')
-	const credits = orderByRationalProperty(film.credits)
+	const releaseDate = new Date(film.releaseDate ?? 0)
+	const cast = orderByRationalProperty(film.cast)
 
 	return json(
 		{
@@ -76,8 +76,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 				...film,
 				runtime: minutesToWatchTime(film.runtime ?? 0),
 				releaseDate: getDateTimeFormat(request).format(releaseDate),
-
-				credits,
+				cast,
 			},
 		},
 		{ headers: { 'Server-Timing': timings.toString() } },
@@ -155,23 +154,11 @@ export default function FilmRoute() {
 						<h3 className="text-lg font-semibold">Richard Curtis</h3>
 						<p className="text-base font-normal">Director, Writer</p>
 					</div>
-					{/* TODO: Toggleable infinite scroll mode */}
-					{/* <Slider */}
-					{/* 	title="Cast" */}
-					{/* 	items={data.film.credits.map(credit => { */}
-					{/* 		return { */}
-					{/* 			to: `/people/${credit.id}`, */}
-					{/* 			image: credit.person.image!, */}
-					{/* 			title: credit.person.name, */}
-					{/* 			subtitle: credit.character, */}
-					{/* 		} */}
-					{/* 	})} */}
-					{/* /> */}
 					<div className="flex flex-col space-y-3">
 						<h2 className="text-xl font-bold">Cast</h2>
 						<Slider
-							images={data.film.credits
-								.map(credit => credit.person.image)
+							images={data.film.cast
+								.map(castMember => castMember.person.image)
 								.filter(Boolean)}
 						/>
 					</div>

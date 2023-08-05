@@ -1,10 +1,10 @@
-import { type CreditMember } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../data-table-column-header.js'
 import { LANGUAGES, PHOTO_TYPES } from '~/utils/constants.ts'
 
-export const columns: ColumnDef<Partial<CreditMember>>[] = [
+// FIX: Figure out what type this needs it was CreditMember
+export const columns: ColumnDef<any>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (

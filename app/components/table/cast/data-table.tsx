@@ -38,7 +38,7 @@ import {
 } from '@dnd-kit/modifiers'
 import { Icon } from '~/components/ui/icon.tsx'
 import { useParams, useSubmit } from '@remix-run/react'
-import { type CreditMember } from '@prisma/client'
+import { type CastMember } from '@prisma/client'
 
 const SortableRow = ({ row, data }: { row: any; data: any }) => {
 	const {
@@ -83,7 +83,7 @@ interface DataTableProps<TData, TValue> {
 	data: TData[]
 }
 
-export function CreditTable<TData, TValue>({
+export function CastTable<TData, TValue>({
 	columns,
 	data,
 }: DataTableProps<TData, TValue>) {
@@ -141,25 +141,25 @@ export function CreditTable<TData, TValue>({
 		const newData = arrayMove(dataAsArrayOfIds, oldIndex, newIndex)
 		// update the dataAsArrayOfIds to the new order
 		setDataAsArrayOfIds(newData)
-		const creditBeforeId = newData[newData.indexOf(active.id) - 1]
-		const creditAfterId = newData[newData.indexOf(active.id) + 1]
+		const castBeforeId = newData[newData.indexOf(active.id) - 1]
+		const castAfterId = newData[newData.indexOf(active.id) + 1]
 
-		const creditBefore = data.find(
-			(item: any) => item.id === creditBeforeId,
-		) as CreditMember
-		const creditAfter = data.find(
-			(item: any) => item.id === creditAfterId,
-		) as CreditMember
+		const castBefore = data.find(
+			(item: any) => item.id === castBeforeId,
+		) as CastMember
+		const castAfter = data.find(
+			(item: any) => item.id === castAfterId,
+		) as CastMember
 
 		const formData = new FormData()
 		formData.set('filmId', filmId.toString())
-		formData.set('creditBefore', JSON.stringify(creditBefore ?? {}))
-		formData.set('creditId', active.id)
-		formData.set('creditAfter', JSON.stringify(creditAfter ?? {}))
+		formData.set('castBefore', JSON.stringify(castBefore ?? {}))
+		formData.set('castId', active.id)
+		formData.set('castAfter', JSON.stringify(castAfter ?? {}))
 
 		submit(formData, {
 			method: 'POST',
-			action: '/resources/film/reorder-credit',
+			action: '/resources/film/reorder-cast-members',
 		})
 	}
 

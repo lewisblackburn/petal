@@ -1,7 +1,7 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ErrorList, Field } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
@@ -31,6 +31,10 @@ export function DataTableAddKeyword() {
 		shouldRevalidate: 'onBlur',
 	})
 
+	useEffect(() => {
+		if (fetcher.data?.status !== 'error') setOpen(false)
+	}, [fetcher])
+
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
@@ -49,9 +53,6 @@ export function DataTableAddKeyword() {
 					action="/resources/film/add-keyword"
 					name="add-film-keyword-form"
 					{...form.props}
-					onSubmit={() => {
-						setOpen(false)
-					}}
 				>
 					<EnsurePE />
 					<DialogHeader>

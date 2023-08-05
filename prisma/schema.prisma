@@ -134,7 +134,8 @@ model Person {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
-  credits CreditMember[]
+  casts CastMember[]
+  crews CrewMember[]
 }
 
 model Film {
@@ -158,26 +159,38 @@ model Film {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  credits  CreditMember[]
+  cast     CastMember[]
+  crew     CrewMember[]
   photos   Photo[]
   videos   Video[]
-  genres   Genre[]        @relation("FilmToGenre")
-  keywords Keyword[]      @relation("FilmToKeyword")
+  genres   Genre[]      @relation("FilmToGenre")
+  keywords Keyword[]    @relation("FilmToKeyword")
 }
 
-model CreditMember {
+model CastMember {
   id          String   @id @unique @default(cuid())
   // NOTE: This is for the order
   numerator   Int
   denominator Int
-  character   String?
+  character   String
   film        Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   person      Person   @relation(fields: [personId], references: [id])
-  department  String
-  job         String?
-  featured    Boolean
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  filmId   String
+  personId String
+}
+
+model CrewMember {
+  id         String   @id @unique @default(cuid())
+  film       Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  person     Person   @relation(fields: [personId], references: [id])
+  department String
+  job        String
+  featured   Boolean? @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   filmId   String
   personId String

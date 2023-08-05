@@ -22,7 +22,8 @@ export async function loader({ request }: DataFunctionArgs) {
 const NavigationLinks: { name: string; path: string }[] = [
 	{ name: 'Primary Facts', path: '' },
 	{ name: 'Alternative Titles', path: 'alternative' },
-	{ name: 'Credits', path: 'credits' },
+	{ name: 'Cast', path: 'cast' },
+	{ name: 'Crew', path: 'crew' },
 	{ name: 'Soundtrack', path: 'soundtrack' },
 	{ name: 'External IDs', path: 'external' },
 	{ name: 'Genres', path: 'genres' },

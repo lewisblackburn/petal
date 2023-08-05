@@ -8,7 +8,7 @@ import { type Person } from '@prisma/client'
 import { ErrorList, Field, SearchSelectField } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import { CREDIT_ROLES } from '~/utils/constants.ts'
+import { crewRolesWithActing } from '~/utils/constants.ts'
 
 export const PersonEditorSchema = z.object({
 	id: z.string().optional(),
@@ -103,7 +103,7 @@ export function PersonEditor({ person }: { person?: Partial<Person> }) {
 					...conform.input(fields.knownForDepartment),
 					autoComplete: 'known-for-department',
 				}}
-				options={CREDIT_ROLES}
+				options={crewRolesWithActing()}
 				errors={fields.knownForDepartment.errors}
 			/>
 			<ErrorList errors={form.errors} id={form.errorId} />

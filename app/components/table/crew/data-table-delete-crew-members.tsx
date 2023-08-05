@@ -1,6 +1,6 @@
 import { useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
-import { type CreditMember } from '@prisma/client'
+import { type CrewMember } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
@@ -16,28 +16,28 @@ import {
 	DialogTrigger,
 } from '~/components/ui/dialog.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { DeleteFilmCreditsSchema } from '~/routes/resources+/film+/delete-credits.ts'
+import { DeleteFilmCrewMembersSchema } from '~/routes/resources+/film+/delete-crew-members.ts'
 import { EnsurePE } from '~/utils/misc.tsx'
 
-interface DataTableDeleteCredits<TData> {
+interface DataTableDeleteCrewMembers<TData> {
 	table: Table<TData>
 }
 
-export function DataTableDeleteCredits<TData>({
+export function DataTableDeleteCrewMembers<TData>({
 	table,
-}: DataTableDeleteCredits<TData>) {
+}: DataTableDeleteCrewMembers<TData>) {
 	const { filmId } = useParams()
 	const peopleSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as CreditMember).id)
+		.rows.map(row => (row.original as CrewMember).id)
 	const fetcher = useFetcher()
 	const [open, setOpen] = useState(false)
 
 	const [form] = useForm({
-		id: 'delete-film-credits-form',
+		id: 'delete-film-crew-members-form',
 		lastSubmission: fetcher.data?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: DeleteFilmCreditsSchema })
+			return parse(formData, { schema: DeleteFilmCrewMembersSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
@@ -46,6 +46,7 @@ export function DataTableDeleteCredits<TData>({
 		if (fetcher.state === 'idle') {
 			table.setRowSelection({})
 		}
+		if (fetcher.data?.status !== 'error') setOpen(false)
 	}, [fetcher, table])
 
 	return (
@@ -65,18 +66,15 @@ export function DataTableDeleteCredits<TData>({
 			<DialogContent className="sm:max-w-[425px]">
 				<fetcher.Form
 					method="POST"
-					action="/resources/film/delete-credits"
-					name="delete-film-credits-form"
+					action="/resources/film/delete-crew-members"
+					name="delete-film-crew-members-form"
 					{...form.props}
-					onSubmit={() => {
-						setOpen(false)
-					}}
 				>
 					<EnsurePE />
 					<DialogHeader>
-						<DialogTitle>Delete Credits</DialogTitle>
+						<DialogTitle>Delete Crew Member</DialogTitle>
 						<DialogDescription>
-							Delte people from the credits table.
+							Delete crew members from the crew table.
 						</DialogDescription>
 					</DialogHeader>
 					<div className="grid py-4">
@@ -89,7 +87,7 @@ export function DataTableDeleteCredits<TData>({
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
-						<Button type="submit">Delete Credits</Button>
+						<Button type="submit">Delete Crew Member</Button>
 					</DialogFooter>
 				</fetcher.Form>
 			</DialogContent>
