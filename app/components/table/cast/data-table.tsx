@@ -159,8 +159,6 @@ export function CastTable<TData, TValue>({
 		const castMemberBefore = newData[castMemberBeforeIndex]
 		const castMemberAfter = newData[castMemberAfterIndex]
 
-		console.log(castMemberBefore, active.id, castMemberAfter, dataCopy)
-
 		const formData = new FormData()
 		formData.set('filmId', filmId.toString())
 		formData.set('castMemberBefore', JSON.stringify(castMemberBefore ?? {}))
