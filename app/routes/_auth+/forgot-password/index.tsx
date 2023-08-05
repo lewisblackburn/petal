@@ -81,7 +81,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const response = await sendEmail({
 		to: user.email,
-		subject: `Epic Notes Password Reset`,
+		subject: `Petal Password Reset`,
 		react: (
 			<ForgotPasswordEmail onboardingUrl={verifyUrl.toString()} otp={otp} />
 		),
@@ -117,7 +117,7 @@ export async function handleVerification({
 }
 
 export const meta: V2_MetaFunction = () => {
-	return [{ title: 'Password Recovery for Epic Notes' }]
+	return [{ title: 'Password Recovery for Petal' }]
 }
 
 export default function ForgotPasswordRoute() {

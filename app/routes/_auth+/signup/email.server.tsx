@@ -13,7 +13,7 @@ export function SignupEmail({
 			<Html lang="en" dir="ltr">
 				<Container>
 					<h1>
-						<Text>Welcome to Epic Notes!</Text>
+						<Text>Welcome to Petal!</Text>
 					</h1>
 					<p>
 						<Text>

@@ -13,7 +13,7 @@ export function EmailChangeEmail({
 			<Html lang="en" dir="ltr">
 				<Container>
 					<h1>
-						<Text>Epic Notes Email Change</Text>
+						<Text>Petal Email Change</Text>
 					</h1>
 					<p>
 						<Text>
@@ -36,11 +36,11 @@ export function EmailChangeNoticeEmail({ userId }: { userId: string }) {
 			<Html lang="en" dir="ltr">
 				<Container>
 					<h1>
-						<Text>Your Epic Notes email has been changed</Text>
+						<Text>Your Petal email has been changed</Text>
 					</h1>
 					<p>
 						<Text>
-							We're writing to let you know that your Epic Notes email has been
+							We're writing to let you know that your Petal email has been
 							changed.
 						</Text>
 					</p>

@@ -16,7 +16,7 @@ const files = glob
 	.sort((a, b) => a.localeCompare(b))
 
 const shouldVerboseLog = process.argv.includes('--log=verbose')
-const logVerbose = shouldVerboseLog ? console.log : () => { }
+const logVerbose = shouldVerboseLog ? console.log : () => {}
 
 if (files.length === 0) {
 	console.log(`No SVG files found in ${inputDirRelative}`)

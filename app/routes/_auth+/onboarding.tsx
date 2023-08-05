@@ -140,7 +140,7 @@ export async function handleVerification({
 }
 
 export const meta: V2_MetaFunction = () => {
-	return [{ title: 'Setup Epic Notes Account' }]
+	return [{ title: 'Setup Petal Account' }]
 }
 
 export default function OnboardingPage() {
@@ -268,8 +268,8 @@ export default function OnboardingPage() {
 							className="w-full"
 							status={
 								navigation.state === 'submitting' &&
-									navigation.formAction === formAction &&
-									navigation.formMethod === 'POST'
+								navigation.formAction === formAction &&
+								navigation.formMethod === 'POST'
 									? 'pending'
 									: actionData?.status ?? 'idle'
 							}

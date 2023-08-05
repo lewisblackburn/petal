@@ -13,7 +13,7 @@ export function ForgotPasswordEmail({
 			<Html lang="en" dir="ltr">
 				<Container>
 					<h1>
-						<Text>Epic Notes Password Reset</Text>
+						<Text>Petal Password Reset</Text>
 					</h1>
 					<p>
 						<Text>

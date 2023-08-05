@@ -22,7 +22,7 @@ export async function loader(args: DataFunctionArgs) {
 }
 
 export const meta: V2_MetaFunction = () => {
-	return [{ title: 'Login to Epic Notes' }]
+	return [{ title: 'Login to Petal' }]
 }
 
 export default function LoginPage() {
