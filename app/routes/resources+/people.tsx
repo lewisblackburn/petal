@@ -1,5 +1,5 @@
 import { type Prisma } from '@prisma/client'
-import { Link, useFetcher } from '@remix-run/react'
+import { Link, useFetcher, useLocation } from '@remix-run/react'
 import {
 	json,
 	type DataFunctionArgs,
@@ -63,6 +63,8 @@ export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
 	}
 }
 
+// FIX: This breaks if someone has the same name DUHDOY
+
 export const PersonSearch = ({
 	labelProps,
 	inputProps,
@@ -72,6 +74,7 @@ export const PersonSearch = ({
 	inputProps: React.InputHTMLAttributes<HTMLInputElement>
 	errors?: ListOfErrors
 }) => {
+	const path = useLocation().pathname
 	const [open, setOpen] = useState(false)
 	const fallbackId = useId()
 	const id = inputProps.id ?? inputProps.name ?? fallbackId
@@ -138,7 +141,7 @@ export const PersonSearch = ({
 						<Spinner showSpinner={delayedBusy} />
 						<CommandList>
 							<CommandEmpty className="-mb-2 p-2">
-								<Link to="/people/new">
+								<Link to={`/people/new?redirectTo=${path}`}>
 									<Button variant="ghost" size="sm" className="w-full">
 										<Icon name="plus" className="mr-2 h-4 w-4" />
 										Create a person
@@ -146,15 +149,16 @@ export const PersonSearch = ({
 								</Link>
 							</CommandEmpty>
 							<CommandGroup>
-								{people.map(person => (
+								{people.map((person: Person) => (
 									<CommandItem
-										key={person.name}
+										key={person.id}
+										value={person.id}
 										onSelect={currentValue => {
 											const person = people.find(
-												person => person.name.toLowerCase() === currentValue,
+												person => person.id === currentValue,
 											)
 											setSelectedPerson(
-												currentValue === selectedPerson?.name
+												currentValue === selectedPerson?.id
 													? selectedPerson
 													: person,
 											)
@@ -172,7 +176,7 @@ export const PersonSearch = ({
 											name="check"
 											className={cn(
 												'ml-auto h-4 w-4',
-												selectedPerson?.name === person.name
+												selectedPerson?.id === person.id
 													? 'opacity-100'
 													: 'opacity-0',
 											)}

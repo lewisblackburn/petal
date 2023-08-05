@@ -1,7 +1,7 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
-import { useFetcher } from '@remix-run/react'
+import { useFetcher, useSearchParams } from '@remix-run/react'
 import { z } from 'zod'
 import { prisma } from '~/utils/db.server.ts'
 import { type Person } from '@prisma/client'
@@ -9,11 +9,13 @@ import { ErrorList, Field, SearchSelectField } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { crewRolesWithActing } from '~/utils/constants.ts'
+import { safeRedirect } from 'remix-utils'
 
 export const PersonEditorSchema = z.object({
 	id: z.string().optional(),
 	name: z.string().min(1),
 	knownForDepartment: z.string().optional(),
+	redirectTo: z.string().optional(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -36,7 +38,7 @@ export async function action({ request }: DataFunctionArgs) {
 	}
 	let person: { id: string }
 
-	const { id, name, knownForDepartment } = submission.value
+	const { id, name, knownForDepartment, redirectTo } = submission.value
 
 	const data = {
 		name,
@@ -62,10 +64,12 @@ export async function action({ request }: DataFunctionArgs) {
 	} else {
 		person = await prisma.person.create({ data, select })
 	}
-	return redirect(`/people/${person.id}`)
+
+	return redirect(safeRedirect(redirectTo, `/people/${person.id}`))
 }
 
 export function PersonEditor({ person }: { person?: Partial<Person> }) {
+	const [searchParams] = useSearchParams()
 	const personEditorFetcher = useFetcher<typeof action>()
 
 	const [form, fields] = useForm({
@@ -78,6 +82,8 @@ export function PersonEditor({ person }: { person?: Partial<Person> }) {
 		defaultValue: person,
 		shouldRevalidate: 'onBlur',
 	})
+
+	const redirectTo = searchParams.get('redirectTo') ?? ''
 
 	return (
 		<personEditorFetcher.Form
@@ -106,6 +112,7 @@ export function PersonEditor({ person }: { person?: Partial<Person> }) {
 				options={crewRolesWithActing()}
 				errors={fields.knownForDepartment.errors}
 			/>
+			<input name={fields.redirectTo.name} type="hidden" value={redirectTo} />
 			<ErrorList errors={form.errors} id={form.errorId} />
 			<div className="flex justify-end gap-4">
 				<Button variant="outline" type="reset">
