@@ -14,6 +14,7 @@ import {
 	time,
 } from '~/utils/timing.server.ts'
 import { GenreTable } from '~/components/table/genres/data-table.tsx'
+import { getDateTimeFormat } from '~/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)
@@ -35,12 +36,11 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	if (!film) {
 		throw new Response('Not found', { status: 404 })
 	}
-
 	const genres = film.genres.map(genre => ({
 		id: genre.id,
 		name: genre.name,
-		created: genre.createdAt,
-		updated: genre.updatedAt,
+		created: getDateTimeFormat(request).format(genre.createdAt),
+		updated: getDateTimeFormat(request).format(genre.updatedAt),
 	}))
 
 	return json({ genres }, { headers: { 'Server-Timing': timings.toString() } })

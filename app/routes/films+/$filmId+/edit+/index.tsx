@@ -6,7 +6,6 @@ import {
 import { useLoaderData } from '@remix-run/react'
 import { prisma } from '~/utils/db.server.ts'
 import { FilmEditor } from '~/routes/resources+/film-editor.tsx'
-import { formatDateWithDashes } from '~/utils/misc.tsx'
 import { Container } from '~/components/container.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
 import {
@@ -14,6 +13,7 @@ import {
 	makeTimings,
 	time,
 } from '~/utils/timing.server.ts'
+import { getDateTimeFormat } from '~/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)
@@ -33,11 +33,18 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		throw new Response('Not found', { status: 404 })
 	}
 
+	const releaseDate = new Date(film.releaseDate ?? '')
+
 	return json(
 		{
 			film: {
 				...film,
-				releaseDate: film.releaseDate && formatDateWithDashes(film.releaseDate),
+				// NOTE: This lets the date picker autofill the date
+				releaseDate: getDateTimeFormat(request)
+					.format(releaseDate)
+					.split('/')
+					.reverse()
+					.join('-'),
 			},
 		},
 		{ headers: { 'Server-Timing': timings.toString() } },

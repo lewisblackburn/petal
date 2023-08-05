@@ -12,14 +12,18 @@ import { Button } from '~/components/ui/button.tsx'
 import { Icon, type IconName } from '~/components/ui/icon.tsx'
 import { Separator } from '~/components/ui/separator.tsx'
 import { prisma } from '~/utils/db.server.ts'
-import { orderByRationalProperty } from '~/utils/misc.tsx'
+import {
+	getDateTimeFormat,
+	minutesToWatchTime,
+	orderByRationalProperty,
+} from '~/utils/misc.tsx'
 import {
 	combineServerTimings,
 	makeTimings,
 	time,
 } from '~/utils/timing.server.ts'
 
-export async function loader({ params }: DataFunctionArgs) {
+export async function loader({ request, params }: DataFunctionArgs) {
 	const timings = makeTimings('film loader')
 
 	const film = await time(
@@ -34,6 +38,8 @@ export async function loader({ params }: DataFunctionArgs) {
 					overview: true,
 					poster: true,
 					backdrop: true,
+					runtime: true,
+					releaseDate: true,
 					genres: true,
 					keywords: true,
 					credits: {
@@ -61,10 +67,19 @@ export async function loader({ params }: DataFunctionArgs) {
 		throw new Response('Not found', { status: 404 })
 	}
 
+	const releaseDate = new Date(film.releaseDate ?? '')
 	const credits = orderByRationalProperty(film.credits)
 
 	return json(
-		{ film: { ...film, credits } },
+		{
+			film: {
+				...film,
+				runtime: minutesToWatchTime(film.runtime ?? 0),
+				releaseDate: getDateTimeFormat(request).format(releaseDate),
+
+				credits,
+			},
+		},
 		{ headers: { 'Server-Timing': timings.toString() } },
 	)
 }
@@ -81,7 +96,7 @@ export default function FilmRoute() {
 	return (
 		<Container className="flex flex-col gap-10">
 			<div className="flex items-center justify-between">
-				<h2 className="text-h2 font-black">About Time</h2>
+				<h2 className="text-h2 font-black">{data.film.title}</h2>
 				<div className="flex items-center gap-5">
 					<Button variant="secondary">
 						<Icon name="star" className="mr-2" />
@@ -113,10 +128,10 @@ export default function FilmRoute() {
 				<div className="col-span-7 flex flex-col space-y-10">
 					<div className="flex items-center justify-between rounded-lg border px-7 py-6">
 						<Status title="Runtime" icon="clock">
-							2h 5m
+							{data.film.runtime ?? 'N/A'}
 						</Status>
 						<Status title="Release Date" icon="calendar">
-							04/09/2013
+							{data.film.releaseDate ?? 'N/A'}
 						</Status>
 						<Status title="Age Rating" icon="person">
 							12A

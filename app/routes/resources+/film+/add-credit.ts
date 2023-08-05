@@ -9,7 +9,7 @@ import { ensurePE } from '~/utils/misc.tsx'
 export const AddFilmCreditSchema = z.object({
 	filmId: z.string(),
 	personId: z.string().nonempty({ message: 'You must select a person' }),
-	character: z.string().nonempty(),
+	character: z.string().optional(),
 	department: z.string().nonempty({ message: 'You must select a department' }),
 	job: z.string().nonempty({ message: 'You must select a job' }),
 })
@@ -33,6 +33,8 @@ export async function action({ request }: DataFunctionArgs) {
 	}
 
 	let { filmId, personId, character, department, job } = submission.value
+
+	console.log({ filmId, personId, character, department, job })
 
 	await prisma.film
 		.update({

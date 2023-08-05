@@ -1,7 +1,6 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
 import { type Keyword } from '@prisma/client'
-import { formatDate } from '~/utils/misc.tsx'
 import { DataTableColumnHeader } from '../data-table-column-header.tsx'
 
 export const columns: ColumnDef<Partial<Keyword>>[] = [
@@ -46,9 +45,7 @@ export const columns: ColumnDef<Partial<Keyword>>[] = [
 			<DataTableColumnHeader column={column} title="createdAt" />
 		),
 		cell: ({ row }) => (
-			<div className="w-[250px]">
-				{formatDate(new Date(row.getValue('created')))}
-			</div>
+			<div className="w-[250px]">{row.getValue('created')}</div>
 		),
 	},
 	{
@@ -57,9 +54,7 @@ export const columns: ColumnDef<Partial<Keyword>>[] = [
 			<DataTableColumnHeader column={column} title="updatedAt" />
 		),
 		cell: ({ row }) => (
-			<div className="w-[250px]">
-				{formatDate(new Date(row.getValue('updated')))}
-			</div>
+			<div className="w-[250px]">{row.getValue('updated')}</div>
 		),
 	},
 ]

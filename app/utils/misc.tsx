@@ -199,10 +199,8 @@ export function getDateTimeFormat(
 	// change your default options here
 	const defaultOptions: Intl.DateTimeFormatOptions = {
 		year: 'numeric',
-		month: 'numeric',
-		day: 'numeric',
-		hour: 'numeric',
-		minute: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
 	}
 	options = {
 		...defaultOptions,
@@ -286,9 +284,9 @@ export function useDoubleCheck() {
 			doubleCheck
 				? undefined
 				: e => {
-					e.preventDefault()
-					setDoubleCheck(true)
-				}
+						e.preventDefault()
+						setDoubleCheck(true)
+				  }
 
 		return {
 			...props,
@@ -335,18 +333,6 @@ export function useDebounce<
 		[delay],
 	)
 }
-export function formatDate(date: Date) {
-	return date.toLocaleDateString('en-GB', {
-		year: 'numeric',
-		month: '2-digit',
-		day: '2-digit',
-	})
-}
-
-export function formatDateWithDashes(date: Date) {
-	const formattedDate = formatDate(date)
-	return formattedDate?.split('/').reverse().join('-')
-}
 
 // TODO: Change this to a prisma computed field when they are supported
 /**
@@ -363,16 +349,25 @@ export function computeInitials(name: string) {
 	return initials.join('')
 }
 
+/**
+ * Returns a sorted array of objects by a rational property (numerator / denominator)
+ * for ordering with the Stern-Brocot method.
+ *
+ * The Stern-Brocot method is a technique for determining the order of elements
+ * when the standard comparison operators are insufficient for complex sorting rules.
+ *
+ * For more details about the Stern-Brocot method, see:
+ * https://begriffs.com/posts/2018-03-20-user-defined-order.html#approach-3-true-fractions
+ *
+ * @typeparam T The type of objects in the array, must have 'numerator' and 'denominator' properties.
+ * @param array The array of objects to be sorted based on the rational property.
+ * @returns A new array containing the objects sorted by the rational property.
+ */
 type NumericRational = {
 	numerator: number
 	denominator: number
 }
 
-/**
- * Returns sorted array of objects by a rational property (numerator / denominator)
- * for ordering with the Stern-Brocot method
- * https://begriffs.com/posts/2018-03-20-user-defined-order.html#approach-3-true-fractions
- */
 export const orderByRationalProperty = <T extends NumericRational>(
 	array: Array<T>,
 ): Array<T> => {
@@ -381,4 +376,22 @@ export const orderByRationalProperty = <T extends NumericRational>(
 		const rationalB = b.numerator / b.denominator
 		return rationalA - rationalB
 	})
+}
+
+/**
+ * Converts the given number of minutes to hours and remaining minutes.
+ *
+ * @param minutes The number of minutes to convert to hours and minutes.
+ * @returns A formatted string in the format "xh ym".
+ * @throws Error if the input `minutes` is a negative number.
+ */
+export function minutesToWatchTime(minutes: number): string {
+	if (minutes < 0) {
+		throw new Error('Minutes must be a non-negative number.')
+	}
+
+	const hours: number = Math.floor(minutes / 60)
+	const remainingMinutes: number = minutes % 60
+
+	return `${hours}h ${remainingMinutes}m`
 }

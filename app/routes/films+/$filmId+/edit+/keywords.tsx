@@ -14,6 +14,7 @@ import {
 	time,
 } from '~/utils/timing.server.ts'
 import { KeywordTable } from '~/components/table/keywords/data-table.tsx'
+import { getDateTimeFormat } from '~/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)
@@ -39,8 +40,8 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	const keywords = film.keywords.map(keyword => ({
 		id: keyword.id,
 		name: keyword.name,
-		created: keyword.createdAt,
-		updated: keyword.updatedAt,
+		created: getDateTimeFormat(request).format(keyword.createdAt),
+		updated: getDateTimeFormat(request).format(keyword.updatedAt),
 	}))
 
 	return json(
