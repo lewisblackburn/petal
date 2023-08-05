@@ -109,8 +109,8 @@ export default function FilmRoute() {
 					className="h-[600px] w-full"
 				/>
 			</div>
-			<div className="grid grid-cols-[3fr_1fr] gap-10">
-				<div className="flex flex-col space-y-10">
+			<div className="grid grid-cols-10 gap-10">
+				<div className="col-span-7 flex flex-col space-y-10">
 					<div className="flex items-center justify-between rounded-lg border px-7 py-6">
 						<Status title="Runtime" icon="clock">
 							2h 5m
@@ -141,19 +141,25 @@ export default function FilmRoute() {
 						<p className="text-base font-normal">Director, Writer</p>
 					</div>
 					{/* TODO: Toggleable infinite scroll mode */}
-					{data.film.credits.length > 0 && (
+					{/* <Slider */}
+					{/* 	title="Cast" */}
+					{/* 	items={data.film.credits.map(credit => { */}
+					{/* 		return { */}
+					{/* 			to: `/people/${credit.id}`, */}
+					{/* 			image: credit.person.image!, */}
+					{/* 			title: credit.person.name, */}
+					{/* 			subtitle: credit.character, */}
+					{/* 		} */}
+					{/* 	})} */}
+					{/* /> */}
+					<div className="flex flex-col space-y-3">
+						<h2 className="text-xl font-bold">Cast</h2>
 						<Slider
-							title="Cast"
-							items={data.film.credits.map(credit => {
-								return {
-									to: `/people/${credit.id}`,
-									image: credit.person.image!,
-									title: credit.person.name,
-									subtitle: credit.character,
-								}
-							})}
+							images={data.film.credits
+								.map(credit => credit.person.image)
+								.filter(Boolean)}
 						/>
-					)}
+					</div>
 					<div className="flex flex-col space-y-1">
 						<h2 className="text-xl font-bold">Reviews</h2>
 					</div>
@@ -161,7 +167,7 @@ export default function FilmRoute() {
 						<h2 className="text-xl font-bold">Recommendations</h2>
 					</div>
 				</div>
-				<div>
+				<div className="col-span-3">
 					<div className="flex flex-col space-y-5 rounded-lg border p-5">
 						<Button size="lg" className="w-full">
 							<Icon name="play" className="mr-2" />

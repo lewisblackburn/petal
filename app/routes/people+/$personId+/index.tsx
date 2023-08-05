@@ -4,9 +4,9 @@ import {
 	type HeadersFunction,
 } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
+import { Carousel } from '~/components/carousel.tsx'
 import { Container } from '~/components/container.tsx'
 import { Image } from '~/components/image.tsx'
-import { Slider } from '~/components/slider.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { prisma } from '~/utils/db.server.ts'
@@ -100,7 +100,7 @@ export default function PersonRoute() {
 				</p>
 				<div>
 					{data.person.credits.length > 0 && (
-						<Slider
+						<Carousel
 							title="Known For"
 							items={data.person.credits.map(credit => {
 								return {
