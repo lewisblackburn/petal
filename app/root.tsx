@@ -71,6 +71,8 @@ export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
 	]
 }
 
+// FIX: SOMETHING IN FILMS+/PEOPLE+ IS CAUSING AN ESBUILD/KIT ERROR
+
 export async function loader({ request }: DataFunctionArgs) {
 	const timings = makeTimings('root loader')
 	const userId = await time(() => getUserId(request), {
@@ -81,19 +83,19 @@ export async function loader({ request }: DataFunctionArgs) {
 
 	const user = userId
 		? await time(
-				() =>
-					prisma.user.findUnique({
-						where: { id: userId },
-						select: {
-							id: true,
-							name: true,
-							username: true,
-							email: true,
-							imageId: true,
-						},
-					}),
-				{ timings, type: 'find user', desc: 'find user in root' },
-		  )
+			() =>
+				prisma.user.findUnique({
+					where: { id: userId },
+					select: {
+						id: true,
+						name: true,
+						username: true,
+						email: true,
+						imageId: true,
+					},
+				}),
+			{ timings, type: 'find user', desc: 'find user in root' },
+		
 		: null
 	if (userId && !user) {
 		console.info('something weird happened')
