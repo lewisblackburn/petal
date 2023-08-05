@@ -6,19 +6,18 @@ import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 
-export const ReorderFilmcastSchema = z.object({
+export const ReorderFilmCastSchema = z.object({
   filmId: z.string(),
-  // FIX: This should be castMemberBefore
-  castBefore: z.string(),
-  castId: z.string(),
-  castAfter: z.string(),
+  castMemberBefore: z.string(),
+  castMemberId: z.string(),
+  castMemberAfter: z.string(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
   await requireUserId(request)
   const formData = await request.formData()
   const submission = parse(formData, {
-    schema: ReorderFilmcastSchema,
+    schema: ReorderFilmCastSchema,
     acceptMultipleErrors: () => true,
   })
   if (!submission.value) {
@@ -31,21 +30,24 @@ export async function action({ request }: DataFunctionArgs) {
     )
   }
 
-  let { filmId, castBefore, castId, castAfter } = submission.value
+  let { filmId, castMemberBefore, castMemberId, castMemberAfter } =
+    submission.value
 
-  const castBeforeParsed = JSON.parse(castBefore) as CastMember
-  const castAfterParsed = JSON.parse(castAfter) as CastMember
+  const castMemberBeforeParsed = JSON.parse(castMemberBefore) as CastMember
+  const castMemberAfterParsed = JSON.parse(castMemberAfter) as CastMember
 
   // Calculate the new Numerator and Denominator values
   const numerator =
-    (castBeforeParsed?.numerator ?? 0) + (castAfterParsed?.numerator ?? 1)
+    (castMemberBeforeParsed?.numerator ?? 0) +
+    (castMemberAfterParsed?.numerator ?? 1)
   const denominator =
-    (castBeforeParsed?.denominator ?? 1) + (castAfterParsed?.denominator ?? 0)
+    (castMemberBeforeParsed?.denominator ?? 1) +
+    (castMemberAfterParsed?.denominator ?? 0)
 
-  // TODO: at some point the values will need to be reindexed to prevent duplicate order values
+  // TODO: At some point the values will need to be reindexed to prevent duplicate order values
   await prisma.castMember
     .update({
-      where: { id: castId },
+      where: { id: castMemberId },
       data: { numerator: numerator, denominator: denominator },
     })
     .catch(err => {

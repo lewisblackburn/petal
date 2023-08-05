@@ -141,23 +141,21 @@ export function CastTable<TData, TValue>({
 		const newData = arrayMove(dataAsArrayOfIds, oldIndex, newIndex)
 		// update the dataAsArrayOfIds to the new order
 		setDataAsArrayOfIds(newData)
-		const castBeforeId = newData[newData.indexOf(active.id) - 1]
-		const castAfterId = newData[newData.indexOf(active.id) + 1]
+		const castMemberBeforeId = newData[newData.indexOf(active.id) - 1]
+		const castMemberAfterId = newData[newData.indexOf(active.id) + 1]
 
-		const castBefore = data.find(
-			(item: any) => item.id === castBeforeId,
+		const castMemberBefore = data.find(
+			(item: any) => item.id === castMemberBeforeId,
 		) as CastMember
-		const castAfter = data.find(
-			(item: any) => item.id === castAfterId,
+		const castMemberAfter = data.find(
+			(item: any) => item.id === castMemberAfterId,
 		) as CastMember
-
-		console.log(castBefore, active.id, castAfter)
 
 		const formData = new FormData()
 		formData.set('filmId', filmId.toString())
-		formData.set('castBefore', JSON.stringify(castBefore ?? {}))
-		formData.set('castId', active.id)
-		formData.set('castAfter', JSON.stringify(castAfter ?? {}))
+		formData.set('castMemberBefore', JSON.stringify(castMemberBefore ?? {}))
+		formData.set('castMemberId', active.id)
+		formData.set('castMemberAfter', JSON.stringify(castMemberAfter ?? {}))
 
 		submit(formData, {
 			method: 'POST',
