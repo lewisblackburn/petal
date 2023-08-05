@@ -45,7 +45,6 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					cast: {
 						take: 10,
 						select: {
-							// These needs to be included for ordering
 							id: true,
 							person: {
 								select: {
@@ -54,8 +53,23 @@ export async function loader({ request, params }: DataFunctionArgs) {
 								},
 							},
 							character: true,
+							// These needs to be included for ordering
 							numerator: true,
 							denominator: true,
+						},
+					},
+					crew: {
+						where: {
+							featured: true,
+						},
+						select: {
+							id: true,
+							job: true,
+							person: {
+								select: {
+									name: true,
+								},
+							},
 						},
 					},
 				},
@@ -77,6 +91,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 				runtime: minutesToWatchTime(film.runtime ?? 0),
 				releaseDate: getDateTimeFormat(request).format(releaseDate),
 				cast,
+				crew: mergeCrewMembers(film.crew),
 			},
 		},
 		{ headers: { 'Server-Timing': timings.toString() } },
@@ -150,9 +165,17 @@ export default function FilmRoute() {
 						<p className="text-base font-normal">{data.film.overview}</p>
 					</div>
 					{/* TODO: Here will be a list of the crew who a featured */}
-					<div className="flex flex-col space-y-1">
-						<h3 className="text-lg font-semibold">Richard Curtis</h3>
-						<p className="text-base font-normal">Director, Writer</p>
+					<div className="flex gap-10">
+						{data.film.crew.map(crewMember => (
+							<div key={crewMember.id} className="flex flex-col space-y-1">
+								<h3 className="text-md font-semibold">
+									{crewMember.person.name}
+								</h3>
+								<p className="text-sm font-normal capitalize">
+									{crewMember.job}
+								</p>
+							</div>
+						))}
 					</div>
 					<div className="flex flex-col space-y-3">
 						<h2 className="text-xl font-bold">Cast</h2>
@@ -256,4 +279,25 @@ function Status({
 			</div>
 		</div>
 	)
+}
+function mergeCrewMembers(arr: any[]) {
+	const nameMap = new Map()
+
+	// Group crew members with the same name
+	arr.forEach(item => {
+		const { id, person, job } = item
+		const { name } = person
+
+		if (nameMap.has(name)) {
+			const existingMember = nameMap.get(name)
+			existingMember.job += ', ' + job
+		} else {
+			nameMap.set(name, { id, person, job })
+		}
+	})
+
+	// Convert the map values back to an array
+	const mergedCrewMembers = Array.from(nameMap.values())
+
+	return mergedCrewMembers
 }

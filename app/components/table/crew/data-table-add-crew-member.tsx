@@ -2,7 +2,11 @@ import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { ErrorList, SearchSelectField } from '~/components/forms.tsx'
+import {
+	CheckboxField,
+	ErrorList,
+	SearchSelectField,
+} from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import {
 	Dialog,
@@ -95,6 +99,16 @@ export function DataTableAddCrewMember() {
 							}}
 							options={getAllJobs()}
 							errors={fields.job.errors}
+						/>
+						<CheckboxField
+							labelProps={{
+								htmlFor: fields.featured.id,
+								children: 'Featured',
+							}}
+							buttonProps={{
+								...conform.input(fields.featured, { type: 'checkbox' }),
+							}}
+							errors={fields.featured.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>

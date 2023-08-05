@@ -39,7 +39,6 @@ import {
 import { Icon } from '~/components/ui/icon.tsx'
 import { useParams, useSubmit } from '@remix-run/react'
 import { toast } from '~/components/ui/use-toast.ts'
-import { CastMember } from '@prisma/client'
 
 const SortableRow = ({ row, data }: { row: any; data: any }) => {
 	const {

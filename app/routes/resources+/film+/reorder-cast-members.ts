@@ -64,7 +64,7 @@ export async function action({ request }: DataFunctionArgs) {
     })
 
   return redirectWithToast(`/films/${filmId}/edit/cast`, {
-    title: 'Reordered Film cast Member',
+    title: 'Reordered Film Cast Member',
     variant: 'default',
   })
 }

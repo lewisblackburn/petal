@@ -83,18 +83,12 @@ export const columns: ColumnDef<Partial<CrewMember>>[] = [
 			<DataTableColumnHeader column={column} title="Featured" />
 		),
 		cell: ({ row }) => (
-			<div className="w-[60px]">
-				<Checkbox
-					checked={row.getValue('featured')}
-					// onCheckedChange={value => row.toggleSelected(!!value)}
-					aria-label="Select row"
-					className={
-						row.getValue('featured')
-							? 'translate-y-[4px]'
-							: '-translate-y-[2px]'
-					}
-				/>
-			</div>
+			<Checkbox
+				checked={row.getValue('featured')}
+				className={
+					row.getValue('featured') ? 'translate-y-[4px]' : '-translate-y-[2px]'
+				}
+			/>
 		),
 	},
 ]
