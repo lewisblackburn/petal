@@ -6,8 +6,9 @@ import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 
-export const ReorderFilmCastSchema = z.object({
+export const ReorderFilmcastSchema = z.object({
   filmId: z.string(),
+  // FIX: This should be castMemberBefore
   castBefore: z.string(),
   castId: z.string(),
   castAfter: z.string(),
@@ -17,7 +18,7 @@ export async function action({ request }: DataFunctionArgs) {
   await requireUserId(request)
   const formData = await request.formData()
   const submission = parse(formData, {
-    schema: ReorderFilmCastSchema,
+    schema: ReorderFilmcastSchema,
     acceptMultipleErrors: () => true,
   })
   if (!submission.value) {
@@ -59,7 +60,7 @@ export async function action({ request }: DataFunctionArgs) {
     })
 
   return redirectWithToast(`/films/${filmId}/edit/cast`, {
-    title: 'Reordered Film Cast Member',
+    title: 'Reordered Film cast Member',
     variant: 'default',
   })
 }

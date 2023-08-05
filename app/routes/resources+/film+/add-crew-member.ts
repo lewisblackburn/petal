@@ -11,6 +11,7 @@ export const AddFilmCrewMemberSchema = z.object({
   personId: z.string().nonempty({ message: 'You must select a person' }),
   department: z.string().nonempty({ message: 'You must select a department' }),
   job: z.string().nonempty({ message: 'You must select a job' }),
+  featured: z.boolean().optional(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -31,7 +32,7 @@ export async function action({ request }: DataFunctionArgs) {
     )
   }
 
-  let { filmId, personId, department, job } = submission.value
+  let { filmId, personId, department, job, featured } = submission.value
 
   await prisma.film
     .update({
@@ -46,8 +47,7 @@ export async function action({ request }: DataFunctionArgs) {
             },
             department,
             job,
-            // FIX: This can be removed now
-            featured: false,
+            featured: featured,
           },
         },
       },

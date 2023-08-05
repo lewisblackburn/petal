@@ -151,6 +151,8 @@ export function CastTable<TData, TValue>({
 			(item: any) => item.id === castAfterId,
 		) as CastMember
 
+		console.log(castBefore, active.id, castAfter)
+
 		const formData = new FormData()
 		formData.set('filmId', filmId.toString())
 		formData.set('castBefore', JSON.stringify(castBefore ?? {}))

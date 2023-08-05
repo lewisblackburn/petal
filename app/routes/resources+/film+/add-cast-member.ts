@@ -32,6 +32,17 @@ export async function action({ request }: DataFunctionArgs) {
 
 	let { filmId, personId, character } = submission.value
 
+	// Find the maximum numerator for the current film
+	const maxNumerator = await prisma.castMember
+		.findFirst({
+			where: { filmId },
+			orderBy: { numerator: 'desc' },
+			select: { numerator: true },
+		})
+		.then(result => result?.numerator ?? 0)
+
+	const newNumerator = maxNumerator + 1
+
 	await prisma.film
 		.update({
 			where: { id: filmId },
@@ -43,7 +54,7 @@ export async function action({ request }: DataFunctionArgs) {
 								id: personId,
 							},
 						},
-						numerator: 1,
+						numerator: newNumerator,
 						denominator: 1,
 						character,
 					},
