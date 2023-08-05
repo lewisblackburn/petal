@@ -160,6 +160,7 @@ export function CastTable<TData, TValue>({
 		submit(formData, {
 			method: 'POST',
 			action: '/resources/film/reorder-cast-members',
+			preventScrollReset: true,
 		})
 	}
 

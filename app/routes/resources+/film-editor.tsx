@@ -1,6 +1,6 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
+import { json, type DataFunctionArgs } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
 import { z } from 'zod'
 import { prisma } from '~/utils/db.server.ts'
@@ -8,6 +8,7 @@ import { type Film } from '@prisma/client'
 import { ErrorList, Field, TextareaField } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
+import { redirectWithToast } from '~/utils/flash-session.server.ts'
 
 export const FilmEditorSchema = z.object({
 	id: z.string().optional(),
@@ -96,7 +97,9 @@ export async function action({ request }: DataFunctionArgs) {
 	} else {
 		film = await prisma.film.create({ data, select })
 	}
-	return redirect(`/films/${film.id}`)
+	return redirectWithToast(`/films/${film.id}/`, {
+		title: id ? 'Film updated' : 'Film created',
+	})
 }
 
 export function FilmEditor({
