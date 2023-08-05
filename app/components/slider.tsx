@@ -4,7 +4,7 @@ interface SliderProps {
 
 export function Slider({ images }: SliderProps) {
 	return (
-		<div className="grid grid-flow-col  gap-5 overflow-x-scroll">
+		<div className="grid grid-flow-col justify-start gap-5 overflow-x-scroll">
 			{images.map((image, index) => (
 				<div key={index} className="w-32">
 					<img

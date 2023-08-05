@@ -184,18 +184,6 @@ export function CastTable<TData, TValue>({
 				restrictToParentElement,
 			]}
 		>
-			<button
-				onClick={() => {
-					const dataSorted = table
-						.getSortedRowModel()
-						.rows.map((row: any) => row.original)
-						.sort((a: any, b: any) => a.index - b.index)
-
-					setDataCopy(dataSorted)
-				}}
-			>
-				update
-			</button>
 			<div className="space-y-4">
 				<DataTableToolbar table={table} />
 				<div className="rounded-md border">
