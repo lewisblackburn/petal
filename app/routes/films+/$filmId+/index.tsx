@@ -35,6 +35,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 				select: {
 					id: true,
 					title: true,
+					tagline: true,
 					overview: true,
 					poster: true,
 					backdrop: true,
@@ -162,9 +163,11 @@ export default function FilmRoute() {
 					</div>
 					<div className="flex flex-col space-y-1">
 						<h2 className="text-xl font-bold">Overview</h2>
+						<p className="pb-3 text-base font-normal text-muted-foreground">
+							{data.film.tagline}
+						</p>
 						<p className="text-base font-normal">{data.film.overview}</p>
 					</div>
-					{/* TODO: Here will be a list of the crew who a featured */}
 					<div className="flex gap-10">
 						{data.film.crew.map(crewMember => (
 							<div key={crewMember.id} className="flex flex-col space-y-1">
