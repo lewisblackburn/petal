@@ -6,6 +6,8 @@ import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 
+// TODO: Write tests for adding 10 people, ordering 10 people and then deleteing 10 people
+
 export const ReorderFilmCastSchema = z.object({
   filmId: z.string(),
   castMemberBefore: z.string(),

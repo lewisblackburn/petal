@@ -45,6 +45,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
     name: crew.person.name,
     department: crew.department,
     job: crew.job,
+    featured: crew.featured,
   }))
 
   return json({ crew }, { headers: { 'Server-Timing': timings.toString() } })

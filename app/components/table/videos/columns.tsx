@@ -1,10 +1,10 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
-import { type Keyword } from '@prisma/client'
 import { DataTableColumnHeader } from '../data-table-column-header.tsx'
 import { VIDEO_TYPES, QUALITY, SITES } from '~/utils/constants.ts'
 
-export const columns: ColumnDef<Partial<Keyword>>[] = [
+// FIX: Figure out what type this needs it was Keyword
+export const columns: ColumnDef<any>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -12,7 +12,11 @@ export const columns: ColumnDef<Partial<Keyword>>[] = [
 				checked={table.getIsAllPageRowsSelected()}
 				onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
 				aria-label="Select all"
-				className="translate-y-[2px]"
+				className={
+					table.getIsAllPageRowsSelected()
+						? 'translate-y-[4px]'
+						: '-translate-y-[2px]'
+				}
 			/>
 		),
 		cell: ({ row }) => (
@@ -20,7 +24,9 @@ export const columns: ColumnDef<Partial<Keyword>>[] = [
 				checked={row.getIsSelected()}
 				onCheckedChange={value => row.toggleSelected(!!value)}
 				aria-label="Select row"
-				className="translate-y-[2px]"
+				className={
+					row.getIsSelected() ? 'translate-y-[4px]' : '-translate-y-[2px]'
+				}
 			/>
 		),
 		enableSorting: false,

@@ -133,6 +133,8 @@ export function CastTable<TData, TValue>({
 
 	// NOTE: I coule create a copy of the data and update here to remove the flash of the old order
 	const onDragEnd = (event: any) => {
+		// FIX: I need to implemnt ordering with getSortedRowModel instead of dataAsArrayOfIds as ordering doesn't work when the table is sorted
+		// console.log(table.getSortedRowModel().rows)
 		const { active, over } = event
 		if (active.id === over.id || !filmId) return
 
