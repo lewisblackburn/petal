@@ -42,7 +42,8 @@ export async function loader({ request }: DataFunctionArgs) {
 				skip,
 				take,
 				where,
-				include: {
+				select: {
+					id: true,
 					photos: {
 						take: 1,
 						where: {
