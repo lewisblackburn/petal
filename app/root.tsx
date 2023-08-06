@@ -71,8 +71,6 @@ export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
 	]
 }
 
-// FIX: SOMETHING IN FILMS+/PEOPLE+ IS CAUSING AN ESBUILD/KIT ERROR
-
 export async function loader({ request }: DataFunctionArgs) {
 	const timings = makeTimings('root loader')
 	const userId = await time(() => getUserId(request), {
