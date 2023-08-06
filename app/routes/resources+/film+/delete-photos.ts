@@ -3,7 +3,10 @@ import { type DataFunctionArgs, json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
-import { redirectWithToast } from '~/utils/flash-session.server.ts'
+import {
+	flashMessage,
+	redirectWithToast,
+} from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
 
 export const DeleteFilmPhotosSchema = z.object({
@@ -56,8 +59,14 @@ export async function action({ request }: DataFunctionArgs) {
 		})
 
 	ensurePE(formData, request)
-	return redirectWithToast(`/films/${filmId}/edit/photo`, {
-		title: 'Deleted Film Photos',
-		variant: 'destructive',
-	})
+	return json(
+		{ success: true },
+		{
+			headers: await flashMessage({
+				toast: {
+					title: 'Deleted Film Photos',
+				},
+			}),
+		},
+	)
 }

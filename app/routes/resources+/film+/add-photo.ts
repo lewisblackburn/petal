@@ -8,7 +8,10 @@ import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { MAX_SIZE } from '~/utils/constants.ts'
 import { prisma } from '~/utils/db.server.ts'
-import { redirectWithToast } from '~/utils/flash-session.server.ts'
+import {
+	flashMessage,
+	redirectWithToast,
+} from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
 import { s3UploadHandler } from '~/utils/s3.server.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
@@ -120,8 +123,14 @@ export async function action({ request }: DataFunctionArgs) {
 		})
 
 	ensurePE(formData, request)
-	return redirectWithToast(`/films/${filmId}/edit/photo`, {
-		title: 'Added Film Photo',
-		variant: 'default',
-	})
+	return json(
+		{ success: true },
+		{
+			headers: await flashMessage({
+				toast: {
+					title: 'Added Film Photo',
+				},
+			}),
+		},
+	)
 }

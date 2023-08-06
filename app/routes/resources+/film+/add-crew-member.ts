@@ -3,7 +3,10 @@ import { type DataFunctionArgs, json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
-import { redirectWithToast } from '~/utils/flash-session.server.ts'
+import {
+  flashMessage,
+  redirectWithToast,
+} from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
 
@@ -66,8 +69,14 @@ export async function action({ request }: DataFunctionArgs) {
     })
 
   ensurePE(formData, request)
-  return redirectWithToast(`/films/${filmId}/edit/crew`, {
-    title: 'Added Film Crew Member',
-    variant: 'default',
-  })
+  return json(
+    { success: true },
+    {
+      headers: await flashMessage({
+        toast: {
+          title: 'Added Film Crew Member',
+        },
+      }),
+    },
+  )
 }
