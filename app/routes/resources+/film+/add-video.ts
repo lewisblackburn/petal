@@ -3,10 +3,7 @@ import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
-import {
-	flashMessage,
-	redirectWithToast,
-} from '~/utils/flash-session.server.ts'
+import { flashMessage } from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
 
@@ -40,6 +37,35 @@ export async function action({ request }: DataFunctionArgs) {
 
 	let { filmId, url, site, type, name, quality, primary } = submission.value
 
+	// check if a primary video of that type already exists
+	if (primary) {
+		const primaryVideo = await prisma.film.findFirst({
+			where: {
+				id: filmId,
+			},
+			select: {
+				photos: {
+					where: {
+						type,
+						primary: true,
+					},
+				},
+			},
+		})
+
+		if (primaryVideo?.photos.length) {
+			return json({
+				status: 400,
+				headers: await flashMessage({
+					toast: {
+						title: 'Primary Photo of That Type Already Exists',
+						variant: 'destructive',
+					},
+				}),
+			})
+		}
+	}
+
 	await prisma.film
 		.update({
 			where: { id: filmId },
@@ -58,14 +84,15 @@ export async function action({ request }: DataFunctionArgs) {
 		})
 		.catch(err => {
 			ensurePE(formData, request)
-			return redirectWithToast(
-				`/films/${filmId}/edit/video`,
-				{
-					title: err.message,
-					variant: 'destructive',
-				},
-				{ status: 400 },
-			)
+			return json({
+				status: 400,
+				headers: flashMessage({
+					toast: {
+						title: err.message,
+						variant: 'destructive',
+					},
+				}),
+			})
 		})
 
 	ensurePE(formData, request)

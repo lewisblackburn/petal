@@ -9,6 +9,11 @@ import { Image } from '~/components/image.tsx'
 import { Slider } from '~/components/slider.tsx'
 import { Badge } from '~/components/ui/badge.tsx'
 import { Button } from '~/components/ui/button.tsx'
+import {
+	Dialog,
+	DialogContent,
+	DialogTrigger,
+} from '~/components/ui/dialog.tsx'
 import { Icon, type IconName } from '~/components/ui/icon.tsx'
 import { Separator } from '~/components/ui/separator.tsx'
 import { prisma } from '~/utils/db.server.ts'
@@ -41,6 +46,13 @@ export async function loader({ request, params }: DataFunctionArgs) {
 						take: 2,
 						where: {
 							primary: true,
+						},
+					},
+					videos: {
+						take: 1,
+						where: {
+							primary: true,
+							type: 'trailer',
 						},
 					},
 					runtime: true,
@@ -211,10 +223,16 @@ export default function FilmRoute() {
 				</div>
 				<div className="col-span-3">
 					<div className="flex flex-col space-y-5 rounded-lg border p-5">
-						<Button size="lg" className="w-full">
-							<Icon name="play" className="mr-2" />
-							Play Trailer
-						</Button>
+						<a
+							href={data.film.videos.filter(Boolean)[0].url}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<Button size="lg" className="w-full">
+								<Icon name="play" className="mr-2" />
+								Play Trailer
+							</Button>
+						</a>
 						<Separator />
 						<div className="grid grid-cols-2 gap-5">
 							<Status title="Popularity" icon="bar-chart">

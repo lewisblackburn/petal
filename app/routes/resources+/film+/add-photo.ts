@@ -8,10 +8,7 @@ import { z } from 'zod'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { MAX_SIZE } from '~/utils/constants.ts'
 import { prisma } from '~/utils/db.server.ts'
-import {
-	flashMessage,
-	redirectWithToast,
-} from '~/utils/flash-session.server.ts'
+import { flashMessage } from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
 import { s3UploadHandler } from '~/utils/s3.server.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
@@ -85,14 +82,15 @@ export async function action({ request }: DataFunctionArgs) {
 		})
 
 		if (primaryPhoto?.photos.length) {
-			return redirectWithToast(
-				`/films/${filmId}/edit/photo`,
-				{
-					title: 'Primary photo of that type already exists',
-					variant: 'destructive',
-				},
-				{ status: 400 },
-			)
+			return json({
+				status: 400,
+				headers: await flashMessage({
+					toast: {
+						title: 'Primary Photo of That Type Already Exists',
+						variant: 'destructive',
+					},
+				}),
+			})
 		}
 	}
 
@@ -112,14 +110,15 @@ export async function action({ request }: DataFunctionArgs) {
 		})
 		.catch(err => {
 			ensurePE(formData, request)
-			return redirectWithToast(
-				`/films/${filmId}/edit/photo`,
-				{
-					title: err.message,
-					variant: 'destructive',
-				},
-				{ status: 400 },
-			)
+			return json({
+				status: 400,
+				headers: flashMessage({
+					toast: {
+						title: err.message,
+						variant: 'destructive',
+					},
+				}),
+			})
 		})
 
 	ensurePE(formData, request)
