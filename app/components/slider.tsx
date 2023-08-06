@@ -1,18 +1,23 @@
+import { Link } from '@remix-run/react'
+
 interface SliderProps {
-	images: string[]
+	items: {
+		to: string
+		image: string
+	}[]
 }
 
-export function Slider({ images }: SliderProps) {
+export function Slider({ items }: SliderProps) {
 	return (
 		<div className="grid grid-flow-col justify-start gap-5 overflow-x-scroll">
-			{images.map((image, index) => (
-				<div key={index} className="w-32">
+			{items.map((item, index) => (
+				<Link key={index} to={item.to} className="w-32">
 					<img
-						src={image}
-						alt={image}
+						src={item.image}
+						alt={item.image}
 						className="aspect-[2/3] w-full rounded-lg object-cover"
 					/>
-				</div>
+				</Link>
 			))}
 		</div>
 	)

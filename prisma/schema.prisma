@@ -127,11 +127,17 @@ model Note {
 }
 
 model Person {
-  id                 String   @id @unique @default(cuid())
+  id                 String    @id @unique @default(cuid())
   name               String
   knownForDepartment String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  biography          String?
+  birthdate          DateTime?
+  dayOfDeath         DateTime?
+  gender             String?
+  placeOfBirth       String?
+  homepage           String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   casts  CastMember[]
   crews  CrewMember[]
@@ -241,6 +247,13 @@ model Keyword {
   id        String   @id @unique @default(cuid())
   name      String
   films     Film[]   @relation("FilmToKeyword")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Location {
+  id        String   @id @unique @default(cuid())
+  name      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

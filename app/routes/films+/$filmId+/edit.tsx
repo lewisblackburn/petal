@@ -2,20 +2,12 @@ import { json, type DataFunctionArgs } from '@remix-run/node'
 import { Outlet } from '@remix-run/react'
 import { Container } from '~/components/container.tsx'
 import ButtonGroup from '~/components/ui/button-group.tsx'
-import { authenticator, requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
+import { requireUserId } from '~/utils/auth.server.ts'
+import { invariantResponse } from '~/utils/misc.tsx'
 
-export async function loader({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
-	const user = await prisma.user.findUnique({
-		where: { id: userId },
-		select: {
-			username: true,
-		},
-	})
-	if (!user) {
-		throw await authenticator.logout(request, { redirectTo: '/' })
-	}
+export async function loader({ request, params }: DataFunctionArgs) {
+	invariantResponse(params.filmId, 'Missing filmId')
+	await requireUserId(request)
 	return json({})
 }
 

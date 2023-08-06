@@ -198,7 +198,7 @@ export function SelectField({
 			>
 				<SelectTrigger
 					className={cn(
-						'w-[180px]',
+						'w-full',
 						errorId && value === '' && 'border-input-invalid',
 					)}
 				>
@@ -236,19 +236,21 @@ export function SearchSelectField({
 	className?: string
 }) {
 	const [open, setOpen] = React.useState(false)
-	const [value, setValue] = React.useState('')
+	const [value, setValue] = React.useState(selectProps.defaultValue)
 	const fallbackId = useId()
 	const id = selectProps.name ?? fallbackId
 	const errorId = errors?.length ? `${id}-error` : undefined
+
 	return (
-		<div className={className}>
+		<div className={cn('flex flex-col', className)}>
 			<input
 				name={selectProps.name}
 				// A hack to allow errors to be displayed as type="hidden" is not supported
-				defaultValue={value ?? ''}
+				onChange={() => {}}
+				value={value ?? ''}
 				className="hidden"
 			/>
-			{/* <Label  htmlFor={id} {...labelProps} /> */}
+			<Label htmlFor={id} className="pb-2" {...labelProps} />
 			<Popover open={open} onOpenChange={setOpen} modal>
 				<PopoverTrigger asChild>
 					<Button
@@ -257,7 +259,7 @@ export function SearchSelectField({
 						aria-expanded={open}
 						// A hack to show error border and "revailidate" on blur
 						className={cn(
-							'w-fit min-w-[200px] justify-between',
+							'min-w-[200px] justify-between whitespace-nowrap',
 							errorId && value === '' && 'border-input-invalid',
 						)}
 					>

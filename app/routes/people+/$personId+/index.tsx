@@ -10,6 +10,7 @@ import { Image } from '~/components/image.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { prisma } from '~/utils/db.server.ts'
+import { invariantResponse } from '~/utils/misc.tsx'
 import {
 	combineServerTimings,
 	makeTimings,
@@ -17,6 +18,7 @@ import {
 } from '~/utils/timing.server.ts'
 
 export async function loader({ params }: DataFunctionArgs) {
+	invariantResponse(params.personId, 'Missing personId')
 	const timings = makeTimings('person loader')
 
 	const person = await time(
@@ -109,6 +111,7 @@ export default function PersonRoute() {
 					Hollywood's new "it girl", and received a BAFTA Award nomination for
 					Best Rising Star.
 				</p>
+				<p>{data.person.knownForDepartment}</p>
 				<div>
 					{data.person.casts.length > 0 && (
 						<Carousel

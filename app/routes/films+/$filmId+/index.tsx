@@ -14,6 +14,7 @@ import { Separator } from '~/components/ui/separator.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import {
 	getDateTimeFormat,
+	invariantResponse,
 	minutesToWatchTime,
 	orderByRationalProperty,
 } from '~/utils/misc.tsx'
@@ -24,6 +25,7 @@ import {
 } from '~/utils/timing.server.ts'
 
 export async function loader({ request, params }: DataFunctionArgs) {
+	invariantResponse(params.filmId, 'Missing filmId')
 	const timings = makeTimings('film loader')
 
 	const film = await time(
@@ -60,6 +62,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 							id: true,
 							person: {
 								select: {
+									id: true,
 									name: true,
 									photos: {
 										take: 1,
@@ -204,8 +207,13 @@ export default function FilmRoute() {
 					<div className="flex flex-col space-y-3">
 						<h2 className="text-xl font-bold">Cast</h2>
 						<Slider
-							images={data.film.cast
-								.map(castMember => castMember.person.photos[0].image)
+							items={data.film.cast
+								.map(castMember => {
+									return {
+										to: `/people/${castMember.person.id}`,
+										image: castMember.person.photos[0].image,
+									}
+								})
 								.filter(Boolean)}
 						/>
 					</div>

@@ -640,4 +640,19 @@ export const LANGUAGES = [
 	},
 ]
 
+export const GENDERS = [
+	{
+		label: 'Male',
+		value: 'male',
+	},
+	{
+		label: 'Female',
+		value: 'female',
+	},
+	{
+		label: 'Other',
+		value: 'other',
+	},
+]
+
 export const MAX_SIZE = 1024 * 1024 * 3 // 3MB

@@ -5,16 +5,29 @@ import { useFetcher, useSearchParams } from '@remix-run/react'
 import { z } from 'zod'
 import { prisma } from '~/utils/db.server.ts'
 import { type Person } from '@prisma/client'
-import { ErrorList, Field, SearchSelectField } from '~/components/forms.tsx'
+import {
+	ErrorList,
+	Field,
+	SearchSelectField,
+	SelectField,
+	TextareaField,
+} from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import { crewRolesWithActing } from '~/utils/constants.ts'
+import { GENDERS, crewRolesWithActing } from '~/utils/constants.ts'
 import { safeRedirect } from 'remix-utils'
+import { LocationSearch } from './locations.tsx'
 
 export const PersonEditorSchema = z.object({
 	id: z.string().optional(),
 	name: z.string().min(1),
 	knownForDepartment: z.string().optional(),
+	biography: z.string().optional(),
+	birthdate: z.string().optional(),
+	dayOfDeath: z.string().optional(),
+	gender: z.string().optional(),
+	placeOfBirth: z.string().optional(),
+	homepage: z.string().optional(),
 	redirectTo: z.string().optional(),
 })
 
@@ -38,11 +51,28 @@ export async function action({ request }: DataFunctionArgs) {
 	}
 	let person: { id: string }
 
-	const { id, name, knownForDepartment, redirectTo } = submission.value
+	const {
+		id,
+		name,
+		knownForDepartment,
+		biography,
+		birthdate,
+		dayOfDeath,
+		gender,
+		placeOfBirth,
+		homepage,
+		redirectTo,
+	} = submission.value
 
 	const data = {
 		name,
 		knownForDepartment,
+		biography,
+		birthdate: birthdate ? new Date(birthdate) : null,
+		dayOfDeath: dayOfDeath ? new Date(dayOfDeath) : null,
+		gender,
+		placeOfBirth,
+		homepage,
 	}
 
 	const select = {
@@ -53,6 +83,7 @@ export async function action({ request }: DataFunctionArgs) {
 			where: { id },
 			select: { id: true },
 		})
+		console.log(existingPerson)
 		if (!existingPerson) {
 			return json({ status: 'error', submission } as const, { status: 400 })
 		}
@@ -79,7 +110,14 @@ export async function action({ request }: DataFunctionArgs) {
 	return redirect(safeRedirect(redirectTo, `/people/${person.id}`))
 }
 
-export function PersonEditor({ person }: { person?: Partial<Person> }) {
+export function PersonEditor({
+	person,
+}: {
+	person?: Partial<Omit<Person, 'birthdate' | 'dayOfDeath'>> & {
+		birthdate: string | null
+		dayOfDeath: string | null
+	}
+}) {
 	const [searchParams] = useSearchParams()
 	const personEditorFetcher = useFetcher<typeof action>()
 
@@ -103,25 +141,95 @@ export function PersonEditor({ person }: { person?: Partial<Person> }) {
 			{...form.props}
 		>
 			<input name="id" type="hidden" value={person?.id} />
-			<Field
-				labelProps={{ htmlFor: fields.name.id, children: 'Name' }}
-				inputProps={{
-					...conform.input(fields.name),
-					autoComplete: 'name',
+			<div className="flex items-center gap-5">
+				<SearchSelectField
+					labelProps={{
+						htmlFor: fields.knownForDepartment.id,
+						children: 'Known For',
+					}}
+					selectProps={{
+						...conform.input(fields.knownForDepartment),
+						autoComplete: 'known-for-department',
+					}}
+					options={crewRolesWithActing()}
+					errors={fields.knownForDepartment.errors}
+				/>
+				<Field
+					labelProps={{ htmlFor: fields.name.id, children: 'Name' }}
+					inputProps={{
+						...conform.input(fields.name),
+						autoComplete: 'name',
+					}}
+					className="w-full"
+					errors={fields.name.errors}
+				/>
+			</div>
+			<TextareaField
+				labelProps={{ htmlFor: fields.biography.id, children: 'Biography' }}
+				textareaProps={{
+					...conform.input(fields.biography),
+					autoComplete: 'biography',
 				}}
-				errors={fields.name.errors}
+				className="w-full"
+				errors={fields.biography.errors}
 			/>
-			<SearchSelectField
+			<div className="flex items-center gap-5">
+				<Field
+					labelProps={{ htmlFor: fields.birthdate.id, children: 'Birthdate' }}
+					inputProps={{
+						...conform.input(fields.birthdate),
+						autoComplete: 'birthdate',
+						type: 'date',
+					}}
+					className="w-full"
+					errors={fields.birthdate.errors}
+				/>
+				<Field
+					labelProps={{
+						htmlFor: fields.dayOfDeath.id,
+						children: 'Day of Death',
+					}}
+					inputProps={{
+						...conform.input(fields.dayOfDeath),
+						autoComplete: 'dayOfDeath',
+						type: 'date',
+					}}
+					className="w-full"
+					errors={fields.dayOfDeath.errors}
+				/>
+				<SelectField
+					labelProps={{ htmlFor: fields.gender.id, children: 'Gender' }}
+					selectProps={{
+						...conform.input(fields.gender),
+						autoComplete: 'gender',
+					}}
+					className="w-full"
+					options={GENDERS}
+					errors={fields.gender.errors}
+				/>
+			</div>
+			<LocationSearch
 				labelProps={{
-					htmlFor: fields.knownForDepartment.id,
-					children: 'Department',
+					htmlFor: fields.placeOfBirth.id,
+					children: 'Place of Birth',
 				}}
 				selectProps={{
-					...conform.input(fields.knownForDepartment),
-					autoComplete: 'known-for-department',
+					...conform.input(fields.placeOfBirth),
+					autoComplete: 'placeOfBirth',
 				}}
-				options={crewRolesWithActing()}
-				errors={fields.knownForDepartment.errors}
+				errors={fields.placeOfBirth.errors}
+			/>
+			<Field
+				labelProps={{
+					htmlFor: fields.homepage.id,
+					children: 'Homepage',
+				}}
+				inputProps={{
+					...conform.input(fields.homepage),
+					autoComplete: 'homepage',
+				}}
+				className="w-full"
+				errors={fields.homepage.errors}
 			/>
 			<input name={fields.redirectTo.name} type="hidden" value={redirectTo} />
 			<ErrorList errors={form.errors} id={form.errorId} />
