@@ -1,6 +1,6 @@
 import { useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
-import { type Photo } from '@prisma/client'
+import { type PersonPhoto } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
@@ -29,7 +29,7 @@ export function DataTableDeletePhotos<TData>({
 	const { filmId } = useParams()
 	const photosSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as Photo).id)
+		.rows.map(row => (row.original as PersonPhoto).id)
 	const fetcher = useFetcher()
 	const [open, setOpen] = useState(false)
 
