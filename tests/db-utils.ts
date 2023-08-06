@@ -42,6 +42,22 @@ export function createFilm() {
 	return {
 		title,
 		overview,
+		photos: {
+			create: [
+				{
+					type: 'poster',
+					image: 'https://via.placeholder.com/300x450',
+					primary: true,
+					language: 'english',
+				},
+				{
+					type: 'backdrop',
+					image: 'https://via.placeholder.com/1920x1080',
+					primary: true,
+					language: 'english',
+				},
+			],
+		},
 	}
 }
 

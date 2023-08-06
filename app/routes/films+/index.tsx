@@ -28,10 +28,10 @@ export async function loader({ request }: DataFunctionArgs) {
 	const where = {
 		OR: search
 			? [
-					{ title: { contains: search } },
-					{ tagline: { contains: search } },
-					{ overview: { contains: search } },
-			  ]
+				{ title: { contains: search } },
+				{ tagline: { contains: search } },
+				{ overview: { contains: search } },
+			]
 			: undefined,
 	} satisfies Prisma.FilmWhereInput
 
@@ -42,6 +42,15 @@ export async function loader({ request }: DataFunctionArgs) {
 				skip,
 				take,
 				where,
+				include: {
+					photos: {
+						take: 1,
+						where: {
+							primary: true,
+							type: 'poster',
+						},
+					},
+				},
 			}),
 		{ timings, type: 'find films' },
 	)
@@ -81,9 +90,13 @@ export default function FilmsRoute() {
 						<li key={film.id}>
 							<Link to={film.id}>
 								<img
-									src={film.poster ?? ''}
+									src={
+										// @ts-ignore
+										film.photos[0]?.image ??
+										'https://via.placeholder.com/300x450'
+									}
 									alt={film.title}
-									className="aspect-a4 rounded-lg bg-muted"
+									className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
 								/>
 							</Link>
 						</li>

@@ -4,7 +4,7 @@ import { json, type DataFunctionArgs } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
 import { z } from 'zod'
 import { prisma } from '~/utils/db.server.ts'
-import { type Film } from '@prisma/client'
+import { type Prisma, type Film } from '@prisma/client'
 import { ErrorList, Field, TextareaField } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
@@ -76,7 +76,23 @@ export async function action({ request }: DataFunctionArgs) {
 		twitter: twitter,
 		website: website,
 		tmdbId: tmdbId,
-	}
+		photos: {
+			create: [
+				{
+					type: 'poster',
+					image: 'https://via.placeholder.com/300x450',
+					primary: true,
+					language: 'english',
+				},
+				{
+					type: 'backdrop',
+					image: 'https://via.placeholder.com/1920x1080',
+					primary: true,
+					language: 'english',
+				},
+			],
+		},
+	} as Prisma.FilmCreateInput
 
 	const select = {
 		id: true,

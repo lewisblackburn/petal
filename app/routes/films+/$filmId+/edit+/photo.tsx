@@ -26,6 +26,8 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					id: params.filmId,
 				},
 				select: {
+					// NOTE: There is no point ordering photos by primary, becuase you can do this in the client
+					// SQL orderBy query's are expensive, so we should avoid them where possible
 					photos: true,
 				},
 			}),

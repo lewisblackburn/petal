@@ -37,8 +37,12 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					title: true,
 					tagline: true,
 					overview: true,
-					poster: true,
-					backdrop: true,
+					photos: {
+						take: 2,
+						where: {
+							primary: true,
+						},
+					},
 					runtime: true,
 					releaseDate: true,
 					genres: true,
@@ -129,12 +133,17 @@ export default function FilmRoute() {
 			</div>
 			<div className="flex items-center gap-5">
 				<Image
-					src={data.film.poster!}
+					src={
+						data.film.photos.filter(photo => photo.type === 'poster')[0]?.image
+					}
 					alt={data.film.title}
 					className="h-[600px] w-[400px]"
 				/>
 				<Image
-					src={data.film.backdrop!}
+					src={
+						data.film.photos?.filter(photo => photo.type === 'backdrop')[0]
+							?.image
+					}
 					alt={data.film.title}
 					className="h-[600px] w-full"
 				/>

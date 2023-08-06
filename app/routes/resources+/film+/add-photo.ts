@@ -58,11 +58,40 @@ export async function action({ request }: DataFunctionArgs) {
 	const image = await unstable_parseMultipartFormData(clonedRequest, params =>
 		s3UploadHandler({
 			...params,
-			filename: `films/${filmId}/${type}/${language}/${params.filename}`,
+			filename: `films/${filmId}/${language}/${params.filename}`,
 		}),
 	)
 
-	const parsedImage = parse(image, { schema: z.string() })
+	//TODO: Fix type
+	const parsedImage = parse(image, { schema: z.any() })
+
+	// check if a primary photo of that type already exists
+	if (primary) {
+		const primaryPhoto = await prisma.film.findFirst({
+			where: {
+				id: filmId,
+			},
+			select: {
+				photos: {
+					where: {
+						type,
+						primary: true,
+					},
+				},
+			},
+		})
+
+		if (primaryPhoto?.photos.length) {
+			return redirectWithToast(
+				`/films/${filmId}/edit/photo`,
+				{
+					title: 'Primary photo of that type already exists',
+					variant: 'destructive',
+				},
+				{ status: 400 },
+			)
+		}
+	}
 
 	await prisma.film
 		.update({

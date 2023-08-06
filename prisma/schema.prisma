@@ -143,9 +143,6 @@ model Film {
   title       String
   overview    String
   tagline     String?
-  // todo - remove these as they're not used anymore
-  poster      String?   @default("https://via.placeholder.com/600x900.png?text=No+Poster")
-  backdrop    String?   @default("https://via.placeholder.com/1920x1080.png?text=No+Backdrop")
   releaseDate DateTime?
   runtime     Float?
   budget      Float?

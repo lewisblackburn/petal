@@ -113,7 +113,12 @@ app.use(
 				].filter(Boolean),
 				'font-src': ["'self'"],
 				'frame-src': ["'self'"],
-				'img-src': ["'self'", 'data:', 'via.placeholder.com'],
+				'img-src': [
+					"'self'",
+					'data:',
+					'via.placeholder.com',
+					'petal-image-host.s3.eu-west-2.amazonaws.com',
+				],
 				'script-src': [
 					"'strict-dynamic'",
 					"'self'",
