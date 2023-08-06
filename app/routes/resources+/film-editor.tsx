@@ -76,22 +76,6 @@ export async function action({ request }: DataFunctionArgs) {
 		twitter: twitter,
 		website: website,
 		tmdbId: tmdbId,
-		photos: {
-			create: [
-				{
-					type: 'poster',
-					image: 'https://via.placeholder.com/300x450',
-					primary: true,
-					language: 'english',
-				},
-				{
-					type: 'backdrop',
-					image: 'https://via.placeholder.com/1920x1080',
-					primary: true,
-					language: 'english',
-				},
-			],
-		},
 	} as Prisma.FilmCreateInput
 
 	const select = {
@@ -111,7 +95,28 @@ export async function action({ request }: DataFunctionArgs) {
 			select,
 		})
 	} else {
-		film = await prisma.film.create({ data, select })
+		film = await prisma.film.create({
+			data: {
+				...data,
+				photos: {
+					create: [
+						{
+							type: 'poster',
+							image: 'https://via.placeholder.com/300x450',
+							primary: true,
+							language: 'english',
+						},
+						{
+							type: 'backdrop',
+							image: 'https://via.placeholder.com/1920x1080',
+							primary: true,
+							language: 'english',
+						},
+					],
+				},
+			},
+			select,
+		})
 	}
 	return redirectWithToast(`/films/${film.id}/`, {
 		title: id ? 'Film updated' : 'Film created',
