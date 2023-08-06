@@ -9,11 +9,6 @@ import { Image } from '~/components/image.tsx'
 import { Slider } from '~/components/slider.tsx'
 import { Badge } from '~/components/ui/badge.tsx'
 import { Button } from '~/components/ui/button.tsx'
-import {
-	Dialog,
-	DialogContent,
-	DialogTrigger,
-} from '~/components/ui/dialog.tsx'
 import { Icon, type IconName } from '~/components/ui/icon.tsx'
 import { Separator } from '~/components/ui/separator.tsx'
 import { prisma } from '~/utils/db.server.ts'
