@@ -28,7 +28,12 @@ export async function loader({ params }: DataFunctionArgs) {
 				select: {
 					id: true,
 					name: true,
-					image: true,
+					photos: {
+						take: 1,
+						where: {
+							primary: true,
+						},
+					},
 					knownForDepartment: true,
 					casts: {
 						take: 10,
@@ -36,7 +41,13 @@ export async function loader({ params }: DataFunctionArgs) {
 							film: {
 								select: {
 									id: true,
-									poster: true,
+									photos: {
+										take: 1,
+										where: {
+											primary: true,
+											type: 'poster',
+										},
+									},
 									title: true,
 								},
 							},
@@ -67,7 +78,7 @@ export default function PersonRoute() {
 		<Container className="grid grid-cols-4 gap-10">
 			<div className="col-span-1 flex flex-col gap-5">
 				<Image
-					src={data.person.image ?? ''}
+					src={data.person.photos[0].image ?? ''}
 					alt={data.person.name}
 					className="aspect-[2/3]"
 				/>
@@ -105,7 +116,9 @@ export default function PersonRoute() {
 							items={data.person.casts.map(cast => {
 								return {
 									to: `/films/${cast.film.id}`,
-									image: cast.film.poster!,
+									image: cast.film.photos.filter(
+										photo => photo.type === 'poster',
+									)[0].image,
 									title: cast.film.title,
 								}
 							})}

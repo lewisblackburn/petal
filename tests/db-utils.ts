@@ -66,6 +66,12 @@ export function createPerson() {
 
 	return {
 		name,
+		photos: {
+			create: {
+				image: 'https://via.placeholder.com/300x450',
+				primary: true,
+			},
+		},
 	}
 }
 

@@ -1,4 +1,4 @@
-import { type Prisma, type Person } from '@prisma/client'
+import { type Prisma, type Person, type PersonPhoto } from '@prisma/client'
 import {
 	json,
 	type HeadersFunction,
@@ -36,6 +36,14 @@ export async function loader({ request }: DataFunctionArgs) {
 				skip,
 				take,
 				where,
+				include: {
+					photos: {
+						take: 1,
+						where: {
+							primary: true,
+						},
+					},
+				},
 			}),
 		{ timings, type: 'find people' },
 	)
@@ -71,11 +79,15 @@ export default function PeopleRoute() {
 			</div>
 			<main>
 				<ul className="grid grid-cols-4 gap-5">
-					{combined.map((person: Person) => (
+					{combined.map((person: Person & { photos: PersonPhoto[] }) => (
 						<li key={person.id}>
 							<Link to={person.id}>
 								<img
-									src={person.image ?? ''}
+									src={
+										person.photos?.filter((photo: any) => photo).length > 0
+											? person.photos[0].image
+											: ''
+									}
 									alt={person.name}
 									className="aspect-a4 rounded-lg bg-muted"
 								/>

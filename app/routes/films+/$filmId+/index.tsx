@@ -54,7 +54,12 @@ export async function loader({ request, params }: DataFunctionArgs) {
 							person: {
 								select: {
 									name: true,
-									image: true,
+									photos: {
+										take: 1,
+										where: {
+											primary: true,
+										},
+									},
 								},
 							},
 							character: true,
@@ -193,7 +198,7 @@ export default function FilmRoute() {
 						<h2 className="text-xl font-bold">Cast</h2>
 						<Slider
 							images={data.film.cast
-								.map(castMember => castMember.person.image)
+								.map(castMember => castMember.person.photos[0].image)
 								.filter(Boolean)}
 						/>
 					</div>

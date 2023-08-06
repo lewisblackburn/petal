@@ -62,7 +62,18 @@ export async function action({ request }: DataFunctionArgs) {
 			select,
 		})
 	} else {
-		person = await prisma.person.create({ data, select })
+		person = await prisma.person.create({
+			data: {
+				...data,
+				photos: {
+					create: {
+						image: 'https://via.placeholder.com/300x450',
+						primary: true,
+					},
+				},
+			},
+			select,
+		})
 	}
 
 	return redirect(safeRedirect(redirectTo, `/people/${person.id}`))

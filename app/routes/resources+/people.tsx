@@ -50,6 +50,14 @@ export async function loader({ request }: DataFunctionArgs) {
 			prisma.person.findMany({
 				take,
 				where,
+				include: {
+					photos: {
+						take: 1,
+						where: {
+							primary: true,
+						},
+					},
+				},
 			}),
 		{ timings, type: 'find people' },
 	)
@@ -62,8 +70,6 @@ export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
 		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
 	}
 }
-
-// FIX: This breaks if someone has the same name DUHDOY
 
 export const PersonSearch = ({
 	labelProps,
@@ -167,7 +173,7 @@ export const PersonSearch = ({
 										className="flex items-center gap-3"
 									>
 										<img
-											src={person.image ?? ''}
+											src={person.photos[0].image ?? ''}
 											alt={person.name}
 											className="aspect-square h-12 w-12 rounded-md"
 										/>
