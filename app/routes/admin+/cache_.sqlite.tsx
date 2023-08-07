@@ -1,4 +1,4 @@
-import  { type DataFunctionArgs , json, redirect } from '@remix-run/node'
+import { type DataFunctionArgs, json, redirect } from '@remix-run/node'
 import { getInstanceInfo, getInternalInstanceDomain } from 'litefs-js'
 import { z } from 'zod'
 import { cache } from '~/utils/cache.server.ts'
