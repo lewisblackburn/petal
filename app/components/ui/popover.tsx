@@ -3,6 +3,13 @@ import * as PopoverPrimitive from '@radix-ui/react-popover'
 
 import { cn } from '~/utils/misc.tsx'
 
+export type PopoverProps = Omit<
+	React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Trigger>,
+	'type'
+> & {
+	type?: string
+}
+
 const Popover = PopoverPrimitive.Root
 
 const PopoverTrigger = PopoverPrimitive.Trigger

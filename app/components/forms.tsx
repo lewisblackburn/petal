@@ -4,17 +4,20 @@ import { Input } from '~/components/ui/input.tsx'
 import { Label } from '~/components/ui/label.tsx'
 import { Checkbox, type CheckboxProps } from '~/components/ui/checkbox.tsx'
 import { Textarea } from '~/components/ui/textarea.tsx'
-import { type SelectProps } from '@radix-ui/react-select'
 import {
 	Select,
 	SelectContent,
-	SelectGroup,
-	SelectItem,
+	type SelectProps,
 	SelectTrigger,
 	SelectValue,
 } from './ui/select.tsx'
 import { cn } from '~/utils/misc.tsx'
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover.tsx'
+import {
+	Popover,
+	PopoverContent,
+	type PopoverProps,
+	PopoverTrigger,
+} from './ui/popover.tsx'
 import { Button } from './ui/button.tsx'
 import { Icon } from './ui/icon.tsx'
 import {
@@ -170,98 +173,136 @@ export function CheckboxField({
 
 export function SelectField({
 	labelProps,
-	selectProps,
-	options,
+	buttonProps,
 	errors,
 	className,
+	children,
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
-	selectProps: SelectProps
-	options: Array<{ label: string; value: string }>
+	buttonProps: SelectProps
 	errors?: ListOfErrors
 	className?: string
+	children: React.ReactNode
 }) {
-	const [value, setValue] = React.useState<string>('')
+	const [open, setOpen] = React.useState(false)
 	const fallbackId = useId()
-	const id = selectProps.name ?? fallbackId
+	const buttonRef = useRef<HTMLButtonElement>(null)
+	const control = useInputEvent({
+		ref: () =>
+			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
+		onFocus: () => buttonRef.current?.focus(),
+		onBlur: () => buttonRef.current?.blur(),
+	})
+	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
 	const errorId = errors?.length ? `${id}-error` : undefined
+
+	const { name, ...props } = buttonProps
+
 	return (
 		<div className={className}>
 			<Label htmlFor={id} {...labelProps} />
 			<Select
-				aria-invalid={errorId ? true : undefined}
-				aria-describedby={errorId}
-				{...selectProps}
-				onValueChange={value => {
-					setValue(value)
-				}}
+				open={open}
+				onOpenChange={setOpen}
+				name={buttonProps.name}
+				defaultValue={buttonProps.defaultValue?.toString()}
 			>
 				<SelectTrigger
-					className={cn(
-						'w-full',
-						errorId && value === '' && 'border-input-invalid',
-					)}
+					id={id}
+					ref={buttonRef}
+					aria-invalid={errorId ? true : undefined}
+					aria-describedby={errorId}
+					{...props}
+					onChange={state => {
+						control.change(state.currentTarget.value)
+						buttonProps.onChange?.(state)
+					}}
+					onFocus={event => {
+						control.focus()
+						buttonProps.onFocus?.(event)
+					}}
+					onBlur={event => {
+						control.blur()
+						buttonProps.onBlur?.(event)
+					}}
+					type="button"
 				>
-					<SelectValue placeholder={`Select a ${selectProps.name}`} />
+					<SelectValue placeholder={labelProps.children} />
 				</SelectTrigger>
-				<SelectContent>
-					<SelectGroup>
-						{options.map(({ label, value }) => (
-							<SelectItem key={label} value={value}>
-								{label}
-							</SelectItem>
-						))}
-					</SelectGroup>
-				</SelectContent>
+				<SelectContent>{children}</SelectContent>
 			</Select>
 			<div className="px-4 pb-3 pt-1">
-				{errorId && value === '' ? (
-					<ErrorList id={errorId} errors={errors} />
-				) : null}
+				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
 			</div>
 		</div>
 	)
 }
+
 export function SearchSelectField({
 	labelProps,
-	selectProps,
+	buttonProps,
 	options,
 	errors,
 	className,
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
-	selectProps: SelectProps
+	buttonProps: PopoverProps
 	options: Array<{ label: string; value: string }>
 	errors?: ListOfErrors
 	className?: string
 }) {
+	const [value, setValue] = React.useState(buttonProps.defaultValue)
 	const [open, setOpen] = React.useState(false)
-	const [value, setValue] = React.useState(selectProps.defaultValue)
 	const fallbackId = useId()
-	const id = selectProps.name ?? fallbackId
+	const buttonRef = useRef<HTMLButtonElement>(null)
+	const control = useInputEvent({
+		ref: () =>
+			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
+		onFocus: () => buttonRef.current?.focus(),
+		onBlur: () => buttonRef.current?.blur(),
+	})
+	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
 	const errorId = errors?.length ? `${id}-error` : undefined
 
+	const { name, ...props } = buttonProps
+
 	return (
-		<div className={cn('flex flex-col', className)}>
+		<div className={className}>
 			<input
-				name={selectProps.name}
-				// A hack to allow errors to be displayed as type="hidden" is not supported
-				onChange={() => {}}
-				value={value ?? ''}
+				name={buttonProps.name}
+				defaultValue={buttonProps.defaultValue?.toString()}
+				value={value}
 				className="hidden"
 			/>
-			<Label htmlFor={id} className="pb-2" {...labelProps} />
-			<Popover open={open} onOpenChange={setOpen} modal>
-				<PopoverTrigger asChild>
+			<Label htmlFor={id} {...labelProps} />
+			<Popover open={open} onOpenChange={setOpen}>
+				<PopoverTrigger
+					id={id}
+					ref={buttonRef}
+					aria-invalid={errorId ? true : undefined}
+					aria-describedby={errorId}
+					{...props}
+					onChange={state => {
+						console.log(state)
+						control.change(state.currentTarget.value)
+						buttonProps.onChange?.(state)
+					}}
+					onFocus={event => {
+						control.focus()
+						buttonProps.onFocus?.(event)
+					}}
+					onBlur={event => {
+						control.blur()
+						buttonProps.onBlur?.(event)
+					}}
+					type="button"
+					asChild
+				>
 					<Button
 						variant="outline"
 						role="combobox"
 						aria-expanded={open}
-						// A hack to show error border and "revailidate" on blur
-						className={cn(
-							'min-w-[200px] justify-between whitespace-nowrap',
-							errorId && value === '' && 'border-input-invalid',
-						)}
+						className="min-w-[300px] justify-between whitespace-nowrap aria-[invalid]:border-input-invalid"
 					>
 						{value
 							? options.find(option => option.value === value)?.label
@@ -309,9 +350,7 @@ export function SearchSelectField({
 				</PopoverContent>
 			</Popover>
 			<div className="px-4 pb-3 pt-1">
-				{errorId && value === '' ? (
-					<ErrorList id={errorId} errors={errors} />
-				) : null}
+				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
 			</div>
 		</div>
 	)

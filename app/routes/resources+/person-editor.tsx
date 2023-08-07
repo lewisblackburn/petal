@@ -17,15 +17,16 @@ import { StatusButton } from '~/components/ui/status-button.tsx'
 import { GENDERS, crewRolesWithActing } from '~/utils/constants.ts'
 import { safeRedirect } from 'remix-utils'
 import { LocationSearch } from './locations.tsx'
+import { SelectItem } from '~/components/ui/select.tsx'
 
 export const PersonEditorSchema = z.object({
 	id: z.string().optional(),
 	name: z.string().min(1),
-	knownForDepartment: z.string().optional(),
+	knownForDepartment: z.string().min(1),
 	biography: z.string().optional(),
 	birthdate: z.string().optional(),
 	dayOfDeath: z.string().optional(),
-	gender: z.string().optional(),
+	gender: z.string().min(1),
 	placeOfBirth: z.string().optional(),
 	homepage: z.string().optional(),
 	redirectTo: z.string().optional(),
@@ -147,9 +148,8 @@ export function PersonEditor({
 						htmlFor: fields.knownForDepartment.id,
 						children: 'Known For',
 					}}
-					selectProps={{
+					buttonProps={{
 						...conform.input(fields.knownForDepartment),
-						autoComplete: 'known-for-department',
 					}}
 					options={crewRolesWithActing()}
 					errors={fields.knownForDepartment.errors}
@@ -199,14 +199,18 @@ export function PersonEditor({
 				/>
 				<SelectField
 					labelProps={{ htmlFor: fields.gender.id, children: 'Gender' }}
-					selectProps={{
+					buttonProps={{
 						...conform.input(fields.gender),
-						autoComplete: 'gender',
 					}}
 					className="w-full"
-					options={GENDERS}
 					errors={fields.gender.errors}
-				/>
+				>
+					{GENDERS.map(gender => (
+						<SelectItem key={gender.value} value={gender.value}>
+							{gender.label}
+						</SelectItem>
+					))}
+				</SelectField>
 			</div>
 			<LocationSearch
 				labelProps={{
