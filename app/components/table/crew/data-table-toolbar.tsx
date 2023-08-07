@@ -1,10 +1,10 @@
 import { type Table } from '@tanstack/react-table'
 
-import { Input } from '~/components/ui/input.tsx'
-import { Button } from '~/components/ui/button.tsx'
-import { Icon } from '~/components/ui/icon.tsx'
 import { DataTableFacetedFilter } from '~/components/table/data-table-faceted-filter.tsx'
 import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
+import { Button } from '~/components/ui/button.tsx'
+import { Icon } from '~/components/ui/icon.tsx'
+import { Input } from '~/components/ui/input.tsx'
 import { CREW_ROLES, getAllJobs } from '~/utils/constants.ts'
 import { DataTableAddCrewMember } from './data-table-add-crew-member.tsx'
 import { DataTableDeleteCrewMembers } from './data-table-delete-crew-members.tsx'

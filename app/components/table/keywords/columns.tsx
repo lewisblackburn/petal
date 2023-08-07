@@ -1,6 +1,6 @@
+import { type Keyword } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
-import { type Keyword } from '@prisma/client'
 import { DataTableColumnHeader } from '../data-table-column-header.tsx'
 
 export const columns: ColumnDef<Partial<Keyword>>[] = [

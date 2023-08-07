@@ -1,9 +1,8 @@
-import type AWS from 'aws-sdk'
-import { Upload } from '@aws-sdk/lib-storage'
-import { S3 } from '@aws-sdk/client-s3'
-import type { UploadHandler } from '@remix-run/node'
-import { writeAsyncIterableToWritable } from '@remix-run/node'
 import { PassThrough } from 'stream'
+import { S3 } from '@aws-sdk/client-s3'
+import { Upload } from '@aws-sdk/lib-storage'
+import  { type UploadHandler , writeAsyncIterableToWritable } from '@remix-run/node'
+import type AWS from 'aws-sdk'
 
 const { STORAGE_ACCESS_KEY, STORAGE_SECRET, STORAGE_REGION, STORAGE_BUCKET } =
 	process.env

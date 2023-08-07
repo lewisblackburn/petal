@@ -5,16 +5,16 @@ import {
 	type DataFunctionArgs,
 } from '@remix-run/node'
 import { Link, useLoaderData, useLocation } from '@remix-run/react'
+import { Container } from '~/components/container.tsx'
+import { InfiniteScroll } from '~/components/infinite-scroll.tsx'
+import { SortBy } from '~/components/sort-by.tsx'
 import { prisma } from '~/utils/db.server.ts'
+import { getTableParams } from '~/utils/request.helper.ts'
 import {
 	combineServerTimings,
 	makeTimings,
 	time,
 } from '~/utils/timing.server.ts'
-import { InfiniteScroll } from '~/components/infinite-scroll.tsx'
-import { SortBy } from '~/components/sort-by.tsx'
-import { Container } from '~/components/container.tsx'
-import { getTableParams } from '~/utils/request.helper.ts'
 
 const TAKE = 30
 

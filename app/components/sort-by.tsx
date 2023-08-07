@@ -1,4 +1,8 @@
+import queryString from 'querystring'
+import { Prisma } from '@prisma/client'
 import { useSearchParams } from '@remix-run/react'
+import React from 'react'
+import { cn } from '~/utils/misc.tsx'
 import { Button } from './ui/button.tsx'
 import {
 	Card,
@@ -16,10 +20,6 @@ import {
 } from './ui/command.tsx'
 import { Icon } from './ui/icon.tsx'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover.tsx'
-import { Prisma } from '@prisma/client'
-import React from 'react'
-import queryString from 'querystring'
-import { cn } from '~/utils/misc.tsx'
 
 // FIX: This should be different for each model maybe try and make it more generic
 const SORT_OPTIONS = [

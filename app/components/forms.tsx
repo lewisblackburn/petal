@@ -1,26 +1,13 @@
 import { useInputEvent } from '@conform-to/react'
+import { Link } from '@remix-run/react'
 import React, { useId, useRef } from 'react'
+import { Checkbox, type CheckboxProps } from '~/components/ui/checkbox.tsx'
 import { Input } from '~/components/ui/input.tsx'
 import { Label } from '~/components/ui/label.tsx'
-import { Checkbox, type CheckboxProps } from '~/components/ui/checkbox.tsx'
 import { Textarea } from '~/components/ui/textarea.tsx'
-import {
-	Select,
-	SelectContent,
-	type SelectProps,
-	SelectTrigger,
-	SelectValue,
-	SelectItem,
-} from './ui/select.tsx'
 import { cn } from '~/utils/misc.tsx'
-import {
-	Popover,
-	PopoverContent,
-	type PopoverProps,
-	PopoverTrigger,
-} from './ui/popover.tsx'
+import { Spinner } from './spinner.tsx'
 import { Button } from './ui/button.tsx'
-import { Icon } from './ui/icon.tsx'
 import {
 	Command,
 	CommandEmpty,
@@ -29,8 +16,21 @@ import {
 	CommandItem,
 	CommandList,
 } from './ui/command.tsx'
-import { Spinner } from './spinner.tsx'
-import { Link } from '@remix-run/react'
+import { Icon } from './ui/icon.tsx'
+import {
+	Popover,
+	PopoverContent,
+	type PopoverProps,
+	PopoverTrigger,
+} from './ui/popover.tsx'
+import {
+	Select,
+	SelectContent,
+	type SelectProps,
+	SelectTrigger,
+	SelectValue,
+	SelectItem,
+} from './ui/select.tsx'
 
 export type ListOfErrors = Array<string | null | undefined> | null | undefined
 
@@ -280,7 +280,7 @@ export function SearchSelectField({
 			<input
 				name={buttonProps.name}
 				// Hack as readOnly prevents errors from being displayed
-				onChange={() => { }}
+				onChange={() => {}}
 				value={value ?? ''}
 				className="hidden"
 			/>
@@ -404,9 +404,9 @@ export function FilterSelectField({
 
 	const defaultItem = buttonProps.defaultValue?.toString()
 		? {
-			label: buttonProps.defaultValue?.toString(),
-			value: buttonProps.defaultValue?.toString(),
-		}
+				label: buttonProps.defaultValue?.toString(),
+				value: buttonProps.defaultValue?.toString(),
+		  }
 		: undefined
 
 	const [selectedItem, setSelectedItem] = React.useState<
@@ -418,7 +418,7 @@ export function FilterSelectField({
 			<input
 				name={buttonProps.name}
 				// Hack as readOnly prevents errors from being displayed
-				onChange={() => { }}
+				onChange={() => {}}
 				value={selectedItem?.value ?? ''}
 				className="hidden"
 			/>

@@ -1,3 +1,17 @@
+import { DndContext, closestCenter } from '@dnd-kit/core'
+import {
+	restrictToParentElement,
+	restrictToVerticalAxis,
+	restrictToWindowEdges,
+} from '@dnd-kit/modifiers'
+import {
+	SortableContext,
+	arrayMove,
+	useSortable,
+	verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { useParams, useSubmit } from '@remix-run/react'
 import {
 	type ColumnDef,
 	type ColumnFiltersState,
@@ -13,6 +27,8 @@ import {
 	getSortedRowModel,
 } from '@tanstack/react-table'
 import React, { useState } from 'react'
+import { DataTablePagination } from '~/components/table/data-table-pagination.tsx'
+import { Icon } from '~/components/ui/icon.tsx'
 import {
 	Table,
 	TableBody,
@@ -21,24 +37,8 @@ import {
 	TableHeader,
 	TableRow,
 } from '~/components/ui/table.tsx'
-import { DataTablePagination } from '~/components/table/data-table-pagination.tsx'
-import { DataTableToolbar } from './data-table-toolbar.js'
-import { DndContext, closestCenter } from '@dnd-kit/core'
-import {
-	SortableContext,
-	arrayMove,
-	useSortable,
-	verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import {
-	restrictToParentElement,
-	restrictToVerticalAxis,
-	restrictToWindowEdges,
-} from '@dnd-kit/modifiers'
-import { Icon } from '~/components/ui/icon.tsx'
-import { useParams, useSubmit } from '@remix-run/react'
 import { toast } from '~/components/ui/use-toast.ts'
+import { DataTableToolbar } from './data-table-toolbar.js'
 
 const SortableRow = ({ row, data }: { row: any; data: any }) => {
 	const {
@@ -194,9 +194,9 @@ export function CastTable<TData, TValue>({
 												{header.isPlaceholder
 													? null
 													: flexRender(
-														header.column.columnDef.header,
-														header.getContext(),
-													)}
+															header.column.columnDef.header,
+															header.getContext(),
+													  )}
 											</TableHead>
 										)
 									})}

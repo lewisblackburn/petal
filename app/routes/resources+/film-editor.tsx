@@ -1,13 +1,13 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { type Prisma, type Film } from '@prisma/client'
 import { json, type DataFunctionArgs } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
 import { z } from 'zod'
-import { prisma } from '~/utils/db.server.ts'
-import { type Prisma, type Film } from '@prisma/client'
 import { ErrorList, Field, TextareaField } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
+import { prisma } from '~/utils/db.server.ts'
 import { redirectWithToast } from '~/utils/flash-session.server.ts'
 
 export const FilmEditorSchema = z.object({

@@ -97,10 +97,10 @@ export async function action({ request }: DataFunctionArgs) {
 			username,
 			password: newPassword
 				? {
-					update: {
-						hash: await getPasswordHash(newPassword),
-					},
-				}
+						update: {
+							hash: await getPasswordHash(newPassword),
+						},
+				  }
 				: undefined,
 		},
 	})

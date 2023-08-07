@@ -1,10 +1,10 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { type Person } from '@prisma/client'
 import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
 import { useFetcher, useSearchParams } from '@remix-run/react'
+import { safeRedirect } from 'remix-utils'
 import { z } from 'zod'
-import { prisma } from '~/utils/db.server.ts'
-import { type Person } from '@prisma/client'
 import {
 	ErrorList,
 	Field,
@@ -15,7 +15,7 @@ import {
 import { Button } from '~/components/ui/button.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { GENDERS, crewRolesWithActing } from '~/utils/constants.ts'
-import { safeRedirect } from 'remix-utils'
+import { prisma } from '~/utils/db.server.ts'
 import { LocationSearch } from './locations.tsx'
 
 export const PersonEditorSchema = z.object({

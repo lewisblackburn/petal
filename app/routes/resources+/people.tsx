@@ -5,6 +5,7 @@ import {
 	type DataFunctionArgs,
 	type HeadersFunction,
 } from '@remix-run/server-runtime'
+import { useSpinDelay } from 'spin-delay'
 import { FilterSelectField, type ListOfErrors } from '~/components/forms.tsx'
 import { type PopoverProps } from '~/components/ui/popover.tsx'
 import { prisma } from '~/utils/db.server.ts'
@@ -14,7 +15,6 @@ import {
 	makeTimings,
 	time,
 } from '~/utils/timing.server.ts'
-import { useSpinDelay } from 'spin-delay'
 
 export async function loader({ request }: DataFunctionArgs) {
 	const timings = makeTimings('people loader')

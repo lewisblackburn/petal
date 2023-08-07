@@ -1,9 +1,9 @@
 import { type Table } from '@tanstack/react-table'
 
-import { Input } from '~/components/ui/input.tsx'
+import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
+import { Input } from '~/components/ui/input.tsx'
 import { DataTableAddKeyword } from './data-table-add-keyword.tsx'
 import { DataTableDeleteKeywords } from './data-table-delete-keywords.tsx'
 

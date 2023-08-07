@@ -1,8 +1,8 @@
 import { type CrewMember } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
-import { DataTableColumnHeader } from '../data-table-column-header.js'
 import { CREW_ROLES, getAllJobs } from '~/utils/constants.ts'
+import { DataTableColumnHeader } from '../data-table-column-header.js'
 
 export const columns: ColumnDef<Partial<CrewMember>>[] = [
 	{

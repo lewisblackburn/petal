@@ -13,6 +13,7 @@ import {
 	getSortedRowModel,
 } from '@tanstack/react-table'
 import React from 'react'
+import { DataTablePagination } from '~/components/table/data-table-pagination.tsx'
 import {
 	Table,
 	TableBody,
@@ -21,7 +22,6 @@ import {
 	TableHeader,
 	TableRow,
 } from '~/components/ui/table.tsx'
-import { DataTablePagination } from '~/components/table/data-table-pagination.tsx'
 import { DataTableToolbar } from './data-table-toolbar.js'
 
 interface DataTableProps<TData, TValue> {
@@ -80,9 +80,9 @@ export function CrewTable<TData, TValue>({
 											{header.isPlaceholder
 												? null
 												: flexRender(
-													header.column.columnDef.header,
-													header.getContext(),
-												)}
+														header.column.columnDef.header,
+														header.getContext(),
+												  )}
 										</TableHead>
 									)
 								})}

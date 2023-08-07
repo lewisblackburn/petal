@@ -1,7 +1,7 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
-import { DataTableColumnHeader } from '../data-table-column-header.js'
 import { LANGUAGES, PHOTO_TYPES } from '~/utils/constants.ts'
+import { DataTableColumnHeader } from '../data-table-column-header.js'
 
 // FIX: Figure out what type this needs it was CreditMember
 export const columns: ColumnDef<any>[] = [

@@ -1,7 +1,7 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
-import { DataTableColumnHeader } from '../data-table-column-header.tsx'
 import { VIDEO_TYPES, QUALITY, SITES } from '~/utils/constants.ts'
+import { DataTableColumnHeader } from '../data-table-column-header.tsx'
 
 // FIX: Figure out what type this needs it was Keyword
 export const columns: ColumnDef<any>[] = [

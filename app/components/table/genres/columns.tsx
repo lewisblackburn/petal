@@ -1,7 +1,7 @@
+import { type Genre } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '~/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../data-table-column-header.js'
-import { type Genre } from '@prisma/client'
 
 export const columns: ColumnDef<Partial<Genre>>[] = [
 	{

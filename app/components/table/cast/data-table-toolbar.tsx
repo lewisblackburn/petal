@@ -1,9 +1,9 @@
 import { type Table } from '@tanstack/react-table'
 
-import { Input } from '~/components/ui/input.tsx'
+import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
+import { Input } from '~/components/ui/input.tsx'
 import { DataTableAddCastMember } from './data-table-add-cast-member.tsx'
 import { DataTableDeleteCastMembers } from './data-table-delete-cast-members.tsx'
 

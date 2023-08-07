@@ -1,13 +1,13 @@
 import { type Table } from '@tanstack/react-table'
 
-import { Input } from '~/components/ui/input.tsx'
+import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
-import { DataTableViewOptions } from '~/components/table/data-table-view-options.tsx'
+import { Input } from '~/components/ui/input.tsx'
+import { VIDEO_TYPES, QUALITY, SITES } from '~/utils/constants.ts'
+import { DataTableFacetedFilter } from '../data-table-faceted-filter.tsx'
 import { DataTableAddVideo } from './data-table-add-video.tsx'
 import { DataTableDeleteVideos } from './data-table-delete-videos.tsx'
-import { DataTableFacetedFilter } from '../data-table-faceted-filter.tsx'
-import { VIDEO_TYPES, QUALITY, SITES } from '~/utils/constants.ts'
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>

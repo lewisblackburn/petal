@@ -7,64 +7,64 @@ import { flashMessage } from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
 
 export const DeleteFilmCrewMembersSchema = z.object({
-  ids: z.string().nonempty(),
-  filmId: z.string().nonempty(),
+	ids: z.string().nonempty(),
+	filmId: z.string().nonempty(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
-  await requireUserId(request)
-  const formData = await request.formData()
-  const submission = parse(formData, {
-    schema: DeleteFilmCrewMembersSchema,
-    acceptMultipleErrors: () => true,
-  })
-  if (!submission.value) {
-    return json(
-      {
-        status: 'error',
-        submission,
-      } as const,
-      { status: 400 },
-    )
-  }
+	await requireUserId(request)
+	const formData = await request.formData()
+	const submission = parse(formData, {
+		schema: DeleteFilmCrewMembersSchema,
+		acceptMultipleErrors: () => true,
+	})
+	if (!submission.value) {
+		return json(
+			{
+				status: 'error',
+				submission,
+			} as const,
+			{ status: 400 },
+		)
+	}
 
-  let { filmId, ids } = submission.value
+	let { filmId, ids } = submission.value
 
-  await prisma.film
-    .update({
-      where: { id: filmId },
-      data: {
-        crew: {
-          deleteMany: {
-            id: {
-              in: JSON.parse(ids) as string[],
-            },
-          },
-        },
-      },
-    })
-    .catch(err => {
-      ensurePE(formData, request)
-      return json({
-        status: 400,
-        headers: flashMessage({
-          toast: {
-            title: err.message,
-            variant: 'destructive',
-          },
-        }),
-      })
-    })
+	await prisma.film
+		.update({
+			where: { id: filmId },
+			data: {
+				crew: {
+					deleteMany: {
+						id: {
+							in: JSON.parse(ids) as string[],
+						},
+					},
+				},
+			},
+		})
+		.catch(err => {
+			ensurePE(formData, request)
+			return json({
+				status: 400,
+				headers: flashMessage({
+					toast: {
+						title: err.message,
+						variant: 'destructive',
+					},
+				}),
+			})
+		})
 
-  ensurePE(formData, request)
-  return json(
-    { success: true },
-    {
-      headers: await flashMessage({
-        toast: {
-          title: 'Deleted Film Crew Members',
-        },
-      }),
-    },
-  )
+	ensurePE(formData, request)
+	return json(
+		{ success: true },
+		{
+			headers: await flashMessage({
+				toast: {
+					title: 'Deleted Film Crew Members',
+				},
+			}),
+		},
+	)
 }

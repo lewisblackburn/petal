@@ -1,8 +1,8 @@
 import { json } from '@remix-run/router'
 import { type DataFunctionArgs } from '@remix-run/server-runtime'
+import { Container } from '~/components/container.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { FilmEditor } from '../resources+/film-editor.tsx'
-import { Container } from '~/components/container.tsx'
 
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserId(request)

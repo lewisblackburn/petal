@@ -1,11 +1,11 @@
 import { Link, NavLink } from '@remix-run/react'
-import { UserDropdown } from './user-dropdown.tsx'
-import { useOptionalUser } from '~/utils/user.ts'
-import { Button } from './ui/button.tsx'
-import { SearchBar } from './search-bar.tsx'
 import { cn } from '~/utils/misc.tsx'
-import { NotificationPopover } from './notification-popover.tsx'
+import { useOptionalUser } from '~/utils/user.ts'
 import { AddMediaDropdown } from './add-media-dropdown.tsx'
+import { NotificationPopover } from './notification-popover.tsx'
+import { SearchBar } from './search-bar.tsx'
+import { Button } from './ui/button.tsx'
+import { UserDropdown } from './user-dropdown.tsx'
 
 const LINKS = [
 	{

@@ -1,5 +1,5 @@
-import { useSearchParams } from '@remix-run/react'
 import queryString from 'querystring'
+import { useSearchParams } from '@remix-run/react'
 import { useInView } from 'react-intersection-observer'
 import { Button } from './ui/button.tsx'
 

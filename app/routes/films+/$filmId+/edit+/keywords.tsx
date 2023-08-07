@@ -4,17 +4,17 @@ import {
 	type HeadersFunction,
 } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { prisma } from '~/utils/db.server.ts'
 import { Container } from '~/components/container.tsx'
 import { columns } from '~/components/table/keywords/columns.tsx'
+import { KeywordTable } from '~/components/table/keywords/data-table.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
+import { prisma } from '~/utils/db.server.ts'
+import { getDateTimeFormat } from '~/utils/misc.tsx'
 import {
 	combineServerTimings,
 	makeTimings,
 	time,
 } from '~/utils/timing.server.ts'
-import { KeywordTable } from '~/components/table/keywords/data-table.tsx'
-import { getDateTimeFormat } from '~/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)

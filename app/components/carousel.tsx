@@ -1,8 +1,8 @@
+import { Link } from '@remix-run/react'
 import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
-import { Icon } from './ui/icon.js'
 import { Button } from './ui/button.js'
-import { Link } from '@remix-run/react'
+import { Icon } from './ui/icon.js'
 
 interface CarouselProps {
 	title: string

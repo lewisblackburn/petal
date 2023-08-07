@@ -20,14 +20,14 @@ export const AddFilmPhotoSchema = z.object({
 		typeof window === 'undefined'
 			? z.any()
 			: z
-				.instanceof(File)
-				.refine(
-					file => file.name !== '' && file.size !== 0,
-					'Image is required',
-				)
-				.refine(file => {
-					return file.size <= MAX_SIZE
-				}, 'Image size must be less than 3MB'),
+					.instanceof(File)
+					.refine(
+						file => file.name !== '' && file.size !== 0,
+						'Image is required',
+					)
+					.refine(file => {
+						return file.size <= MAX_SIZE
+					}, 'Image size must be less than 3MB'),
 	type: z.string().nonempty({ message: 'You must select a type' }),
 	language: z.string().nonempty({ message: 'You must select a language' }),
 	primary: checkboxSchema(),

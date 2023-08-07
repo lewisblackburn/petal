@@ -1,14 +1,7 @@
-import * as React from 'react'
 import { type Column } from '@tanstack/react-table'
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from '~/components/ui/popover.tsx'
-import { Button } from '~/components/ui/button.tsx'
-import { Icon } from '~/components/ui/icon.tsx'
-import { Separator } from '~/components/ui/separator.tsx'
+import * as React from 'react'
 import { Badge } from '~/components/ui/badge.tsx'
+import { Button } from '~/components/ui/button.tsx'
 import {
 	Command,
 	CommandEmpty,
@@ -18,6 +11,13 @@ import {
 	CommandList,
 	CommandSeparator,
 } from '~/components/ui/command.tsx'
+import { Icon } from '~/components/ui/icon.tsx'
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '~/components/ui/popover.tsx'
+import { Separator } from '~/components/ui/separator.tsx'
 import { cn } from '~/utils/misc.tsx'
 
 interface DataTableFacetedFilter<TData, TValue> {
