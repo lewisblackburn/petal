@@ -227,7 +227,7 @@ export default function FilmRoute() {
 				<div className="col-span-3">
 					<div className="flex flex-col space-y-5 rounded-lg border p-5">
 						<a
-							href={data.film.videos.filter(Boolean)[0].url}
+							href={data.film.videos.filter(Boolean)[0]?.url ?? ''}
 							target="_blank"
 							rel="noopener noreferrer"
 						>

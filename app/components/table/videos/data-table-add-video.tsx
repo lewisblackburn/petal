@@ -96,7 +96,7 @@ export function DataTableAddVideo() {
 								htmlFor: fields.site.id,
 								children: 'Site',
 							}}
-							selectProps={{
+							buttonProps={{
 								...conform.input(fields.site, { type: 'text' }),
 							}}
 							options={SITES}
@@ -107,7 +107,7 @@ export function DataTableAddVideo() {
 								htmlFor: fields.type.id,
 								children: 'Type',
 							}}
-							selectProps={{
+							buttonProps={{
 								...conform.input(fields.type, { type: 'text' }),
 							}}
 							options={VIDEO_TYPES}
@@ -118,7 +118,7 @@ export function DataTableAddVideo() {
 								htmlFor: fields.quality.id,
 								children: 'Quality',
 							}}
-							selectProps={{
+							buttonProps={{
 								...conform.input(fields.quality, { type: 'text' }),
 							}}
 							options={QUALITY}

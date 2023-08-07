@@ -67,8 +67,9 @@ export function DataTableAddCastMember() {
 						<PersonSearch
 							labelProps={{
 								htmlFor: fields.personId.id,
+								children: 'Person',
 							}}
-							inputProps={{
+							buttonProps={{
 								...conform.input(fields.personId, { type: 'text' }),
 							}}
 							errors={fields.personId.errors}

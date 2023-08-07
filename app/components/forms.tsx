@@ -10,6 +10,7 @@ import {
 	type SelectProps,
 	SelectTrigger,
 	SelectValue,
+	SelectItem,
 } from './ui/select.tsx'
 import { cn } from '~/utils/misc.tsx'
 import {
@@ -28,6 +29,8 @@ import {
 	CommandItem,
 	CommandList,
 } from './ui/command.tsx'
+import { Spinner } from './spinner.tsx'
+import { Link } from '@remix-run/react'
 
 export type ListOfErrors = Array<string | null | undefined> | null | undefined
 
@@ -174,15 +177,15 @@ export function CheckboxField({
 export function SelectField({
 	labelProps,
 	buttonProps,
+	options,
 	errors,
 	className,
-	children,
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
 	buttonProps: SelectProps
+	options: Array<{ label: string; value: string }>
 	errors?: ListOfErrors
 	className?: string
-	children: React.ReactNode
 }) {
 	const [open, setOpen] = React.useState(false)
 	const fallbackId = useId()
@@ -229,7 +232,13 @@ export function SelectField({
 				>
 					<SelectValue placeholder={labelProps.children} />
 				</SelectTrigger>
-				<SelectContent>{children}</SelectContent>
+				<SelectContent>
+					{options.map(option => (
+						<SelectItem key={option.value} value={option.value}>
+							{option.label}
+						</SelectItem>
+					))}
+				</SelectContent>
 			</Select>
 			<div className="px-4 pb-3 pt-1">
 				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
@@ -267,15 +276,16 @@ export function SearchSelectField({
 	const { name, ...props } = buttonProps
 
 	return (
-		<div className={className}>
+		<div className={cn('flex flex-col space-y-2', className)}>
 			<input
 				name={buttonProps.name}
-				defaultValue={buttonProps.defaultValue?.toString()}
-				value={value}
+				// Hack as readOnly prevents errors from being displayed
+				onChange={() => { }}
+				value={value ?? ''}
 				className="hidden"
 			/>
 			<Label htmlFor={id} {...labelProps} />
-			<Popover open={open} onOpenChange={setOpen}>
+			<Popover open={open} onOpenChange={setOpen} modal>
 				<PopoverTrigger
 					id={id}
 					ref={buttonRef}
@@ -344,6 +354,173 @@ export function SearchSelectField({
 										/>
 									</CommandItem>
 								))}
+							</CommandGroup>
+						</CommandList>
+					</Command>
+				</PopoverContent>
+			</Popover>
+			<div className="px-4 pb-3 pt-1">
+				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+			</div>
+		</div>
+	)
+}
+
+// This needs to swap names with the above component
+export function FilterSelectField({
+	labelProps,
+	buttonProps,
+	items,
+	busy = false,
+	notFound = '',
+	errors,
+	className,
+	onInput,
+	onFocus,
+}: {
+	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
+	buttonProps: PopoverProps
+	items: any
+	busy: boolean
+	notFound?: string
+	errors?: ListOfErrors
+	className?: string
+	onInput: React.FormEventHandler<HTMLInputElement>
+	onFocus: React.FocusEventHandler<HTMLInputElement>
+}) {
+	const [open, setOpen] = React.useState(false)
+	const fallbackId = useId()
+	const buttonRef = useRef<HTMLButtonElement>(null)
+	const control = useInputEvent({
+		ref: () =>
+			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
+		onFocus: () => buttonRef.current?.focus(),
+		onBlur: () => buttonRef.current?.blur(),
+	})
+	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
+	const errorId = errors?.length ? `${id}-error` : undefined
+
+	const { name, ...props } = buttonProps
+
+	const defaultItem = buttonProps.defaultValue?.toString()
+		? {
+			label: buttonProps.defaultValue?.toString(),
+			value: buttonProps.defaultValue?.toString(),
+		}
+		: undefined
+
+	const [selectedItem, setSelectedItem] = React.useState<
+		null | undefined | { label: string; value: string; image?: string }
+	>(defaultItem)
+
+	return (
+		<div className={cn('flex flex-col space-y-2', className)}>
+			<input
+				name={buttonProps.name}
+				// Hack as readOnly prevents errors from being displayed
+				onChange={() => { }}
+				value={selectedItem?.value ?? ''}
+				className="hidden"
+			/>
+			<Label htmlFor={id} {...labelProps} />
+			<Popover open={open} onOpenChange={setOpen} modal>
+				<PopoverTrigger
+					id={id}
+					ref={buttonRef}
+					aria-invalid={errorId ? true : undefined}
+					aria-describedby={errorId}
+					{...props}
+					onChange={state => {
+						console.log(state)
+						control.change(state.currentTarget.value)
+						buttonProps.onChange?.(state)
+					}}
+					onFocus={event => {
+						control.focus()
+						buttonProps.onFocus?.(event)
+					}}
+					onBlur={event => {
+						control.blur()
+						buttonProps.onBlur?.(event)
+					}}
+					type="button"
+					asChild
+				>
+					<Button
+						variant="outline"
+						role="combobox"
+						aria-expanded={open}
+						className="min-w-[300px] justify-between whitespace-nowrap aria-[invalid]:border-input-invalid"
+					>
+						{selectedItem
+							? selectedItem.label
+							: `Select ${labelProps.children?.toString().toLowerCase()}...`}
+						<Icon
+							name="caret-sort"
+							className="ml-2 h-4 w-4 shrink-0 opacity-50"
+						/>
+					</Button>
+				</PopoverTrigger>
+				<PopoverContent className="w-full p-0" align="start">
+					<Command shouldFilter={false}>
+						<CommandInput
+							placeholder={`Search ${labelProps.children
+								?.toString()
+								.toLowerCase()}...`}
+							onFocus={onFocus}
+							onInput={onInput}
+							className="h-9"
+						/>
+						<Spinner showSpinner={busy} />
+						<CommandList>
+							<CommandEmpty className="-mb-2 p-2">
+								<Link to={notFound}>
+									<Button variant="ghost" size="sm" className="w-full">
+										<Icon name="plus" className="mr-2 h-4 w-4" />
+										Create a {labelProps.children?.toString().toLowerCase()}
+									</Button>
+								</Link>
+							</CommandEmpty>
+							<CommandGroup>
+								{items?.map(
+									(item: { label: string; value: string; image?: string }) => (
+										<CommandItem
+											key={item.value}
+											value={item.value}
+											onSelect={currentValue => {
+												const item = items.find(
+													(item: any) =>
+														item.value.toLowerCase() === currentValue,
+												)
+												setSelectedItem(
+													currentValue === selectedItem?.value
+														? selectedItem
+														: item,
+												)
+												setOpen(false)
+											}}
+											className="flex items-center gap-3"
+										>
+											{item.image && (
+												<img
+													src={item.image ?? ''}
+													alt={item.value}
+													className="aspect-square h-12 w-12 rounded-md"
+												/>
+											)}
+											{item.label}
+											<Icon
+												name="check"
+												className={cn(
+													'ml-auto h-4 w-4',
+													selectedItem?.value === item.value
+														? 'opacity-100'
+														: 'opacity-0',
+												)}
+											/>
+										</CommandItem>
+									),
+								)}
 							</CommandGroup>
 						</CommandList>
 					</Command>

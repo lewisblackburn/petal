@@ -30,6 +30,7 @@ export async function loader({ params }: DataFunctionArgs) {
 				select: {
 					id: true,
 					name: true,
+					placeOfBirth: true,
 					photos: {
 						take: 1,
 						where: {
@@ -112,6 +113,7 @@ export default function PersonRoute() {
 					Best Rising Star.
 				</p>
 				<p>{data.person.knownForDepartment}</p>
+				<p>{data.person.placeOfBirth}</p>
 				<div>
 					{data.person.casts.length > 0 && (
 						<Carousel

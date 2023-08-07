@@ -72,8 +72,9 @@ export function DataTableAddCrewMember() {
 						<PersonSearch
 							labelProps={{
 								htmlFor: fields.personId.id,
+								children: 'Person',
 							}}
-							inputProps={{
+							buttonProps={{
 								...conform.input(fields.personId, { type: 'text' }),
 							}}
 							errors={fields.personId.errors}
@@ -83,7 +84,7 @@ export function DataTableAddCrewMember() {
 								htmlFor: fields.department.id,
 								children: 'Department',
 							}}
-							selectProps={{
+							buttonProps={{
 								...conform.input(fields.department, { type: 'text' }),
 							}}
 							options={CREW_ROLES}
@@ -94,7 +95,7 @@ export function DataTableAddCrewMember() {
 								htmlFor: fields.job.id,
 								children: 'Job',
 							}}
-							selectProps={{
+							buttonProps={{
 								...conform.input(fields.job, { type: 'text' }),
 							}}
 							options={getAllJobs()}

@@ -17,7 +17,6 @@ import { StatusButton } from '~/components/ui/status-button.tsx'
 import { GENDERS, crewRolesWithActing } from '~/utils/constants.ts'
 import { safeRedirect } from 'remix-utils'
 import { LocationSearch } from './locations.tsx'
-import { SelectItem } from '~/components/ui/select.tsx'
 
 export const PersonEditorSchema = z.object({
 	id: z.string().optional(),
@@ -27,7 +26,7 @@ export const PersonEditorSchema = z.object({
 	birthdate: z.string().optional(),
 	dayOfDeath: z.string().optional(),
 	gender: z.string().min(1),
-	placeOfBirth: z.string().optional(),
+	placeOfBirth: z.string(),
 	homepage: z.string().optional(),
 	redirectTo: z.string().optional(),
 })
@@ -84,7 +83,6 @@ export async function action({ request }: DataFunctionArgs) {
 			where: { id },
 			select: { id: true },
 		})
-		console.log(existingPerson)
 		if (!existingPerson) {
 			return json({ status: 'error', submission } as const, { status: 400 })
 		}
@@ -202,24 +200,18 @@ export function PersonEditor({
 					buttonProps={{
 						...conform.input(fields.gender),
 					}}
+					options={GENDERS}
 					className="w-full"
 					errors={fields.gender.errors}
-				>
-					{GENDERS.map(gender => (
-						<SelectItem key={gender.value} value={gender.value}>
-							{gender.label}
-						</SelectItem>
-					))}
-				</SelectField>
+				/>
 			</div>
 			<LocationSearch
 				labelProps={{
 					htmlFor: fields.placeOfBirth.id,
 					children: 'Place of Birth',
 				}}
-				selectProps={{
+				buttonProps={{
 					...conform.input(fields.placeOfBirth),
-					autoComplete: 'placeOfBirth',
 				}}
 				errors={fields.placeOfBirth.errors}
 			/>

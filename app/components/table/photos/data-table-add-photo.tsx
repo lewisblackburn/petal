@@ -88,9 +88,8 @@ export function DataTableAddPhoto() {
 								htmlFor: fields.type.id,
 								children: 'Type',
 							}}
-							selectProps={{
+							buttonProps={{
 								...conform.input(fields.type, { type: 'text' }),
-								autoComplete: 'off',
 							}}
 							options={PHOTO_TYPES}
 							errors={fields.type.errors}
@@ -100,9 +99,8 @@ export function DataTableAddPhoto() {
 								htmlFor: fields.language.id,
 								children: 'Language',
 							}}
-							selectProps={{
+							buttonProps={{
 								...conform.input(fields.language, { type: 'text' }),
-								autoComplete: 'off',
 							}}
 							options={LANGUAGES}
 							errors={fields.language.errors}
