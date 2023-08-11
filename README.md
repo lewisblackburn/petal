@@ -78,4 +78,4 @@ Epic Stack 🚀" boilerplate as well.
 
 ## Last Sync
 
-https://github.com/epicweb-dev/epic-stack/commit/1e310c24d8b5339bfe797794102cbc9f6ea069a6
+https://github.com/epicweb-dev/epic-stack/commit/e55897cc229188205600850edeb3d30e76055cc0
