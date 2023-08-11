@@ -162,9 +162,9 @@ export function DeleteNote({ id }: { id: string }) {
 				variant="destructive"
 				status={
 					navigation.state === 'submitting' &&
-					navigation.formAction === formAction &&
-					navigation.formData?.get('intent') === 'delete-note' &&
-					navigation.formMethod === 'POST'
+						navigation.formAction === formAction &&
+						navigation.formData?.get('intent') === 'delete-note' &&
+						navigation.formMethod === 'POST'
 						? 'pending'
 						: actionData?.status ?? 'idle'
 				}
