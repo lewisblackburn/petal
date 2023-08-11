@@ -27,7 +27,6 @@ import {
 	getSession,
 } from '~/utils/session.server.ts'
 import { passwordSchema, usernameSchema } from '~/utils/user-validation.ts'
-import { checkboxSchema } from '~/utils/zod-extensions.ts'
 import {
 	type VerificationTypes,
 	isCodeValid,
@@ -57,7 +56,7 @@ const LoginFormSchema = z.object({
 	username: usernameSchema,
 	password: passwordSchema,
 	redirectTo: z.string().optional(),
-	remember: checkboxSchema(),
+	remember: z.boolean().optional(),
 })
 
 const verifiedTimeKey = 'verified-time'
@@ -151,7 +150,6 @@ async function inlineLoginAction({ request }: DataFunctionArgs) {
 				}
 			}),
 		async: true,
-		acceptMultipleErrors: () => true,
 	})
 	// get the password off the payload that's sent back
 	delete submission.payload.password
@@ -377,7 +375,6 @@ async function inlineTwoFAAction({ request }: DataFunctionArgs) {
 			}
 		}),
 		async: true,
-		acceptMultipleErrors: () => true,
 	})
 
 	if (submission.intent !== 'submit') {
@@ -462,7 +459,7 @@ function InlineTwoFA({
 					value="cancel"
 					status={
 						twoFAFetcher.state === 'submitting' &&
-						twoFAFetcher.formData?.get('intent') === 'cancel'
+							twoFAFetcher.formData?.get('intent') === 'cancel'
 							? 'pending'
 							: twoFAFetcher.data?.status ?? 'idle'
 					}
@@ -477,7 +474,7 @@ function InlineTwoFA({
 					value="confirm"
 					status={
 						twoFAFetcher.state === 'submitting' &&
-						twoFAFetcher.formData?.get('intent') === 'confirm'
+							twoFAFetcher.formData?.get('intent') === 'confirm'
 							? 'pending'
 							: twoFAFetcher.data?.status ?? 'idle'
 					}

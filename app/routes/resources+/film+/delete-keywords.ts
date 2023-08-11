@@ -16,7 +16,6 @@ export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const submission = parse(formData, {
 		schema: DeleteFilmKeywordsSchema,
-		acceptMultipleErrors: () => true,
 	})
 	if (!submission.value) {
 		return json(

@@ -11,26 +11,16 @@ import { prisma } from '~/utils/db.server.ts'
 import { flashMessage } from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
 import { s3UploadHandler } from '~/utils/s3.server.ts'
-import { checkboxSchema } from '~/utils/zod-extensions.ts'
 
 // TODO: Change primary variable to order and the primary photo/video will be the first one
 export const AddFilmPhotoSchema = z.object({
 	filmId: z.string(),
-	image:
-		typeof window === 'undefined'
-			? z.any()
-			: z
-					.instanceof(File)
-					.refine(
-						file => file.name !== '' && file.size !== 0,
-						'Image is required',
-					)
-					.refine(file => {
-						return file.size <= MAX_SIZE
-					}, 'Image size must be less than 3MB'),
+	image: z.instanceof(File, { message: 'Image is required' }).refine(file => {
+		return file.size <= MAX_SIZE
+	}, 'Image size must be less than 3MB'),
 	type: z.string().nonempty({ message: 'You must select a type' }),
 	language: z.string().nonempty({ message: 'You must select a language' }),
-	primary: checkboxSchema(),
+	primary: z.boolean().optional(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -40,7 +30,6 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const submission = parse(formData, {
 		schema: AddFilmPhotoSchema,
-		acceptMultipleErrors: () => true,
 	})
 
 	if (!submission.value) {
@@ -101,7 +90,8 @@ export async function action({ request }: DataFunctionArgs) {
 				photos: {
 					create: {
 						type,
-						primary,
+						// TODO: Just make this requried
+						primary: primary ?? false,
 						language,
 						image: parsedImage.payload.image,
 					},

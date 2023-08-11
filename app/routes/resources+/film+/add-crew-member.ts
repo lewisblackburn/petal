@@ -5,14 +5,13 @@ import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { flashMessage } from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
-import { checkboxSchema } from '~/utils/zod-extensions.ts'
 
 export const AddFilmCrewMemberSchema = z.object({
 	filmId: z.string(),
 	personId: z.string().nonempty({ message: 'You must select a person' }),
 	department: z.string().nonempty({ message: 'You must select a department' }),
 	job: z.string().nonempty({ message: 'You must select a job' }),
-	featured: checkboxSchema(),
+	featured: z.boolean().optional(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -21,7 +20,6 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const submission = parse(formData, {
 		schema: AddFilmCrewMemberSchema,
-		acceptMultipleErrors: () => true,
 	})
 	if (!submission.value) {
 		return json(

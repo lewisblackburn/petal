@@ -18,7 +18,6 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const submission = parse(formData, {
 		schema: AddFilmCastMemberSchema,
-		acceptMultipleErrors: () => true,
 	})
 	if (!submission.value) {
 		return json(

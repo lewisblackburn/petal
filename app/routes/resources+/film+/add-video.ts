@@ -5,7 +5,6 @@ import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { flashMessage } from '~/utils/flash-session.server.ts'
 import { ensurePE } from '~/utils/misc.tsx'
-import { checkboxSchema } from '~/utils/zod-extensions.ts'
 
 // FIX: Add primary video
 export const AddFilmVideoSchema = z.object({
@@ -15,7 +14,7 @@ export const AddFilmVideoSchema = z.object({
 	type: z.string().nonempty(),
 	name: z.string().nonempty(),
 	quality: z.string().nonempty(),
-	primary: checkboxSchema(),
+	primary: z.boolean().optional(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -23,7 +22,6 @@ export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const submission = parse(formData, {
 		schema: AddFilmVideoSchema,
-		acceptMultipleErrors: () => true,
 	})
 	if (!submission.value) {
 		return json(
@@ -77,7 +75,7 @@ export async function action({ request }: DataFunctionArgs) {
 						type,
 						name,
 						quality,
-						primary,
+						primary: primary ?? false,
 					},
 				},
 			},

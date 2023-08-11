@@ -11,9 +11,7 @@ test('Users can create notes', async ({ login, page }) => {
 	// blank form submission should result in errors
 	await page.getByRole('button', { name: /submit/i }).click()
 	// count errors
-	await expect(
-		page.getByText('String must contain at least 1 character(s)'),
-	).toHaveCount(2)
+	await expect(page.getByText('Required')).toHaveCount(2)
 
 	// fill in form and submit
 	await page.getByRole('textbox', { name: /title/i }).fill(newNote.title)

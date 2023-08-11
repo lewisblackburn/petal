@@ -36,8 +36,7 @@ export const handle = {
 
 const PhotoFormSchema = z.object({
 	photoFile: z
-		.instanceof(File)
-		.refine(file => file.name !== '' && file.size !== 0, 'Image is required')
+		.instanceof(File, { message: 'Image is required' })
 		.refine(file => {
 			return file.size <= MAX_SIZE
 		}, 'Image size must be less than 3MB'),
@@ -105,7 +104,7 @@ export async function action({ request }: DataFunctionArgs) {
 			.delete({
 				where: { fileId: previousUserPhoto.imageId },
 			})
-			.catch(() => {}) // ignore the error, maybe it never existed?
+			.catch(() => { }) // ignore the error, maybe it never existed?
 	}
 
 	return redirect('/settings/profile')
