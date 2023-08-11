@@ -17,6 +17,9 @@ export default {
 		},
 		extend: {
 			...extendedTheme,
+			fontFamily: {
+				sans: ['var(--font-sans)', ...defaultTheme.fontFamily.sans],
+			},
 		},
 	},
 	plugins: [animatePlugin, radixPlugin],
