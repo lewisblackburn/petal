@@ -126,7 +126,10 @@ export function PersonEditor({
 		onValidate({ formData }) {
 			return parse(formData, { schema: PersonEditorSchema })
 		},
-		defaultValue: person,
+		defaultValue: {
+			...person,
+			name: person?.name ?? searchParams.get('name') ?? '',
+		},
 		shouldRevalidate: 'onBlur',
 	})
 

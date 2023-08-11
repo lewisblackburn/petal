@@ -1,5 +1,4 @@
 import { useInputEvent } from '@conform-to/react'
-import { Link } from '@remix-run/react'
 import React, { useId, useRef } from 'react'
 import { Checkbox, type CheckboxProps } from '~/components/ui/checkbox.tsx'
 import { Input } from '~/components/ui/input.tsx'
@@ -174,6 +173,7 @@ export function CheckboxField({
 	)
 }
 
+// FIX: The select value doesn't go back when pressing reset
 export function SelectField({
 	labelProps,
 	buttonProps,
@@ -372,21 +372,21 @@ export function FilterSelectField({
 	buttonProps,
 	items,
 	busy = false,
-	notFound = '',
 	errors,
 	className,
 	onInput,
 	onFocus,
+	onNotFound,
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
 	buttonProps: PopoverProps
 	items: any
 	busy: boolean
-	notFound?: string
 	errors?: ListOfErrors
 	className?: string
 	onInput: React.FormEventHandler<HTMLInputElement>
 	onFocus: React.FocusEventHandler<HTMLInputElement>
+	onNotFound: (e: any) => void
 }) {
 	const [open, setOpen] = React.useState(false)
 	const fallbackId = useId()
@@ -474,12 +474,15 @@ export function FilterSelectField({
 						<Spinner showSpinner={busy} />
 						<CommandList>
 							<CommandEmpty className="-mb-2 p-2">
-								<Link to={notFound}>
-									<Button variant="ghost" size="sm" className="w-full">
-										<Icon name="plus" className="mr-2 h-4 w-4" />
-										Create a {labelProps.children?.toString().toLowerCase()}
-									</Button>
-								</Link>
+								<Button
+									onClick={onNotFound}
+									variant="ghost"
+									size="sm"
+									className="w-full"
+								>
+									<Icon name="plus" className="mr-2 h-4 w-4" />
+									Create a {labelProps.children?.toString().toLowerCase()}
+								</Button>
 							</CommandEmpty>
 							<CommandGroup>
 								{items?.map(

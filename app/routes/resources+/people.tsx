@@ -1,10 +1,11 @@
 import { type Prisma } from '@prisma/client'
-import { useFetcher, useLocation } from '@remix-run/react'
+import { useFetcher, useLocation, useNavigate } from '@remix-run/react'
 import {
 	json,
 	type DataFunctionArgs,
 	type HeadersFunction,
 } from '@remix-run/server-runtime'
+import { useState } from 'react'
 import { useSpinDelay } from 'spin-delay'
 import { FilterSelectField, type ListOfErrors } from '~/components/forms.tsx'
 import { type PopoverProps } from '~/components/ui/popover.tsx'
@@ -61,6 +62,8 @@ export const PersonSearch = ({
 	errors?: ListOfErrors
 	className?: string
 }) => {
+	const [value, setValue] = useState('')
+	const navigate = useNavigate()
 	const path = useLocation().pathname
 	const peopleFetcher = useFetcher<typeof loader>()
 
@@ -81,7 +84,6 @@ export const PersonSearch = ({
 			{...props}
 			items={items}
 			busy={delayedBusy}
-			notFound={`/people/new?redirectTo=${path}`}
 			onFocus={() => {
 				peopleFetcher.submit(
 					{ search: '' },
@@ -89,11 +91,16 @@ export const PersonSearch = ({
 				)
 			}}
 			onInput={e => {
+				setValue(e.currentTarget.value)
+
 				peopleFetcher.submit(
 					{ search: e.currentTarget.value },
 					{ method: 'GET', action: '/resources/people' },
 				)
 			}}
+			onNotFound={() =>
+				navigate(`/people/new?redirectTo=${path}&name=${value}`)
+			}
 		/>
 	)
 }
