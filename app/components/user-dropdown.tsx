@@ -1,6 +1,6 @@
 import { Form, Link, useSubmit } from '@remix-run/react'
 import { useRef } from 'react'
-import { computeInitials, getUserImgSrc } from '~/utils/misc.tsx'
+import { getUserImgSrc } from '~/utils/misc.tsx'
 import { useUser } from '~/utils/user.ts'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar.tsx'
 import { Button } from './ui/button.tsx'
@@ -30,7 +30,8 @@ export function UserDropdown() {
 							src={getUserImgSrc(user.imageId)}
 							alt={user.name ?? user.username}
 						/>
-						<AvatarFallback>{computeInitials(user.name ?? '')}</AvatarFallback>
+						{/* TODO: Make this compute initials */}
+						<AvatarFallback>LB</AvatarFallback>
 					</Avatar>
 				</Button>
 			</DropdownMenuTrigger>

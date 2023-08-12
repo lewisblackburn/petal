@@ -319,9 +319,9 @@ export function useDoubleCheck() {
 			doubleCheck
 				? undefined
 				: e => {
-						e.preventDefault()
-						setDoubleCheck(true)
-				  }
+					e.preventDefault()
+					setDoubleCheck(true)
+				}
 
 		return {
 			...props,
@@ -367,21 +367,6 @@ export function useDebounce<
 			),
 		[delay],
 	)
-}
-
-// TODO: Change this to a prisma computed field when they are supported
-/**
- * Returns the initials of a name
- */
-export function computeInitials(name: string) {
-	const names = name.split(' ')
-	const initials = []
-
-	for (let name in names) {
-		initials.push(names[name][0].toUpperCase())
-	}
-
-	return initials.join('')
 }
 
 /**
