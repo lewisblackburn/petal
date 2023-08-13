@@ -376,7 +376,7 @@ export function FilterSelectField({
 	className,
 	onInput,
 	onFocus,
-	onNotFound,
+	onCreate,
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
 	buttonProps: PopoverProps
@@ -386,11 +386,12 @@ export function FilterSelectField({
 	className?: string
 	onInput: React.FormEventHandler<HTMLInputElement>
 	onFocus: React.FocusEventHandler<HTMLInputElement>
-	onNotFound: (e: any) => void
+	onCreate: (value: string) => void
 }) {
 	const [open, setOpen] = React.useState(false)
 	const fallbackId = useId()
 	const buttonRef = useRef<HTMLButtonElement>(null)
+	const inputRef = useRef<HTMLInputElement>(null)
 	const control = useInputEvent({
 		ref: () =>
 			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
@@ -464,6 +465,7 @@ export function FilterSelectField({
 				<PopoverContent className="w-full p-0" align="start">
 					<Command shouldFilter={false}>
 						<CommandInput
+							ref={inputRef}
 							placeholder={`Search ${labelProps.children
 								?.toString()
 								.toLowerCase()}...`}
@@ -475,7 +477,7 @@ export function FilterSelectField({
 						<CommandList>
 							<CommandEmpty className="-mb-2 p-2">
 								<Button
-									onClick={onNotFound}
+									onClick={() => onCreate(inputRef.current?.value ?? '')}
 									variant="ghost"
 									size="sm"
 									className="w-full"

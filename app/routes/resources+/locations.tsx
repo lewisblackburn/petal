@@ -6,7 +6,6 @@ import {
 	type DataFunctionArgs,
 	type HeadersFunction,
 } from '@remix-run/server-runtime'
-import { useState } from 'react'
 import { useSpinDelay } from 'spin-delay'
 import { z } from 'zod'
 import { FilterSelectField, type ListOfErrors } from '~/components/forms.tsx'
@@ -55,19 +54,6 @@ export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
 		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
 	}
 }
-
-export const PersonEditorSchema = z.object({
-	id: z.string().optional(),
-	name: z.string().min(1),
-	knownForDepartment: z.string().min(1),
-	biography: z.string().optional(),
-	birthdate: z.string().optional(),
-	dayOfDeath: z.string().optional(),
-	gender: z.string().min(1),
-	placeOfBirth: z.string(),
-	homepage: z.string().optional(),
-	redirectTo: z.string().optional(),
-})
 
 export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
@@ -118,14 +104,35 @@ export const LocationSearch = ({
 	errors?: ListOfErrors
 	className?: string
 }) => {
-	const [value, setValue] = useState('')
 	const locationFetcher = useFetcher<typeof loader>()
+
+	const handleSearch = (e: any) => {
+		const searchValue = e.currentTarget.value
+
+		locationFetcher.submit(
+			{ search: searchValue },
+			{ method: 'GET', action: '/resources/locations' },
+		)
+	}
 
 	const busy = locationFetcher.state !== 'idle'
 	const delayedBusy = useSpinDelay(busy, {
 		delay: 150,
 		minDuration: 500,
 	})
+
+	const handleCreate = (value: string) => {
+		locationFetcher.submit(
+			{ name: value },
+			{ method: 'POST', action: '/resources/locations' },
+		)
+		setTimeout(() => {
+			locationFetcher.submit(
+				{ search: value },
+				{ method: 'GET', action: '/resources/locations' },
+			)
+		}, 100)
+	}
 
 	const items = locationFetcher.data?.locations?.map(location => ({
 		label: location.name,
@@ -137,29 +144,9 @@ export const LocationSearch = ({
 			{...props}
 			items={items}
 			busy={delayedBusy}
-			onFocus={() => {
-				locationFetcher.submit(
-					{ search: '' },
-					{ method: 'GET', action: '/resources/locations' },
-				)
-			}}
-			onInput={e => {
-				setValue(e.currentTarget.value)
-
-				locationFetcher.submit(
-					{ search: e.currentTarget.value },
-					{ method: 'GET', action: '/resources/locations' },
-				)
-			}}
-			onNotFound={() => {
-				// FIX: The list of items should update but it doesn't i have to clost and
-				// repoen the popover to see the new items
-				// I think this is just a bad way of doing it in general and i'm tired
-				locationFetcher.submit(
-					{ name: value },
-					{ method: 'POST', action: '/resources/locations' },
-				)
-			}}
+			onFocus={handleSearch}
+			onInput={handleSearch}
+			onCreate={handleCreate}
 		/>
 	)
 }

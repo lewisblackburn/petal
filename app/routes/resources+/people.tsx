@@ -1,11 +1,10 @@
 import { type Prisma } from '@prisma/client'
-import { useFetcher, useLocation, useNavigate } from '@remix-run/react'
+import { useFetcher } from '@remix-run/react'
 import {
 	json,
 	type DataFunctionArgs,
 	type HeadersFunction,
 } from '@remix-run/server-runtime'
-import { useState } from 'react'
 import { useSpinDelay } from 'spin-delay'
 import { FilterSelectField, type ListOfErrors } from '~/components/forms.tsx'
 import { type PopoverProps } from '~/components/ui/popover.tsx'
@@ -62,16 +61,37 @@ export const PersonSearch = ({
 	errors?: ListOfErrors
 	className?: string
 }) => {
-	const [value, setValue] = useState('')
-	const navigate = useNavigate()
-	const path = useLocation().pathname
 	const peopleFetcher = useFetcher<typeof loader>()
+
+	const handleSearch = (e: any) => {
+		const searchValue = e.currentTarget.value
+
+		peopleFetcher.submit(
+			{ search: searchValue },
+			{ method: 'GET', action: '/resources/people' },
+		)
+	}
 
 	const busy = peopleFetcher.state !== 'idle'
 	const delayedBusy = useSpinDelay(busy, {
 		delay: 150,
 		minDuration: 500,
 	})
+
+	// FIX: This should not return with redirect when creating a new person from here but
+	// it should from everywhere else
+	const handleCreate = (value: string) => {
+		peopleFetcher.submit(
+			{ name: value },
+			{ method: 'POST', action: '/resources/person-editor' },
+		)
+		setTimeout(() => {
+			peopleFetcher.submit(
+				{ name: value },
+				{ method: 'GET', action: '/resources/people' },
+			)
+		}, 400)
+	}
 
 	const items = peopleFetcher.data?.people?.map(person => ({
 		label: person.name,
@@ -84,23 +104,9 @@ export const PersonSearch = ({
 			{...props}
 			items={items}
 			busy={delayedBusy}
-			onFocus={() => {
-				peopleFetcher.submit(
-					{ search: '' },
-					{ method: 'GET', action: '/resources/people' },
-				)
-			}}
-			onInput={e => {
-				setValue(e.currentTarget.value)
-
-				peopleFetcher.submit(
-					{ search: e.currentTarget.value },
-					{ method: 'GET', action: '/resources/people' },
-				)
-			}}
-			onNotFound={() =>
-				navigate(`/people/new?redirectTo=${path}&name=${value}`)
-			}
+			onFocus={handleSearch}
+			onInput={handleSearch}
+			onCreate={handleCreate}
 		/>
 	)
 }

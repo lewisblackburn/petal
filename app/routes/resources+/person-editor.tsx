@@ -1,9 +1,8 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { type Person } from '@prisma/client'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
+import { json, type DataFunctionArgs } from '@remix-run/node'
 import { useFetcher, useSearchParams } from '@remix-run/react'
-import { safeRedirect } from 'remix-utils'
 import { z } from 'zod'
 import {
 	ErrorList,
@@ -16,19 +15,19 @@ import { Button } from '~/components/ui/button.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { GENDERS, crewRolesWithActing } from '~/utils/constants.ts'
 import { prisma } from '~/utils/db.server.ts'
+import { redirectWithToast } from '~/utils/flash-session.server.ts'
 import { LocationSearch } from './locations.tsx'
 
 export const PersonEditorSchema = z.object({
 	id: z.string().optional(),
 	name: z.string().min(1),
-	knownForDepartment: z.string().min(1),
+	knownForDepartment: z.string().optional(),
 	biography: z.string().optional(),
 	birthdate: z.string().optional(),
 	dayOfDeath: z.string().optional(),
-	gender: z.string().min(1),
-	placeOfBirth: z.string(),
+	gender: z.string().optional(),
+	placeOfBirth: z.string().optional(),
 	homepage: z.string().optional(),
-	redirectTo: z.string().optional(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -60,7 +59,6 @@ export async function action({ request }: DataFunctionArgs) {
 		gender,
 		placeOfBirth,
 		homepage,
-		redirectTo,
 	} = submission.value
 
 	const data = {
@@ -105,7 +103,9 @@ export async function action({ request }: DataFunctionArgs) {
 		})
 	}
 
-	return redirect(safeRedirect(redirectTo, `/people/${person.id}`))
+	return redirectWithToast(`/people/${person.id}/`, {
+		title: id ? 'Person updated' : 'Person created',
+	})
 }
 
 export function PersonEditor({
@@ -132,8 +132,6 @@ export function PersonEditor({
 		},
 		shouldRevalidate: 'onBlur',
 	})
-
-	const redirectTo = searchParams.get('redirectTo') ?? ''
 
 	return (
 		<personEditorFetcher.Form
@@ -229,7 +227,6 @@ export function PersonEditor({
 				className="w-full"
 				errors={fields.homepage.errors}
 			/>
-			<input name={fields.redirectTo.name} type="hidden" value={redirectTo} />
 			<ErrorList errors={form.errors} id={form.errorId} />
 			<div className="flex justify-end gap-4">
 				<Button variant="outline" type="reset">
