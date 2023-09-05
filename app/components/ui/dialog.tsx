@@ -1,8 +1,8 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog'
+import { X } from 'lucide-react'
 import * as React from 'react'
 
-import { cn } from '~/utils/misc.tsx'
-import { Icon } from './icon.tsx'
+import { cn } from '#app/utils/misc.tsx'
 
 const Dialog = DialogPrimitive.Root
 
@@ -47,7 +47,7 @@ const DialogContent = React.forwardRef<
 		>
 			{children}
 			<DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-				<Icon name="cross-1" className="h-4 w-4" />
+				<X className="h-4 w-4" />
 				<span className="sr-only">Close</span>
 			</DialogPrimitive.Close>
 		</DialogPrimitive.Content>

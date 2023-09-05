@@ -1,40 +1,24 @@
 import { useLoaderData } from '@remix-run/react'
-import {
-	type DataFunctionArgs,
-	type HeadersFunction,
-	json,
-} from '@remix-run/server-runtime'
-import { Container } from '~/components/container.tsx'
-import { columns } from '~/components/table/videos/columns.tsx'
-import { VideoTable } from '~/components/table/videos/data-table.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import {
-	combineServerTimings,
-	makeTimings,
-	time,
-} from '~/utils/timing.server.ts'
+import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { columns } from '#app/components/table/film/videos/columns.tsx'
+import { VideoTable } from '#app/components/table/film/videos/data-table.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { invariantResponse } from '#app/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)
-	const timings = makeTimings('video loader')
 
-	const film = await time(
-		() =>
-			prisma.film.findUnique({
-				where: {
-					id: params.filmId,
-				},
-				select: {
-					videos: true,
-				},
-			}),
-		{ timings, type: 'find videos' },
-	)
+	const film = await prisma.film.findUnique({
+		where: {
+			id: params.filmId,
+		},
+		select: {
+			videos: true,
+		},
+	})
 
-	if (!film) {
-		throw new Response('Not found', { status: 404 })
-	}
+	invariantResponse(film, 'Not found', { status: 404 })
 
 	const videos = film.videos.map(video => ({
 		id: video.id,
@@ -45,21 +29,16 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		primary: video.primary,
 	}))
 
-	return json({ videos }, { headers: { 'Server-Timing': timings.toString() } })
+	return json({ videos })
 }
 
-export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
-	return {
-		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
-	}
-}
-
-export default function FilmEditVideo() {
+export default function FilmEditVideos() {
 	const { videos } = useLoaderData<typeof loader>()
 
 	return (
-		<Container>
-			<VideoTable data={videos} columns={columns}></VideoTable>
-		</Container>
+		<div className="container py-6">
+			{/* FIX: Dropdown resetting scroll */}
+			<VideoTable data={videos} columns={columns} />
+		</div>
 	)
 }

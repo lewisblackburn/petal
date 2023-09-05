@@ -2,9 +2,9 @@ import { parse } from '@conform-to/zod'
 import { type CastMember } from '@prisma/client'
 import { type DataFunctionArgs, json } from '@remix-run/server-runtime'
 import { z } from 'zod'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { redirectWithToast } from '~/utils/flash-session.server.ts'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { redirectWithToast } from '#app/utils/toast.server.ts'
 
 // TODO: Write tests for adding 10 people, ordering 10 people and then deleteing 10 people
 
@@ -46,24 +46,12 @@ export async function action({ request }: DataFunctionArgs) {
 		(castMemberAfterParsed?.denominator ?? 0)
 
 	// TODO: At some point the values will need to be reindexed to prevent duplicate order values
-	await prisma.castMember
-		.update({
-			where: { id: castMemberId },
-			data: { numerator: numerator, denominator: denominator },
-		})
-		.catch(err => {
-			return redirectWithToast(
-				`/films/${filmId}/edit/cast`,
-				{
-					title: err.message,
-					variant: 'destructive',
-				},
-				{ status: 400 },
-			)
-		})
+	await prisma.castMember.update({
+		where: { id: castMemberId },
+		data: { numerator: numerator, denominator: denominator },
+	})
 
 	return redirectWithToast(`/films/${filmId}/edit/cast`, {
-		title: 'Reordered Film Cast Member',
-		variant: 'default',
+		description: 'Cast Member Reordered',
 	})
 }

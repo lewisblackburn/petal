@@ -1,5 +1,5 @@
 import { type Table } from '@tanstack/react-table'
-import { Button } from '~/components/ui/button.tsx'
+import { Button } from '../ui/button.tsx'
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -7,8 +7,8 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu.tsx'
-import { Icon } from '~/components/ui/icon.tsx'
+} from '../ui/dropdown-menu.tsx'
+import { Icon } from '../ui/icon.tsx'
 
 interface DataTableViewOptionsProps<TData> {
 	table: Table<TData>

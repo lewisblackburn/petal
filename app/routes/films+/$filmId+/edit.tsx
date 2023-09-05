@@ -1,15 +1,5 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
 import { Outlet } from '@remix-run/react'
-import { Container } from '~/components/container.tsx'
-import ButtonGroup from '~/components/ui/button-group.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { invariantResponse } from '~/utils/misc.tsx'
-
-export async function loader({ request, params }: DataFunctionArgs) {
-	invariantResponse(params.filmId, 'Missing filmId')
-	await requireUserId(request)
-	return json({})
-}
+import ButtonGroup from '#app/components/ui/button-group.tsx'
 
 const NavigationLinks: { name: string; path: string }[] = [
 	{ name: 'Primary Facts', path: '' },
@@ -27,9 +17,9 @@ const NavigationLinks: { name: string; path: string }[] = [
 	{ name: 'Photo', path: 'photo' },
 ]
 
-export default function FilmEditLayout() {
+export default function FilmEdit() {
 	return (
-		<Container>
+		<div className="container py-6">
 			<div className="mb-5">
 				<h2 className="text-2xl font-bold tracking-tight">Edit Film</h2>
 				<p className="text-muted-foreground">Edit the details of this film.</p>
@@ -40,6 +30,6 @@ export default function FilmEditLayout() {
 			<main>
 				<Outlet />
 			</main>
-		</Container>
+		</div>
 	)
 }

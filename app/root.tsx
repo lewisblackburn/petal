@@ -1,3 +1,5 @@
+import { useForm } from '@conform-to/react'
+import { parse } from '@conform-to/zod'
 import { cssBundleHref } from '@remix-run/css-bundle'
 import {
 	json,
@@ -14,28 +16,41 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useFetcher,
+	useFetchers,
 	useLoaderData,
 } from '@remix-run/react'
 import { withSentry } from '@sentry/remix'
+import { Suspense, lazy } from 'react'
+import { z } from 'zod'
 import { Confetti } from './components/confetti.tsx'
-import { Container } from './components/container.tsx'
 import { GeneralErrorBoundary } from './components/error-boundary.tsx'
-import { Header } from './components/header.tsx'
-import { href as iconsHref } from './components/ui/icon.tsx'
-import { Toaster } from './components/ui/toaster.tsx'
-import { ThemeSwitch, useTheme } from './routes/resources+/theme/index.tsx'
-import { getTheme } from './routes/resources+/theme/theme.server.ts'
+import { ErrorList } from './components/forms.tsx'
+import { NavigationBar } from './components/navigation-bar.tsx'
+import { EpicToaster } from './components/toaster.tsx'
+import { Icon, href as iconsHref } from './components/ui/icon.tsx'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
 import { authenticator, getUserId } from './utils/auth.server.ts'
-import { ClientHintCheck, getHints } from './utils/client-hints.tsx'
+import { ClientHintCheck, getHints, useHints } from './utils/client-hints.tsx'
+import { getConfetti } from './utils/confetti.server.ts'
 import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
-import { getFlashSession } from './utils/flash-session.server.ts'
-import { combineHeaders, getDomainUrl } from './utils/misc.tsx'
+import {
+	combineHeaders,
+	getDomainUrl,
+	invariantResponse,
+} from './utils/misc.tsx'
 import { useNonce } from './utils/nonce-provider.ts'
+import { useRequestInfo } from './utils/request-info.ts'
+import { type Theme, setTheme, getTheme } from './utils/theme.server.ts'
 import { makeTimings, time } from './utils/timing.server.ts'
-import { useToast } from './utils/useToast.tsx'
+import { getToast } from './utils/toast.server.ts'
+
+const RemixDevTools =
+	process.env.NODE_ENV === 'development'
+		? lazy(() => import('remix-development-tools'))
+		: null
 
 export const links: LinksFunction = () => {
 	return [
@@ -57,6 +72,7 @@ export const links: LinksFunction = () => {
 			href: '/site.webmanifest',
 			crossOrigin: 'use-credentials',
 		} as const, // necessary to make typescript happy
+		//These should match the css preloads above to avoid css as render blocking resource
 		{ rel: 'icon', type: 'image/svg+xml', href: '/favicons/favicon.svg' },
 		{ rel: 'stylesheet', href: fontStylestylesheetUrl },
 		{ rel: 'stylesheet', href: tailwindStylesheetUrl },
@@ -66,8 +82,8 @@ export const links: LinksFunction = () => {
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
 	return [
-		{ title: data ? 'Petal' : 'Error | Petal' },
-		{ name: 'description', content: `An entertainment database` },
+		{ title: data ? 'Epic Notes' : 'Error | Epic Notes' },
+		{ name: 'description', content: `Your own captain's log` },
 	]
 }
 
@@ -82,15 +98,23 @@ export async function loader({ request }: DataFunctionArgs) {
 	const user = userId
 		? await time(
 				() =>
-					prisma.user.findUnique({
-						where: { id: userId },
+					prisma.user.findUniqueOrThrow({
 						select: {
 							id: true,
 							name: true,
 							username: true,
 							email: true,
-							imageId: true,
+							image: { select: { id: true } },
+							roles: {
+								select: {
+									name: true,
+									permissions: {
+										select: { entity: true, action: true, access: true },
+									},
+								},
+							},
 						},
+						where: { id: userId },
 					}),
 				{ timings, type: 'find user', desc: 'find user in root' },
 		  )
@@ -101,7 +125,8 @@ export async function loader({ request }: DataFunctionArgs) {
 		// them in the database. Maybe they were deleted? Let's log them out.
 		await authenticator.logout(request, { redirectTo: '/' })
 	}
-	const { flash, headers: flashHeaders } = await getFlashSession(request)
+	const { toast, headers: toastHeaders } = await getToast(request)
+	const { confettiId, headers: confettiHeaders } = getConfetti(request)
 
 	return json(
 		{
@@ -115,12 +140,14 @@ export async function loader({ request }: DataFunctionArgs) {
 				},
 			},
 			ENV: getEnv(),
-			flash,
+			toast,
+			confettiId,
 		},
 		{
 			headers: combineHeaders(
 				{ 'Server-Timing': timings.toString() },
-				flashHeaders,
+				toastHeaders,
+				confettiHeaders,
 			),
 		},
 	)
@@ -133,6 +160,34 @@ export const headers: HeadersFunction = ({ loaderHeaders }) => {
 	return headers
 }
 
+const ThemeFormSchema = z.object({
+	theme: z.enum(['system', 'light', 'dark']),
+})
+
+export async function action({ request }: DataFunctionArgs) {
+	const formData = await request.formData()
+	invariantResponse(
+		formData.get('intent') === 'update-theme',
+		'Invalid intent',
+		{ status: 400 },
+	)
+	const submission = parse(formData, {
+		schema: ThemeFormSchema,
+	})
+	if (submission.intent !== 'submit') {
+		return json({ status: 'success', submission } as const)
+	}
+	if (!submission.value) {
+		return json({ status: 'error', submission } as const, { status: 400 })
+	}
+	const { theme } = submission.value
+
+	const responseInit = {
+		headers: { 'set-cookie': setTheme(theme) },
+	}
+	return json({ success: true, submission }, responseInit)
+}
+
 function Document({
 	children,
 	nonce,
@@ -141,7 +196,7 @@ function Document({
 }: {
 	children: React.ReactNode
 	nonce: string
-	theme?: 'dark' | 'light'
+	theme?: Theme
 	env?: Record<string, string>
 }) {
 	return (
@@ -173,29 +228,118 @@ function App() {
 	const data = useLoaderData<typeof loader>()
 	const nonce = useNonce()
 	const theme = useTheme()
-	useToast(data.flash?.toast)
 
 	return (
 		<Document nonce={nonce} theme={theme} env={data.ENV}>
 			<div className="flex h-screen flex-col justify-between">
-				<Header />
+				<NavigationBar />
+
 				<div className="flex-1">
 					<Outlet />
 				</div>
 
-				<Container className="flex justify-between pb-10">
+				<div className="container flex justify-between pb-5">
 					<Link to="/">
 						<div className="font-bold">Petal</div>
 					</Link>
 					<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
-				</Container>
+				</div>
 			</div>
-			<Confetti confetti={data.flash?.confetti} />
-			<Toaster />
+			<Confetti id={data.confettiId} />
+			<EpicToaster toast={data.toast} />
+			{RemixDevTools ? (
+				<Suspense>
+					<RemixDevTools />
+				</Suspense>
+			) : null}
 		</Document>
 	)
 }
 export default withSentry(App)
+
+/**
+ * @returns the user's theme preference, or the client hint theme if the user
+ * has not set a preference.
+ */
+export function useTheme() {
+	const hints = useHints()
+	const requestInfo = useRequestInfo()
+	const optimisticMode = useOptimisticThemeMode()
+	if (optimisticMode) {
+		return optimisticMode === 'system' ? hints.theme : optimisticMode
+	}
+	return requestInfo.userPrefs.theme ?? hints.theme
+}
+
+/**
+ * If the user's changing their theme mode preference, this will return the
+ * value it's being changed to.
+ */
+export function useOptimisticThemeMode() {
+	const fetchers = useFetchers()
+
+	const themeFetcher = fetchers.find(
+		f => f.formData?.get('intent') === 'update-theme',
+	)
+
+	if (themeFetcher && themeFetcher.formData) {
+		const submission = parse(themeFetcher.formData, {
+			schema: ThemeFormSchema,
+		})
+		return submission.value?.theme
+	}
+}
+
+function ThemeSwitch({ userPreference }: { userPreference?: Theme | null }) {
+	const fetcher = useFetcher<typeof action>()
+
+	const [form] = useForm({
+		id: 'theme-switch',
+		lastSubmission: fetcher.data?.submission,
+		onValidate({ formData }) {
+			return parse(formData, { schema: ThemeFormSchema })
+		},
+	})
+
+	const optimisticMode = useOptimisticThemeMode()
+	const mode = optimisticMode ?? userPreference ?? 'system'
+	const nextMode =
+		mode === 'system' ? 'light' : mode === 'light' ? 'dark' : 'system'
+	const modeLabel = {
+		light: (
+			<Icon name="sun">
+				<span className="sr-only">Light</span>
+			</Icon>
+		),
+		dark: (
+			<Icon name="moon">
+				<span className="sr-only">Dark</span>
+			</Icon>
+		),
+		system: (
+			<Icon name="laptop">
+				<span className="sr-only">System</span>
+			</Icon>
+		),
+	}
+
+	return (
+		<fetcher.Form method="POST" {...form.props}>
+			<input type="hidden" name="theme" value={nextMode} />
+			<div className="flex gap-2">
+				<button
+					name="intent"
+					value="update-theme"
+					type="submit"
+					className="flex h-8 w-8 cursor-pointer items-center justify-center"
+				>
+					{modeLabel[mode]}
+				</button>
+			</div>
+			<ErrorList errors={form.errors} id={form.errorId} />
+		</fetcher.Form>
+	)
+}
 
 export function ErrorBoundary() {
 	// the nonce doesn't rely on the loader so we can access that

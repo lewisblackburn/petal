@@ -1,10 +1,9 @@
 import { parse } from '@conform-to/zod'
 import { type DataFunctionArgs, json } from '@remix-run/server-runtime'
 import { z } from 'zod'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { flashMessage } from '~/utils/flash-session.server.ts'
-import { ensurePE } from '~/utils/misc.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const AddFilmKeywordSchema = z.object({
 	filmId: z.string().nonempty(),
@@ -29,38 +28,23 @@ export async function action({ request }: DataFunctionArgs) {
 
 	let { filmId, keyword } = submission.value
 
-	await prisma.film
-		.update({
-			where: { id: filmId },
-			data: {
-				keywords: {
-					create: {
-						name: keyword,
-					},
+	await prisma.film.update({
+		where: { id: filmId },
+		data: {
+			keywords: {
+				create: {
+					name: keyword,
 				},
 			},
-		})
-		.catch(err => {
-			ensurePE(formData, request)
-			return json({
-				status: 400,
-				headers: flashMessage({
-					toast: {
-						title: err.message,
-						variant: 'destructive',
-					},
-				}),
-			})
-		})
+		},
+	})
 
-	ensurePE(formData, request)
 	return json(
 		{ success: true },
 		{
-			headers: await flashMessage({
-				toast: {
-					title: 'Added Film Keyword',
-				},
+			headers: await createToastHeaders({
+				description: 'Added Film Keyword',
+				type: 'success',
 			}),
 		},
 	)

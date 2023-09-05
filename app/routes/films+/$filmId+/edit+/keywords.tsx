@@ -1,67 +1,42 @@
-import {
-	json,
-	type DataFunctionArgs,
-	type HeadersFunction,
-} from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { Container } from '~/components/container.tsx'
-import { columns } from '~/components/table/keywords/columns.tsx'
-import { KeywordTable } from '~/components/table/keywords/data-table.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { getDateTimeFormat } from '~/utils/misc.tsx'
-import {
-	combineServerTimings,
-	makeTimings,
-	time,
-} from '~/utils/timing.server.ts'
+import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { columns } from '#app/components/table/film/keywords/columns.tsx'
+import { KeywordTable } from '#app/components/table/film/keywords/data-table.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { invariantResponse } from '#app/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)
-	const timings = makeTimings('keywords loader')
 
-	const film = await time(
-		() =>
-			prisma.film.findUnique({
-				where: {
-					id: params.filmId,
-				},
-				select: {
-					keywords: true,
-				},
-			}),
-		{ timings, type: 'find keywords' },
-	)
+	const film = await prisma.film.findUnique({
+		where: {
+			id: params.filmId,
+		},
+		select: {
+			keywords: true,
+		},
+	})
 
-	if (!film) {
-		throw new Response('Not found', { status: 404 })
-	}
+	invariantResponse(film, 'Not found', { status: 404 })
 
 	const keywords = film.keywords.map(keyword => ({
 		id: keyword.id,
 		name: keyword.name,
-		created: getDateTimeFormat(request).format(keyword.createdAt),
-		updated: getDateTimeFormat(request).format(keyword.updatedAt),
+		created: new Date(keyword.createdAt),
+		updated: new Date(keyword.updatedAt),
 	}))
 
-	return json(
-		{ keywords },
-		{ headers: { 'Server-Timing': timings.toString() } },
-	)
-}
-
-export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
-	return {
-		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
-	}
+	return json({ keywords })
 }
 
 export default function FilmEditKeywords() {
 	const { keywords } = useLoaderData<typeof loader>()
 
 	return (
-		<Container>
+		<div className="container py-6">
+			{/* FIX: Dropdown resetting scroll */}
 			<KeywordTable data={keywords} columns={columns} />
-		</Container>
+		</div>
 	)
 }

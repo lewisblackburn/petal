@@ -1,26 +1,18 @@
-import { type Prisma, type Film } from '@prisma/client'
+import { type Prisma, type FilmPhoto } from '@prisma/client'
 import {
 	json,
-	type HeadersFunction,
 	type DataFunctionArgs,
+	type V2_MetaFunction,
 } from '@remix-run/node'
-import { Link, useLoaderData, useLocation } from '@remix-run/react'
-import { Container } from '~/components/container.tsx'
-import { InfiniteScroll } from '~/components/infinite-scroll.tsx'
-import { SortBy } from '~/components/sort-by.tsx'
-import { prisma } from '~/utils/db.server.ts'
-import { getTableParams } from '~/utils/request.helper.ts'
-import {
-	combineServerTimings,
-	makeTimings,
-	time,
-} from '~/utils/timing.server.ts'
+import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react'
+import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { InfiniteScroll } from '#app/components/infinite-scroll.tsx'
+import { prisma } from '#app/utils/db.server.ts'
+import { getTableParams } from '#app/utils/request.helper.ts'
 
-const TAKE = 30
+const TAKE = 20
 
 export async function loader({ request }: DataFunctionArgs) {
-	const timings = makeTimings('films loader')
-
 	const { orderBy, search, skip, take } = getTableParams(request, TAKE, {
 		orderBy: 'createdAt',
 		order: 'desc',
@@ -35,44 +27,29 @@ export async function loader({ request }: DataFunctionArgs) {
 			: undefined,
 	} satisfies Prisma.FilmWhereInput
 
-	const films = await time(
-		() =>
-			prisma.film.findMany({
-				orderBy,
-				skip,
-				take,
-				where,
-				select: {
-					id: true,
-					photos: {
-						take: 1,
-						where: {
-							primary: true,
-							type: 'poster',
-						},
-					},
+	const films = await prisma.film.findMany({
+		orderBy,
+		skip,
+		take,
+		where,
+		select: {
+			id: true,
+			title: true,
+			photos: {
+				take: 1,
+				where: {
+					primary: true,
+					type: 'poster',
 				},
-			}),
-		{ timings, type: 'find films' },
-	)
-	const count = await time(
-		() =>
-			prisma.film.count({
-				where,
-			}),
-		{ timings, type: 'find film count' },
-	)
+			},
+		},
+	})
 
-	return json(
-		{ films, count },
-		{ headers: { 'Server-Timing': timings.toString() } },
-	)
-}
+	const count = await prisma.film.count({
+		where,
+	})
 
-export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
-	return {
-		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
-	}
+	return json({ films, count })
 }
 
 export default function FilmsRoute() {
@@ -81,30 +58,40 @@ export default function FilmsRoute() {
 	const combined = [...(location.state?.data ?? []), ...data.films]
 
 	return (
-		<Container className="grid grid-cols-[300px_1fr] gap-5">
-			<div>
-				<SortBy />
-			</div>
-			<main>
-				<ul className="grid grid-cols-4 gap-5">
-					{combined.map((film: Film) => (
-						<li key={film.id}>
-							<Link to={film.id}>
-								<img
-									src={
-										// @ts-ignore
-										film.photos[0]?.image ??
-										'https://via.placeholder.com/300x450'
-									}
-									alt={film.title}
-									className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
-								/>
-							</Link>
-						</li>
-					))}
-				</ul>
-				<InfiniteScroll take={TAKE} count={data.count} data={combined} />
-			</main>
-		</Container>
+		<main className="container py-6">
+			<Outlet />
+			<ul className="grid grid-cols-4 gap-5">
+				{combined.map(film => (
+					<li key={film.id}>
+						<Link to={film.id}>
+							<img
+								src={
+									film.photos.filter(
+										(photo: FilmPhoto) => photo.type === 'poster',
+									)[0]?.image
+								}
+								alt={film.title}
+								className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
+							/>
+						</Link>
+					</li>
+				))}
+			</ul>
+			<InfiniteScroll take={TAKE} count={data.count} data={combined} />
+		</main>
 	)
+}
+
+export const meta: V2_MetaFunction = () => {
+	return [
+		{ title: 'Films | Petal' },
+		{
+			name: 'description',
+			content: `Films on Petal`,
+		},
+	]
+}
+
+export function ErrorBoundary() {
+	return <GeneralErrorBoundary />
 }

@@ -1,84 +1,39 @@
-import {
-	json,
-	type DataFunctionArgs,
-	type HeadersFunction,
-} from '@remix-run/node'
+import { json, type DataFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { Container } from '~/components/container.tsx'
-import { FilmEditor } from '~/routes/resources+/film-editor.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { getDateTimeFormat } from '~/utils/misc.tsx'
-import {
-	combineServerTimings,
-	makeTimings,
-	time,
-} from '~/utils/timing.server.ts'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { invariantResponse } from '#app/utils/misc.tsx'
+import { FilmEditor, action } from '../../__film-editor.tsx'
 
-export async function loader({ request, params }: DataFunctionArgs) {
+export { action }
+
+export async function loader({ params, request }: DataFunctionArgs) {
 	await requireUserId(request)
-	const timings = makeTimings('film loader')
-
-	const film = await time(
-		() =>
-			prisma.film.findUnique({
-				where: {
-					id: params.filmId,
-				},
-			}),
-		{ timings, type: 'find film' },
-	)
-
-	if (!film) {
-		throw new Response('Not found', { status: 404 })
-	}
-
-	const releaseDate = new Date(film.releaseDate ?? 0)
-
-	return json(
-		{
-			film: {
-				...film,
-				// NOTE: This lets the date picker autofill the date
-				releaseDate: getDateTimeFormat(request)
-					.format(releaseDate)
-					.split('/')
-					.reverse()
-					.join('-'),
-			},
+	const film = await prisma.film.findFirst({
+		select: {
+			id: true,
+			title: true,
+			tagline: true,
+			overview: true,
+			runtime: true,
+			releaseDate: true,
+			ageRating: true,
+			language: true,
+			status: true,
+			budget: true,
+			revenue: true,
 		},
-		{ headers: { 'Server-Timing': timings.toString() } },
-	)
-}
+		where: {
+			id: params.filmId,
+		},
+	})
 
-export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
-	return {
-		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
-	}
+	invariantResponse(film, 'Not found', { status: 404 })
+	return json({ film })
 }
 
 export default function FilmEdit() {
-	const { film } = useLoaderData<typeof loader>()
+	const data = useLoaderData<typeof loader>()
 
-	return (
-		<Container>
-			<FilmEditor
-				film={{
-					id: film.id,
-					title: film.title,
-					tagline: film.tagline,
-					overview: film.overview,
-					releaseDate: film.releaseDate,
-					runtime: film.runtime,
-					budget: film.budget,
-					revenue: film.revenue,
-					status: film.status,
-					twitter: film.twitter,
-					instagram: film.instagram,
-					website: film.website,
-					tmdbId: film.tmdbId,
-				}}
-			/>
-		</Container>
-	)
+	return <FilmEditor film={data.film} />
 }

@@ -1,14 +1,14 @@
 import { type Column } from '@tanstack/react-table'
-import { Button } from '~/components/ui/button.tsx'
+import { cn } from '#app/utils/misc.tsx'
+import { Button } from '../ui/button.tsx'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu.tsx'
-import { Icon } from '~/components/ui/icon.tsx'
-import { cn } from '~/utils/misc.tsx'
+} from '../ui/dropdown-menu.tsx'
+import { Icon } from '../ui/icon.tsx'
 
 interface DataTableColumnHeaderProps<TData, TValue>
 	extends React.HTMLAttributes<HTMLDivElement> {

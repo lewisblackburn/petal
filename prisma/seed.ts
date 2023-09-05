@@ -1,217 +1,347 @@
-import fs from 'fs'
 import { faker } from '@faker-js/faker'
+import { promiseHash } from 'remix-utils'
+import { GENRES } from '#app/utils/constants.ts'
+import { prisma } from '../app/utils/db.server.ts'
 import {
 	createFilm,
-	createGenre,
-	createKeyword,
 	createPassword,
 	createPerson,
 	createUser,
-} from 'tests/db-utils.ts'
-import { deleteAllData } from 'tests/setup/utils.ts'
-import { getPasswordHash } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
+	getNoteImages,
+	getUserImages,
+	img,
+} from '../tests/db-utils.ts'
 
 async function seed() {
 	console.log('🌱 Seeding...')
 	console.time(`🌱 Database has been seeded`)
 
 	console.time('🧹 Cleaned up the database...')
-	deleteAllData()
+	await prisma.user.deleteMany()
+	await prisma.role.deleteMany()
+	await prisma.permission.deleteMany()
+	await prisma.genre.deleteMany()
+	await prisma.keyword.deleteMany()
+	await prisma.film.deleteMany()
+	await prisma.person.deleteMany()
 	console.timeEnd('🧹 Cleaned up the database...')
 
-	console.time(`👑 Created admin role/permission...`)
-	const adminRole = await prisma.role.create({
+	console.time('🔑 Created permissions...')
+	const entities = ['user', 'note', 'film']
+	const actions = ['create', 'read', 'update', 'delete']
+	const accesses = ['own', 'any'] as const
+	for (const entity of entities) {
+		for (const action of actions) {
+			for (const access of accesses) {
+				await prisma.permission.create({ data: { entity, action, access } })
+			}
+		}
+	}
+	console.timeEnd('🔑 Created permissions...')
+
+	console.time('👑 Created roles...')
+	await prisma.role.create({
 		data: {
 			name: 'admin',
 			permissions: {
-				create: { name: 'admin' },
+				connect: await prisma.permission.findMany({
+					select: { id: true },
+					where: { access: 'any' },
+				}),
 			},
 		},
 	})
-	console.timeEnd(`👑 Created admin role/permission...`)
-	const totalUsers = 40
+	await prisma.role.create({
+		data: {
+			name: 'user',
+			permissions: {
+				connect: await prisma.permission.findMany({
+					select: { id: true },
+					where: { access: 'own' },
+				}),
+			},
+		},
+	})
+	console.timeEnd('👑 Created roles...')
+
+	if (process.env.MINIMAL_SEED) {
+		console.log('👍 Minimal seed complete')
+		console.timeEnd(`🌱 Database has been seeded`)
+		return
+	}
+
+	const totalUsers = 5
 	console.time(`👤 Created ${totalUsers} users...`)
-	const users = await Promise.all(
-		Array.from({ length: totalUsers }, async (_, index) => {
-			const userData = createUser()
-			const userCreatedUpdated = getCreatedAndUpdated()
-			const user = await prisma.user
-				.create({
-					select: { id: true },
-					data: {
-						...userData,
-						...userCreatedUpdated,
-						password: {
-							create: createPassword(userData.username),
-						},
-						image: {
-							create: {
-								contentType: 'image/jpeg',
-								file: {
-									create: {
-										blob: await fs.promises.readFile(
-											`./tests/fixtures/images/user/${index % 10}.jpg`,
-										),
-									},
-								},
+	const noteImages = await getNoteImages()
+	const userImages = await getUserImages()
+
+	for (let index = 0; index < totalUsers; index++) {
+		const userData = createUser()
+		await prisma.user
+			.create({
+				select: { id: true },
+				data: {
+					...userData,
+					password: { create: createPassword(userData.username) },
+					image: { create: userImages[index % userImages.length] },
+					roles: { connect: { name: 'user' } },
+					notes: {
+						create: Array.from({
+							length: faker.number.int({ min: 1, max: 3 }),
+						}).map(() => ({
+							title: faker.lorem.sentence(),
+							content: faker.lorem.paragraphs(),
+							images: {
+								create: Array.from({
+									length: faker.number.int({ min: 1, max: 3 }),
+								}).map(() => {
+									const imgNumber = faker.number.int({ min: 0, max: 9 })
+									return noteImages[imgNumber]
+								}),
 							},
-						},
-						notes: {
-							create: Array.from({
-								length: faker.number.int({ min: 0, max: 10 }),
-							}).map(() => ({
-								title: faker.lorem.sentence(),
-								content: faker.lorem.paragraphs(),
-								...getCreatedAndUpdated(userCreatedUpdated.createdAt),
-							})),
-						},
+						})),
 					},
-				})
-				.catch(() => null)
-			return user
-		}),
-	).then(users => users.filter(Boolean))
-	console.timeEnd(`👤 Created ${users.length} users...`)
+				},
+			})
+			.catch(e => {
+				console.error('Error creating a user:', e)
+				return null
+			})
+	}
+	console.timeEnd(`👤 Created ${totalUsers} users...`)
 
-	const totalFilms = 40
-	console.time(`🎞️ Created ${totalFilms} films...`)
-	const films = await Promise.all(
-		Array.from({ length: totalFilms }, async () => {
-			const filmData = createFilm()
-			const filmCreatedUpdated = getCreatedAndUpdated()
-			const film = await prisma.film
-				.create({
-					select: { id: true },
-					data: {
-						...filmData,
-						...filmCreatedUpdated,
-					},
-				})
-				.catch(() => null)
-			return film
-		}),
-	).then(films => films.filter(Boolean))
-	console.timeEnd(`🎞️ Created ${films.length} films...`)
+	console.time(`🐨 Created admin user "kody"`)
 
-	const totalPeople = 40
-	console.time(`🧍 Created ${totalPeople} people...`)
-	const people = await Promise.all(
-		Array.from({ length: totalPeople }, async () => {
-			const personData = createPerson()
-			const personCreatedUpdated = getCreatedAndUpdated()
-			const person = await prisma.person
-				.create({
-					select: { id: true },
-					data: {
-						...personData,
-						...personCreatedUpdated,
-					},
-				})
-				.catch(() => null)
-			return person
+	const kodyImages = await promiseHash({
+		kodyUser: img({ filepath: './tests/fixtures/images/user/kody.png' }),
+		cuteKoala: img({
+			altText: 'an adorable koala cartoon illustration',
+			filepath: './tests/fixtures/images/kody-notes/cute-koala.png',
 		}),
-	).then(people => people.filter(Boolean))
-	console.timeEnd(`🧍 Created ${people.length} people...`)
-
-	const totalGenres = 40
-	console.time(`🗞️ Created ${totalGenres} genres...`)
-	const genres = await Promise.all(
-		Array.from({ length: totalGenres }, async () => {
-			const genreData = createGenre()
-			const genreCreatedUpdated = getCreatedAndUpdated()
-			const genre = await prisma.genre
-				.create({
-					select: { id: true },
-					data: {
-						...genreData,
-						...genreCreatedUpdated,
-					},
-				})
-				.catch(() => null)
-			return genre
+		koalaEating: img({
+			altText: 'a cartoon illustration of a koala in a tree eating',
+			filepath: './tests/fixtures/images/kody-notes/koala-eating.png',
 		}),
-	).then(genres => genres.filter(Boolean))
-	console.timeEnd(`🗞️ Created ${genres.length} genres...`)
-
-	const totalKeywords = 40
-	console.time(`🦫 Created ${totalKeywords} keywords...`)
-	const keywords = await Promise.all(
-		Array.from({ length: totalKeywords }, async () => {
-			const keywordData = createKeyword()
-			const keywordCreatedUpdated = getCreatedAndUpdated()
-			const keyword = await prisma.keyword
-				.create({
-					select: { id: true },
-					data: {
-						...keywordData,
-						...keywordCreatedUpdated,
-					},
-				})
-				.catch(() => null)
-			return keyword
+		koalaCuddle: img({
+			altText: 'a cartoon illustration of koalas cuddling',
+			filepath: './tests/fixtures/images/kody-notes/koala-cuddle.png',
 		}),
-	).then(keywords => keywords.filter(Boolean))
-	console.timeEnd(`🦫 Created ${keywords.length} keywords...`)
+		mountain: img({
+			altText: 'a beautiful mountain covered in snow',
+			filepath: './tests/fixtures/images/kody-notes/mountain.png',
+		}),
+		koalaCoder: img({
+			altText: 'a koala coding at the computer',
+			filepath: './tests/fixtures/images/kody-notes/koala-coder.png',
+		}),
+		koalaMentor: img({
+			altText:
+				'a koala in a friendly and helpful posture. The Koala is standing next to and teaching a woman who is coding on a computer and shows positive signs of learning and understanding what is being explained.',
+			filepath: './tests/fixtures/images/kody-notes/koala-mentor.png',
+		}),
+		koalaSoccer: img({
+			altText: 'a cute cartoon koala kicking a soccer ball on a soccer field ',
+			filepath: './tests/fixtures/images/kody-notes/koala-soccer.png',
+		}),
+	})
 
-	console.time(
-		`🐨 Created user "kody" with the password "kodylovesyou" and admin role`,
-	)
 	await prisma.user.create({
+		select: { id: true },
 		data: {
 			email: 'kody@kcd.dev',
 			username: 'kody',
 			name: 'Kody',
-			roles: { connect: { id: adminRole.id } },
-			image: {
-				create: {
-					contentType: 'image/png',
-					file: {
-						create: {
-							blob: await fs.promises.readFile(
-								'./tests/fixtures/images/user/kody.png',
-							),
-						},
-					},
-				},
-			},
-			password: {
-				create: {
-					hash: await getPasswordHash('kodylovesyou'),
-				},
-			},
+			image: { create: kodyImages.kodyUser },
+			password: { create: createPassword('kodylovesyou') },
+			roles: { connect: [{ name: 'admin' }, { name: 'user' }] },
 			notes: {
 				create: [
 					{
+						id: 'd27a197e',
 						title: 'Basic Koala Facts',
 						content:
 							'Koalas are found in the eucalyptus forests of eastern Australia. They have grey fur with a cream-coloured chest, and strong, clawed feet, perfect for living in the branches of trees!',
+						images: { create: [kodyImages.cuteKoala, kodyImages.koalaEating] },
 					},
 					{
+						id: '414f0c09',
 						title: 'Koalas like to cuddle',
 						content:
 							'Cuddly critters, koalas measure about 60cm to 85cm long, and weigh about 14kg.',
+						images: {
+							create: [kodyImages.koalaCuddle],
+						},
 					},
 					{
+						id: '260366b1',
 						title: 'Not bears',
 						content:
 							"Although you may have heard people call them koala 'bears', these awesome animals aren’t bears at all – they are in fact marsupials. A group of mammals, most marsupials have pouches where their newborns develop.",
+					},
+					{
+						id: 'bb79cf45',
+						title: 'Snowboarding Adventure',
+						content:
+							"Today was an epic day on the slopes! Shredded fresh powder with my friends, caught some sick air, and even attempted a backflip. Can't wait for the next snowy adventure!",
+						images: {
+							create: [kodyImages.mountain],
+						},
+					},
+					{
+						id: '9f4308be',
+						title: 'Onewheel Tricks',
+						content:
+							"Mastered a new trick on my Onewheel today called '180 Spin'. It's exhilarating to carve through the streets while pulling off these rad moves. Time to level up and learn more!",
+					},
+					{
+						id: '306021fb',
+						title: 'Coding Dilemma',
+						content:
+							"Stuck on a bug in my latest coding project. Need to figure out why my function isn't returning the expected output. Time to dig deep, debug, and conquer this challenge!",
+						images: {
+							create: [kodyImages.koalaCoder],
+						},
+					},
+					{
+						id: '16d4912a',
+						title: 'Coding Mentorship',
+						content:
+							"Had a fantastic coding mentoring session today with Sarah. Helped her understand the concept of recursion, and she made great progress. It's incredibly fulfilling to help others improve their coding skills.",
+						images: {
+							create: [kodyImages.koalaMentor],
+						},
+					},
+					{
+						id: '3199199e',
+						title: 'Koala Fun Facts',
+						content:
+							"Did you know that koalas sleep for up to 20 hours a day? It's because their diet of eucalyptus leaves doesn't provide much energy. But when I'm awake, I enjoy munching on leaves, chilling in trees, and being the cuddliest koala around!",
+					},
+					{
+						id: '2030ffd3',
+						title: 'Skiing Adventure',
+						content:
+							'Spent the day hitting the slopes on my skis. The fresh powder made for some incredible runs and breathtaking views. Skiing down the mountain at top speed is an adrenaline rush like no other!',
+						images: {
+							create: [kodyImages.mountain],
+						},
+					},
+					{
+						id: 'f375a804',
+						title: 'Code Jam Success',
+						content:
+							'Participated in a coding competition today and secured the first place! The adrenaline, the challenging problems, and the satisfaction of finding optimal solutions—it was an amazing experience. Feeling proud and motivated to keep pushing my coding skills further!',
+						images: {
+							create: [kodyImages.koalaCoder],
+						},
+					},
+					{
+						id: '562c541b',
+						title: 'Koala Conservation Efforts',
+						content:
+							"Joined a local conservation group to protect koalas and their habitats. Together, we're planting more eucalyptus trees, raising awareness about their endangered status, and working towards a sustainable future for these adorable creatures. Every small step counts!",
+					},
+					// extra long note to test scrolling
+					{
+						id: 'f67ca40b',
+						title: 'Game day',
+						content:
+							"Just got back from the most amazing game. I've been playing soccer for a long time, but I've not once scored a goal. Well, today all that changed! I finally scored my first ever goal.\n\nI'm in an indoor league, and my team's not the best, but we're pretty good and I have fun, that's all that really matters. Anyway, I found myself at the other end of the field with the ball. It was just me and the goalie. I normally just kick the ball and hope it goes in, but the ball was already rolling toward the goal. The goalie was about to get the ball, so I had to charge. I managed to get possession of the ball just before the goalie got it. I brought it around the goalie and had a perfect shot. I screamed so loud in excitement. After all these years playing, I finally scored a goal!\n\nI know it's not a lot for most folks, but it meant a lot to me. We did end up winning the game by one. It makes me feel great that I had a part to play in that.\n\nIn this team, I'm the captain. I'm constantly cheering my team on. Even after getting injured, I continued to come and watch from the side-lines. I enjoy yelling (encouragingly) at my team mates and helping them be the best they can. I'm definitely not the best player by a long stretch. But I really enjoy the game. It's a great way to get exercise and have good social interactions once a week.\n\nThat said, it can be hard to keep people coming and paying dues and stuff. If people don't show up it can be really hard to find subs. I have a list of people I can text, but sometimes I can't find anyone.\n\nBut yeah, today was awesome. I felt like more than just a player that gets in the way of the opposition, but an actual asset to the team. Really great feeling.\n\nAnyway, I'm rambling at this point and really this is just so we can have a note that's pretty long to test things out. I think it's long enough now... Cheers!",
+						images: {
+							create: [kodyImages.koalaSoccer],
+						},
 					},
 				],
 			},
 		},
 	})
-	console.timeEnd(
-		`🐨 Created user "kody" with the password "kodylovesyou" and admin role`,
-	)
+	console.timeEnd(`🐨 Created admin user "kody"`)
+
+	console.time(`🎶 Created ${GENRES.length} genres...`)
+	for (let index = 0; index < GENRES.length; index++) {
+		await prisma.genre
+			.create({
+				select: { id: true },
+				data: {
+					name: GENRES[index],
+				},
+			})
+			.catch(e => {
+				console.error('Error creating a genre:', e)
+				return null
+			})
+	}
+	console.timeEnd(`🎶 Created ${GENRES.length} genres...`)
+
+	const totalFilms = 40
+	console.time(`🎞️ Created ${totalFilms} films...`)
+	for (let index = 0; index < totalFilms; index++) {
+		const filmData = createFilm()
+		await prisma.film
+			.create({
+				select: { id: true },
+				data: {
+					...filmData,
+					genres: {
+						connect: {
+							name: GENRES[index % GENRES.length],
+						},
+					},
+					keywords: {
+						create: {
+							name: faker.word.noun(),
+						},
+					},
+					photos: {
+						create: [
+							{
+								language: 'en',
+								primary: true,
+								type: 'poster',
+								image: 'https://placehold.co/300x450?text=Image',
+							},
+							{
+								language: 'en',
+								primary: true,
+								type: 'backdrop',
+								image: 'https://placehold.co/1920x1080?text=Image',
+							},
+						],
+					},
+				},
+			})
+			.catch(e => {
+				console.error('Error creating a film:', e)
+				return null
+			})
+	}
+	console.timeEnd(`🎞️ Created ${totalFilms} films...`)
+
+	const totalPeople = 5
+	console.time(`🧑 Created ${totalPeople} people...`)
+	for (let index = 0; index < totalPeople; index++) {
+		const personData = createPerson()
+		await prisma.person
+			.create({
+				select: { id: true },
+				data: {
+					...personData,
+					photos: {
+						create: {
+							primary: true,
+							image: 'https://placehold.co/300x450?text=Image',
+						},
+					},
+				},
+			})
+			.catch(e => {
+				console.error('Error creating a person:', e)
+				return null
+			})
+	}
+	console.timeEnd(`🧑 Created ${totalPeople} people...`)
 
 	console.timeEnd(`🌱 Database has been seeded`)
-}
-
-function getCreatedAndUpdated(from: Date = new Date(2020, 0, 1)) {
-	const createdAt = faker.date.between({ from, to: new Date() })
-	const updatedAt = faker.date.between({ from: createdAt, to: new Date() })
-	return { createdAt, updatedAt }
 }
 
 seed()
@@ -222,8 +352,3 @@ seed()
 	.finally(async () => {
 		await prisma.$disconnect()
 	})
-
-/*
-eslint
-	@typescript-eslint/no-unused-vars: "off",
-*/

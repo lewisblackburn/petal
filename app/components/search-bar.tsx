@@ -1,31 +1,24 @@
 import { Form, useSearchParams, useSubmit } from '@remix-run/react'
-import { useDebounce, useIsSubmitting } from '~/utils/misc.tsx'
-import { Button } from './ui/button.tsx'
+import { useDebounce, useIsPending } from '#app/utils/misc.tsx'
 import { Icon } from './ui/icon.tsx'
 import { Input } from './ui/input.tsx'
 import { Label } from './ui/label.tsx'
 import { StatusButton } from './ui/status-button.tsx'
 
 export function SearchBar({
-	action,
 	status,
 	autoFocus = false,
 	autoSubmit = false,
-	hasType = false,
-	hasButton = false,
 }: {
-	action: string
 	status: 'idle' | 'pending' | 'success' | 'error'
 	autoFocus?: boolean
 	autoSubmit?: boolean
-	hasType?: boolean
-	hasButton?: boolean
 }) {
 	const [searchParams] = useSearchParams()
 	const submit = useSubmit()
-	const isSubmitting = useIsSubmitting({
+	const isSubmitting = useIsPending({
 		formMethod: 'GET',
-		formAction: action,
+		formAction: '/users',
 	})
 
 	const handleFormChange = useDebounce((form: HTMLFormElement) => {
@@ -35,7 +28,7 @@ export function SearchBar({
 	return (
 		<Form
 			method="GET"
-			action={action}
+			action="/users"
 			className="flex flex-wrap items-center justify-center gap-2"
 			onChange={e => autoSubmit && handleFormChange(e.currentTarget)}
 		>
@@ -49,28 +42,21 @@ export function SearchBar({
 					id="search"
 					defaultValue={searchParams.get('search') ?? ''}
 					placeholder="Search"
-					className="md:w-[100px] lg:w-[300px]"
+					className="w-full"
 					autoFocus={autoFocus}
 				/>
 			</div>
-			{hasButton && (
-				<div>
-					<StatusButton
-						type="submit"
-						status={isSubmitting ? 'pending' : status}
-						className="flex w-full items-center justify-center"
-						size="sm"
-					>
-						<Icon name="magnifying-glass" size="sm" />
-						<span className="sr-only">Search</span>
-					</StatusButton>
-				</div>
-			)}
-			{hasType && (
-				<Button type="button" size="icon">
-					<Icon name="laptop" size="sm" />
-				</Button>
-			)}
+			<div>
+				<StatusButton
+					type="submit"
+					status={isSubmitting ? 'pending' : status}
+					className="flex w-full items-center justify-center"
+					size="sm"
+				>
+					<Icon name="magnifying-glass" size="sm" />
+					<span className="sr-only">Search</span>
+				</StatusButton>
+			</div>
 		</Form>
 	)
 }

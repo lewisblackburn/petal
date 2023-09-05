@@ -1,45 +1,28 @@
-import {
-	json,
-	type DataFunctionArgs,
-	type HeadersFunction,
-} from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { Container } from '~/components/container.tsx'
-import { columns } from '~/components/table/cast/columns.tsx'
-import { CastTable } from '~/components/table/cast/data-table.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { orderByRationalProperty } from '~/utils/misc.tsx'
-import {
-	combineServerTimings,
-	makeTimings,
-	time,
-} from '~/utils/timing.server.ts'
+import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { columns } from '#app/components/table/film/cast/columns.tsx'
+import { CastTable } from '#app/components/table/film/cast/data-table.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { invariantResponse, orderByRationalProperty } from '#app/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)
-	const timings = makeTimings('cast loader')
 
-	const film = await time(
-		() =>
-			prisma.film.findUnique({
-				where: {
-					id: params.filmId,
+	const film = await prisma.film.findUnique({
+		where: {
+			id: params.filmId,
+		},
+		select: {
+			cast: {
+				include: {
+					person: true,
 				},
-				select: {
-					cast: {
-						include: {
-							person: true,
-						},
-					},
-				},
-			}),
-		{ timings, type: 'find cast' },
-	)
+			},
+		},
+	})
 
-	if (!film) {
-		throw new Response('Not found', { status: 404 })
-	}
+	invariantResponse(film, 'Not found', { status: 404 })
 
 	const cast = film.cast.map(cast => ({
 		id: cast.id,
@@ -49,25 +32,16 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		denominator: cast.denominator,
 	}))
 
-	return json(
-		{ cast: orderByRationalProperty(cast) },
-		{ headers: { 'Server-Timing': timings.toString() } },
-	)
-}
-
-export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
-	return {
-		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
-	}
+	return json({ cast: orderByRationalProperty(cast) })
 }
 
 export default function FilmEditCast() {
 	const { cast } = useLoaderData<typeof loader>()
 
 	return (
-		<Container>
+		<div className="container py-6">
 			{/* FIX: Dropdown resetting scroll */}
 			<CastTable data={cast} columns={columns} />
-		</Container>
+		</div>
 	)
 }

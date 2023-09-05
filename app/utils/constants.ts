@@ -1,3 +1,45 @@
+export const LANGUAGES = [
+	{ value: 'en', label: 'English' },
+	{ value: 'es', label: 'Español' },
+	{ value: 'fr', label: 'Français' },
+	{ value: 'de', label: 'Deutsch' },
+	{ value: 'it', label: 'Italiano' },
+	{ value: 'pt', label: 'Português' },
+	{ value: 'ru', label: 'Русский' },
+	{ value: 'zh', label: '中文' },
+	{ value: 'ja', label: '日本語' },
+	{ value: 'ko', label: '한국어' },
+	{ value: 'ar', label: 'العربية' },
+	{ value: 'tr', label: 'Türkçe' },
+	{ value: 'pl', label: 'Polski' },
+	{ value: 'nl', label: 'Nederlands' },
+	{ value: 'sv', label: 'Svenska' },
+	{ value: 'da', label: 'Dansk' },
+	{ value: 'fi', label: 'Suomi' },
+	{ value: 'no', label: 'Norsk' },
+	{ value: 'hu', label: 'Magyar' },
+	{ value: 'cs', label: 'Čeština' },
+	{ value: 'ro', label: 'Română' },
+]
+
+export const AGE_RATINGS = [
+	{ value: 'U', label: 'U' },
+	{ value: 'PG', label: 'PG' },
+	{ value: '12', label: '12' },
+	{ value: '12A', label: '12A' },
+	{ value: '15', label: '15' },
+	{ value: '18', label: '18' },
+]
+
+export const STATUSES = [
+	{ value: 'rumored', label: 'Rumored', icon: 'question-mark' },
+	{ value: 'planned', label: 'Planned', icon: 'reader' },
+	{ value: 'in production', label: 'In Production', icon: 'scissors' },
+	{ value: 'post production', label: 'Post Production', icon: 'magic-wand' },
+	{ value: 'released', label: 'Released', icon: 'check' },
+	{ value: 'cancelled', label: 'Cancelled', icon: 'cross-1' },
+]
+
 type CrewRole = {
 	value: string
 	label: string
@@ -521,125 +563,6 @@ export const QUALITY = [
 	},
 ]
 
-export const LANGUAGES = [
-	{
-		label: 'English',
-		value: 'english',
-	},
-	{
-		label: 'Spanish',
-		value: 'spanish',
-	},
-	{
-		label: 'French',
-		value: 'french',
-	},
-	{
-		label: 'German',
-		value: 'german',
-	},
-	{
-		label: 'Italian',
-		value: 'italian',
-	},
-	{
-		label: 'Japanese',
-		value: 'japanese',
-	},
-	{
-		label: 'Korean',
-		value: 'korean',
-	},
-	{
-		label: 'Chinese',
-		value: 'chinese',
-	},
-	{
-		label: 'Russian',
-		value: 'russian',
-	},
-	{
-		label: 'Portuguese',
-		value: 'portuguese',
-	},
-	{
-		label: 'Arabic',
-		value: 'arabic',
-	},
-	{
-		label: 'Dutch',
-		value: 'dutch',
-	},
-	{
-		label: 'Swedish',
-		value: 'swedish',
-	},
-	{
-		label: 'Turkish',
-		value: 'turkish',
-	},
-	{
-		label: 'Greek',
-		value: 'greek',
-	},
-	{
-		label: 'Polish',
-		value: 'polish',
-	},
-	{
-		label: 'Danish',
-		value: 'danish',
-	},
-	{
-		label: 'Norwegian',
-		value: 'norwegian',
-	},
-	{
-		label: 'Finnish',
-		value: 'finnish',
-	},
-	{
-		label: 'Hungarian',
-		value: 'hungarian',
-	},
-	{
-		label: 'Czech',
-		value: 'czech',
-	},
-	{
-		label: 'Slovak',
-		value: 'slovak',
-	},
-	{
-		label: 'Romanian',
-		value: 'romanian',
-	},
-	{
-		label: 'Bulgarian',
-		value: 'bulgarian',
-	},
-	{
-		label: 'Ukrainian',
-		value: 'ukrainian',
-	},
-	{
-		label: 'Hindi',
-		value: 'hindi',
-	},
-	{
-		label: 'Thai',
-		value: 'thai',
-	},
-	{
-		label: 'Indonesian',
-		value: 'indonesian',
-	},
-	{
-		label: 'Vietnamese',
-		value: 'vietnamese',
-	},
-]
-
 export const GENDERS = [
 	{
 		label: 'Male',
@@ -653,6 +576,34 @@ export const GENDERS = [
 		label: 'Other',
 		value: 'other',
 	},
+]
+export const GENRES = [
+	'Action',
+	'Adventure',
+	'Comedy',
+	'Drama',
+	'Fantasy',
+	'Horror',
+	'Thriller',
+	'Western',
+	'Sci-Fi',
+	'Romance',
+	'Crime',
+	'Animation',
+	'Family',
+	'Mystery',
+	'War',
+	'History',
+	'Music',
+	'Sport',
+	'Biography',
+	'Musical',
+	'Film-Noir',
+	'News',
+	'Talk-Show',
+	'Reality-TV',
+	'Game-Show',
+	'Adult',
 ]
 
 export const MAX_SIZE = 1024 * 1024 * 3 // 3MB

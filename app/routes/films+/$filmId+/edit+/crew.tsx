@@ -1,69 +1,46 @@
-import {
-	json,
-	type DataFunctionArgs,
-	type HeadersFunction,
-} from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { Container } from '~/components/container.tsx'
-import { columns } from '~/components/table/crew/columns.tsx'
-import { CrewTable } from '~/components/table/crew/data-table.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import {
-	combineServerTimings,
-	makeTimings,
-	time,
-} from '~/utils/timing.server.ts'
+import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { columns } from '#app/components/table/film/crew/columns.tsx'
+import { CrewTable } from '#app/components/table/film/crew/data-table.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { invariantResponse } from '#app/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
-	await requireUserId(request)
-	const timings = makeTimings('crew loader')
+  await requireUserId(request)
 
-	const film = await time(
-		() =>
-			prisma.film.findUnique({
-				where: {
-					id: params.filmId,
-				},
-				select: {
-					crew: {
-						include: {
-							person: true,
-						},
-					},
-				},
-			}),
-		{ timings, type: 'find crew' },
-	)
+  const film = await prisma.film.findUnique({
+    where: {
+      id: params.filmId,
+    },
+    select: {
+      crew: {
+        include: {
+          person: true,
+        },
+      },
+    },
+  })
 
-	if (!film) {
-		throw new Response('Not found', { status: 404 })
-	}
+  invariantResponse(film, 'Not found', { status: 404 })
 
-	const crew = film.crew.map(crew => ({
-		id: crew.id,
-		name: crew.person.name,
-		department: crew.department,
-		job: crew.job,
-		featured: crew.featured,
-	}))
-
-	return json({ crew }, { headers: { 'Server-Timing': timings.toString() } })
+  const crew = film.crew.map(crew => ({
+    id: crew.id,
+    name: crew.person.name,
+    department: crew.department,
+    job: crew.job,
+    featured: crew.featured,
+  }))
+  return json({ crew })
 }
 
-export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
-	return {
-		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
-	}
-}
+export default function FilmEditCrew() {
+  const { crew } = useLoaderData<typeof loader>()
 
-export default function FilmEditCast() {
-	const { crew } = useLoaderData<typeof loader>()
-
-	return (
-		<Container>
-			{/* FIX: Dropdown resetting scroll */}
-			<CrewTable data={crew} columns={columns} />
-		</Container>
-	)
+  return (
+    <div className="container py-6">
+      {/* FIX: Dropdown resetting scroll */}
+      <CrewTable data={crew} columns={columns} />
+    </div>
+  )
 }

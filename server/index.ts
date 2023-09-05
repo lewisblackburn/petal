@@ -2,13 +2,13 @@ import crypto from 'crypto'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import {
-	type RequestHandler,
 	createRequestHandler as _createRequestHandler,
+	type RequestHandler,
 } from '@remix-run/express'
 import {
-	type ServerBuild,
 	broadcastDevReady,
 	installGlobals,
+	type ServerBuild,
 } from '@remix-run/node'
 import { wrapExpressCreateRequestHandler } from '@sentry/remix'
 import address from 'address'
@@ -21,13 +21,11 @@ import rateLimit from 'express-rate-limit'
 import getPort, { portNumbers } from 'get-port'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import sourceMapSupport from 'source-map-support'
 
 // @ts-ignore - this file may not exist if you haven't built yet, but it will
 // definitely exist by the time the dev or prod server actually runs.
-import * as remixBuild from '../build/index.js'
+import * as remixBuild from '#build/index.js'
 
-sourceMapSupport.install()
 installGlobals()
 
 const MODE = process.env.NODE_ENV
@@ -114,12 +112,7 @@ app.use(
 				].filter(Boolean),
 				'font-src': ["'self'"],
 				'frame-src': ["'self'"],
-				'img-src': [
-					"'self'",
-					'data:',
-					'via.placeholder.com',
-					'petal-image-host.s3.eu-west-2.amazonaws.com',
-				],
+				'img-src': ["'self'", 'data:', 'placehold.co'],
 				'script-src': [
 					"'strict-dynamic'",
 					"'self'",
@@ -214,8 +207,8 @@ const server = app.listen(portToUse, () => {
 		desiredPort === portToUse
 			? desiredPort
 			: addy && typeof addy === 'object'
-				? addy.port
-				: 0
+			? addy.port
+			: 0
 
 	if (portUsed !== desiredPort) {
 		console.warn(

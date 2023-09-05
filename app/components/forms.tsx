@@ -1,12 +1,10 @@
 import { useInputEvent } from '@conform-to/react'
 import React, { useId, useRef } from 'react'
-import { Checkbox, type CheckboxProps } from '~/components/ui/checkbox.tsx'
-import { Input } from '~/components/ui/input.tsx'
-import { Label } from '~/components/ui/label.tsx'
-import { Textarea } from '~/components/ui/textarea.tsx'
-import { cn } from '~/utils/misc.tsx'
+import { cn } from '#app/utils/misc.tsx'
+import { Image } from './image.tsx'
 import { Spinner } from './spinner.tsx'
 import { Button } from './ui/button.tsx'
+import { Checkbox, type CheckboxProps } from './ui/checkbox.tsx'
 import {
 	Command,
 	CommandEmpty,
@@ -16,6 +14,8 @@ import {
 	CommandList,
 } from './ui/command.tsx'
 import { Icon } from './ui/icon.tsx'
+import { Input } from './ui/input.tsx'
+import { Label } from './ui/label.tsx'
 import {
 	Popover,
 	PopoverContent,
@@ -25,11 +25,12 @@ import {
 import {
 	Select,
 	SelectContent,
+	SelectItem,
 	type SelectProps,
 	SelectTrigger,
 	SelectValue,
-	SelectItem,
 } from './ui/select.tsx'
+import { Textarea } from './ui/textarea.tsx'
 
 export type ListOfErrors = Array<string | null | undefined> | null | undefined
 
@@ -76,7 +77,7 @@ export function Field({
 				aria-describedby={errorId}
 				{...inputProps}
 			/>
-			<div className="px-4 pb-3 pt-1">
+			<div className="min-h-[32px] px-4 pb-3 pt-1">
 				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
 			</div>
 		</div>
@@ -106,7 +107,7 @@ export function TextareaField({
 				aria-describedby={errorId}
 				{...textareaProps}
 			/>
-			<div className="px-4 pb-3 pt-1">
+			<div className="min-h-[32px] px-4 pb-3 pt-1">
 				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
 			</div>
 		</div>
@@ -173,20 +174,20 @@ export function CheckboxField({
 	)
 }
 
-// FIX: The select value doesn't go back when pressing reset
 export function SelectField({
 	labelProps,
 	buttonProps,
-	options,
 	errors,
 	className,
+	options,
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
 	buttonProps: SelectProps
-	options: Array<{ label: string; value: string }>
 	errors?: ListOfErrors
 	className?: string
+	options: Array<{ label: string; value: string }>
 }) {
+	const [value, setValue] = React.useState(buttonProps.defaultValue?.toString())
 	const [open, setOpen] = React.useState(false)
 	const fallbackId = useId()
 	const buttonRef = useRef<HTMLButtonElement>(null)
@@ -195,6 +196,7 @@ export function SelectField({
 			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
 		onFocus: () => buttonRef.current?.focus(),
 		onBlur: () => buttonRef.current?.blur(),
+		onReset: () => setValue(buttonProps.defaultValue?.toString() ?? ''),
 	})
 	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
 	const errorId = errors?.length ? `${id}-error` : undefined
@@ -207,8 +209,9 @@ export function SelectField({
 			<Select
 				open={open}
 				onOpenChange={setOpen}
-				name={buttonProps.name}
-				defaultValue={buttonProps.defaultValue?.toString()}
+				name={name}
+				value={value}
+				onValueChange={value => setValue(value)}
 			>
 				<SelectTrigger
 					id={id}
@@ -216,10 +219,6 @@ export function SelectField({
 					aria-invalid={errorId ? true : undefined}
 					aria-describedby={errorId}
 					{...props}
-					onChange={state => {
-						control.change(state.currentTarget.value)
-						buttonProps.onChange?.(state)
-					}}
 					onFocus={event => {
 						control.focus()
 						buttonProps.onFocus?.(event)
@@ -233,9 +232,9 @@ export function SelectField({
 					<SelectValue placeholder={labelProps.children} />
 				</SelectTrigger>
 				<SelectContent>
-					{options.map(option => (
-						<SelectItem key={option.value} value={option.value}>
-							{option.label}
+					{options.map(({ label, value }) => (
+						<SelectItem key={value} value={value}>
+							{label}
 						</SelectItem>
 					))}
 				</SelectContent>
@@ -247,7 +246,7 @@ export function SelectField({
 	)
 }
 
-export function SearchSelectField({
+export function FilterSelectField({
 	labelProps,
 	buttonProps,
 	options,
@@ -269,6 +268,7 @@ export function SearchSelectField({
 			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
 		onFocus: () => buttonRef.current?.focus(),
 		onBlur: () => buttonRef.current?.blur(),
+		onReset: () => setValue(buttonProps.defaultValue?.toString() ?? ''),
 	})
 	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
 	const errorId = errors?.length ? `${id}-error` : undefined
@@ -278,14 +278,14 @@ export function SearchSelectField({
 	return (
 		<div className={cn('flex flex-col space-y-2', className)}>
 			<input
-				name={buttonProps.name}
+				name={name}
 				// Hack as readOnly prevents errors from being displayed
-				onChange={() => { }}
+				onChange={() => {}}
 				value={value ?? ''}
 				className="hidden"
 			/>
 			<Label htmlFor={id} {...labelProps} />
-			<Popover open={open} onOpenChange={setOpen} modal>
+			<Popover open={open} onOpenChange={setOpen} modal={false}>
 				<PopoverTrigger
 					id={id}
 					ref={buttonRef}
@@ -340,7 +340,7 @@ export function SearchSelectField({
 									<CommandItem
 										key={option.value}
 										onSelect={currentValue => {
-											setValue(currentValue === value ? '' : currentValue)
+											setValue(option.value === value ? '' : option.value)
 											setOpen(false)
 										}}
 									>
@@ -366,8 +366,7 @@ export function SearchSelectField({
 	)
 }
 
-// This needs to swap names with the above component
-export function FilterSelectField({
+export function SearchSelectField({
 	labelProps,
 	buttonProps,
 	items,
@@ -405,9 +404,9 @@ export function FilterSelectField({
 
 	const defaultItem = buttonProps.defaultValue?.toString()
 		? {
-			label: buttonProps.defaultValue?.toString(),
-			value: buttonProps.defaultValue?.toString(),
-		}
+				label: buttonProps.defaultValue?.toString(),
+				value: buttonProps.defaultValue?.toString(),
+		  }
 		: undefined
 
 	const [selectedItem, setSelectedItem] = React.useState<
@@ -419,7 +418,7 @@ export function FilterSelectField({
 			<input
 				name={buttonProps.name}
 				// Hack as readOnly prevents errors from being displayed
-				onChange={() => { }}
+				onChange={() => {}}
 				value={selectedItem?.value ?? ''}
 				className="hidden"
 			/>
@@ -473,7 +472,10 @@ export function FilterSelectField({
 							onInput={onInput}
 							className="h-9"
 						/>
-						<Spinner showSpinner={busy} />
+						<Spinner
+							className="absolute right-0 top-[10px] mr-2"
+							showSpinner={busy}
+						/>
 						<CommandList>
 							<CommandEmpty className="-mb-2 p-2">
 								<Button
@@ -507,7 +509,7 @@ export function FilterSelectField({
 											className="flex items-center gap-3"
 										>
 											{item.image && (
-												<img
+												<Image
 													src={item.image ?? ''}
 													alt={item.value}
 													className="aspect-square h-12 w-12 rounded-md"

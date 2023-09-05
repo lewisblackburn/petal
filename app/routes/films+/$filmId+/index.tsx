@@ -1,145 +1,193 @@
+import { useForm } from '@conform-to/react'
+import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { type V2_MetaFunction } from '@remix-run/node'
+import { Form, Link, useActionData, useLoaderData } from '@remix-run/react'
+import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { format } from 'date-fns'
+import { z } from 'zod'
+import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { ErrorList } from '#app/components/forms.tsx'
+import { Image } from '#app/components/image.tsx'
+import { Slider } from '#app/components/slider.tsx'
+import { Badge } from '#app/components/ui/badge.tsx'
+import { Button } from '#app/components/ui/button.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
+import { Separator } from '#app/components/ui/separator.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { ToggleFavouriteFilm } from '#app/routes/resources+/film+/favourite.tsx'
+import { FilmRatingDropdown } from '#app/routes/resources+/film+/rate.tsx'
+import { getUserId } from '#app/utils/auth.server.ts'
+import { LANGUAGES, STATUSES } from '#app/utils/constants.ts'
+import { prisma } from '#app/utils/db.server.ts'
 import {
-	json,
-	type DataFunctionArgs,
-	type HeadersFunction,
-} from '@remix-run/node'
-import { Link, useLoaderData } from '@remix-run/react'
-import { Container } from '~/components/container.tsx'
-import { Image } from '~/components/image.tsx'
-import { Slider } from '~/components/slider.tsx'
-import { Badge } from '~/components/ui/badge.tsx'
-import { Button } from '~/components/ui/button.tsx'
-import { Icon, type IconName } from '~/components/ui/icon.tsx'
-import { Separator } from '~/components/ui/separator.tsx'
-import { prisma } from '~/utils/db.server.ts'
-import {
-	getDateTimeFormat,
 	invariantResponse,
-	minutesToWatchTime,
-	orderByRationalProperty,
-} from '~/utils/misc.tsx'
+	useDoubleCheck,
+	useIsPending,
+	formatRuntime,
+} from '#app/utils/misc.tsx'
 import {
-	combineServerTimings,
-	makeTimings,
-	time,
-} from '~/utils/timing.server.ts'
+	requireUserWithRole,
+	userHasPermission,
+} from '#app/utils/permissions.ts'
+import { redirectWithToast } from '#app/utils/toast.server.ts'
+import { useOptionalUser } from '#app/utils/user.ts'
+import { type IconName } from '@/icon-name'
+import { type loader as filmsLoader } from './index.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
-	invariantResponse(params.filmId, 'Missing filmId')
-	const timings = makeTimings('film loader')
-
-	const film = await time(
-		() =>
-			prisma.film.findUnique({
+	const userId = await getUserId(request)
+	const film = await prisma.film.findUnique({
+		where: {
+			id: params.filmId,
+		},
+		select: {
+			id: true,
+			title: true,
+			tagline: true,
+			overview: true,
+			photos: {
+				take: 2,
 				where: {
-					id: params.filmId,
+					primary: true,
+				},
+			},
+			videos: {
+				take: 1,
+				where: {
+					primary: true,
+					type: 'trailer',
+				},
+			},
+			runtime: true,
+			releaseDate: true,
+			ageRating: true,
+			userScore: true,
+			language: true,
+			status: true,
+			genres: true,
+			keywords: true,
+			popularity: true,
+			contentScore: true,
+			budget: true,
+			revenue: true,
+			cast: {
+				take: 10,
+				select: {
+					id: true,
+					person: {
+						select: {
+							id: true,
+							name: true,
+							photos: {
+								take: 1,
+								where: {
+									primary: true,
+								},
+							},
+						},
+					},
+					character: true,
+					// These needs to be included for cast ordering
+					numerator: true,
+					denominator: true,
+				},
+			},
+			crew: {
+				where: {
+					featured: true,
 				},
 				select: {
 					id: true,
-					title: true,
-					tagline: true,
-					overview: true,
-					photos: {
-						take: 2,
-						where: {
-							primary: true,
-						},
-					},
-					videos: {
-						take: 1,
-						where: {
-							primary: true,
-							type: 'trailer',
-						},
-					},
-					runtime: true,
-					releaseDate: true,
-					genres: true,
-					keywords: true,
-					cast: {
-						take: 10,
+					job: true,
+					person: {
 						select: {
-							id: true,
-							person: {
-								select: {
-									id: true,
-									name: true,
-									photos: {
-										take: 1,
-										where: {
-											primary: true,
-										},
-									},
-								},
-							},
-							character: true,
-							// These needs to be included for ordering
-							numerator: true,
-							denominator: true,
-						},
-					},
-					crew: {
-						where: {
-							featured: true,
-						},
-						select: {
-							id: true,
-							job: true,
-							person: {
-								select: {
-									name: true,
-								},
-							},
+							name: true,
 						},
 					},
 				},
-			}),
-		{ timings, type: 'find film' },
-	)
-
-	if (!film) {
-		throw new Response('Not found', { status: 404 })
-	}
-
-	const releaseDate = new Date(film.releaseDate ?? 0)
-	const cast = orderByRationalProperty(film.cast)
-
-	return json(
-		{
-			film: {
-				...film,
-				runtime: minutesToWatchTime(film.runtime ?? 0),
-				releaseDate: getDateTimeFormat(request).format(releaseDate),
-				cast,
-				crew: mergeCrewMembers(film.crew),
+			},
+			favourited: {
+				take: 1,
+				where: {
+					userId: userId ?? '',
+				},
+			},
+			ratings: {
+				take: 1,
+				where: {
+					userId: userId ?? '',
+				},
 			},
 		},
-		{ headers: { 'Server-Timing': timings.toString() } },
-	)
+	})
+
+	invariantResponse(film, 'Not found', { status: 404 })
+
+	const releaseDate = format(new Date(film.releaseDate ?? ''), 'dd MMMM yyyy')
+	const runtime = formatRuntime(film.runtime ?? 0)
+
+	return json({
+		film: {
+			...film,
+			releaseDate,
+			runtime,
+		},
+	})
 }
 
-export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
-	return {
-		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
+const DeleteFormSchema = z.object({
+	intent: z.literal('delete-film'),
+	filmId: z.string(),
+})
+
+export async function action({ request }: DataFunctionArgs) {
+	await requireUserWithRole(request, 'admin')
+	const formData = await request.formData()
+	const submission = parse(formData, {
+		schema: DeleteFormSchema,
+	})
+	if (submission.intent !== 'submit') {
+		return json({ status: 'idle', submission } as const)
 	}
+	if (!submission.value) {
+		return json({ status: 'error', submission } as const, { status: 400 })
+	}
+
+	const { filmId } = submission.value
+
+	const film = await prisma.film.findFirst({
+		select: { id: true },
+		where: { id: filmId },
+	})
+	invariantResponse(film, 'Not found', { status: 404 })
+
+	await prisma.film.delete({ where: { id: film.id } })
+
+	return redirectWithToast('/films', {
+		type: 'success',
+		title: 'Success',
+		description: 'The film has been deleted.',
+	})
 }
 
 export default function FilmRoute() {
 	const data = useLoaderData<typeof loader>()
+	const user = useOptionalUser()
+	const canDelete = userHasPermission(user, 'delete:film:any')
 
 	return (
-		<Container className="flex flex-col gap-10">
+		<div className="container flex flex-col gap-10 py-6">
 			<div className="flex items-center justify-between">
 				<h2 className="text-h2 font-black">{data.film.title}</h2>
 				<div className="flex items-center gap-5">
-					<Button variant="secondary">
-						<Icon name="star" className="mr-2" />
-						<span>Rate</span>
-					</Button>
-					<Button variant="secondary">
-						<Icon name="heart" className="mr-2" />
-						Favourite
-					</Button>
+					<FilmRatingDropdown
+						filmId={data.film.id}
+						defaultRating={data.film.ratings[0]?.value}
+					/>
+					<ToggleFavouriteFilm
+						filmId={data.film.id}
+						defaultValue={!!data.film.favourited[0]?.id}
+					/>
 					<Button variant="secondary">
 						<Icon name="plus" className="mr-2" />
 						Add to watchlist
@@ -173,17 +221,27 @@ export default function FilmRoute() {
 							{data.film.releaseDate ?? 'N/A'}
 						</Status>
 						<Status title="Age Rating" icon="person">
-							12A
+							{data.film.ageRating ?? 'N/A'}
 						</Status>
 						<Status title="User score" icon="star">
-							100%
+							{data.film.userScore ?? 'N/A'}
 						</Status>
 						<Status title="Language" icon="language">
-							English
+							{LANGUAGES.find(language => language.value === data.film.language)
+								?.label ?? 'N/A'}
 						</Status>
-						<Status title="Status" icon="check">
-							Released
-						</Status>
+						{data.film.status && (
+							<Status
+								title="Status"
+								icon={
+									(STATUSES.find(status => status.value === data.film.status)
+										?.icon as IconName) ?? 'question-mark'
+								}
+							>
+								{STATUSES.find(status => status.value === data.film.status)
+									?.label ?? 'N/A'}
+							</Status>
+						)}
 					</div>
 					<div className="flex flex-col space-y-1">
 						<h2 className="text-xl font-bold">Overview</h2>
@@ -211,7 +269,7 @@ export default function FilmRoute() {
 								.map(castMember => {
 									return {
 										to: `/people/${castMember.person.id}`,
-										image: castMember.person.photos[0].image,
+										image: castMember.person.photos[0]?.image,
 									}
 								})
 								.filter(Boolean)}
@@ -227,11 +285,15 @@ export default function FilmRoute() {
 				<div className="col-span-3">
 					<div className="flex flex-col space-y-5 rounded-lg border p-5">
 						<a
-							href={data.film.videos.filter(Boolean)[0]?.url ?? ''}
+							href={data.film.videos.filter(Boolean)[0]?.url}
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							<Button size="lg" className="w-full">
+							<Button
+								size="lg"
+								className="w-full"
+								disabled={!data.film.videos.filter(Boolean)[0]?.url}
+							>
 								<Icon name="play" className="mr-2" />
 								Play Trailer
 							</Button>
@@ -239,16 +301,16 @@ export default function FilmRoute() {
 						<Separator />
 						<div className="grid grid-cols-2 gap-5">
 							<Status title="Popularity" icon="bar-chart">
-								100%
+								{data.film.popularity ?? 'N/A'} %
 							</Status>
 							<Status title="Content Score" icon="folder">
-								100%
+								{data.film.contentScore ?? 'N/A'} %
 							</Status>
 							<Status title="Budget" icon="banknote">
-								$12,000,000.00
+								$ {data.film.budget ?? 'N/A'}
 							</Status>
 							<Status title="Revenue" icon="credit-card">
-								$87,100,499.00
+								$ {data.film.revenue ?? 'N/A'}
 							</Status>
 						</div>
 						<Separator />
@@ -279,27 +341,103 @@ export default function FilmRoute() {
 							))}
 						</div>
 						<Separator />
-						<div className="flex items-center justify-between gap-5">
-							<Link to="." className="w-full" preventScrollReset>
-								<Button variant="secondary" size="sm" className="w-full">
-									<Icon name="exclamation-triangle" className="mr-1" />
-									Report Issue
-								</Button>
-							</Link>
-							<Link to="edit" className="w-full">
-								<Button size="sm" className="w-full">
-									<Icon name="pencil-2" className="mr-2" />
-									Edit Page
-								</Button>
-							</Link>
+						<div className="flex flex-col items-center justify-between gap-5">
+							<div className="flex w-full items-center justify-between gap-5">
+								<Link to="." className="w-full" preventScrollReset>
+									<Button variant="secondary" size="sm" className="w-full">
+										<Icon name="exclamation-triangle" className="mr-1" />
+										Report Issue
+									</Button>
+								</Link>
+								<Link to="edit" className="w-full">
+									<Button size="sm" className="w-full">
+										<Icon name="pencil-2" className="mr-2" />
+										Edit Page
+									</Button>
+								</Link>
+							</div>
+							{canDelete && (
+								<div className="w-full">
+									<DeleteFilm id={data.film.id} />
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
 			</div>
-		</Container>
+		</div>
 	)
 }
 
+export function DeleteFilm({ id }: { id: string }) {
+	const actionData = useActionData<typeof action>()
+	const isPending = useIsPending()
+	const [form] = useForm({
+		id: 'delete-film',
+		lastSubmission: actionData?.submission,
+		constraint: getFieldsetConstraint(DeleteFormSchema),
+		onValidate({ formData }) {
+			return parse(formData, { schema: DeleteFormSchema })
+		},
+	})
+	const dc = useDoubleCheck()
+
+	return (
+		<Form method="post" {...form.props}>
+			<input type="hidden" name="filmId" value={id} />
+			<StatusButton
+				type="submit"
+				name="intent"
+				value="delete-film"
+				variant={dc.doubleCheck ? 'destructive' : 'default'}
+				{...dc.getButtonProps({
+					type: 'submit',
+					name: 'intent',
+					value: 'delete-film',
+				})}
+				status={isPending ? 'pending' : actionData?.status ?? 'idle'}
+				disabled={isPending}
+				className="w-full max-md:aspect-square max-md:px-0"
+			>
+				<Icon name="trash" className="scale-125 max-md:scale-150">
+					{dc.doubleCheck ? 'Are you sure?' : 'Delete'}
+				</Icon>
+			</StatusButton>
+			<ErrorList errors={form.errors} id={form.errorId} />
+		</Form>
+	)
+}
+
+export const meta: V2_MetaFunction<
+	typeof loader,
+	{ 'routes/films+/$filmId+': typeof filmsLoader }
+> = ({ data }) => {
+	const filmTitle = data?.film.title ?? 'Film'
+	const filmTagline =
+		data?.film.tagline && data.film.tagline.length > 100
+			? data?.film.tagline.slice(0, 97) + '...'
+			: 'No content'
+	return [
+		{ title: `${filmTitle} | Petal` },
+		{
+			name: 'description',
+			content: filmTagline,
+		},
+	]
+}
+
+export function ErrorBoundary() {
+	return (
+		<GeneralErrorBoundary
+			statusHandlers={{
+				403: () => <p>You are not allowed to do that</p>,
+				404: ({ params }) => (
+					<p>No film with the id "{params.filmId}" exists</p>
+				),
+			}}
+		/>
+	)
+}
 function Status({
 	icon,
 	title,
@@ -317,25 +455,4 @@ function Status({
 			</div>
 		</div>
 	)
-}
-function mergeCrewMembers(arr: any[]) {
-	const nameMap = new Map()
-
-	// Group crew members with the same name
-	arr.forEach(item => {
-		const { id, person, job } = item
-		const { name } = person
-
-		if (nameMap.has(name)) {
-			const existingMember = nameMap.get(name)
-			existingMember.job += ', ' + job
-		} else {
-			nameMap.set(name, { id, person, job })
-		}
-	})
-
-	// Convert the map values back to an array
-	const mergedCrewMembers = Array.from(nameMap.values())
-
-	return mergedCrewMembers
 }

@@ -1,63 +1,42 @@
-import {
-	json,
-	type DataFunctionArgs,
-	type HeadersFunction,
-} from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { Container } from '~/components/container.tsx'
-import { columns } from '~/components/table/genres/columns.tsx'
-import { GenreTable } from '~/components/table/genres/data-table.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { getDateTimeFormat } from '~/utils/misc.tsx'
-import {
-	combineServerTimings,
-	makeTimings,
-	time,
-} from '~/utils/timing.server.ts'
+import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { columns } from '#app/components/table/film/genres/columns.tsx'
+import { GenreTable } from '#app/components/table/film/genres/data-table.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { invariantResponse } from '#app/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
-	await requireUserId(request)
-	const timings = makeTimings('genres loader')
+  await requireUserId(request)
 
-	const film = await time(
-		() =>
-			prisma.film.findUnique({
-				where: {
-					id: params.filmId,
-				},
-				select: {
-					genres: true,
-				},
-			}),
-		{ timings, type: 'find genres' },
-	)
+  const film = await prisma.film.findUnique({
+    where: {
+      id: params.filmId,
+    },
+    select: {
+      genres: true,
+    },
+  })
 
-	if (!film) {
-		throw new Response('Not found', { status: 404 })
-	}
-	const genres = film.genres.map(genre => ({
-		id: genre.id,
-		name: genre.name,
-		created: getDateTimeFormat(request).format(genre.createdAt),
-		updated: getDateTimeFormat(request).format(genre.updatedAt),
-	}))
+  invariantResponse(film, 'Not found', { status: 404 })
 
-	return json({ genres }, { headers: { 'Server-Timing': timings.toString() } })
-}
+  const genres = film.genres.map(genre => ({
+    id: genre.id,
+    name: genre.name,
+    created: new Date(genre.createdAt),
+    updated: new Date(genre.updatedAt),
+  }))
 
-export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
-	return {
-		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
-	}
+  return json({ genres })
 }
 
 export default function FilmEditGenres() {
-	const { genres } = useLoaderData<typeof loader>()
+  const { genres } = useLoaderData<typeof loader>()
 
-	return (
-		<Container>
-			<GenreTable data={genres} columns={columns} />
-		</Container>
-	)
+  return (
+    <div className="container py-6">
+      {/* FIX: Dropdown resetting scroll */}
+      <GenreTable data={genres} columns={columns} />
+    </div>
+  )
 }

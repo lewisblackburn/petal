@@ -1,7 +1,7 @@
 import { type Column } from '@tanstack/react-table'
-import * as React from 'react'
-import { Badge } from '~/components/ui/badge.tsx'
-import { Button } from '~/components/ui/button.tsx'
+import { cn } from '#app/utils/misc.tsx'
+import { Badge } from '../ui/badge.tsx'
+import { Button } from '../ui/button.tsx'
 import {
 	Command,
 	CommandEmpty,
@@ -10,15 +10,10 @@ import {
 	CommandItem,
 	CommandList,
 	CommandSeparator,
-} from '~/components/ui/command.tsx'
-import { Icon } from '~/components/ui/icon.tsx'
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from '~/components/ui/popover.tsx'
-import { Separator } from '~/components/ui/separator.tsx'
-import { cn } from '~/utils/misc.tsx'
+} from '../ui/command.tsx'
+import { Icon } from '../ui/icon.tsx'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover.tsx'
+import { Separator } from '../ui/separator.tsx'
 
 interface DataTableFacetedFilter<TData, TValue> {
 	column?: Column<TData, TValue>
@@ -42,7 +37,7 @@ export function DataTableFacetedFilter<TData, TValue>({
 		<Popover>
 			<PopoverTrigger asChild>
 				<Button variant="outline" size="sm" className="h-8 border-dashed">
-					<Icon name="plus-circle" className="mr-2 h-4 w-4" />
+					<Icon name="plus-circled" className="mr-2 h-4 w-4" />
 					{title}
 					{selectedValues?.size > 0 && (
 						<>

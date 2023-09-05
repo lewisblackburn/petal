@@ -1,4 +1,4 @@
-import { cn } from '~/utils/misc.tsx'
+import { cn } from '#app/utils/misc.tsx'
 
 export function Image({
 	...props

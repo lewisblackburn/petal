@@ -1,33 +1,62 @@
 import { json, type DataFunctionArgs } from '@remix-run/node'
-import { Outlet } from '@remix-run/react'
-import { Separator } from '~/components/ui/separator.tsx'
-import { authenticator, requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
+import { Link, Outlet, useMatches } from '@remix-run/react'
+import { Spacer } from '#app/components/spacer.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { cn, invariantResponse } from '#app/utils/misc.tsx'
+import { useUser } from '#app/utils/user.ts'
+
+export const handle = {
+	breadcrumb: <Icon name="file-text">Edit Profile</Icon>,
+}
 
 export async function loader({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
-		select: {
-			username: true,
-		},
+		select: { username: true },
 	})
-	if (!user) {
-		throw await authenticator.logout(request, { redirectTo: '/' })
-	}
+	invariantResponse(user, 'User not found', { status: 404 })
 	return json({})
 }
 
-export default function ProfileSettings() {
+export default function EditUserProfile() {
+	const user = useUser()
+	const matches = useMatches()
+	const breadcrumbs = matches
+		.map(m =>
+			m.handle?.breadcrumb ? (
+				<Link key={m.id} to={m.pathname} className="flex items-center">
+					{m.handle.breadcrumb}
+				</Link>
+			) : null,
+		)
+		.filter(Boolean)
+
 	return (
-		<div className="space-y-6">
-			<div>
-				<h3 className="text-lg font-medium">Profile</h3>
-				<p className="text-sm text-muted-foreground">
-					This is how others will see you on the site.
-				</p>
-			</div>
-			<Separator />
+		<div className="container m-auto mb-36 mt-16 max-w-3xl">
+			<ul className="flex gap-3">
+				<li>
+					<Link
+						className="text-muted-foreground"
+						to={`/users/${user.username}`}
+					>
+						Profile
+					</Link>
+				</li>
+				{breadcrumbs.map((breadcrumb, i, arr) => (
+					<li
+						key={i}
+						className={cn('flex items-center gap-3', {
+							'text-muted-foreground': i < arr.length - 1,
+						})}
+					>
+						▶️ {breadcrumb}
+					</li>
+				))}
+			</ul>
+			<Spacer size="xs" />
 			<main>
 				<Outlet />
 			</main>

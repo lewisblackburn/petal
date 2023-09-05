@@ -1,6 +1,5 @@
 import { Link, Outlet, useLocation, useParams } from '@remix-run/react'
-import { Container } from '~/components/container.tsx'
-import { Icon } from '~/components/ui/icon.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
 
 export default function FilmLayout() {
 	const path = useLocation().pathname
@@ -10,15 +9,15 @@ export default function FilmLayout() {
 	return (
 		<div>
 			<div className="flex h-16 items-center border-b">
-				<Container>
+				<div className="container py-6">
 					<Link
-						to={isInEditMode ? `/films/${filmId}` ?? '/films' : '/films'}
+						to={isInEditMode ? `/films/${filmId}` : '/films'}
 						className="flex items-center space-x-3 font-bold"
 					>
 						<Icon name="arrow-left" />
 						<span>Back to {isInEditMode ? 'film' : 'films'}</span>
 					</Link>
-				</Container>
+				</div>
 			</div>
 			<Outlet />
 		</div>

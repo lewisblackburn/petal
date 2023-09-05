@@ -1,66 +1,43 @@
 import { useLoaderData } from '@remix-run/react'
-import {
-	type DataFunctionArgs,
-	type HeadersFunction,
-	json,
-} from '@remix-run/server-runtime'
-import { Container } from '~/components/container.tsx'
-import { columns } from '~/components/table/photos/columns.tsx'
-import { PhotoTable } from '~/components/table/photos/data-table.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import {
-	combineServerTimings,
-	makeTimings,
-	time,
-} from '~/utils/timing.server.ts'
+import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { columns } from '#app/components/table/film/photos/columns.tsx'
+import { PhotoTable } from '#app/components/table/film/photos/data-table.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { invariantResponse } from '#app/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)
-	const timings = makeTimings('photo loader')
 
-	const film = await time(
-		() =>
-			prisma.film.findUnique({
-				where: {
-					id: params.filmId,
-				},
-				select: {
-					// NOTE: There is no point ordering photos by primary, becuase you can do this in the client
-					// SQL orderBy query's are expensive, so we should avoid them where possible
-					photos: true,
-				},
-			}),
-		{ timings, type: 'find photos' },
-	)
+	const film = await prisma.film.findUnique({
+		where: {
+			id: params.filmId,
+		},
+		select: {
+			photos: true,
+		},
+	})
 
-	if (!film) {
-		throw new Response('Not found', { status: 404 })
-	}
+	invariantResponse(film, 'Not found', { status: 404 })
 
 	const photos = film.photos.map(photo => ({
 		id: photo.id,
-		type: photo.type,
-		primary: photo.primary,
-		language: photo.language,
 		image: photo.image,
+		type: photo.type,
+		language: photo.language,
+		primary: photo.primary,
 	}))
 
-	return json({ photos }, { headers: { 'Server-Timing': timings.toString() } })
+	return json({ photos })
 }
 
-export const headers: HeadersFunction = ({ loaderHeaders, parentHeaders }) => {
-	return {
-		'Server-Timing': combineServerTimings(parentHeaders, loaderHeaders),
-	}
-}
-
-export default function FilmEditPhoto() {
+export default function FilmEditphotos() {
 	const { photos } = useLoaderData<typeof loader>()
 
 	return (
-		<Container>
-			<PhotoTable data={photos} columns={columns}></PhotoTable>
-		</Container>
+		<div className="container py-6">
+			{/* FIX: Dropdown resetting scroll */}
+			<PhotoTable data={photos} columns={columns} />
+		</div>
 	)
 }

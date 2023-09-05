@@ -5,14 +5,12 @@ import {
 	unstable_parseMultipartFormData,
 } from '@remix-run/server-runtime'
 import { z } from 'zod'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { MAX_SIZE } from '~/utils/constants.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { flashMessage } from '~/utils/flash-session.server.ts'
-import { ensurePE } from '~/utils/misc.tsx'
-import { s3UploadHandler } from '~/utils/s3.server.ts'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { MAX_SIZE } from '#app/utils/constants.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { s3UploadHandler } from '#app/utils/s3.server.ts'
+import { createToastHeaders } from '#app/utils/toast.server.ts'
 
-// TODO: Change primary variable to order and the primary photo/video will be the first one
 export const AddFilmPhotoSchema = z.object({
 	filmId: z.string(),
 	image: z.instanceof(File, { message: 'Image is required' }).refine(file => {
@@ -71,54 +69,39 @@ export async function action({ request }: DataFunctionArgs) {
 		})
 
 		if (primaryPhoto?.photos.length) {
-			return json({
-				status: 400,
-				headers: await flashMessage({
-					toast: {
-						title: 'Primary Photo of That Type Already Exists',
-						variant: 'destructive',
-					},
-				}),
-			})
+			return json(
+				{ success: false },
+				{
+					headers: await createToastHeaders({
+						description: 'A primary photo of that type already exists',
+						type: 'error',
+					}),
+				},
+			)
 		}
 	}
 
-	await prisma.film
-		.update({
-			where: { id: filmId },
-			data: {
-				photos: {
-					create: {
-						type,
-						// TODO: Just make this requried
-						primary: primary ?? false,
-						language,
-						image: parsedImage.payload.image,
-					},
+	await prisma.film.update({
+		where: { id: filmId },
+		data: {
+			photos: {
+				create: {
+					type,
+					// TODO: Just make this requried
+					primary: primary ?? false,
+					language,
+					image: parsedImage.payload.image,
 				},
 			},
-		})
-		.catch(err => {
-			ensurePE(formData, request)
-			return json({
-				status: 400,
-				headers: flashMessage({
-					toast: {
-						title: err.message,
-						variant: 'destructive',
-					},
-				}),
-			})
-		})
+		},
+	})
 
-	ensurePE(formData, request)
 	return json(
 		{ success: true },
 		{
-			headers: await flashMessage({
-				toast: {
-					title: 'Added Film Photo',
-				},
+			headers: await createToastHeaders({
+				description: 'Added Film Photo',
+				type: 'success',
 			}),
 		},
 	)

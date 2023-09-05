@@ -1,12 +1,18 @@
-export function Spinner({ showSpinner }: { showSpinner: boolean }) {
+export function Spinner({
+	className,
+	showSpinner,
+}: {
+	className?: string
+	showSpinner: boolean
+}) {
 	return (
 		<div
-			className={`absolute right-0 top-[11px] transition-opacity ${
+			className={`transition-opacity ${
 				showSpinner ? 'opacity-100' : 'opacity-0'
-			}`}
+			} ${className}`}
 		>
 			<svg
-				className="-ml-1 mr-3 h-4 w-4 animate-spin"
+				className="mr-2 h-4 w-4 animate-spin"
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
 				viewBox="0 0 24 24"
