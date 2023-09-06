@@ -337,3 +337,14 @@ model Favourite {
 
   @@index([filmId, userId])
 }
+
+model AuditLog {
+  id       String @id @default(cuid())
+  action   String // e.g., create, update, delete
+  entity   String // e.g., film, person, etc.
+  entityId String // the ID of the entity being modified
+  userId   String // the ID of the user making the change
+  changes  String // Store previous and new attribute values as JSON string
+
+  createdAt DateTime @default(now())
+}

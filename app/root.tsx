@@ -97,27 +97,28 @@ export async function loader({ request }: DataFunctionArgs) {
 
 	const user = userId
 		? await time(
-				() =>
-					prisma.user.findUniqueOrThrow({
-						select: {
-							id: true,
-							name: true,
-							username: true,
-							email: true,
-							image: { select: { id: true } },
-							roles: {
-								select: {
-									name: true,
-									permissions: {
-										select: { entity: true, action: true, access: true },
-									},
+			() =>
+				prisma.user.findUniqueOrThrow({
+					select: {
+						id: true,
+						name: true,
+						username: true,
+						email: true,
+						initials: true,
+						image: { select: { id: true } },
+						roles: {
+							select: {
+								name: true,
+								permissions: {
+									select: { entity: true, action: true, access: true },
 								},
 							},
 						},
-						where: { id: userId },
-					}),
-				{ timings, type: 'find user', desc: 'find user in root' },
-		  )
+					},
+					where: { id: userId },
+				}),
+			{ timings, type: 'find user', desc: 'find user in root' },
+		)
 		: null
 	if (userId && !user) {
 		console.info('something weird happened')

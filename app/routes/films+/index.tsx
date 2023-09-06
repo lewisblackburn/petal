@@ -1,4 +1,4 @@
-import { type Prisma, type FilmPhoto } from '@prisma/client'
+import { type Prisma } from '@prisma/client'
 import {
 	json,
 	type DataFunctionArgs,

@@ -106,11 +106,10 @@ function UserDropdown() {
 					<Avatar className="h-8 w-8">
 						<AvatarImage
 							className="object-cover"
-							src={getUserImgSrc(user.image?.id)}
+							src={getUserImgSrc(user.image?.id + 's')}
 							alt={user.name ?? user.username}
 						/>
-						{/* TODO: Make this compute initials */}
-						<AvatarFallback>LB</AvatarFallback>
+						<AvatarFallback>{user.initials}</AvatarFallback>
 					</Avatar>
 				</Button>
 			</DropdownMenuTrigger>
