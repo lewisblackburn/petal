@@ -4,7 +4,6 @@ import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { ServerOnly } from 'remix-utils'
 import {
-	CheckboxField,
 	ErrorList,
 	Field,
 	FilterSelectField,
@@ -102,16 +101,6 @@ export function DataTableAddPhoto() {
 							}}
 							options={LANGUAGES}
 							errors={fields.language.errors}
-						/>
-						<CheckboxField
-							labelProps={{
-								htmlFor: fields.primary.id,
-								children: 'Primary',
-							}}
-							buttonProps={conform.input(fields.primary, {
-								type: 'checkbox',
-							})}
-							errors={fields.primary.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>

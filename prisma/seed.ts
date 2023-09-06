@@ -292,22 +292,6 @@ async function seed() {
 							name: faker.word.noun(),
 						},
 					},
-					photos: {
-						create: [
-							{
-								language: 'en',
-								primary: true,
-								type: 'poster',
-								image: 'https://placehold.co/300x450?text=Image',
-							},
-							{
-								language: 'en',
-								primary: true,
-								type: 'backdrop',
-								image: 'https://placehold.co/1920x1080?text=Image',
-							},
-						],
-					},
 				},
 			})
 			.catch(e => {
@@ -326,12 +310,6 @@ async function seed() {
 				select: { id: true },
 				data: {
 					...personData,
-					photos: {
-						create: {
-							primary: true,
-							image: 'https://placehold.co/300x450?text=Image',
-						},
-					},
 				},
 			})
 			.catch(e => {

@@ -2,12 +2,7 @@ import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import {
-	CheckboxField,
-	ErrorList,
-	Field,
-	FilterSelectField,
-} from '#app/components/forms.tsx'
+import { ErrorList, Field, FilterSelectField } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -121,16 +116,6 @@ export function DataTableAddVideo() {
 							}}
 							options={QUALITY}
 							errors={fields.quality.errors}
-						/>
-						<CheckboxField
-							labelProps={{
-								htmlFor: fields.primary.id,
-								children: 'Primary',
-							}}
-							buttonProps={conform.input(fields.primary, {
-								type: 'checkbox',
-							})}
-							errors={fields.primary.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>

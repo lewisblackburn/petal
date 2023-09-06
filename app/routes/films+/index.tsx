@@ -20,10 +20,10 @@ export async function loader({ request }: DataFunctionArgs) {
 	const where = {
 		OR: search
 			? [
-					{ title: { contains: search } },
-					{ tagline: { contains: search } },
-					{ overview: { contains: search } },
-			  ]
+				{ title: { contains: search } },
+				{ tagline: { contains: search } },
+				{ overview: { contains: search } },
+			]
 			: undefined,
 	} satisfies Prisma.FilmWhereInput
 
@@ -35,13 +35,7 @@ export async function loader({ request }: DataFunctionArgs) {
 		select: {
 			id: true,
 			title: true,
-			photos: {
-				take: 1,
-				where: {
-					primary: true,
-					type: 'poster',
-				},
-			},
+			poster: true,
 		},
 	})
 
@@ -65,11 +59,7 @@ export default function FilmsRoute() {
 					<li key={film.id}>
 						<Link to={film.id}>
 							<img
-								src={
-									film.photos.filter(
-										(photo: FilmPhoto) => photo.type === 'poster',
-									)[0]?.image
-								}
+								src={film.poster}
 								alt={film.title}
 								className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
 							/>

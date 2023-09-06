@@ -5,7 +5,7 @@ import { LANGUAGES, PHOTO_TYPES } from '#app/utils/constants.ts'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 
 export const columns: ColumnDef<
-	Pick<FilmPhoto, 'id' | 'image' | 'type' | 'language' | 'primary'>
+	Pick<FilmPhoto, 'id' | 'image' | 'type' | 'language'>
 >[] = [
 		{
 			id: 'select',
@@ -97,19 +97,5 @@ export const columns: ColumnDef<
 			filterFn: (row, id, value) => {
 				return value.includes(row.getValue(id))
 			},
-		},
-		{
-			accessorKey: 'primary',
-			header: ({ column }) => (
-				<DataTableColumnHeader column={column} title="Primary" />
-			),
-			cell: ({ row }) => (
-				<Checkbox
-					checked={row.getValue('primary')}
-					className={
-						row.getValue('primary') ? 'translate-y-[4px]' : '-translate-y-[2px]'
-					}
-				/>
-			),
 		},
 	]

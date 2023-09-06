@@ -7,35 +7,34 @@ import { prisma } from '#app/utils/db.server.ts'
 import { invariantResponse } from '#app/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
-  await requireUserId(request)
+	await requireUserId(request)
 
-  const person = await prisma.person.findUnique({
-    where: {
-      id: params.personId,
-    },
-    select: {
-      photos: true,
-    },
-  })
+	const person = await prisma.person.findUnique({
+		where: {
+			id: params.personId,
+		},
+		select: {
+			photos: true,
+		},
+	})
 
-  invariantResponse(person, 'Not found', { status: 404 })
+	invariantResponse(person, 'Not found', { status: 404 })
 
-  const photos = person.photos.map(photo => ({
-    id: photo.id,
-    image: photo.image,
-    primary: photo.primary,
-  }))
+	const photos = person.photos.map(photo => ({
+		id: photo.id,
+		image: photo.image,
+	}))
 
-  return json({ photos })
+	return json({ photos })
 }
 
 export default function PersonEditphotos() {
-  const { photos } = useLoaderData<typeof loader>()
+	const { photos } = useLoaderData<typeof loader>()
 
-  return (
-    <div className="container py-6">
-      {/* FIX: Dropdown resetting scroll */}
-      <PhotoTable data={photos} columns={columns} />
-    </div>
-  )
+	return (
+		<div className="container py-6">
+			{/* FIX: Dropdown resetting scroll */}
+			<PhotoTable data={photos} columns={columns} />
+		</div>
+	)
 }

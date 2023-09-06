@@ -18,7 +18,6 @@ export const AddFilmPhotoSchema = z.object({
 	}, 'Image size must be less than 3MB'),
 	type: z.string().nonempty({ message: 'You must select a type' }),
 	language: z.string().nonempty({ message: 'You must select a language' }),
-	primary: z.boolean().optional(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -40,7 +39,7 @@ export async function action({ request }: DataFunctionArgs) {
 		)
 	}
 
-	let { filmId, type, primary, language } = submission.value
+	let { filmId, type, language } = submission.value
 
 	const image = await unstable_parseMultipartFormData(clonedRequest, params =>
 		s3UploadHandler({
@@ -52,35 +51,6 @@ export async function action({ request }: DataFunctionArgs) {
 	//TODO: Fix type
 	const parsedImage = parse(image, { schema: z.any() })
 
-	// check if a primary photo of that type already exists
-	if (primary) {
-		const primaryPhoto = await prisma.film.findFirst({
-			where: {
-				id: filmId,
-			},
-			select: {
-				photos: {
-					where: {
-						type,
-						primary: true,
-					},
-				},
-			},
-		})
-
-		if (primaryPhoto?.photos.length) {
-			return json(
-				{ success: false },
-				{
-					headers: await createToastHeaders({
-						description: 'A primary photo of that type already exists',
-						type: 'error',
-					}),
-				},
-			)
-		}
-	}
-
 	await prisma.film.update({
 		where: { id: filmId },
 		data: {
@@ -88,7 +58,6 @@ export async function action({ request }: DataFunctionArgs) {
 				create: {
 					type,
 					// TODO: Just make this requried
-					primary: primary ?? false,
 					language,
 					image: parsedImage.payload.image,
 				},

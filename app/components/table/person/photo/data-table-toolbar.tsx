@@ -3,8 +3,6 @@ import { type Table } from '@tanstack/react-table'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Input } from '#app/components/ui/input.tsx'
-import { LANGUAGES, PHOTO_TYPES } from '#app/utils/constants.ts'
-import { DataTableFacetedFilter } from '../../data-table-faceted-filter.tsx'
 import { DataTableViewOptions } from '../../data-table-view-options.tsx'
 import { DataTableAddPhoto } from './data-table-add-photo.tsx'
 import { DataTableDeletePhotos } from './data-table-delete-photos.tsx'
@@ -27,21 +25,6 @@ export function DataTableToolbar<TData>({
 					onChange={event => table.setGlobalFilter(event.target.value)}
 					className="h-8 w-[150px] lg:w-[250px]"
 				/>
-				{table.getColumn('type') && (
-					<DataTableFacetedFilter
-						column={table.getColumn('type')}
-						title="Type"
-						options={PHOTO_TYPES}
-					/>
-				)}
-
-				{table.getColumn('language') && (
-					<DataTableFacetedFilter
-						column={table.getColumn('language')}
-						title="Language"
-						options={LANGUAGES}
-					/>
-				)}
 				{isFiltered && (
 					<Button
 						variant="ghost"

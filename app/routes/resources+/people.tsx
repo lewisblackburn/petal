@@ -20,13 +20,10 @@ export async function loader({ request }: DataFunctionArgs) {
 	const people = await prisma.person.findMany({
 		take,
 		where,
-		include: {
-			photos: {
-				take: 1,
-				where: {
-					primary: true,
-				},
-			},
+		select: {
+			id: true,
+			name: true,
+			image: true,
 		},
 	})
 
@@ -76,7 +73,7 @@ export const PersonSearch = ({
 	const items = peopleFetcher.data?.people?.map(person => ({
 		label: person.name,
 		value: person.id,
-		image: person.photos[0]?.image,
+		image: person.image,
 	}))
 
 	return (

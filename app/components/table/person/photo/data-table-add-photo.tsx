@@ -3,7 +3,7 @@ import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { ServerOnly } from 'remix-utils'
-import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
+import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -73,16 +73,6 @@ export function DataTableAddPhoto() {
 								accept: 'image/*',
 							}}
 							errors={fields.image.errors}
-						/>
-						<CheckboxField
-							labelProps={{
-								htmlFor: fields.primary.id,
-								children: 'Primary',
-							}}
-							buttonProps={conform.input(fields.primary, {
-								type: 'checkbox',
-							})}
-							errors={fields.primary.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>

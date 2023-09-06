@@ -1,8 +1,8 @@
 import { parse } from '@conform-to/zod'
 import {
-  json,
-  type DataFunctionArgs,
-  unstable_parseMultipartFormData,
+	json,
+	type DataFunctionArgs,
+	unstable_parseMultipartFormData,
 } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
@@ -12,92 +12,62 @@ import { s3UploadHandler } from '#app/utils/s3.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const AddPersonImageSchema = z.object({
-  personId: z.string(),
-  image: z.instanceof(File, { message: 'Image is required' }).refine(file => {
-    return file.size <= MAX_SIZE
-  }, 'Image size must be less than 3MB'),
-  primary: z.boolean().optional(),
+	personId: z.string(),
+	image: z.instanceof(File, { message: 'Image is required' }).refine(file => {
+		return file.size <= MAX_SIZE
+	}, 'Image size must be less than 3MB'),
 })
 
 export async function action({ request }: DataFunctionArgs) {
-  await requireUserId(request)
-  const clonedRequest = request.clone()
-  const formData = await request.formData()
+	await requireUserId(request)
+	const clonedRequest = request.clone()
+	const formData = await request.formData()
 
-  const submission = parse(formData, {
-    schema: AddPersonImageSchema,
-  })
+	const submission = parse(formData, {
+		schema: AddPersonImageSchema,
+	})
 
-  if (!submission.value) {
-    return json(
-      {
-        status: 'error',
-        submission,
-      } as const,
-      { status: 400 },
-    )
-  }
+	if (!submission.value) {
+		return json(
+			{
+				status: 'error',
+				submission,
+			} as const,
+			{ status: 400 },
+		)
+	}
 
-  let { personId, primary } = submission.value
+	let { personId } = submission.value
 
-  const image = await unstable_parseMultipartFormData(clonedRequest, params =>
-    s3UploadHandler({
-      ...params,
-      filename: `people/${personId}/${params.filename}`,
-    }),
-  )
+	const image = await unstable_parseMultipartFormData(clonedRequest, params =>
+		s3UploadHandler({
+			...params,
+			filename: `people/${personId}/${params.filename}`,
+		}),
+	)
 
-  //TODO: Fix type
-  const parsedImage = parse(image, { schema: z.any() })
+	//TODO: Fix type
+	const parsedImage = parse(image, { schema: z.any() })
 
-  // check if a primary photo of that type already exists
-  if (primary) {
-    const primaryPhoto = await prisma.person.findFirst({
-      where: {
-        id: personId,
-      },
-      select: {
-        photos: {
-          where: {
-            primary: true,
-          },
-        },
-      },
-    })
+	await prisma.person.update({
+		where: { id: personId },
+		data: {
+			photos: {
+				create: {
+					// TODO: Just make this requried
+					image: parsedImage.payload.image,
+				},
+			},
+		},
+	})
 
-    if (primaryPhoto?.photos.length) {
-      return json(
-        { success: false },
-        {
-          headers: await createToastHeaders({
-            description: 'A primary photo of that type already exists',
-            type: 'error',
-          }),
-        },
-      )
-    }
-  }
-
-  await prisma.person.update({
-    where: { id: personId },
-    data: {
-      photos: {
-        create: {
-          // TODO: Just make this requried
-          primary: primary ?? false,
-          image: parsedImage.payload.image,
-        },
-      },
-    },
-  })
-
-  return json(
-    { success: true },
-    {
-      headers: await createToastHeaders({
-        description: 'Added Person Photo',
-        type: 'success',
-      }),
-    },
-  )
+	return json(
+		{ success: true },
+		{
+			headers: await createToastHeaders({
+				description: 'Added Person Photo',
+				type: 'success',
+			}),
+		},
+	)
 }

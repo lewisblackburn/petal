@@ -29,12 +29,7 @@ export async function loader({ request }: DataFunctionArgs) {
     select: {
       id: true,
       name: true,
-      photos: {
-        take: 1,
-        where: {
-          primary: true,
-        },
-      },
+      image: true,
     },
   })
 
@@ -58,7 +53,7 @@ export default function PeopleRoute() {
           <li key={person.id}>
             <Link to={person.id}>
               <img
-                src={person.photos[0]?.image}
+                src={person.image}
                 alt={person.name}
                 className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
               />

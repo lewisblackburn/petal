@@ -25,7 +25,6 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		image: photo.image,
 		type: photo.type,
 		language: photo.language,
-		primary: photo.primary,
 	}))
 
 	return json({ photos })

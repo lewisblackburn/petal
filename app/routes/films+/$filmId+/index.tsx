@@ -45,19 +45,6 @@ export async function loader({ request, params }: DataFunctionArgs) {
 			title: true,
 			tagline: true,
 			overview: true,
-			photos: {
-				take: 2,
-				where: {
-					primary: true,
-				},
-			},
-			videos: {
-				take: 1,
-				where: {
-					primary: true,
-					type: 'trailer',
-				},
-			},
 			runtime: true,
 			releaseDate: true,
 			ageRating: true,
@@ -70,6 +57,9 @@ export async function loader({ request, params }: DataFunctionArgs) {
 			contentScore: true,
 			budget: true,
 			revenue: true,
+			poster: true,
+			backdrop: true,
+			trailer: true,
 			cast: {
 				take: 10,
 				select: {
@@ -78,12 +68,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 						select: {
 							id: true,
 							name: true,
-							photos: {
-								take: 1,
-								where: {
-									primary: true,
-								},
-							},
+							image: true,
 						},
 					},
 					character: true,
@@ -196,17 +181,12 @@ export default function FilmRoute() {
 			</div>
 			<div className="flex items-center gap-5">
 				<Image
-					src={
-						data.film.photos.filter(photo => photo.type === 'poster')[0]?.image
-					}
+					src={data.film.poster ?? ''}
 					alt={data.film.title}
 					className="h-[600px] w-[400px]"
 				/>
 				<Image
-					src={
-						data.film.photos?.filter(photo => photo.type === 'backdrop')[0]
-							?.image
-					}
+					src={data.film.backdrop ?? ''}
 					alt={data.film.title}
 					className="h-[600px] w-full"
 				/>
@@ -269,7 +249,7 @@ export default function FilmRoute() {
 								.map(castMember => {
 									return {
 										to: `/people/${castMember.person.id}`,
-										image: castMember.person.photos[0]?.image,
+										image: castMember.person.image ?? '',
 									}
 								})
 								.filter(Boolean)}
@@ -285,14 +265,14 @@ export default function FilmRoute() {
 				<div className="col-span-3">
 					<div className="flex flex-col space-y-5 rounded-lg border p-5">
 						<a
-							href={data.film.videos.filter(Boolean)[0]?.url}
+							href={data.film.trailer ?? ''}
 							target="_blank"
 							rel="noopener noreferrer"
 						>
 							<Button
 								size="lg"
 								className="w-full"
-								disabled={!data.film.videos.filter(Boolean)[0]?.url}
+								disabled={!data.film.trailer}
 							>
 								<Icon name="play" className="mr-2" />
 								Play Trailer
