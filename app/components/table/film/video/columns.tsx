@@ -1,11 +1,12 @@
-import { type FilmPhoto } from '@prisma/client'
+import { type FilmVideo } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
-import { LANGUAGES, PHOTO_TYPES } from '#app/utils/constants.ts'
+import { QUALITY, SITES, VIDEO_TYPES } from '#app/utils/constants.ts'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
+import { DataTableRowActions } from './data-table-row-actions.tsx'
 
 export const columns: ColumnDef<
-	Pick<FilmPhoto, 'id' | 'image' | 'type' | 'language'>
+	Pick<FilmVideo, 'url' | 'name' | 'site' | 'type' | 'quality'>
 >[] = [
 		{
 			id: 'select',
@@ -35,29 +36,41 @@ export const columns: ColumnDef<
 			enableHiding: false,
 		},
 		{
-			accessorKey: 'id',
+			accessorKey: 'url',
 			header: ({ column }) => (
-				<DataTableColumnHeader column={column} title="ID" />
+				<DataTableColumnHeader column={column} title="URL" />
 			),
 			cell: ({ row }) => {
 				return (
 					<div className="w-[300px] truncate">
-						<a href={row.getValue('id')}>{row.getValue('id')}</a>
+						<a href={row.getValue('url')}>{row.getValue('url')}</a>
 					</div>
 				)
 			},
 		},
 		{
-			accessorKey: 'image',
+			accessorKey: 'name',
 			header: ({ column }) => (
-				<DataTableColumnHeader column={column} title="Image" />
+				<DataTableColumnHeader column={column} title="Name" />
+			),
+			cell: ({ row }) => <div className="w-[100px]">{row.getValue('name')}</div>,
+		},
+		{
+			accessorKey: 'site',
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Site" />
 			),
 			cell: ({ row }) => {
-				return (
-					<div className="w-[300px] truncate">
-						<a href={row.getValue('image')}>{row.getValue('image')}</a>
-					</div>
-				)
+				const site = SITES.find(site => site.value === row.getValue('site'))
+
+				if (!site) {
+					return null
+				}
+
+				return <span>{site.label}</span>
+			},
+			filterFn: (row, id, value) => {
+				return value.includes(row.getValue(id))
 			},
 		},
 		{
@@ -66,36 +79,40 @@ export const columns: ColumnDef<
 				<DataTableColumnHeader column={column} title="Type" />
 			),
 			cell: ({ row }) => {
-				const type = PHOTO_TYPES.find(type => type.value === row.getValue('type'))
+				const type = VIDEO_TYPES.find(type => type.value === row.getValue('type'))
 
 				if (!type) {
 					return null
 				}
 
-				return <div className="w-[150px]">{type.label}</div>
+				return <span>{type.label}</span>
 			},
 			filterFn: (row, id, value) => {
 				return value.includes(row.getValue(id))
 			},
 		},
 		{
-			accessorKey: 'language',
+			accessorKey: 'quality',
 			header: ({ column }) => (
-				<DataTableColumnHeader column={column} title="Language" />
+				<DataTableColumnHeader column={column} title="Quality" />
 			),
 			cell: ({ row }) => {
-				const language = LANGUAGES.find(
-					language => language.value === row.getValue('language'),
+				const quality = QUALITY.find(
+					quality => quality.value === row.getValue('quality'),
 				)
 
-				if (!language) {
+				if (!quality) {
 					return null
 				}
 
-				return <div className="w-[150px]">{language.label}</div>
+				return <span>{quality.label}</span>
 			},
 			filterFn: (row, id, value) => {
 				return value.includes(row.getValue(id))
 			},
+		},
+		{
+			id: 'actions',
+			cell: ({ row }) => <DataTableRowActions row={row} />,
 		},
 	]

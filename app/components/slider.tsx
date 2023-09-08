@@ -5,6 +5,8 @@ interface SliderProps {
 	items: {
 		to: string
 		image: string
+		title?: string
+		description?: string
 	}[]
 }
 
@@ -15,11 +17,17 @@ export function Slider({ title, items }: SliderProps) {
 			<div className="grid grid-flow-col justify-start gap-5 overflow-x-scroll">
 				{items.map((item, index) => (
 					<Link key={index} to={item.to} className="w-32">
-						<img
-							src={item.image}
-							alt={item.image}
-							className="aspect-[2/3] w-full rounded-lg object-cover"
-						/>
+						<div>
+							<img
+								src={item.image}
+								alt={item.image}
+								className="aspect-[2/3] w-full rounded-lg object-cover"
+							/>
+							<div className="text-md flex flex-col py-2">
+								<span className="font-bold">{item?.title}</span>
+								<span>{item?.description}</span>
+							</div>
+						</div>
 					</Link>
 				))}
 			</div>

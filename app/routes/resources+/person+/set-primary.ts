@@ -30,8 +30,6 @@ export async function action({ request }: DataFunctionArgs) {
 
 	let { personId, image } = submission.value
 
-	console.log(personId, image)
-
 	await prisma.person.update({
 		where: { id: personId },
 		data: {

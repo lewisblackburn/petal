@@ -52,9 +52,9 @@ export async function action({ request }: DataFunctionArgs) {
 	await prisma.person.update({
 		where: { id: personId },
 		data: {
+			image: parsedImage.payload.image,
 			photos: {
 				create: {
-					// TODO: Just make this requried
 					image: parsedImage.payload.image,
 				},
 			},

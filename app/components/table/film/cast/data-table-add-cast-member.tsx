@@ -66,6 +66,7 @@ export function DataTableAddCastMember() {
 							labelProps={{
 								htmlFor: fields.personId.id,
 								children: 'Person',
+								autoFocus: true,
 							}}
 							buttonProps={{
 								...conform.input(fields.personId, { type: 'text' }),

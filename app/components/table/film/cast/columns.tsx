@@ -1,4 +1,5 @@
 import { type CastMember } from '@prisma/client'
+import { Link } from '@remix-run/react'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
@@ -30,6 +31,19 @@ export const columns: ColumnDef<Partial<CastMember>>[] = [
 		),
 		enableSorting: false,
 		enableHiding: false,
+	},
+	{
+		accessorKey: 'id',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="ID" />
+		),
+		cell: ({ row }) => (
+			<div className="w-[160px]">
+				<Link to={`/people/${row.original.personId}`}>
+					{row.getValue('id')}
+				</Link>
+			</div>
+		),
 	},
 	{
 		accessorKey: 'name',

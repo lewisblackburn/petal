@@ -250,6 +250,8 @@ export default function FilmRoute() {
 									return {
 										to: `/people/${castMember.person.id}`,
 										image: castMember.person.image ?? '',
+										title: castMember.person.name ?? '',
+										description: castMember.character ?? ''
 									}
 								})
 								.filter(Boolean)}

@@ -5,7 +5,6 @@ import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
-// FIX: Add primary video
 export const AddFilmVideoSchema = z.object({
 	filmId: z.string(),
 	url: z.string().url(),
@@ -13,7 +12,6 @@ export const AddFilmVideoSchema = z.object({
 	type: z.string().nonempty(),
 	name: z.string().nonempty(),
 	quality: z.string().nonempty(),
-	primary: z.boolean().optional(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -32,36 +30,7 @@ export async function action({ request }: DataFunctionArgs) {
 		)
 	}
 
-	let { filmId, url, site, type, name, quality, primary } = submission.value
-
-	// check if a primary video of that type already exists
-	if (primary) {
-		const primaryVideo = await prisma.film.findFirst({
-			where: {
-				id: filmId,
-			},
-			select: {
-				videos: {
-					where: {
-						type,
-						primary: true,
-					},
-				},
-			},
-		})
-
-		if (primaryVideo?.videos.length) {
-			return json(
-				{ success: true },
-				{
-					headers: await createToastHeaders({
-						description: 'A primary video of that type already exists',
-						type: 'success',
-					}),
-				},
-			)
-		}
-	}
+	let { filmId, url, site, type, name, quality } = submission.value
 
 	await prisma.film.update({
 		where: { id: filmId },
@@ -73,7 +42,6 @@ export async function action({ request }: DataFunctionArgs) {
 					type,
 					name,
 					quality,
-					primary: primary ?? false,
 				},
 			},
 		},
@@ -83,7 +51,7 @@ export async function action({ request }: DataFunctionArgs) {
 		{ success: true },
 		{
 			headers: await createToastHeaders({
-				description: 'Added Film Photo',
+				description: 'Added Film Video',
 				type: 'success',
 			}),
 		},

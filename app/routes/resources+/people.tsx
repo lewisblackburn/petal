@@ -1,9 +1,13 @@
+import { parse } from '@conform-to/zod'
 import { type Prisma } from '@prisma/client'
 import { useFetcher } from '@remix-run/react'
 import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { useState } from 'react'
 import { useSpinDelay } from 'spin-delay'
+import { z } from 'zod'
 import { SearchSelectField, type ListOfErrors } from '#app/components/forms.tsx'
 import { type PopoverProps } from '#app/components/ui/popover.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { getTableParams } from '#app/utils/request.helper.ts'
 
@@ -30,6 +34,37 @@ export async function loader({ request }: DataFunctionArgs) {
 	return json({ people })
 }
 
+const NewPersonSchema = z.object({
+	name: z.string().min(1).max(50),
+})
+
+export async function action({ request }: DataFunctionArgs) {
+	await requireUserId(request)
+
+	const formData = await request.formData()
+
+	const submission = parse(formData, {
+		schema: NewPersonSchema,
+	})
+	if (!submission.value) {
+		return json(
+			{
+				status: 'error',
+				submission,
+			} as const,
+			{ status: 400 },
+		)
+	}
+
+	const { name } = submission.value
+
+	const person = await prisma.person.create({
+		data: { name },
+	})
+
+	return json({ person })
+}
+
 export const PersonSearch = ({
 	...props
 }: {
@@ -38,39 +73,37 @@ export const PersonSearch = ({
 	errors?: ListOfErrors
 	className?: string
 }) => {
-	const peopleFetcher = useFetcher<typeof loader>()
+	const fetcher = useFetcher<typeof loader>()
 
 	const handleSearch = (e: any) => {
 		const searchValue = e.currentTarget.value
 
-		peopleFetcher.submit(
+		fetcher.submit(
 			{ search: searchValue },
 			{ method: 'GET', action: '/resources/people' },
 		)
 	}
 
-	const busy = peopleFetcher.state !== 'idle'
+	const busy = fetcher.state !== 'idle'
 	const delayedBusy = useSpinDelay(busy, {
 		delay: 150,
 		minDuration: 500,
 	})
 
-	// FIX: This should not return with redirect when creating a new person from here but
-	// it should from everywhere else
 	const handleCreate = (value: string) => {
-		peopleFetcher.submit(
+		fetcher.submit(
 			{ name: value },
-			{ method: 'POST', action: '/resources/person-editor' },
+			{ method: 'POST', action: '/resources/people' },
 		)
 		setTimeout(() => {
-			peopleFetcher.submit(
-				{ name: value },
+			fetcher.submit(
+				{ search: value },
 				{ method: 'GET', action: '/resources/people' },
 			)
 		}, 400)
 	}
 
-	const items = peopleFetcher.data?.people?.map(person => ({
+	const items = fetcher.data?.people?.map(person => ({
 		label: person.name,
 		value: person.id,
 		image: person.image,

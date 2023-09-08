@@ -16,7 +16,7 @@ export const AddFilmPhotoSchema = z.object({
 	image: z.instanceof(File, { message: 'Image is required' }).refine(file => {
 		return file.size <= MAX_SIZE
 	}, 'Image size must be less than 3MB'),
-	type: z.string().nonempty({ message: 'You must select a type' }),
+	type: z.enum(['poster', 'backdrop']),
 	language: z.string().nonempty({ message: 'You must select a language' }),
 })
 
@@ -54,10 +54,10 @@ export async function action({ request }: DataFunctionArgs) {
 	await prisma.film.update({
 		where: { id: filmId },
 		data: {
+			[type]: parsedImage.payload.image,
 			photos: {
 				create: {
 					type,
-					// TODO: Just make this requried
 					language,
 					image: parsedImage.payload.image,
 				},

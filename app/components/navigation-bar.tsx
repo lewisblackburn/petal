@@ -106,7 +106,7 @@ function UserDropdown() {
 					<Avatar className="h-8 w-8">
 						<AvatarImage
 							className="object-cover"
-							src={getUserImgSrc(user.image?.id + 's')}
+							src={getUserImgSrc(user.image?.id)}
 							alt={user.name ?? user.username}
 						/>
 						<AvatarFallback>{user.initials}</AvatarFallback>

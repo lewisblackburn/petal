@@ -161,8 +161,9 @@ export function FilmEditor({
 			tagline: film?.tagline,
 			overview: film?.overview,
 			runtime: film?.runtime,
-			releaseDate:
-				format(new Date(film?.releaseDate ?? ''), 'yyyy-MM-dd') ?? '',
+			releaseDate: film?.releaseDate
+				? format(new Date(film.releaseDate), 'yyyy-MM-dd')
+				: null,
 			ageRating: film?.ageRating,
 			language: film?.language,
 			status: film?.status,

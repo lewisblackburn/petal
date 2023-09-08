@@ -1,7 +1,7 @@
 import { useLoaderData } from '@remix-run/react'
 import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
-import { columns } from '#app/components/table/film/videos/columns.tsx'
-import { VideoTable } from '#app/components/table/film/videos/data-table.tsx'
+import { columns } from '#app/components/table/film/video/columns.tsx'
+import { VideoTable } from '#app/components/table/film/video/data-table.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { invariantResponse } from '#app/utils/misc.tsx'
@@ -21,7 +21,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	invariantResponse(film, 'Not found', { status: 404 })
 
 	const videos = film.videos.map(video => ({
-		id: video.id,
+		url: video.url,
 		name: video.name,
 		site: video.site,
 		type: video.type,

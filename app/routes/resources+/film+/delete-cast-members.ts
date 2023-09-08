@@ -28,6 +28,8 @@ export async function action({ request }: DataFunctionArgs) {
 
 	let { filmId, ids } = submission.value
 
+	console.log(ids)
+
 	await prisma.film.update({
 		where: { id: filmId },
 		data: {

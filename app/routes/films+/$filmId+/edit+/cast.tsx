@@ -26,6 +26,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 
 	const cast = film.cast.map(cast => ({
 		id: cast.id,
+		personId: cast.personId,
 		name: cast.person.name,
 		character: cast.character,
 		numerator: cast.numerator,
