@@ -1,98 +1,184 @@
 import { json, type DataFunctionArgs } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
+import { format } from 'date-fns'
 import { Image } from '#app/components/image.tsx'
 import { Slider } from '#app/components/slider.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { GENDERS, MEDIA_ROLES } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { invariantResponse } from '#app/utils/misc.tsx'
 
 export async function loader({ params }: DataFunctionArgs) {
-  const person = await prisma.person.findUnique({
-    where: {
-      id: params.personId,
-    },
-    select: {
-      id: true,
-      name: true,
-      placeOfBirth: true,
-      image: true,
-      knownForDepartment: true,
-      casts: {
-        take: 10,
-        select: {
-          film: {
-            select: {
-              id: true,
-              title: true,
-              poster: true,
-            },
-          },
-        },
-      },
-    },
-  })
+	const person = await prisma.person.findUnique({
+		where: {
+			id: params.personId,
+		},
+		select: {
+			id: true,
+			image: true,
+			name: true,
+			biography: true,
+			knownForDepartment: true,
+			gender: true,
+			birthdate: true,
+			years: true,
+			placeOfBirth: true,
+			// This is technically a list of all the Films/TV shows/etc the person has been in
+			casts: {
+				select: {
+					film: {
+						select: {
+							id: true,
+							title: true,
+							poster: true,
+						},
+					},
+				},
+				orderBy: {
+					film: {
+						releaseDate: 'desc',
+					},
+				},
+			},
+			_count: {
+				select: {
+					casts: true,
+				},
+			},
+		},
+	})
 
-  invariantResponse(person, 'Not found', { status: 404 })
+	// TODO: When TV Shows are added this will need to be changed to include both
+	const knownForCredits = await prisma.person.findUnique({
+		where: {
+			id: params.personId,
+		},
+		select: {
+			casts: {
+				take: 10,
+				select: {
+					film: {
+						select: {
+							id: true,
+							poster: true,
+							title: true,
+						},
+					},
+				},
+				orderBy: {
+					film: {
+						userScore: 'desc',
+					},
+				},
+			},
+		},
+	})
 
-  return json({ person })
+	invariantResponse(person, 'Not found', { status: 404 })
+
+	return json({
+		person: {
+			...person,
+			birthdate: person.birthdate
+				? format(new Date(person.birthdate), 'yyyy-MM-dd')
+				: null,
+		},
+		knownForCredits: knownForCredits?.casts,
+	})
 }
 
 export default function PersonRoute() {
-  const data = useLoaderData<typeof loader>()
+	const data = useLoaderData<typeof loader>()
 
-  return (
-    <div className="container grid grid-cols-4 gap-10 py-6">
-      <div className="col-span-1 flex flex-col gap-5">
-        <Image
-          src={data.person.image ?? ''}
-          alt={data.person.name}
-          className="aspect-[2/3]"
-        />
-        <Link to="edit" className="w-full">
-          <Button size="sm" className="w-full">
-            <Icon name="pencil-2" className="mr-2" />
-            Edit Page
-          </Button>
-        </Link>
-      </div>
-      <div className="col-span-3 flex flex-col space-y-5">
-        <h1 className="text-3xl font-bold">{data.person.name}</h1>
-        <p className="text-base font-normal">
-          Rachel Anne McAdams (born November 17, 1978) is a Canadian actress.
-          After graduating from a theatre degree program at York University in
-          2001, she worked in Canadian television and film productions, such as
-          the drama film Perfect Pie (2002), for which she received a Genie
-          Award nomination, the comedy film My Name Is Tanino (2002), and the
-          comedy series Slings and Arrows (2003–2005), for which she won a
-          Gemini Award.
-          <br />
-          <br />
-          In 2002, she made her Hollywood film debut in the comedy The Hot
-          Chick. She rose to fame in 2004 with the comedy Mean Girls and the
-          romantic drama The Notebook. In 2005, she starred in the romantic
-          comedy Wedding Crashers, the psychological thriller Red Eye, and the
-          comedy-drama The Family Stone. She was hailed by the media as
-          Hollywood's new "it girl", and received a BAFTA Award nomination for
-          Best Rising Star.
-        </p>
-        <p>{data.person.knownForDepartment}</p>
-        <p>{data.person.placeOfBirth}</p>
-        <div>
-          {data.person.casts.length > 0 && (
-            <Slider
-              title="Known For"
-              items={data.person.casts.map(cast => {
-                return {
-                  to: `/films/${cast.film.id}`,
-                  image: cast.film.poster ?? '',
-                  title: cast.film.title,
-                }
-              })}
-            />
-          )}
-        </div>
-      </div>
-    </div>
-  )
+	return (
+		<div className="container grid grid-cols-4 gap-10 py-6">
+			<div className="col-span-1 flex flex-col gap-5">
+				<Image
+					src={data.person.image ?? ''}
+					alt={data.person.name}
+					className="aspect-[2/3]"
+				/>
+
+				<div className="flex flex-col gap-5">
+					{data.person.knownForDepartment && (
+						<div>
+							<h2 className="font-bold">Known For</h2>
+							{
+								MEDIA_ROLES.filter(
+									role => role.value === data.person.knownForDepartment,
+								)[0].label
+							}
+						</div>
+					)}
+					<div>
+						<h2 className="font-bold">Known Credits</h2>
+						{data.person._count.casts}
+					</div>
+					{data.person.gender && (
+						<div>
+							<h2 className="font-bold">Gender</h2>
+							{
+								GENDERS.filter(gender => gender.value === data.person.gender)[0]
+									.label
+							}
+						</div>
+					)}
+					{data.person.birthdate && (
+						<div>
+							<h2 className="font-bold">Birthdate</h2>
+							{data.person.birthdate} ({data.person.years} old)
+						</div>
+					)}
+					{data.person.placeOfBirth && (
+						<div>
+							<h2 className="font-bold">Place of Birth</h2>
+							{data.person.placeOfBirth}
+						</div>
+					)}
+				</div>
+				<Link to="edit" className="w-full">
+					<Button size="sm" className="w-full">
+						<Icon name="pencil-2" className="mr-2" />
+						Edit Page
+					</Button>
+				</Link>
+			</div>
+			<div className="col-span-3 flex flex-col space-y-5">
+				<h1 className="text-3xl font-bold">{data.person.name}</h1>
+				<div className="flex flex-col gap-2">
+					{data.person.biography?.split('\n').map((item, key) => {
+						return (
+							<p key={key} className="text-base font-normal">
+								{item}
+							</p>
+						)
+					})}
+				</div>
+				<div>
+					{data.person.casts.length > 0 && (
+						<Slider
+							title="Known For"
+							// TODO: This will need to be replaced with a list of the person's most popular films
+							items={data.knownForCredits?.map(credit => {
+								return {
+									to: `/films/${credit.film.id}`,
+									image: credit.film.poster ?? '',
+									title: credit.film.title,
+								}
+							})}
+						/>
+					)}
+				</div>
+				<div>
+					<h2 className="font-bold">All</h2>
+					<div className="flex flex-col">
+						{data.person.casts.map(cast => (
+							<span key={cast.film.id}>{cast.film.title}</span>
+						))}
+					</div>
+				</div>
+			</div>
+		</div>
+	)
 }

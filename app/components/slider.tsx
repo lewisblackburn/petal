@@ -2,7 +2,7 @@ import { Link } from '@remix-run/react'
 
 interface SliderProps {
 	title?: string
-	items: {
+	items?: {
 		to: string
 		image: string
 		title?: string
@@ -11,6 +11,7 @@ interface SliderProps {
 }
 
 export function Slider({ title, items }: SliderProps) {
+	if (!items) return null
 	return (
 		<div className="flex flex-col gap-5">
 			{title && <h2 className="text-xl font-bold">{title}</h2>}

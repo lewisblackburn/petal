@@ -33,24 +33,17 @@ export const columns: ColumnDef<Partial<CastMember>>[] = [
 		enableHiding: false,
 	},
 	{
-		accessorKey: 'id',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="ID" />
-		),
-		cell: ({ row }) => (
-			<div className="w-[160px]">
-				<Link to={`/people/${row.original.personId}`}>
-					{row.getValue('id')}
-				</Link>
-			</div>
-		),
-	},
-	{
 		accessorKey: 'name',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Name" />
 		),
-		cell: ({ row }) => <div className="w-[160px]">{row.getValue('name')}</div>,
+		cell: ({ row }) => (
+			<div className="w-[160px]">
+				<Link to={`/people/${row.original.personId}`}>
+					{row.getValue('name')}
+				</Link>
+			</div>
+		),
 	},
 	{
 		accessorKey: 'character',

@@ -24,6 +24,7 @@ import {
 	useDoubleCheck,
 	useIsPending,
 	formatRuntime,
+	orderByRationalProperty,
 } from '#app/utils/misc.tsx'
 import {
 	requireUserWithRole,
@@ -114,6 +115,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	return json({
 		film: {
 			...film,
+			cast: orderByRationalProperty(film.cast),
 			releaseDate,
 			runtime,
 		},
@@ -251,7 +253,7 @@ export default function FilmRoute() {
 										to: `/people/${castMember.person.id}`,
 										image: castMember.person.image ?? '',
 										title: castMember.person.name ?? '',
-										description: castMember.character ?? ''
+										description: castMember.character ?? '',
 									}
 								})
 								.filter(Boolean)}

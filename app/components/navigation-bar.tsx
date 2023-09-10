@@ -1,4 +1,11 @@
-import { Form, Link, NavLink, useMatches, useSubmit } from '@remix-run/react'
+import {
+	Form,
+	Link,
+	NavLink,
+	useLocation,
+	useMatches,
+	useSubmit,
+} from '@remix-run/react'
 import { useRef } from 'react'
 import { cn, getUserImgSrc } from '#app/utils/misc.tsx'
 import { useOptionalUser, useUser } from '#app/utils/user.ts'
@@ -15,6 +22,7 @@ import {
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from './ui/dropdown-menu.tsx'
+import { Icon } from './ui/icon.tsx'
 
 const LINKS = [
 	{
@@ -41,6 +49,7 @@ const LINKS = [
 
 export function NavigationBar() {
 	const user = useOptionalUser()
+	const pathname = useLocation().pathname
 	const matches = useMatches()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 
@@ -82,10 +91,13 @@ export function NavigationBar() {
 					)}
 					<div className="flex items-center gap-10">
 						{user ? (
-							<UserDropdown />
+							<>
+								<AddMediaDropdown />
+								<UserDropdown />
+							</>
 						) : (
 							<Button asChild variant="default" size="sm">
-								<Link to="/login">Log In</Link>
+								<Link to={`/login?redirectTo=${pathname}`}>Log In</Link>
 							</Button>
 						)}
 					</div>
@@ -158,6 +170,53 @@ function UserDropdown() {
 						<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
 					</DropdownMenuItem>
 				</Form>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	)
+}
+
+export function AddMediaDropdown() {
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="ghost" size="icon">
+					<Icon name="plus" className="h-4 w-4" />
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent className="w-56" align="center" forceMount>
+				<DropdownMenuGroup>
+					<Link to="/films/new">
+						<DropdownMenuItem>
+							<Icon name="film" className="mr-2 h-4 w-4" />
+							Film
+						</DropdownMenuItem>
+						All cork
+					</Link>
+					<Link to="/television/new">
+						<DropdownMenuItem>
+							<Icon name="tv" className="mr-2 h-4 w-4" />
+							Televsion Show
+						</DropdownMenuItem>
+					</Link>
+					<Link to="/people/new">
+						<DropdownMenuItem>
+							<Icon name="person" className="mr-2 h-4 w-4" />
+							Person
+						</DropdownMenuItem>
+					</Link>
+					<Link to="/books/new">
+						<DropdownMenuItem>
+							<Icon name="book-open" className="mr-2 h-4 w-4" />
+							Book
+						</DropdownMenuItem>
+					</Link>
+					<Link to="/songs/new">
+						<DropdownMenuItem>
+							<Icon name="musical-note" className="mr-2 h-4 w-4" />
+							Song
+						</DropdownMenuItem>
+					</Link>
+				</DropdownMenuGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	)

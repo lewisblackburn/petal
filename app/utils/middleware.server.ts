@@ -1,7 +1,8 @@
 import { Prisma } from '@prisma/client'
+import { formatDistanceToNowStrict } from 'date-fns'
 import { prisma } from './db.server.ts'
 
-export const initials = Prisma.defineExtension(client => {
+export const results = Prisma.defineExtension(client => {
 	return client.$extends({
 		result: {
 			user: {
@@ -19,6 +20,20 @@ export const initials = Prisma.defineExtension(client => {
 					},
 				},
 			},
+			person: {
+				years: {
+					needs: {
+						birthdate: true,
+					},
+					compute(person) {
+						if (!person.birthdate) return null
+
+						const birthdate = new Date(person.birthdate)
+
+						return formatDistanceToNowStrict(birthdate)
+					},
+				},
+			},
 		},
 	})
 })
@@ -32,12 +47,14 @@ export const log = Prisma.defineExtension(client => {
 		result: {
 			film: {
 				log: {
-					needs: {},
+					needs: {
+						id: true,
+					},
 					compute(film) {
 						return (userId: string) =>
 							prisma.auditLog.create({
 								data: {
-									action: film.id ? 'update' : 'create',
+									action: 'update',
 									entity: 'film',
 									entityId: film.id,
 									userId,

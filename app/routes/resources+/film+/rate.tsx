@@ -41,19 +41,46 @@ export async function action({ request }: DataFunctionArgs) {
 
 	let { filmId, rating } = submission.value
 
-	await prisma.filmRating.upsert({
-		where: {
-			filmId_userId: { filmId, userId },
-		},
-		update: {
-			value: rating,
-		},
-		create: {
-			userId,
-			filmId,
-			value: rating,
-		},
+	// FIX: This code needs improving a lot
+	const averageRating = await prisma.filmRating.aggregate({
+		where: { film: { id: filmId } },
+		_avg: { value: true },
 	})
+
+	if (rating === 0) {
+		await prisma.film.update({
+			where: { id: filmId },
+			data: {
+				ratings: {
+					delete: {
+						filmId_userId: { filmId, userId },
+					},
+				},
+			},
+		})
+	} else {
+		console.log(averageRating)
+		await prisma.film.update({
+			where: { id: filmId },
+			data: {
+				userScore: averageRating._avg.value ?? rating,
+				ratings: {
+					upsert: {
+						where: {
+							filmId_userId: { filmId, userId },
+						},
+						update: {
+							value: rating,
+						},
+						create: {
+							userId,
+							value: rating,
+						},
+					},
+				},
+			},
+		})
+	}
 
 	return json(
 		{ rating },

@@ -40,7 +40,7 @@ export const STATUSES = [
 	{ value: 'cancelled', label: 'Cancelled', icon: 'cross-1' },
 ]
 
-type CrewRole = {
+type Role = {
 	value: string
 	label: string
 	jobs: {
@@ -50,7 +50,7 @@ type CrewRole = {
 }
 
 export function getAllJobs() {
-	const jobs: CrewRole['jobs'] = []
+	const jobs: Role['jobs'] = []
 	CREW_ROLES.forEach(department => {
 		department.jobs.forEach(job => {
 			jobs.push(job)
@@ -59,26 +59,7 @@ export function getAllJobs() {
 	return jobs
 }
 
-export function crewRolesWithActing() {
-	const ACTING_ROLE = {
-		value: 'acting',
-		label: 'Acting',
-		jobs: [
-			{
-				value: 'actor',
-				label: 'Actor',
-			},
-			{
-				value: 'actress',
-				label: 'Actress',
-			},
-		],
-	}
-
-	return [ACTING_ROLE, ...CREW_ROLES]
-}
-
-export const CREW_ROLES: CrewRole[] = [
+export const CREW_ROLES: Role[] = [
 	{
 		value: 'writing',
 		label: 'Writing',
@@ -494,6 +475,33 @@ export const CREW_ROLES: CrewRole[] = [
 		],
 	},
 ]
+
+export const CAST_ROLES: Role[] = [
+	{
+		value: 'acting',
+		label: 'Acting',
+		jobs: [
+			{
+				value: 'actor',
+				label: 'Actor',
+			},
+			{
+				value: 'actress',
+				label: 'Actress',
+			},
+			{
+				value: 'voice actor',
+				label: 'Voice Actor',
+			},
+			{
+				value: 'voice actress',
+				label: 'Voice Actress',
+			},
+		],
+	},
+]
+
+export const MEDIA_ROLES = CAST_ROLES.concat(CREW_ROLES)
 
 export const SITES = [
 	{

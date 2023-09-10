@@ -152,7 +152,7 @@ export function createFilm() {
 		0,
 		1,
 	)[0].value
-	const userScore = faker.number.float({ min: 0, max: 10, precision: 0.1 })
+	const userScore = 0
 	const language = LANGUAGES.sort(() => Math.random() - Math.random()).slice(
 		0,
 		1,

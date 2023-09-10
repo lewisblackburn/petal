@@ -202,7 +202,7 @@ model Film {
   budget       Float?
   revenue      Float?
   status       String?
-  userScore    Float?
+  userScore    Float     @default(0)
   contentScore Float?
   popularity   Float?
   language     String?
