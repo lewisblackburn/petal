@@ -49,32 +49,6 @@ export async function loader({ params }: DataFunctionArgs) {
 		},
 	})
 
-	// TODO: When TV Shows are added this will need to be changed to include both
-	const knownForCredits = await prisma.person.findUnique({
-		where: {
-			id: params.personId,
-		},
-		select: {
-			casts: {
-				take: 10,
-				select: {
-					film: {
-						select: {
-							id: true,
-							poster: true,
-							title: true,
-						},
-					},
-				},
-				orderBy: {
-					film: {
-						userScore: 'desc',
-					},
-				},
-			},
-		},
-	})
-
 	invariantResponse(person, 'Not found', { status: 404 })
 
 	return json({
@@ -84,7 +58,6 @@ export async function loader({ params }: DataFunctionArgs) {
 				? format(new Date(person.birthdate), 'yyyy-MM-dd')
 				: null,
 		},
-		knownForCredits: knownForCredits?.casts,
 	})
 }
 
@@ -160,7 +133,7 @@ export default function PersonRoute() {
 						<Slider
 							title="Known For"
 							// TODO: This will need to be replaced with a list of the person's most popular films
-							items={data.knownForCredits?.map(credit => {
+							items={data.person.casts?.map(credit => {
 								return {
 									to: `/films/${credit.film.id}`,
 									image: credit.film.poster ?? '',
@@ -169,14 +142,6 @@ export default function PersonRoute() {
 							})}
 						/>
 					)}
-				</div>
-				<div>
-					<h2 className="font-bold">All</h2>
-					<div className="flex flex-col">
-						{data.person.casts.map(cast => (
-							<span key={cast.film.id}>{cast.film.title}</span>
-						))}
-					</div>
 				</div>
 			</div>
 		</div>

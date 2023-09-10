@@ -190,7 +190,6 @@ export function AddMediaDropdown() {
 							<Icon name="film" className="mr-2 h-4 w-4" />
 							Film
 						</DropdownMenuItem>
-						All cork
 					</Link>
 					<Link to="/television/new">
 						<DropdownMenuItem>
