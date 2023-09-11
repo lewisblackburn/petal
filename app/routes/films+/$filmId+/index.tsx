@@ -104,6 +104,10 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					userId: userId ?? '',
 				},
 			},
+			reviews: {
+				take: 1,
+				orderBy: { createdAt: 'desc' },
+			},
 		},
 	})
 
@@ -260,7 +264,21 @@ export default function FilmRoute() {
 						/>
 					</div>
 					<div className="flex flex-col space-y-1">
-						<h2 className="text-xl font-bold">Reviews</h2>
+						<div className="flex items-center justify-between">
+							<h2 className="text-xl font-bold">Reviews</h2>
+							<Link to="review">
+								<Button variant="ghost" size="icon">
+									<Icon name="plus" className="h-4 w-4" />
+								</Button>
+							</Link>
+						</div>
+						{data.film.reviews.length > 0 ? (
+							<div className="flex flex-col space-y-5 rounded-lg border p-5"></div>
+						) : (
+							<p className="text-base font-normal text-muted-foreground">
+								There are currently no reviews.
+							</p>
+						)}
 					</div>
 					<div className="flex flex-col space-y-1">
 						<h2 className="text-xl font-bold">Recommendations</h2>

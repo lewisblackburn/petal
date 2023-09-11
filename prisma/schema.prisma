@@ -22,9 +22,10 @@ model User {
   image    UserImage?
   password Password?
 
-  notes      Note[]
-  ratedFilms FilmRating[]
-  favourites Favourite[]
+  notes       Note[]
+  ratedFilms  FilmRating[]
+  filmReviews FilmReview[]
+  favourites  Favourite[]
 
   roles       Role[]
   sessions    Session[]
@@ -226,6 +227,7 @@ model Film {
   genres     Genre[]      @relation("FilmToGenre")
   keywords   Keyword[]    @relation("FilmToKeyword")
   ratings    FilmRating[]
+  reviews    FilmReview[]
   favourited Favourite[]
 }
 
@@ -297,6 +299,19 @@ model FilmRating {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String
   value     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([filmId, userId])
+}
+
+model FilmReview {
+  id        String   @id @unique @default(cuid())
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
