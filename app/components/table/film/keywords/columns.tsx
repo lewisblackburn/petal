@@ -32,13 +32,6 @@ export const columns: ColumnDef<Partial<Keyword>>[] = [
 		enableHiding: false,
 	},
 	{
-		accessorKey: 'id',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="ID" />
-		),
-		cell: ({ row }) => <div>{row.getValue('id')}</div>,
-	},
-	{
 		accessorKey: 'name',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Name" />

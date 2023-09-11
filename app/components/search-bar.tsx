@@ -1,62 +1,41 @@
-import { Form, useSearchParams, useSubmit } from '@remix-run/react'
-import { useDebounce, useIsPending } from '#app/utils/misc.tsx'
-import { Icon } from './ui/icon.tsx'
+import { Form, useSearchParams } from '@remix-run/react'
+import { useIsPending } from '#app/utils/misc.tsx'
+import { Spinner } from './spinner.tsx'
 import { Input } from './ui/input.tsx'
 import { Label } from './ui/label.tsx'
-import { StatusButton } from './ui/status-button.tsx'
 
-export function SearchBar({
-	status,
-	autoFocus = false,
-	autoSubmit = false,
-}: {
-	status: 'idle' | 'pending' | 'success' | 'error'
-	autoFocus?: boolean
-	autoSubmit?: boolean
-}) {
-	const [searchParams] = useSearchParams()
-	const submit = useSubmit()
-	const isSubmitting = useIsPending({
-		formMethod: 'GET',
-		formAction: '/search',
-	})
+export function SearchBar({ autoFocus = false }: { autoFocus?: boolean }) {
+  const [searchParams] = useSearchParams()
+  const isSubmitting = useIsPending({
+    formMethod: 'GET',
+    formAction: '/search',
+  })
 
-	const handleFormChange = useDebounce((form: HTMLFormElement) => {
-		submit(form)
-	}, 400)
-
-	return (
-		<Form
-			method="GET"
-			action="/search"
-			className="flex flex-wrap items-center justify-center gap-2"
-			onChange={e => autoSubmit && handleFormChange(e.currentTarget)}
-		>
-			<div className="flex-1">
-				<Label htmlFor="search" className="sr-only">
-					Search
-				</Label>
-				<Input
-					type="search"
-					name="search"
-					id="search"
-					defaultValue={searchParams.get('search') ?? ''}
-					placeholder="Search"
-					className="w-full"
-					autoFocus={autoFocus}
-				/>
-			</div>
-			<div>
-				<StatusButton
-					type="submit"
-					status={isSubmitting ? 'pending' : status}
-					className="flex w-full items-center justify-center"
-					size="sm"
-				>
-					<Icon name="magnifying-glass" size="sm" />
-					<span className="sr-only">Search</span>
-				</StatusButton>
-			</div>
-		</Form>
-	)
+  return (
+    <Form
+      method="GET"
+      action="/search"
+      className="flex flex-wrap items-center justify-center gap-2"
+    >
+      <div className="relative flex-1">
+        <Label htmlFor="search" className="sr-only">
+          Search
+        </Label>
+        <Input
+          type="search"
+          name="search"
+          id="search"
+          defaultValue={searchParams.get('search') ?? ''}
+          placeholder="Search"
+          className="w-full"
+          autoFocus={autoFocus}
+          autoComplete="off"
+        />
+        <Spinner
+          className="absolute right-0 top-[12px] mr-2"
+          showSpinner={isSubmitting}
+        />
+      </div>
+    </Form>
+  )
 }

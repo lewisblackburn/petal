@@ -1,11 +1,4 @@
-import {
-	Form,
-	Link,
-	NavLink,
-	useLocation,
-	useMatches,
-	useSubmit,
-} from '@remix-run/react'
+import { Form, Link, NavLink, useLocation, useSubmit } from '@remix-run/react'
 import { useRef } from 'react'
 import { cn, getUserImgSrc } from '#app/utils/misc.tsx'
 import { useOptionalUser, useUser } from '#app/utils/user.ts'
@@ -50,8 +43,6 @@ const LINKS = [
 export function NavigationBar() {
 	const user = useOptionalUser()
 	const pathname = useLocation().pathname
-	const matches = useMatches()
-	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 
 	return (
 		<div className="flex items-center border-b">
@@ -84,14 +75,12 @@ export function NavigationBar() {
 							</NavLink>
 						))}
 					</nav>
-					{isOnSearchPage ? null : (
-						<div className="ml-auto max-w-sm flex-1 pr-10">
-							<SearchBar status="idle" />
-						</div>
-					)}
-					<div className="flex items-center gap-10">
+					<div className="flex items-center gap-5">
 						{user ? (
 							<>
+								<div className="w-[300px]">
+									<SearchBar />
+								</div>
 								<AddMediaDropdown />
 								<UserDropdown />
 							</>
