@@ -25,7 +25,8 @@ import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { useOptionalUser } from '#app/utils/user.ts'
 import { type loader as filmsLoader } from './index.tsx'
 
-export async function loader({ params }: DataFunctionArgs) {
+export async function loader({ params, request }: DataFunctionArgs) {
+  const userId = await requireUserId(request)
   const filmReview = await prisma.filmReview.findUnique({
     where: {
       id: params.reviewId,
@@ -35,6 +36,15 @@ export async function loader({ params }: DataFunctionArgs) {
       title: true,
       content: true,
       userId: true,
+      film: {
+        select: {
+          ratings: {
+            where: {
+              userId
+            }
+          }
+        }
+      }
     },
   })
 
@@ -97,6 +107,7 @@ export default function FilmReviewRoute() {
 
   return (
     <div className="container flex flex-col gap-10 py-6">
+      {data.filmReview.film.ratings.length > 0 && data.filmReview.film.ratings[0].value}
       <h1>
         {data.filmReview.title}
       </h1>
