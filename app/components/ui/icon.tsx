@@ -47,7 +47,7 @@ export function Icon({
 	if (children) {
 		return (
 			<span
-				className={`inline-flex items-center ${childrenSizeClassName[size]}`}
+				className={`inline-flex items-center gap-4 ${childrenSizeClassName[size]}`}
 			>
 				<Icon name={name} size={size} className={className} {...props} />
 				{children}

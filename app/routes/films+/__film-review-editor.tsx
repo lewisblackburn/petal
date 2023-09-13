@@ -20,6 +20,7 @@ const FilmReviewEditorSchema = z.object({
 	id: z.string().optional(),
 	title: z.string().min(1).max(50),
 	content: z.string().min(1).max(500),
+	rating: z.number().min(1).max(5),
 })
 
 export async function action({ request, params }: DataFunctionArgs) {
@@ -55,9 +56,34 @@ export async function action({ request, params }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	const { id: reviewId, title, content } = submission.value
+	const { id: reviewId, title, content, rating } = submission.value
 
 	const updatedReview = await prisma.$transaction(async $prisma => {
+		await $prisma.filmRating.upsert({
+			where: { filmId_userId: { filmId: params.filmId!, userId } },
+			create: {
+				filmId: params.filmId!,
+				userId,
+				value: rating,
+			},
+			update: {
+				value: rating,
+			},
+		})
+		// NOTE: Update user score like in /resources/film/rate.tsx
+		const updatedAverageRating = await $prisma.filmRating.aggregate({
+			where: { filmId: params.filmId },
+			_avg: { value: true },
+		})
+
+		await $prisma.film.update({
+			where: { id: params.filmId },
+			data: {
+				userScore: {
+					set: updatedAverageRating._avg.value ?? 0,
+				},
+			},
+		})
 		const review = await $prisma.filmReview.upsert({
 			select: { id: true },
 			where: { id: reviewId ?? '__new_review__' },
@@ -88,8 +114,10 @@ export async function action({ request, params }: DataFunctionArgs) {
 
 export function FilmReviewEditor({
 	review,
+	rating,
 }: {
 	review?: SerializeFrom<Pick<FilmReview, 'id' | 'title' | 'content'>>
+	rating?: number | null
 }) {
 	const filmReviewFetcher = useFetcher<typeof action>()
 	const isPending = filmReviewFetcher.state !== 'idle'
@@ -104,6 +132,7 @@ export function FilmReviewEditor({
 		defaultValue: {
 			title: review?.title,
 			content: review?.content,
+			rating: rating,
 		},
 	})
 
@@ -115,6 +144,14 @@ export function FilmReviewEditor({
 		>
 			{review ? <input type="hidden" name="id" value={review.id} /> : null}
 			<div className="flex flex-col gap-1">
+				<Field
+					labelProps={{ children: 'Rating' }}
+					inputProps={{
+						...conform.textarea(fields.rating, { ariaAttributes: true }),
+						type: 'number',
+					}}
+					errors={fields.rating.errors}
+				/>
 				<Field
 					labelProps={{ children: 'Title' }}
 					inputProps={{

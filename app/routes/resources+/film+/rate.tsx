@@ -130,8 +130,9 @@ export const FilmRatingDropdown = ({
 			<Icon
 				key={starRating}
 				name={isFilled ? 'star-filled' : 'star'}
-				className={`cursor-pointer ${isFilled ? 'text-yellow-500' : 'text-gray-500'
-					}`}
+				className={`cursor-pointer ${
+					isFilled ? 'text-yellow-500' : 'text-gray-500'
+				}`}
 				onMouseEnter={() => handleStarHover(starRating)}
 				onClick={() => handleStarClick(starRating)}
 			/>

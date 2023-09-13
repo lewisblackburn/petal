@@ -8,6 +8,7 @@ import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList } from '#app/components/forms.tsx'
 import { Image } from '#app/components/image.tsx'
+import { ReviewCard } from '#app/components/review-card.tsx'
 import { Slider } from '#app/components/slider.tsx'
 import { Badge } from '#app/components/ui/badge.tsx'
 import { Button } from '#app/components/ui/button.tsx'
@@ -108,6 +109,25 @@ export async function loader({ request, params }: DataFunctionArgs) {
 			reviews: {
 				take: 1,
 				orderBy: { createdAt: 'desc' },
+				select: {
+					id: true,
+					title: true,
+					content: true,
+					createdAt: true,
+					user: {
+						select: {
+							name: true,
+							username: true,
+							initials: true,
+							image: true,
+						},
+					},
+					rating: {
+						select: {
+							value: true,
+						},
+					},
+				},
 			},
 		},
 	})
@@ -267,7 +287,7 @@ export default function FilmRoute() {
 								.filter(Boolean)}
 						/>
 					</div>
-					<div className="flex flex-col space-y-1">
+					<div className="flex flex-col space-y-5">
 						<div className="flex items-center justify-between">
 							<h2 className="text-xl font-bold">Reviews</h2>
 							<Link to="reviews" className="text-muted-foreground">
@@ -275,7 +295,7 @@ export default function FilmRoute() {
 							</Link>
 						</div>
 						{data.film.reviews.length > 0 ? (
-							<div>{data.film.reviews[0].content}</div>
+							<ReviewCard filmId={data.film.id} review={data.film.reviews[0]} />
 						) : (
 							<p className="text-base font-normal text-muted-foreground">
 								There are currently no reviews.

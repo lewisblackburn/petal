@@ -294,27 +294,29 @@ model FilmVideo {
 }
 
 model FilmRating {
-  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  film      Film        @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   filmId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String
-  value     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  value     Int         @default(0)
+  review    FilmReview?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
   @@unique([filmId, userId])
 }
 
 model FilmReview {
-  id        String   @id @unique @default(cuid())
-  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id        String      @id @unique @default(cuid())
+  film      Film        @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   filmId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String
   title     String
   content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  rating    FilmRating? @relation(fields: [filmId, userId], references: [filmId, userId], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
   @@unique([filmId, userId])
 }

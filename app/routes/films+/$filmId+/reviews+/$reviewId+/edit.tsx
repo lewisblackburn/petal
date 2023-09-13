@@ -17,6 +17,11 @@ export async function loader({ params, request }: DataFunctionArgs) {
 			id: true,
 			title: true,
 			content: true,
+			rating: {
+				select: {
+					value: true,
+				},
+			},
 		},
 		where: {
 			id: params.reviewId,
@@ -30,5 +35,12 @@ export async function loader({ params, request }: DataFunctionArgs) {
 export default function FilmEditRoute() {
 	const data = useLoaderData<typeof loader>()
 
-	return <FilmReviewEditor review={data.filmReview} />
+	return (
+		<div className="container py-6">
+			<FilmReviewEditor
+				review={data.filmReview}
+				rating={data.filmReview.rating?.value}
+			/>
+		</div>
+	)
 }

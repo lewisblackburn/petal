@@ -1,18 +1,35 @@
-import { json } from '@remix-run/router'
-import { type DataFunctionArgs } from '@remix-run/server-runtime'
+import { json, type DataFunctionArgs } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
+import {
+	FilmReviewEditor,
+	action,
+} from '#app/routes/films+/__film-review-editor.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
-import { FilmReviewEditor, action } from '../../__film-review-editor.tsx'
-
-export async function loader({ request }: DataFunctionArgs) {
-	await requireUserId(request)
-	return json({})
-}
+import { prisma } from '#app/utils/db.server.ts'
 
 export { action }
-export default function NewFilmReviewRoute() {
+
+export async function loader({ params, request }: DataFunctionArgs) {
+	const userId = await requireUserId(request)
+	const filmRating = await prisma.filmRating.findFirst({
+		select: {
+			value: true,
+		},
+		where: {
+			filmId: params.filmId,
+			userId,
+		},
+	})
+
+	return json({ filmRating })
+}
+
+export default function FilmEditRoute() {
+	const data = useLoaderData<typeof loader>()
+
 	return (
-		<main className="container py-6">
-			<FilmReviewEditor />
-		</main>
+		<div className="container py-6">
+			<FilmReviewEditor rating={data.filmRating?.value} />
+		</div>
 	)
 }

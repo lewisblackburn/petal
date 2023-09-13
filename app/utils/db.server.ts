@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import chalk from 'chalk'
-import { results, log } from './middleware.server.ts'
+import { results } from './middleware.server.ts'
 import { singleton } from './singleton.server.ts'
 
 const prisma = singleton('prisma', () => {
@@ -35,8 +35,6 @@ const prisma = singleton('prisma', () => {
 
 	client.$connect()
 	return client
-})
-	.$extends(results)
-	.$extends(log)
+}).$extends(results)
 
 export { prisma }
