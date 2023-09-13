@@ -30,7 +30,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	return json({ keywords })
 }
 
-export default function FilmEditKeywords() {
+export default function FilmEditKeywordsRoute() {
 	const { keywords } = useLoaderData<typeof loader>()
 
 	return (

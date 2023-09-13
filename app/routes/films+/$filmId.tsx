@@ -1,11 +1,7 @@
-import { Outlet, useLocation, useNavigate } from '@remix-run/react'
+import { Outlet, useNavigate } from '@remix-run/react'
 import { Icon } from '#app/components/ui/icon.tsx'
 
 export default function FilmLayout() {
-	const path = useLocation().pathname
-	const isInEditMode = path.includes('edit')
-	const isInReviewMode = path.includes('review')
-	const shouldReturnToFilm = isInEditMode || isInReviewMode
 	const navigate = useNavigate()
 
 	return (
@@ -17,7 +13,7 @@ export default function FilmLayout() {
 						onClick={() => navigate(-1)}
 					>
 						<Icon name="arrow-left" />
-						<span>Back to {shouldReturnToFilm ? 'film' : 'films'}</span>
+						<span>Back</span>
 					</button>
 				</div>
 			</div>

@@ -34,7 +34,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
   return json({ crew })
 }
 
-export default function FilmEditCrew() {
+export default function FilmEditCrewRoute() {
   const { crew } = useLoaderData<typeof loader>()
 
   return (

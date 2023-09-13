@@ -28,7 +28,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	return json({ photos })
 }
 
-export default function PersonEditphotos() {
+export default function PersonEditPhotoRoute() {
 	const { photos } = useLoaderData<typeof loader>()
 
 	return (

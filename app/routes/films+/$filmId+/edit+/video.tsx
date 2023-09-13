@@ -31,7 +31,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	return json({ videos })
 }
 
-export default function FilmEditVideos() {
+export default function FilmEditVideoRoute() {
 	const { videos } = useLoaderData<typeof loader>()
 
 	return (

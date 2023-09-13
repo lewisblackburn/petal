@@ -60,7 +60,7 @@ export async function requireUserWithRole(request: Request, name: string) {
 }
 
 type Action = 'create' | 'read' | 'update' | 'delete'
-type Entity = 'user' | 'note' | 'film'
+type Entity = 'user' | 'note' | 'film' | 'review'
 type Access = 'own' | 'any' | 'own,any' | 'any,own'
 type PermissionString = `${Action}:${Entity}` | `${Action}:${Entity}:${Access}`
 function parsePermissionString(permissionString: PermissionString) {

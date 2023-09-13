@@ -311,6 +311,7 @@ model FilmReview {
   filmId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String
+  title     String
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

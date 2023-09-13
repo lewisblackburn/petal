@@ -1,16 +1,23 @@
-import { type Film, type Person } from '@prisma/client'
 import {
 	type DataFunctionArgs,
 	json,
 	type V2_MetaFunction,
 } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { NavLink, Outlet, useLoaderData } from '@remix-run/react'
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from '#app/components/ui/card.tsx'
 import { prisma } from '#app/utils/db.server.ts'
+import { cn } from '#app/utils/misc.tsx'
 import { getTableParams } from '#app/utils/request.helper.ts'
 
 export const meta: V2_MetaFunction = () => {
 	return [{ title: 'Search | Petal' }]
 }
+
 export async function loader({ request }: DataFunctionArgs) {
 	const { search: searchTerm } = getTableParams(request, 5)
 
@@ -47,53 +54,78 @@ export async function loader({ request }: DataFunctionArgs) {
 
 	const type = results[0]?.type ?? 'film'
 
-	let result: Film[] | Person[] = []
-
-	if (type === 'film') {
-		result = await prisma.film.findMany({
-			where: {
-				title: {
-					contains: searchTerm,
-				},
-			},
+	const counts = await prisma.$transaction(async $prisma => {
+		const filmCount = await $prisma.film.count({
+			where: { title: { contains: searchTerm } },
 		})
-	} else if (type === 'person') {
-		result = await prisma.person.findMany({
-			where: {
-				name: {
-					contains: searchTerm,
-				},
-			},
+		const peopleCount = await $prisma.person.count({
+			where: { name: { contains: searchTerm } },
 		})
-	}
 
-	return json({ result, type })
+		return { filmCount, peopleCount }
+	})
+
+	const { filmCount, peopleCount } = counts
+
+	return json({ filmCount, peopleCount, type })
 }
 
 export default function Search() {
-	const { result, type } = useLoaderData<typeof loader>()
+	const { filmCount, peopleCount } = useLoaderData<typeof loader>()
 
-	// FIX: This needs an overhaul
+	const LINKS = [
+		{
+			href: '',
+			label: 'Films',
+			count: filmCount,
+		},
+		{
+			href: 'television',
+			label: 'Television',
+			count: 0,
+		},
+		{
+			href: 'people',
+			label: 'People',
+			count: peopleCount,
+		},
+		{
+			href: 'books',
+			label: 'Books',
+			count: 0,
+		},
+		{
+			href: 'music',
+			label: 'Music',
+			count: 0,
+		},
+	]
 
-	if (type === 'film') {
-		return (
-			<div className="container py-6">
-				{result.map((item: Film) => (
-					<div key={item.id}>{item.title}</div>
-				))}
-			</div>
-		)
-	}
-
-	if (type === 'person') {
-		return (
-			<div className="container py-6">
-				{result.map((item: Person) => (
-					<div key={item.id}>{item.name}</div>
-				))}
-			</div>
-		)
-	}
-
-	return <div>error</div>
+	return (
+		<div className="container py-6">
+			<Card className="w-[350px]">
+				<CardHeader>
+					<CardTitle>Search Results</CardTitle>
+				</CardHeader>
+				<CardContent className="flex flex-col">
+					{LINKS.map(({ href, label, count }) => (
+						<NavLink
+							key={href}
+							to={href}
+							className={({ isActive }) =>
+								cn(
+									'text-sm font-medium text-muted-foreground transition-colors hover:text-primary',
+									isActive && 'text-primary',
+								)
+							}
+							end
+						>
+							{label} ({count})
+						</NavLink>
+					))}
+				</CardContent>
+			</Card>
+			<Outlet />
+		</div>
+	)
 }

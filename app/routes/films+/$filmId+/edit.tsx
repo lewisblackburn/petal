@@ -1,4 +1,5 @@
 import { Outlet } from '@remix-run/react'
+import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import ButtonGroup from '#app/components/ui/button-group.tsx'
 
 const NavigationLinks: { name: string; path: string }[] = [
@@ -17,7 +18,7 @@ const NavigationLinks: { name: string; path: string }[] = [
 	{ name: 'Photo', path: 'photo' },
 ]
 
-export default function FilmEdit() {
+export default function FilmEditLayout() {
 	return (
 		<div className="container py-6">
 			<div className="mb-5">
@@ -31,5 +32,17 @@ export default function FilmEdit() {
 				<Outlet />
 			</main>
 		</div>
+	)
+}
+
+export function ErrorBoundary() {
+	return (
+		<GeneralErrorBoundary
+			statusHandlers={{
+				404: ({ params }) => (
+					<p>No film with the id "{params.filmId}" exists</p>
+				),
+			}}
+		/>
 	)
 }

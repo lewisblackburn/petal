@@ -27,6 +27,7 @@ import {
 	orderByRationalProperty,
 } from '#app/utils/misc.tsx'
 import {
+	requireUserWithPermission,
 	requireUserWithRole,
 	userHasPermission,
 } from '#app/utils/permissions.ts'
@@ -152,6 +153,8 @@ export async function action({ request }: DataFunctionArgs) {
 	})
 	invariantResponse(film, 'Not found', { status: 404 })
 
+	await requireUserWithPermission(request, 'delete:film:any')
+
 	await prisma.film.delete({ where: { id: film.id } })
 
 	return redirectWithToast('/films', {
@@ -171,6 +174,7 @@ export default function FilmRoute() {
 			<div className="flex items-center justify-between">
 				<h2 className="text-h2 font-black">{data.film.title}</h2>
 				<div className="flex items-center gap-5">
+					{/* FIX: Fix nested button error  */}
 					<FilmRatingDropdown
 						filmId={data.film.id}
 						defaultRating={data.film.ratings[0]?.value}
@@ -266,14 +270,12 @@ export default function FilmRoute() {
 					<div className="flex flex-col space-y-1">
 						<div className="flex items-center justify-between">
 							<h2 className="text-xl font-bold">Reviews</h2>
-							<Link to="review">
-								<Button variant="ghost" size="icon">
-									<Icon name="plus" className="h-4 w-4" />
-								</Button>
+							<Link to="reviews" className="text-muted-foreground">
+								View More
 							</Link>
 						</div>
 						{data.film.reviews.length > 0 ? (
-							<div className="flex flex-col space-y-5 rounded-lg border p-5"></div>
+							<div>{data.film.reviews[0].content}</div>
 						) : (
 							<p className="text-base font-normal text-muted-foreground">
 								There are currently no reviews.
@@ -428,18 +430,6 @@ export const meta: V2_MetaFunction<
 	]
 }
 
-export function ErrorBoundary() {
-	return (
-		<GeneralErrorBoundary
-			statusHandlers={{
-				403: () => <p>You are not allowed to do that</p>,
-				404: ({ params }) => (
-					<p>No film with the id "{params.filmId}" exists</p>
-				),
-			}}
-		/>
-	)
-}
 function Status({
 	icon,
 	title,
@@ -456,5 +446,18 @@ function Status({
 				<p>{children}</p>
 			</div>
 		</div>
+	)
+}
+
+export function ErrorBoundary() {
+	return (
+		<GeneralErrorBoundary
+			statusHandlers={{
+				403: () => <p>You are not allowed to do that</p>,
+				404: ({ params }) => (
+					<p>No film with the id "{params.filmId}" exists</p>
+				),
+			}}
+		/>
 	)
 }

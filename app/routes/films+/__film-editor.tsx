@@ -177,7 +177,6 @@ export function FilmEditor({
 			method="post"
 			className="flex h-full flex-col gap-y-4"
 			{...form.props}
-			encType="multipart/form-data"
 		>
 			{film ? <input type="hidden" name="id" value={film.id} /> : null}
 			<div className="flex flex-col gap-1">

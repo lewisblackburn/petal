@@ -30,7 +30,7 @@ export async function loader({ params, request }: DataFunctionArgs) {
 	return json({ person })
 }
 
-export default function FilmEdit() {
+export default function PersonEditRoute() {
 	const data = useLoaderData<typeof loader>()
 
 	return <PersonEditor person={data.person} />

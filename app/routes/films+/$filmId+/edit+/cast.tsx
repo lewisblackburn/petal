@@ -36,7 +36,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	return json({ cast: orderByRationalProperty(cast) })
 }
 
-export default function FilmEditCast() {
+export default function FilmEditCastRoute() {
 	const { cast } = useLoaderData<typeof loader>()
 
 	return (

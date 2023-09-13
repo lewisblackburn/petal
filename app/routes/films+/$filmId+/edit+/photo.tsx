@@ -30,7 +30,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	return json({ photos })
 }
 
-export default function FilmEditphotos() {
+export default function FilmEditPhotoRoute() {
 	const { photos } = useLoaderData<typeof loader>()
 
 	return (
