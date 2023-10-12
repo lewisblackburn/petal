@@ -68,6 +68,10 @@ export const log = Prisma.defineExtension(client => {
 	})
 })
 
+// NOTE: Have a function before that before the table is updated it creates an audit log with an id and previous values
+// then have a function after the update that finds the audit log and updates it with the new values
+// https://github.com/prisma/prisma/discussions/12610
+
 // export const defaultTake = Prisma.defineExtension(client => {
 //   return client.$extends({
 //     query: {

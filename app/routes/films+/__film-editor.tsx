@@ -39,8 +39,7 @@ const FilmEditorSchema = z.object({
 })
 
 export async function action({ request }: DataFunctionArgs) {
-	let film = null
-	const userId = await requireUserId(request)
+	await requireUserId(request)
 
 	const formData = await request.formData()
 
@@ -48,8 +47,8 @@ export async function action({ request }: DataFunctionArgs) {
 		schema: FilmEditorSchema.superRefine(async (data, ctx) => {
 			if (!data.id) return
 
-			film = await prisma.film.findUnique({
-				// select: { id: true },
+			const film = await prisma.film.findUnique({
+				select: { id: true },
 				where: { id: data.id },
 			})
 			if (!film) {
@@ -86,7 +85,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const updatedFilm = await prisma.$transaction(async $prisma => {
 		const film = await $prisma.film.upsert({
-			// select: { id: true },
+			select: { id: true },
 			where: { id: filmId ?? '__new_film__' },
 			create: {
 				title,
@@ -116,8 +115,6 @@ export async function action({ request }: DataFunctionArgs) {
 
 		return film
 	})
-
-	await updatedFilm.log(userId)
 
 	return redirectWithToast(`/films/${updatedFilm.id}`, {
 		type: 'success',
