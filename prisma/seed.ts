@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { promiseHash } from 'remix-utils'
-import { GENRES } from '#app/utils/constants.ts'
+import { COUNTRIES, GENRES } from '#app/utils/constants.ts'
 import { prisma } from '../app/utils/db.server.ts'
 import {
 	createFilm,
@@ -24,6 +24,7 @@ async function seed() {
 	await prisma.keyword.deleteMany()
 	await prisma.film.deleteMany()
 	await prisma.person.deleteMany()
+	await prisma.country.deleteMany()
 	console.timeEnd('🧹 Cleaned up the database...')
 
 	console.time('🔑 Created permissions...')
@@ -318,6 +319,23 @@ async function seed() {
 			})
 	}
 	console.timeEnd(`🧑 Created ${totalPeople} people...`)
+
+	console.time(`🌐 Created ${COUNTRIES.length} countries...`)
+	for (let index = 0; index < COUNTRIES.length; index++) {
+		await prisma.country
+			.create({
+				select: { id: true },
+				data: {
+					flag: COUNTRIES[index].flag,
+					name: COUNTRIES[index].label,
+				},
+			})
+			.catch(e => {
+				console.error('Error creating a country:', e)
+				return null
+			})
+	}
+	console.timeEnd(`🌐 Created ${COUNTRIES.length} countries...`)
 
 	console.timeEnd(`🌱 Database has been seeded`)
 }

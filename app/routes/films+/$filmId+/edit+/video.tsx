@@ -21,6 +21,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	invariantResponse(film, 'Not found', { status: 404 })
 
 	const videos = film.videos.map(video => ({
+		id: video.id,
 		url: video.url,
 		name: video.name,
 		site: video.site,

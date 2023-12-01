@@ -22,10 +22,13 @@ model User {
   image    UserImage?
   password Password?
 
-  notes       Note[]
-  ratedFilms  FilmRating[]
-  filmReviews FilmReview[]
-  favourites  Favourite[]
+  notes           Note[]
+  ratedFilms      FilmRating[]
+  filmReviews     FilmReview[]
+  favouritedFilms FilmFavourite[]
+  ratedSongs      SongRating[]
+  songReviews     SongReview[]
+  favouritedSongs SongFavourite[]
 
   roles       Role[]
   sessions    Session[]
@@ -189,6 +192,7 @@ model Person {
 
   casts  CastMember[]
   crews  CrewMember[]
+  songs  Artist[]
   photos PersonImage[]
 }
 
@@ -196,7 +200,6 @@ model Film {
   id           String    @id @unique @default(cuid())
   title        String
   overview     String
-  tagline      String?
   releaseDate  DateTime?
   ageRating    String?
   runtime      Float?
@@ -207,28 +210,44 @@ model Film {
   contentScore Float?
   popularity   Float?
   language     String?
-  instagram    String?
-  twitter      String?
   website      String?
-  tmdbId       String?
-  locked       Boolean?  @default(false)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
 
-  // Primary images and videos
+  // external ids
+  facebook  String?
+  instagram String?
+  twitter   String?
+
+  imdbId     String?
+  wikiDataId String?
+  tmdbId     String?
+
+  freebaseId  String?
+  freebaseMid String?
+  tvrageId    String?
+
+  locked    Boolean? @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Primary images, videos, taglines, etc.
   poster   String? @default("https://placehold.co/300x450?text=Image")
   backdrop String? @default("https://placehold.co/1920x1080?text=Image")
   trailer  String? @default("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+  tagline  String? @default("")
 
-  cast       CastMember[]
-  crew       CrewMember[]
-  photos     FilmPhoto[]
-  videos     FilmVideo[]
-  genres     Genre[]      @relation("FilmToGenre")
-  keywords   Keyword[]    @relation("FilmToKeyword")
-  ratings    FilmRating[]
-  reviews    FilmReview[]
-  favourited Favourite[]
+  cast                      CastMember[]
+  crew                      CrewMember[]
+  photos                    FilmPhoto[]
+  videos                    FilmVideo[]
+  taglines                  FilmTagline[]
+  genres                    Genre[]                     @relation("FilmToGenre")
+  keywords                  Keyword[]                   @relation("FilmToKeyword")
+  ratings                   FilmRating[]
+  reviews                   FilmReview[]
+  favourited                FilmFavourite[]
+  FilmReleaseInformation    FilmReleaseInformation[]
+  FilmProductionInformation FilmProductionInformation[]
+  FilmAlternateTitle        FilmAlternateTitle[]
 }
 
 model CastMember {
@@ -321,10 +340,69 @@ model FilmReview {
   @@unique([filmId, userId])
 }
 
+model FilmAlternateTitle {
+  id        String   @id @unique @default(cuid())
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId    String
+  title     String
+  language  String
+  country   Country  @relation(fields: [countryId], references: [id])
+  countryId String
+  locked    Boolean? @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilmTagline {
+  id        String   @id @unique @default(cuid())
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId    String
+  tagline   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilmProductionInformation {
+  id                  String            @id @unique @default(cuid())
+  film                Film              @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId              String
+  company             ProductionCompany @relation(fields: [productionCompanyId], references: [id])
+  productionCompanyId String
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+}
+
+model FilmReleaseInformation {
+  id             String   @id @unique @default(cuid())
+  film           Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId         String
+  country        Country  @relation(fields: [countryId], references: [id])
+  countryId      String
+  language       String?
+  date           DateTime
+  classification String?
+  type           String?
+  note           String?
+  locked         Boolean? @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductionCompany {
+  id                        String                      @id @unique @default(cuid())
+  name                      String                      @unique
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  FilmProductionInformation FilmProductionInformation[]
+}
+
 model Genre {
   id        String   @id @unique @default(cuid())
   name      String   @unique
   films     Film[]   @relation("FilmToGenre")
+  songs     Song[]   @relation("SongToGenre")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -333,6 +411,7 @@ model Keyword {
   id        String   @id @unique @default(cuid())
   name      String
   films     Film[]   @relation("FilmToKeyword")
+  songs     Song[]   @relation("SongToKeyword")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -344,7 +423,7 @@ model Location {
   updatedAt DateTime @updatedAt
 }
 
-model Favourite {
+model FilmFavourite {
   id        String   @id @unique @default(cuid())
   film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   filmId    String
@@ -356,6 +435,18 @@ model Favourite {
   @@index([filmId, userId])
 }
 
+model SongFavourite {
+  id        String   @id @unique @default(cuid())
+  song      Song     @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  songId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([songId, userId])
+}
+
 model AuditLog {
   id       String @id @default(cuid())
   action   String // e.g., create, update, delete
@@ -365,4 +456,91 @@ model AuditLog {
   changes  String // Store previous and new attribute values as JSON string
 
   createdAt DateTime @default(now())
+}
+
+model Song {
+  id       String   @id @unique @default(cuid())
+  title    String
+  artist   String
+  duration Int
+  locked   Boolean? @default(false)
+
+  genres     Genre[]         @relation("SongToGenre")
+  keywords   Keyword[]       @relation("SongToKeyword")
+  favourited SongFavourite[]
+  ratings    SongRating[]
+  reviews    SongReview[]
+
+  album   Album?  @relation(fields: [albumId], references: [id])
+  albumId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SongRating {
+  song      Song        @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  songId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  value     Int         @default(0)
+  review    SongReview?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([songId, userId])
+}
+
+model SongReview {
+  id        String      @id @unique @default(cuid())
+  song      Song        @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  songId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  title     String
+  content   String
+  rating    SongRating? @relation(fields: [songId, userId], references: [songId, userId], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([songId, userId])
+}
+
+model Album {
+  id     String   @id @unique @default(cuid())
+  title  String
+  year   Int
+  cover  String?  @default("https://placehold.co/300x450?text=Image")
+  locked Boolean? @default(false)
+
+  songs   Song[]
+  artists Artist[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Artist {
+  id       String   @id @unique @default(cuid())
+  name     String
+  person   Person   @relation(fields: [personId], references: [id])
+  personId String
+  locked   Boolean? @default(false)
+
+  albums Album[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Country {
+  id   String @id @unique @default(cuid())
+  flag String
+  name String @unique
+
+  filmAlternateTitles    FilmAlternateTitle[]
+  filmReleaseInformation FilmReleaseInformation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
