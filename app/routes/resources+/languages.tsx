@@ -15,17 +15,17 @@ export async function loader({ request }: DataFunctionArgs) {
 
 	const where = {
 		OR: search ? [{ name: { contains: search } }] : undefined,
-	} satisfies Prisma.CountryWhereInput
+	} satisfies Prisma.LanguageWhereInput
 
-	const countries = await prisma.country.findMany({
+	const languages = await prisma.language.findMany({
 		take,
 		where,
 	})
 
-	return json({ countries })
+	return json({ languages })
 }
 
-export const CountrySearch = ({
+export const LanguageSearch = ({
 	...props
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
@@ -33,26 +33,26 @@ export const CountrySearch = ({
 	errors?: ListOfErrors
 	className?: string
 }) => {
-	const countriesFetcher = useFetcher<typeof loader>()
+	const languagesFetcher = useFetcher<typeof loader>()
 
 	const handleSearch = (e: any) => {
 		const searchValue = e.currentTarget.value
 
-		countriesFetcher.submit(
+		languagesFetcher.submit(
 			{ search: searchValue },
-			{ method: 'GET', action: '/resources/countries' },
+			{ method: 'GET', action: '/resources/languages' },
 		)
 	}
 
-	const busy = countriesFetcher.state !== 'idle'
+	const busy = languagesFetcher.state !== 'idle'
 	const delayedBusy = useSpinDelay(busy, {
 		delay: 150,
 		minDuration: 500,
 	})
 
-	const items = countriesFetcher.data?.countries?.map(country => ({
-		label: `${country.flag} ${country.name}`,
-		value: country.code,
+	const items = languagesFetcher.data?.languages?.map(language => ({
+		label: language.name,
+		value: language.id,
 	}))
 
 	return (

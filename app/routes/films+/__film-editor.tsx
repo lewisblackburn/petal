@@ -1,6 +1,6 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { type Film } from '@prisma/client'
+import { type Language, type Film } from '@prisma/client'
 import { Form, useFetcher } from '@remix-run/react'
 import {
 	type DataFunctionArgs,
@@ -13,16 +13,16 @@ import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import {
 	ErrorList,
 	Field,
-	FilterSelectField,
 	SelectField,
 	TextareaField,
 } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
-import { AGE_RATINGS, LANGUAGES, STATUSES } from '#app/utils/constants.ts'
+import { AGE_RATINGS, STATUSES } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
+import { LanguageSearch } from '../resources+/languages.tsx'
 
 const FilmEditorSchema = z.object({
 	id: z.string().optional(),
@@ -48,7 +48,7 @@ export async function action({ request }: DataFunctionArgs) {
 			if (!data.id) return
 
 			const film = await prisma.film.findUnique({
-				select: { id: true },
+				select: { id: true, language: true },
 				where: { id: data.id },
 			})
 			if (!film) {
@@ -94,7 +94,11 @@ export async function action({ request }: DataFunctionArgs) {
 				runtime,
 				releaseDate,
 				ageRating,
-				language,
+				language: {
+					connect: {
+						id: language,
+					},
+				},
 				status,
 				budget,
 				revenue,
@@ -106,7 +110,11 @@ export async function action({ request }: DataFunctionArgs) {
 				runtime,
 				releaseDate,
 				ageRating,
-				language,
+				language: {
+					connect: {
+						id: language,
+					},
+				},
 				status,
 				budget,
 				revenue,
@@ -136,11 +144,10 @@ export function FilmEditor({
 			| 'runtime'
 			| 'releaseDate'
 			| 'ageRating'
-			| 'language'
 			| 'status'
 			| 'budget'
 			| 'revenue'
-		>
+		> & { language: Language }
 	>
 }) {
 	const filmFetcher = useFetcher<typeof action>()
@@ -162,7 +169,7 @@ export function FilmEditor({
 				? format(new Date(film.releaseDate), 'yyyy-MM-dd')
 				: null,
 			ageRating: film?.ageRating,
-			language: film?.language,
+			language: film?.language?.id,
 			status: film?.status,
 			budget: film?.budget,
 			revenue: film?.revenue,
@@ -223,12 +230,17 @@ export function FilmEditor({
 					options={AGE_RATINGS}
 					errors={fields.ageRating.errors}
 				/>
-				<FilterSelectField
-					labelProps={{ children: 'Language' }}
-					buttonProps={{
-						...conform.input(fields.language, { ariaAttributes: true }),
+				<LanguageSearch
+					labelProps={{
+						htmlFor: fields.language.id,
+						children: 'Language',
+						autoFocus: true,
 					}}
-					options={LANGUAGES}
+					buttonProps={{
+						...conform.input(fields.language, { type: 'text' }),
+						// @ts-expect-error custom attribute in the DOM
+						defaultlabel: film?.language?.name,
+					}}
 					errors={fields.language.errors}
 				/>
 				<SelectField

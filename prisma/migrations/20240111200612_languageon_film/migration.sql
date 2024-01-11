@@ -1,0 +1,47 @@
+/*
+  Warnings:
+
+  - You are about to drop the column `language` on the `Film` table. All the data in the column will be lost.
+
+*/
+-- RedefineTables
+PRAGMA foreign_keys=OFF;
+CREATE TABLE "new_Film" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "title" TEXT NOT NULL,
+    "overview" TEXT NOT NULL,
+    "releaseDate" DATETIME,
+    "ageRating" TEXT,
+    "runtime" REAL,
+    "languageId" TEXT,
+    "budget" REAL,
+    "revenue" REAL,
+    "status" TEXT,
+    "userScore" REAL NOT NULL DEFAULT 0,
+    "contentScore" REAL,
+    "popularity" REAL,
+    "website" TEXT,
+    "facebook" TEXT,
+    "instagram" TEXT,
+    "twitter" TEXT,
+    "imdbId" TEXT,
+    "wikiDataId" TEXT,
+    "tmdbId" TEXT,
+    "freebaseId" TEXT,
+    "freebaseMid" TEXT,
+    "tvrageId" TEXT,
+    "locked" BOOLEAN DEFAULT false,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    "poster" TEXT DEFAULT 'https://placehold.co/300x450?text=Image',
+    "backdrop" TEXT DEFAULT 'https://placehold.co/1920x1080?text=Image',
+    "trailer" TEXT DEFAULT 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    "tagline" TEXT DEFAULT '',
+    CONSTRAINT "Film_languageId_fkey" FOREIGN KEY ("languageId") REFERENCES "Langauge" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+INSERT INTO "new_Film" ("ageRating", "backdrop", "budget", "contentScore", "createdAt", "facebook", "freebaseId", "freebaseMid", "id", "imdbId", "instagram", "locked", "overview", "popularity", "poster", "releaseDate", "revenue", "runtime", "status", "tagline", "title", "tmdbId", "trailer", "tvrageId", "twitter", "updatedAt", "userScore", "website", "wikiDataId") SELECT "ageRating", "backdrop", "budget", "contentScore", "createdAt", "facebook", "freebaseId", "freebaseMid", "id", "imdbId", "instagram", "locked", "overview", "popularity", "poster", "releaseDate", "revenue", "runtime", "status", "tagline", "title", "tmdbId", "trailer", "tvrageId", "twitter", "updatedAt", "userScore", "website", "wikiDataId" FROM "Film";
+DROP TABLE "Film";
+ALTER TABLE "new_Film" RENAME TO "Film";
+CREATE UNIQUE INDEX "Film_id_key" ON "Film"("id");
+PRAGMA foreign_key_check;
+PRAGMA foreign_keys=ON;

@@ -18,7 +18,7 @@ import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { ToggleFavouriteFilm } from '#app/routes/resources+/film+/favourite.tsx'
 import { FilmRatingDropdown } from '#app/routes/resources+/film+/rate.tsx'
 import { getUserId } from '#app/utils/auth.server.ts'
-import { LANGUAGES, STATUSES } from '#app/utils/constants.ts'
+import { STATUSES } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import {
 	invariantResponse,
@@ -240,8 +240,7 @@ export default function FilmRoute() {
 							{data.film.userScore ?? 'N/A'}
 						</Status>
 						<Status title="Language" icon="language">
-							{LANGUAGES.find(language => language.value === data.film.language)
-								?.label ?? 'N/A'}
+							{data.film.language?.name ?? 'N/A'}
 						</Status>
 						{data.film.status && (
 							<Status

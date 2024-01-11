@@ -203,13 +203,14 @@ model Film {
   releaseDate  DateTime?
   ageRating    String?
   runtime      Float?
+  language     Language? @relation(fields: [languageId], references: [id])
+  languageId   String?
   budget       Float?
   revenue      Float?
   status       String?
   userScore    Float     @default(0)
   contentScore Float?
   popularity   Float?
-  language     String?
   website      String?
 
   // external ids
@@ -345,7 +346,7 @@ model FilmAlternateTitle {
   film        Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   filmId      String
   title       String
-  country     Country  @relation(fields: [countryCode], references: [countryCode])
+  country     Country  @relation(fields: [countryCode], references: [code])
   countryCode String
   locked      Boolean? @default(false)
 
@@ -376,7 +377,7 @@ model FilmReleaseInformation {
   id             String   @id @unique @default(cuid())
   film           Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   filmId         String
-  country        Country  @relation(fields: [countryCode], references: [countryCode])
+  country        Country  @relation(fields: [countryCode], references: [code])
   countryCode    String
   language       String?
   date           DateTime
@@ -533,10 +534,10 @@ model Artist {
 }
 
 model Country {
-  countryCode String     @id @unique
-  flag        String
-  name        String     @unique
-  languages   Langauge[]
+  code      String     @id @unique
+  flag      String
+  name      String     @unique
+  languages Language[]
 
   filmAlternativeTitles  FilmAlternateTitle[]
   filmReleaseInformation FilmReleaseInformation[]
@@ -545,9 +546,12 @@ model Country {
   updatedAt DateTime @updatedAt
 }
 
-model Langauge {
+model Language {
   id         String    @id @unique @default(cuid())
   name       String
   nativeName String
   countries  Country[]
+  films      Film[]
+
+  @@index([name])
 }

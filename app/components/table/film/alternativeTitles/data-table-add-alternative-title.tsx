@@ -73,14 +73,14 @@ export function DataTableAddAlternativeTitle() {
 						/>
 						<CountrySearch
 							labelProps={{
-								htmlFor: fields.countryCode.id,
+								htmlFor: fields.code.id,
 								children: 'Country',
 								autoFocus: true,
 							}}
 							buttonProps={{
-								...conform.input(fields.countryCode, { type: 'text' }),
+								...conform.input(fields.code, { type: 'text' }),
 							}}
-							errors={fields.countryCode.errors}
+							errors={fields.code.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>

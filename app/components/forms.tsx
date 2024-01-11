@@ -280,7 +280,7 @@ export function FilterSelectField({
 			<input
 				name={name}
 				// Hack as readOnly prevents errors from being displayed
-				onChange={() => { }}
+				onChange={() => {}}
 				value={value ?? ''}
 				className="hidden"
 			/>
@@ -404,9 +404,11 @@ export function SearchSelectField({
 
 	const defaultItem = buttonProps.defaultValue?.toString()
 		? {
-			label: buttonProps.defaultValue?.toString(),
-			value: buttonProps.defaultValue?.toString(),
-		}
+				// BUG: find a better way to do language label value
+				// @ts-expect-error defaultlabel custom attribute in the DOM due to value being different from label in some cases
+				label: buttonProps.defaultlabel ?? buttonProps.defaultValue?.toString(),
+				value: buttonProps.defaultValue?.toString(),
+		  }
 		: undefined
 
 	const [selectedItem, setSelectedItem] = React.useState<
@@ -418,7 +420,7 @@ export function SearchSelectField({
 			<input
 				name={buttonProps.name}
 				// Hack as readOnly prevents errors from being displayed
-				onChange={() => { }}
+				onChange={() => {}}
 				value={selectedItem?.value ?? ''}
 				className="hidden"
 			/>

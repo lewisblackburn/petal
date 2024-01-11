@@ -1,3 +1,6 @@
+// TODO: Move this file entirely to the prisma database
+// TODO: Setup a seed variable file that contains this data instead.
+// TODO: Maybe just make the seed script be runnable from the admin dashboard to seed the languages
 export const COUNTRIES = [
 	{ label: 'Aruba', value: 'AW', flag: '🇦🇼' },
 	{ label: 'Afghanistan', value: 'AF', flag: '🇦🇫' },
@@ -545,7 +548,7 @@ export const LANGUAGES = [
 	},
 	{
 		name: 'Kashmiri',
-		nativeName: 'कश्मीरी, كشميري‎',
+		nativeName: '',
 	},
 	{
 		name: 'Kazakh',
@@ -581,7 +584,7 @@ export const LANGUAGES = [
 	},
 	{
 		name: 'Kurdish',
-		nativeName: 'Kurdî, كوردی‎',
+		nativeName: '',
 	},
 	{
 		name: 'Kwanyama, Kuanyama',
@@ -637,7 +640,7 @@ export const LANGUAGES = [
 	},
 	{
 		name: 'Malay',
-		nativeName: 'bahasa Melayu, بهاس ملايو‎',
+		nativeName: '',
 	},
 	{
 		name: 'Malayalam',
@@ -729,7 +732,7 @@ export const LANGUAGES = [
 	},
 	{
 		name: 'Panjabi, Punjabi',
-		nativeName: 'ਪੰਜਾਬੀ, پنجابی‎',
+		nativeName: '',
 	},
 	{
 		name: 'Pāli',
@@ -781,7 +784,7 @@ export const LANGUAGES = [
 	},
 	{
 		name: 'Sindhi',
-		nativeName: 'सिन्धी, سنڌي، سندھی‎',
+		nativeName: '',
 	},
 	{
 		name: 'Northern Sami',
@@ -857,7 +860,7 @@ export const LANGUAGES = [
 	},
 	{
 		name: 'Tajik',
-		nativeName: 'тоҷикӣ, toğikī, تاجیکی‎',
+		nativeName: '',
 	},
 	{
 		name: 'Thai',
@@ -897,7 +900,7 @@ export const LANGUAGES = [
 	},
 	{
 		name: 'Tatar',
-		nativeName: 'татарча, tatarça, تاتارچا‎',
+		nativeName: '',
 	},
 	{
 		name: 'Twi',
@@ -909,7 +912,7 @@ export const LANGUAGES = [
 	},
 	{
 		name: 'Uighur, Uyghur',
-		nativeName: 'Uyƣurqə, ئۇيغۇرچە‎',
+		nativeName: '',
 	},
 	{
 		name: 'Ukrainian',
@@ -921,7 +924,7 @@ export const LANGUAGES = [
 	},
 	{
 		name: 'Uzbek',
-		nativeName: 'zbek, Ўзбек, أۇزبېك‎',
+		nativeName: '',
 	},
 	{
 		name: 'Venda',

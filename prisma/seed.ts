@@ -25,7 +25,7 @@ async function seed() {
 	await prisma.film.deleteMany()
 	await prisma.person.deleteMany()
 	await prisma.country.deleteMany()
-	await prisma.langauge.deleteMany()
+	await prisma.language.deleteMany()
 	console.timeEnd('🧹 Cleaned up the database...')
 
 	console.time('🔑 Created permissions...')
@@ -325,9 +325,9 @@ async function seed() {
 	for (let index = 0; index < COUNTRIES.length; index++) {
 		await prisma.country
 			.create({
-				select: { countryCode: true },
+				select: { code: true },
 				data: {
-					countryCode: COUNTRIES[index].value,
+					code: COUNTRIES[index].value,
 					name: COUNTRIES[index].label,
 					flag: COUNTRIES[index].flag,
 				},
@@ -341,7 +341,7 @@ async function seed() {
 
 	console.time(`🌐 Created ${LANGUAGES.length} languages...`)
 	for (let index = 0; index < LANGUAGES.length; index++) {
-		await prisma.langauge
+		await prisma.language
 			.create({
 				select: { id: true },
 				data: {

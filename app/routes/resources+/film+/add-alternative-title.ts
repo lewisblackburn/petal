@@ -8,7 +8,7 @@ import { createToastHeaders } from '#app/utils/toast.server.ts'
 export const AddFilmAlternativeTitleSchema = z.object({
 	filmId: z.string().nonempty(),
 	alternativeTitle: z.string().nonempty(),
-	countryCode: z.string().nonempty({ message: 'You must select a country' }),
+	code: z.string().nonempty({ message: 'You must select a country' }),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -37,7 +37,7 @@ export async function action({ request }: DataFunctionArgs) {
 					title: alternativeTitle,
 					country: {
 						connect: {
-							countryCode: submission.value.countryCode,
+							code: submission.value.code,
 						},
 					},
 				},
