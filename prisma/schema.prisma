@@ -235,19 +235,19 @@ model Film {
   trailer  String? @default("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
   tagline  String? @default("")
 
-  cast                      CastMember[]
-  crew                      CrewMember[]
-  photos                    FilmPhoto[]
-  videos                    FilmVideo[]
-  taglines                  FilmTagline[]
-  genres                    Genre[]                     @relation("FilmToGenre")
-  keywords                  Keyword[]                   @relation("FilmToKeyword")
-  ratings                   FilmRating[]
-  reviews                   FilmReview[]
-  favourited                FilmFavourite[]
-  FilmReleaseInformation    FilmReleaseInformation[]
-  FilmProductionInformation FilmProductionInformation[]
-  FilmAlternateTitle        FilmAlternateTitle[]
+  cast                  CastMember[]
+  crew                  CrewMember[]
+  photos                FilmPhoto[]
+  videos                FilmVideo[]
+  taglines              FilmTagline[]
+  genres                Genre[]                     @relation("FilmToGenre")
+  keywords              Keyword[]                   @relation("FilmToKeyword")
+  ratings               FilmRating[]
+  reviews               FilmReview[]
+  favourited            FilmFavourite[]
+  alternativeTitles     FilmAlternateTitle[]
+  releaseInformation    FilmReleaseInformation[]
+  productionInformation FilmProductionInformation[]
 }
 
 model CastMember {
@@ -341,14 +341,13 @@ model FilmReview {
 }
 
 model FilmAlternateTitle {
-  id        String   @id @unique @default(cuid())
-  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  filmId    String
-  title     String
-  language  String
-  country   Country  @relation(fields: [countryId], references: [id])
-  countryId String
-  locked    Boolean? @default(false)
+  id          String   @id @unique @default(cuid())
+  film        Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId      String
+  title       String
+  country     Country  @relation(fields: [countryCode], references: [countryCode])
+  countryCode String
+  locked      Boolean? @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -377,8 +376,8 @@ model FilmReleaseInformation {
   id             String   @id @unique @default(cuid())
   film           Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   filmId         String
-  country        Country  @relation(fields: [countryId], references: [id])
-  countryId      String
+  country        Country  @relation(fields: [countryCode], references: [countryCode])
+  countryCode    String
   language       String?
   date           DateTime
   classification String?
@@ -534,13 +533,21 @@ model Artist {
 }
 
 model Country {
-  id   String @id @unique @default(cuid())
-  flag String
-  name String @unique
+  countryCode String     @id @unique
+  flag        String
+  name        String     @unique
+  languages   Langauge[]
 
-  filmAlternateTitles    FilmAlternateTitle[]
+  filmAlternativeTitles  FilmAlternateTitle[]
   filmReleaseInformation FilmReleaseInformation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Langauge {
+  id         String    @id @unique @default(cuid())
+  name       String
+  nativeName String
+  countries  Country[]
 }

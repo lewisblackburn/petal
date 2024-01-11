@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { promiseHash } from 'remix-utils'
-import { COUNTRIES, GENRES } from '#app/utils/constants.ts'
+import { COUNTRIES, GENRES, LANGUAGES } from '#app/utils/constants.ts'
 import { prisma } from '../app/utils/db.server.ts'
 import {
 	createFilm,
@@ -25,6 +25,7 @@ async function seed() {
 	await prisma.film.deleteMany()
 	await prisma.person.deleteMany()
 	await prisma.country.deleteMany()
+	await prisma.langauge.deleteMany()
 	console.timeEnd('🧹 Cleaned up the database...')
 
 	console.time('🔑 Created permissions...')
@@ -324,10 +325,11 @@ async function seed() {
 	for (let index = 0; index < COUNTRIES.length; index++) {
 		await prisma.country
 			.create({
-				select: { id: true },
+				select: { countryCode: true },
 				data: {
-					flag: COUNTRIES[index].flag,
+					countryCode: COUNTRIES[index].value,
 					name: COUNTRIES[index].label,
+					flag: COUNTRIES[index].flag,
 				},
 			})
 			.catch(e => {
@@ -336,6 +338,23 @@ async function seed() {
 			})
 	}
 	console.timeEnd(`🌐 Created ${COUNTRIES.length} countries...`)
+
+	console.time(`🌐 Created ${LANGUAGES.length} languages...`)
+	for (let index = 0; index < LANGUAGES.length; index++) {
+		await prisma.langauge
+			.create({
+				select: { id: true },
+				data: {
+					name: LANGUAGES[index].name,
+					nativeName: LANGUAGES[index].nativeName,
+				},
+			})
+			.catch(e => {
+				console.error('Error creating a language:', e)
+				return null
+			})
+	}
+	console.timeEnd(`🌐 Created ${LANGUAGES.length} languages...`)
 
 	console.timeEnd(`🌱 Database has been seeded`)
 }

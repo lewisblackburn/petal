@@ -20,7 +20,7 @@ const FilmReviewEditorSchema = z.object({
 	id: z.string().optional(),
 	title: z.string().min(1).max(50),
 	content: z.string().min(1).max(500),
-	rating: z.number().min(1).max(5),
+	rating: z.number().min(1).max(10),
 })
 
 export async function action({ request, params }: DataFunctionArgs) {
