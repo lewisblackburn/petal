@@ -35,7 +35,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 	let { filmId } = submission.value
 
-	const isFavourited = await prisma.favourite.findFirst({
+	const isFavourited = await prisma.filmFavourite.findFirst({
 		where: {
 			filmId,
 			userId,
@@ -43,13 +43,13 @@ export async function action({ request }: DataFunctionArgs) {
 	})
 
 	if (isFavourited) {
-		await prisma.favourite.delete({
+		await prisma.filmFavourite.delete({
 			where: {
 				id: isFavourited.id,
 			},
 		})
 	} else {
-		await prisma.favourite.create({
+		await prisma.filmFavourite.create({
 			data: {
 				filmId,
 				userId,

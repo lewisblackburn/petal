@@ -94,12 +94,15 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					},
 				},
 			},
+			// Has user favourited this film
 			favourited: {
 				take: 1,
 				where: {
 					userId: userId ?? '',
 				},
 			},
+
+			// Has user rated this film
 			ratings: {
 				take: 1,
 				where: {
