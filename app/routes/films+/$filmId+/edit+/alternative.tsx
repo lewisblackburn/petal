@@ -1,4 +1,3 @@
-import { type Country, type FilmAlternateTitle } from '@prisma/client'
 import { useLoaderData } from '@remix-run/react'
 import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
 import { columns } from '#app/components/table/film/alternativeTitles/columns.tsx'
