@@ -14,6 +14,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { CountrySearch } from '#app/routes/resources+/countries.tsx'
 import { AddFilmAlternativeTitleSchema } from '#app/routes/resources+/film+/add-alternative-title.ts'
 
 export function DataTableAddAlternativeTitle() {
@@ -69,6 +70,17 @@ export function DataTableAddAlternativeTitle() {
 								...conform.input(fields.alternativeTitle, { type: 'text' }),
 							}}
 							errors={fields.alternativeTitle.errors}
+						/>
+						<CountrySearch
+							labelProps={{
+								htmlFor: fields.countryCode.id,
+								children: 'Country',
+								autoFocus: true,
+							}}
+							buttonProps={{
+								...conform.input(fields.countryCode, { type: 'text' }),
+							}}
+							errors={fields.countryCode.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
