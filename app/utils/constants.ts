@@ -1564,4 +1564,28 @@ export const GENRES = [
 	'Adult',
 ]
 
+export const FILM_RELEASE_TYPES = [
+	{
+		label: 'Premiere',
+		value: 'premiere',
+	},
+	{
+		label: 'Theatrical',
+		value: 'theatrical',
+	},
+	{
+		label: 'Digital',
+		value: 'digital',
+	},
+	{
+		label: 'Physical',
+		value: 'physical',
+	},
+	{
+		label: 'TV',
+		value: 'tv',
+	},
+]
+
+// NOTE: This is max file size
 export const MAX_SIZE = 1024 * 1024 * 3 // 3MB

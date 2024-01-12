@@ -375,9 +375,12 @@ model FilmReleaseInformation {
   filmId         String
   country        Country  @relation(fields: [countryCode], references: [code])
   countryCode    String
-  language       String?
+  language       Language @relation(fields: [languageId], references: [id])
+  languageId     String
   date           DateTime
+  // NOTE: I think I will keep this as a string not an ENUM as tehre are so many different classificationss per country
   classification String?
+  // TODO: This will be an ENUM at some point
   type           String?
   note           String?
   locked         Boolean? @default(false)
@@ -387,16 +390,16 @@ model FilmReleaseInformation {
 }
 
 model ProductionCompany {
-  id          String                      @id @unique @default(cuid())
-  name        String                      @unique
-  location    String?
-  country     Country?                    @relation(fields: [countryCode], references: [code])
-  countryCode String?
-  logo        String?                     @default("https://placehold.co/300x450?text=Image")
-  homepage    String?
-  films       FilmProductionInformation[]
-  createdAt   DateTime                    @default(now())
-  updatedAt   DateTime                    @updatedAt
+  id                        String                      @id @unique @default(cuid())
+  name                      String                      @unique
+  location                  String?
+  country                   Country?                    @relation(fields: [countryCode], references: [code])
+  countryCode               String?
+  logo                      String?                     @default("https://placehold.co/300x450?text=Image")
+  homepage                  String?
+  filmProductionInformation FilmProductionInformation[]
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
 }
 
 model Genre {
@@ -549,11 +552,12 @@ model Country {
 }
 
 model Language {
-  id         String    @id @unique @default(cuid())
-  name       String
-  nativeName String
-  countries  Country[]
-  films      Film[]
+  id                     String                   @id @unique @default(cuid())
+  name                   String
+  nativeName             String
+  countries              Country[]
+  films                  Film[]
+  filmReleaseInformation FilmReleaseInformation[]
 
   @@index([name])
 }

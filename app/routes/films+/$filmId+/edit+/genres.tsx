@@ -7,36 +7,32 @@ import { prisma } from '#app/utils/db.server.ts'
 import { invariantResponse } from '#app/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
-  await requireUserId(request)
+	await requireUserId(request)
 
-  const film = await prisma.film.findUnique({
-    where: {
-      id: params.filmId,
-    },
-    select: {
-      genres: true,
-    },
-  })
+	const film = await prisma.film.findUnique({
+		where: {
+			id: params.filmId,
+		},
+		select: {
+			genres: true,
+		},
+	})
 
-  invariantResponse(film, 'Not found', { status: 404 })
+	invariantResponse(film, 'Not found', { status: 404 })
 
-  const genres = film.genres.map(genre => ({
-    id: genre.id,
-    name: genre.name,
-    created: new Date(genre.createdAt),
-    updated: new Date(genre.updatedAt),
-  }))
+	const genres = film.genres.map(genre => ({
+		id: genre.id,
+		name: genre.name,
+		created: new Date(genre.createdAt),
+		updated: new Date(genre.updatedAt),
+	}))
 
-  return json({ genres })
+	return json({ genres })
 }
 
 export default function FilmEditGenresRoute() {
-  const { genres } = useLoaderData<typeof loader>()
+	const { genres } = useLoaderData<typeof loader>()
 
-  return (
-    <div className="container py-6">
-      {/* FIX: Dropdown resetting scroll */}
-      <GenreTable data={genres} columns={columns} />
-    </div>
-  )
+	// FIX: Dropdown resetting scroll
+	return <GenreTable data={genres} columns={columns} />
 }

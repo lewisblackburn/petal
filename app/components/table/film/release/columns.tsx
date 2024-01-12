@@ -1,9 +1,9 @@
-import { type Country, type FilmAlternateTitle } from '@prisma/client'
+import { type Country, type FilmReleaseInformation } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 
-export const columns: ColumnDef<Partial<FilmAlternateTitle & Country>>[] = [
+export const columns: ColumnDef<Partial<FilmReleaseInformation & Country>>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -32,40 +32,50 @@ export const columns: ColumnDef<Partial<FilmAlternateTitle & Country>>[] = [
 		enableHiding: false,
 	},
 	{
-		accessorKey: 'title',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Title" />
-		),
-		cell: ({ row }) => <div className="w-[200px]">{row.getValue('title')}</div>,
-	},
-	{
-		accessorKey: 'countryName',
+		accessorKey: 'Country',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Country" />
 		),
 		cell: ({ row }) => (
 			<div className="flex w-[200px] items-center space-x-2">
 				<div>{row.original.flag}</div>
-				<div>{row.getValue('countryName')}</div>
+				<div>{row.getValue('country')}</div>
 			</div>
 		),
 	},
 	{
-		accessorKey: 'created',
+		accessorKey: 'language',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="createdAt" />
+			<DataTableColumnHeader column={column} title="Language" />
 		),
-		cell: ({ row }) => (
-			<div className="w-[250px]">{row.getValue('created')}</div>
-		),
+		cell: ({ row }) => <div className="">{row.getValue('language')}</div>,
 	},
 	{
-		accessorKey: 'updated',
+		accessorKey: 'releaseDate',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="updatedAt" />
+			<DataTableColumnHeader column={column} title="Date" />
 		),
-		cell: ({ row }) => (
-			<div className="w-[250px]">{row.getValue('updated')}</div>
+		cell: ({ row }) => <div className="">{row.getValue('releaseDate')}</div>,
+	},
+	{
+		accessorKey: 'classification',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Classification" />
 		),
+		cell: ({ row }) => <div className="">{row.getValue('classification')}</div>,
+	},
+	{
+		accessorKey: 'type',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Type" />
+		),
+		cell: ({ row }) => <div className="">{row.getValue('type')}</div>,
+	},
+	{
+		accessorKey: 'note',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Note" />
+		),
+		cell: ({ row }) => <div className="">{row.getValue('note')}</div>,
 	},
 ]

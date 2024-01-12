@@ -40,10 +40,6 @@ export async function loader({ request, params }: DataFunctionArgs) {
 export default function FilmEditTaglinesRoute() {
 	const { taglines } = useLoaderData<typeof loader>()
 
-	return (
-		<div className="container py-6">
-			{/* FIX: Dropdown resetting scroll */}
-			<TaglineTable data={taglines} columns={columns} />
-		</div>
-	)
+	// FIX: Dropdown resetting scroll
+	return <TaglineTable data={taglines} columns={columns} />
 }

@@ -33,10 +33,6 @@ export async function loader({ request, params }: DataFunctionArgs) {
 export default function FilmEditPhotoRoute() {
 	const { photos } = useLoaderData<typeof loader>()
 
-	return (
-		<div className="container py-6">
-			{/* FIX: Dropdown resetting scroll */}
-			<PhotoTable data={photos} columns={columns} />
-		</div>
-	)
+	// FIX: Dropdown resetting scroll
+	return <PhotoTable data={photos} columns={columns} />
 }

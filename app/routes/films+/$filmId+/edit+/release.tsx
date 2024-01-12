@@ -1,0 +1,51 @@
+import { useLoaderData } from '@remix-run/react'
+import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { columns } from '#app/components/table/film/release/columns.tsx'
+import { ReleaseInformationTable } from '#app/components/table/film/release/data-table.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { invariantResponse } from '#app/utils/misc.tsx'
+
+export async function loader({ request, params }: DataFunctionArgs) {
+	await requireUserId(request)
+
+	const film = await prisma.film.findUnique({
+		where: {
+			id: params.filmId,
+		},
+		select: {
+			releaseInformation: {
+				select: {
+					id: true,
+					country: true,
+					language: true,
+					date: true,
+					classification: true,
+					type: true,
+					note: true,
+				},
+			},
+		},
+	})
+
+	invariantResponse(film, 'Not found', { status: 404 })
+
+	const releaseInformation = film.releaseInformation.map(release => ({
+		id: release.id,
+		country: release.country.name,
+		flag: release.country.flag,
+		releaseDate: new Date(release.date),
+		classification: release.classification,
+		type: release.type,
+		note: release.note,
+	}))
+
+	return json({ releaseInformation })
+}
+
+export default function FilmEditTaglinesRoute() {
+	const { releaseInformation } = useLoaderData<typeof loader>()
+
+	// FIX: Dropdown resetting scroll
+	return <ReleaseInformationTable data={releaseInformation} columns={columns} />
+}
