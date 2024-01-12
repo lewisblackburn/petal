@@ -218,13 +218,9 @@ model Film {
   instagram String?
   twitter   String?
 
-  imdbId     String?
-  wikiDataId String?
-  tmdbId     String?
-
-  freebaseId  String?
-  freebaseMid String?
-  tvrageId    String?
+  imdbID     String?
+  wikiDataID String?
+  tmdbID     String?
 
   locked    Boolean? @default(false)
   createdAt DateTime @default(now())
@@ -364,13 +360,13 @@ model FilmTagline {
 }
 
 model FilmProductionInformation {
-  id                  String            @id @unique @default(cuid())
-  film                Film              @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                  String              @id @unique @default(cuid())
+  film                Film                @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   filmId              String
-  company             ProductionCompany @relation(fields: [productionCompanyId], references: [id])
-  productionCompanyId String
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
+  productionCountries Country[]
+  productionCompanies ProductionCompany[]
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
 }
 
 model FilmReleaseInformation {
@@ -391,11 +387,16 @@ model FilmReleaseInformation {
 }
 
 model ProductionCompany {
-  id                        String                      @id @unique @default(cuid())
-  name                      String                      @unique
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime                    @updatedAt
-  FilmProductionInformation FilmProductionInformation[]
+  id          String                      @id @unique @default(cuid())
+  name        String                      @unique
+  location    String?
+  country     Country?                    @relation(fields: [countryCode], references: [code])
+  countryCode String?
+  logo        String?                     @default("https://placehold.co/300x450?text=Image")
+  homepage    String?
+  films       FilmProductionInformation[]
+  createdAt   DateTime                    @default(now())
+  updatedAt   DateTime                    @updatedAt
 }
 
 model Genre {
@@ -534,13 +535,14 @@ model Artist {
 }
 
 model Country {
-  code      String     @id @unique
-  flag      String
-  name      String     @unique
-  languages Language[]
-
-  filmAlternativeTitles  FilmAlternateTitle[]
-  filmReleaseInformation FilmReleaseInformation[]
+  code                      String                      @id @unique
+  flag                      String
+  name                      String                      @unique
+  languages                 Language[]
+  filmProductionInformation FilmProductionInformation[]
+  productionCompanies       ProductionCompany[]
+  filmAlternativeTitles     FilmAlternateTitle[]
+  filmReleaseInformation    FilmReleaseInformation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

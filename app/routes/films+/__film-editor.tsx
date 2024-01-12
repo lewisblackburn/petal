@@ -32,7 +32,7 @@ const FilmEditorSchema = z.object({
 	runtime: z.number().min(1).max(500).optional(),
 	releaseDate: z.date().optional(),
 	ageRating: z.string().optional(),
-	language: z.string().optional(),
+	language: z.any().optional(),
 	status: z.string().optional(),
 	budget: z.number().positive().optional(),
 	revenue: z.number().positive().optional(),
@@ -147,7 +147,8 @@ export function FilmEditor({
 			| 'status'
 			| 'budget'
 			| 'revenue'
-		> & { language: Language }
+		> &
+			Partial<{ language: Language | null }>
 	>
 }) {
 	const filmFetcher = useFetcher<typeof action>()
