@@ -3,6 +3,7 @@ import React, { useId, useRef } from 'react'
 import { cn } from '#app/utils/misc.tsx'
 import { Image } from './image.tsx'
 import { Spinner } from './spinner.tsx'
+import { Badge } from './ui/badge.tsx'
 import { Button } from './ui/button.tsx'
 import { Checkbox, type CheckboxProps } from './ui/checkbox.tsx'
 import {
@@ -33,6 +34,11 @@ import {
 import { Textarea } from './ui/textarea.tsx'
 
 export type ListOfErrors = Array<string | null | undefined> | null | undefined
+
+export type OptionType = {
+	label: string
+	value: string
+}
 
 export function ErrorList({
 	id,
@@ -185,7 +191,7 @@ export function SelectField({
 	buttonProps: SelectProps
 	errors?: ListOfErrors
 	className?: string
-	options: Array<{ label: string; value: string }>
+	options: OptionType[]
 }) {
 	const [value, setValue] = React.useState(buttonProps.defaultValue?.toString())
 	const [open, setOpen] = React.useState(false)
@@ -255,7 +261,7 @@ export function FilterSelectField({
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
 	buttonProps: PopoverProps
-	options: Array<{ label: string; value: string }>
+	options: OptionType[]
 	errors?: ListOfErrors
 	className?: string
 }) {
@@ -292,11 +298,6 @@ export function FilterSelectField({
 					aria-invalid={errorId ? true : undefined}
 					aria-describedby={errorId}
 					{...props}
-					onChange={state => {
-						console.log(state)
-						control.change(state.currentTarget.value)
-						buttonProps.onChange?.(state)
-					}}
 					onFocus={event => {
 						control.focus()
 						buttonProps.onFocus?.(event)
@@ -530,6 +531,154 @@ export function SearchSelectField({
 										</CommandItem>
 									),
 								)}
+							</CommandGroup>
+						</CommandList>
+					</Command>
+				</PopoverContent>
+			</Popover>
+			<div className="px-4 pb-3 pt-1">
+				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+			</div>
+		</div>
+	)
+}
+
+export function MultiSelectField({
+	labelProps,
+	buttonProps,
+	options,
+	errors,
+	className,
+}: {
+	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
+	buttonProps: PopoverProps
+	options: OptionType[]
+	errors?: ListOfErrors
+	className?: string
+}) {
+	const [open, setOpen] = React.useState(false)
+	const [selected, setSelected] = React.useState<string[]>([])
+
+	const fallbackId = useId()
+	const buttonRef = useRef<HTMLButtonElement>(null)
+	const control = useInputEvent({
+		ref: () =>
+			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
+		onFocus: () => buttonRef.current?.focus(),
+		onBlur: () => buttonRef.current?.blur(),
+		onReset: () =>
+			setSelected(buttonProps.defaultValue?.toString().split(',') ?? []),
+	})
+	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
+	const errorId = errors?.length ? `${id}-error` : undefined
+
+	const { name, ...props } = buttonProps
+
+	const handleUnselect = (item: string) => {
+		setSelected(selected.filter(i => i !== item))
+	}
+
+	return (
+		<div className={cn('flex flex-col space-y-2', className)}>
+			<Label htmlFor={id} {...labelProps} />
+			<Popover open={open} onOpenChange={setOpen} {...props}>
+				<PopoverTrigger
+					id={id}
+					ref={buttonRef}
+					aria-invalid={errorId ? true : undefined}
+					aria-describedby={errorId}
+					onFocus={event => {
+						control.focus()
+						buttonProps.onFocus?.(event)
+					}}
+					onBlur={event => {
+						control.blur()
+						buttonProps.onBlur?.(event)
+					}}
+					type="button"
+					asChild
+				>
+					<Button
+						variant="outline"
+						role="combobox"
+						aria-expanded={open}
+						className="min-w-[300px] justify-between whitespace-nowrap aria-[invalid]:border-input-invalid"
+					>
+						{selected.length < 1 &&
+							`Select ${labelProps.children?.toString().toLowerCase()}...`}
+						<div className="flex flex-wrap gap-1">
+							{selected.map(item => (
+								<Badge
+									variant="secondary"
+									key={item}
+									className=""
+									onClick={() => handleUnselect(item)}
+								>
+									{options.find(option => option.value === item)?.label ??
+										`Select ${labelProps.children
+											?.toString()
+											.toLowerCase()}...`}
+									<button
+										className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+										onKeyDown={e => {
+											if (e.key === 'Enter') {
+												handleUnselect(item)
+											}
+										}}
+										onMouseDown={e => {
+											e.preventDefault()
+											e.stopPropagation()
+										}}
+										onClick={() => handleUnselect(item)}
+									>
+										<Icon
+											name="cross-1"
+											className="h-3 w-3 text-muted-foreground hover:text-foreground"
+										/>
+									</button>
+								</Badge>
+							))}
+						</div>
+						<Icon name="caret-sort" className="h-4 w-4 shrink-0 opacity-50" />
+					</Button>
+				</PopoverTrigger>
+				<PopoverContent className="w-full p-0" align="start">
+					<Command>
+						<CommandInput
+							placeholder={`Search ${labelProps.children
+								?.toString()
+								.toLowerCase()}...`}
+							className="h-9"
+						/>
+						<CommandList>
+							<CommandEmpty>
+								No {labelProps.children?.toString().toLowerCase()} found.
+							</CommandEmpty>
+							<CommandGroup>
+								{options.map(option => (
+									<CommandItem
+										key={option.value}
+										onSelect={() => {
+											setSelected(
+												selected.includes(option.value)
+													? selected.filter(item => item !== option.value)
+													: [...selected, option.value],
+											)
+											setOpen(true)
+										}}
+									>
+										<Icon
+											name="check"
+											className={cn(
+												'mr-2 h-4 w-4',
+												selected.includes(option.value)
+													? 'opacity-100'
+													: 'opacity-0',
+											)}
+										/>
+										{option.label}
+									</CommandItem>
+								))}
 							</CommandGroup>
 						</CommandList>
 					</Command>

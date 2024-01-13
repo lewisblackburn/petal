@@ -7,48 +7,48 @@ import { prisma } from '#app/utils/db.server.ts'
 import { invariantResponse } from '#app/utils/misc.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
-	await requireUserId(request)
+  await requireUserId(request)
 
-	const film = await prisma.film.findUnique({
-		where: {
-			id: params.filmId,
-		},
-		select: {
-			releaseInformation: {
-				select: {
-					id: true,
-					country: true,
-					language: true,
-					date: true,
-					classification: true,
-					type: true,
-					note: true,
-				},
-			},
-		},
-	})
+  const film = await prisma.film.findUnique({
+    where: {
+      id: params.filmId,
+    },
+    select: {
+      releaseInformation: {
+        select: {
+          id: true,
+          country: true,
+          language: true,
+          date: true,
+          classification: true,
+          type: true,
+          note: true,
+        },
+      },
+    },
+  })
 
-	invariantResponse(film, 'Not found', { status: 404 })
+  invariantResponse(film, 'Not found', { status: 404 })
 
-	const releaseInformation = film.releaseInformation.map(release => ({
-		id: release.id,
-		flag: release.country.flag,
-		country: release.country.name,
-		// NOTE: This is included for the serach via country.
-		countryCode: release.country.code,
-		language: release.language.name,
-		releaseDate: new Date(release.date),
-		classification: release.classification,
-		type: release.type,
-		note: release.note,
-	}))
+  const releaseInformation = film.releaseInformation.map(release => ({
+    id: release.id,
+    flag: release.country.flag,
+    country: release.country.name,
+    // NOTE: This is included for the dropdown serach via country.
+    countryCode: release.country.code,
+    language: release.language.name,
+    releaseDate: new Date(release.date),
+    classification: release.classification,
+    type: release.type,
+    note: release.note,
+  }))
 
-	return json({ releaseInformation })
+  return json({ releaseInformation })
 }
 
 export default function FilmEditTaglinesRoute() {
-	const { releaseInformation } = useLoaderData<typeof loader>()
+  const { releaseInformation } = useLoaderData<typeof loader>()
 
-	// FIX: Dropdown resetting scroll
-	return <ReleaseInformationTable data={releaseInformation} columns={columns} />
+  // FIX: Dropdown resetting scroll
+  return <ReleaseInformationTable data={releaseInformation} columns={columns} />
 }
