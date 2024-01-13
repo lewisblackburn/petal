@@ -2,9 +2,11 @@ import { type Table } from '@tanstack/react-table'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Input } from '#app/components/ui/input.tsx'
+import { COUNTRIES } from '#app/utils/constants.ts'
+import { DataTableFacetedFilter } from '../../data-table-faceted-filter.tsx'
 import { DataTableViewOptions } from '../../data-table-view-options.tsx'
-import { DataTableAddAlternativeTitle } from './data-table-add-release-information.tsx'
-import { DataTableDeleteAlternativeTitles } from './data-table-delete-release-information.tsx'
+import { DataTableAddReleaseInformation } from './data-table-add-release-information.tsx'
+import { DataTableDeleteReleaseInformation } from './data-table-delete-release-information.tsx'
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>
@@ -24,6 +26,16 @@ export function DataTableToolbar<TData>({
 					onChange={event => table.setGlobalFilter(event.target.value)}
 					className="h-8 w-[150px] lg:w-[250px]"
 				/>
+				{/* NOTE: I have decided to keep countries as both in the database
+				and in a static array as it allows me to search statically
+				and search for models via country if needed as well*/}
+				{table.getColumn('country') && (
+					<DataTableFacetedFilter
+						column={table.getColumn('country')}
+						title="Country"
+						options={COUNTRIES}
+					/>
+				)}
 				{isFiltered && (
 					<Button
 						variant="ghost"
@@ -37,8 +49,8 @@ export function DataTableToolbar<TData>({
 			</div>
 			<div className="flex flex-1 items-center space-x-2">
 				<DataTableViewOptions table={table} />
-				<DataTableAddAlternativeTitle />
-				<DataTableDeleteAlternativeTitles table={table} />
+				<DataTableAddReleaseInformation />
+				<DataTableDeleteReleaseInformation table={table} />
 			</div>
 		</div>
 	)

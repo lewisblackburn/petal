@@ -5,11 +5,11 @@ import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
-export const AddFilmAlternativeTitleSchema = z.object({
+export const AddFilmReleaseInformationSchema = z.object({
 	filmId: z.string().nonempty(),
 	code: z.string().nonempty({ message: 'You must select a country' }),
 	languageId: z.string().nonempty({ message: 'You must select a country' }),
-	date: z.string(),
+	date: z.date(),
 	classification: z.string(),
 	// TODO: This should be the film release types enum
 	type: z.string(),
@@ -20,7 +20,7 @@ export async function action({ request }: DataFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
 	const submission = parse(formData, {
-		schema: AddFilmAlternativeTitleSchema,
+		schema: AddFilmReleaseInformationSchema,
 	})
 	if (!submission.value) {
 		return json(

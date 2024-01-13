@@ -32,8 +32,11 @@ export async function loader({ request, params }: DataFunctionArgs) {
 
 	const releaseInformation = film.releaseInformation.map(release => ({
 		id: release.id,
-		country: release.country.name,
 		flag: release.country.flag,
+		country: release.country.name,
+		// NOTE: This is included for the serach via country.
+		countryCode: release.country.code,
+		language: release.language.name,
 		releaseDate: new Date(release.date),
 		classification: release.classification,
 		type: release.type,

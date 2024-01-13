@@ -1,9 +1,18 @@
-import { type Country, type FilmReleaseInformation } from '@prisma/client'
+import { type FilmReleaseInformation } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 
-export const columns: ColumnDef<Partial<FilmReleaseInformation & Country>>[] = [
+export const columns: ColumnDef<
+	Partial<
+		FilmReleaseInformation & {
+			flag: string
+			country: string
+			language: string
+			releaseDate: string
+		}
+	>
+>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -32,16 +41,19 @@ export const columns: ColumnDef<Partial<FilmReleaseInformation & Country>>[] = [
 		enableHiding: false,
 	},
 	{
-		accessorKey: 'Country',
+		accessorKey: 'country',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Country" />
 		),
 		cell: ({ row }) => (
-			<div className="flex w-[200px] items-center space-x-2">
-				<div>{row.original.flag}</div>
-				<div>{row.getValue('country')}</div>
+			<div className="">
+				{row.original.flag} {row.getValue('country')}
 			</div>
 		),
+		filterFn: (row, id, value) => {
+			console.log(row.original)
+			return value.includes(row.original.countryCode)
+		},
 	},
 	{
 		accessorKey: 'language',
