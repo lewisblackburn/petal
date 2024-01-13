@@ -66,7 +66,9 @@ export async function action({ request }: DataFunctionArgs) {
 		where: { id: submission.value.id },
 		data: {
 			productionCountries: {
-				connect: [...productionCountriesJSON],
+				connect: productionCountriesJSON.map((code: any) => ({
+					code,
+				})),
 			},
 		},
 	})
