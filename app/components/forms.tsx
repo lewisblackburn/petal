@@ -558,6 +558,7 @@ export function MultiSelectField({
 }) {
 	const [open, setOpen] = React.useState(false)
 	const [selected, setSelected] = React.useState<string[]>(
+		// @ts-expect-error TODO: fix type issue
 		buttonProps.defaultValue ?? [],
 	)
 
@@ -568,6 +569,7 @@ export function MultiSelectField({
 			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
 		onFocus: () => buttonRef.current?.focus(),
 		onBlur: () => buttonRef.current?.blur(),
+		// @ts-expect-error TODO: fix type issue
 		onReset: () => setSelected(buttonProps.defaultValue ?? []),
 	})
 	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
