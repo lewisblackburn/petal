@@ -66,7 +66,7 @@ export async function action({ request }: DataFunctionArgs) {
 		where: { id: submission.value.id },
 		data: {
 			productionCountries: {
-				connect: productionCountriesJSON.map((code: any) => ({
+				set: productionCountriesJSON.map((code: any) => ({
 					code,
 				})),
 			},
@@ -142,7 +142,9 @@ export default function FilmEditProductionInformationRoute() {
 			return parse(formData, { schema: FilmProductionCountriesSchema })
 		},
 		defaultValue: {
-			productionCountries: data.productionCountries,
+			productionCountries: data.productionCountries.map(
+				country => country.countryCode,
+			),
 		},
 	})
 

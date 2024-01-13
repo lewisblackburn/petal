@@ -557,7 +557,9 @@ export function MultiSelectField({
 	className?: string
 }) {
 	const [open, setOpen] = React.useState(false)
-	const [selected, setSelected] = React.useState<string[]>([])
+	const [selected, setSelected] = React.useState<string[]>(
+		buttonProps.defaultValue ?? [],
+	)
 
 	const fallbackId = useId()
 	const buttonRef = useRef<HTMLButtonElement>(null)
@@ -566,8 +568,7 @@ export function MultiSelectField({
 			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
 		onFocus: () => buttonRef.current?.focus(),
 		onBlur: () => buttonRef.current?.blur(),
-		onReset: () =>
-			setSelected(buttonProps.defaultValue?.toString().split(',') ?? []),
+		onReset: () => setSelected(buttonProps.defaultValue ?? []),
 	})
 	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
 	const errorId = errors?.length ? `${id}-error` : undefined
@@ -577,6 +578,8 @@ export function MultiSelectField({
 	const handleUnselect = (item: string) => {
 		setSelected(selected.filter(i => i !== item))
 	}
+
+	console.log(selected)
 
 	return (
 		<div className={cn('flex flex-col space-y-2', className)}>
