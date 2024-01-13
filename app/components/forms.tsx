@@ -580,6 +580,13 @@ export function MultiSelectField({
 
 	return (
 		<div className={cn('flex flex-col space-y-2', className)}>
+			<input
+				name={buttonProps.name}
+				// Hack as readOnly prevents errors from being displayed
+				onChange={() => {}}
+				value={JSON.stringify(selected)}
+				className="hidden"
+			/>
 			<Label htmlFor={id} {...labelProps} />
 			<Popover open={open} onOpenChange={setOpen} {...props}>
 				<PopoverTrigger

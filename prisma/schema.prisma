@@ -232,19 +232,20 @@ model Film {
   trailer  String? @default("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
   tagline  String? @default("")
 
-  cast                  CastMember[]
-  crew                  CrewMember[]
-  photos                FilmPhoto[]
-  videos                FilmVideo[]
-  taglines              FilmTagline[]
-  genres                Genre[]                     @relation("FilmToGenre")
-  keywords              Keyword[]                   @relation("FilmToKeyword")
-  ratings               FilmRating[]
-  reviews               FilmReview[]
-  favourited            FilmFavourite[]
-  alternativeTitles     FilmAlternateTitle[]
-  releaseInformation    FilmReleaseInformation[]
-  productionInformation FilmProductionInformation[]
+  cast                CastMember[]
+  crew                CrewMember[]
+  photos              FilmPhoto[]
+  videos              FilmVideo[]
+  taglines            FilmTagline[]
+  genres              Genre[]                  @relation("FilmToGenre")
+  keywords            Keyword[]                @relation("FilmToKeyword")
+  ratings             FilmRating[]
+  reviews             FilmReview[]
+  favourited          FilmFavourite[]
+  alternativeTitles   FilmAlternateTitle[]
+  releaseInformation  FilmReleaseInformation[]
+  productionCountries Country[]
+  productionCompanies ProductionCompany[]
 }
 
 model CastMember {
@@ -359,16 +360,6 @@ model FilmTagline {
   updatedAt DateTime @updatedAt
 }
 
-model FilmProductionInformation {
-  id                  String              @id @unique @default(cuid())
-  film                Film                @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  filmId              String
-  productionCountries Country[]
-  productionCompanies ProductionCompany[]
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-}
-
 model FilmReleaseInformation {
   id             String   @id @unique @default(cuid())
   film           Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -390,16 +381,16 @@ model FilmReleaseInformation {
 }
 
 model ProductionCompany {
-  id                        String                      @id @unique @default(cuid())
-  name                      String                      @unique
-  location                  String?
-  country                   Country?                    @relation(fields: [countryCode], references: [code])
-  countryCode               String?
-  logo                      String?                     @default("https://placehold.co/300x450?text=Image")
-  homepage                  String?
-  filmProductionInformation FilmProductionInformation[]
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime                    @updatedAt
+  id          String   @id @unique @default(cuid())
+  name        String   @unique
+  location    String?
+  country     Country? @relation(fields: [countryCode], references: [code])
+  countryCode String?
+  logo        String?  @default("https://placehold.co/300x450?text=Image")
+  homepage    String?
+  films       Film[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Genre {
@@ -538,14 +529,14 @@ model Artist {
 }
 
 model Country {
-  code                      String                      @id @unique
-  flag                      String
-  name                      String                      @unique
-  languages                 Language[]
-  filmProductionInformation FilmProductionInformation[]
-  productionCompanies       ProductionCompany[]
-  filmAlternativeTitles     FilmAlternateTitle[]
-  filmReleaseInformation    FilmReleaseInformation[]
+  code                   String                   @id @unique
+  flag                   String
+  name                   String                   @unique
+  languages              Language[]
+  films                  Film[]
+  productionCompanies    ProductionCompany[]
+  filmAlternativeTitles  FilmAlternateTitle[]
+  filmReleaseInformation FilmReleaseInformation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
