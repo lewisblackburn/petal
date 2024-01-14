@@ -4,6 +4,8 @@ import { Form, useFetcher, useLoaderData } from '@remix-run/react'
 import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { ErrorList, MultiSelectField } from '#app/components/forms.tsx'
+import { columns } from '#app/components/table/film/productionCompanies/columns.tsx'
+import { ProductionCompaniesTable } from '#app/components/table/film/productionCompanies/data-table.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
@@ -111,21 +113,15 @@ export async function loader({ request, params }: DataFunctionArgs) {
 
 	invariantResponse(film, 'Not found', { status: 404 })
 
-	const productionCountries = film.productionCountries.map(country => ({
-		countryCode: country.code,
-		name: country.name,
-		flag: country.flag,
-	}))
-
 	const productionCompanies = film.productionCompanies.map(company => ({
 		id: company.id,
-		name: company.name,
+		company: company.name,
 		logo: company.logo,
 		created: new Date(company.createdAt),
 		updated: new Date(company.updatedAt),
 	}))
 
-	return json({ film, productionCountries, productionCompanies })
+	return json({ film, productionCompanies })
 }
 
 export default function FilmEditProductionInformationRoute() {
@@ -142,49 +138,55 @@ export default function FilmEditProductionInformationRoute() {
 			return parse(formData, { schema: FilmProductionCountriesSchema })
 		},
 		defaultValue: {
-			productionCountries: data.productionCountries.map(
-				country => country.countryCode,
+			productionCountries: data.film.productionCountries.map(
+				country => country.code,
 			),
 		},
 	})
 
 	return (
-		<Form
-			method="post"
-			className="flex h-full flex-col gap-y-4"
-			{...form.props}
-		>
-			{data.film ? (
-				<input type="hidden" name="id" value={data.film.id} />
-			) : null}
-			<div className="flex flex-col gap-1">
-				<MultiSelectField
-					labelProps={{
-						htmlFor: fields.productionCountries.id,
-						children: 'Production Countries',
-						autoFocus: true,
-					}}
-					buttonProps={{
-						...conform.input(fields.productionCountries, { type: 'text' }),
-					}}
-					options={COUNTRIES}
-					errors={fields.productionCountries.errors}
-				/>
-			</div>
-			<ErrorList id={form.errorId} errors={form.errors} />
-			<div className="flex justify-end gap-2">
-				<Button form={form.id} variant="destructive" type="reset">
-					Reset
-				</Button>
-				<StatusButton
-					form={form.id}
-					type="submit"
-					disabled={isPending}
-					status={isPending ? 'pending' : 'idle'}
-				>
-					Submit
-				</StatusButton>
-			</div>
-		</Form>
+		<div className="flex flex-col gap-10">
+			<Form
+				method="post"
+				className="flex h-full flex-col gap-y-4"
+				{...form.props}
+			>
+				{data.film ? (
+					<input type="hidden" name="id" value={data.film.id} />
+				) : null}
+				<div className="flex flex-col gap-1">
+					<MultiSelectField
+						labelProps={{
+							htmlFor: fields.productionCountries.id,
+							children: 'Production Countries',
+							autoFocus: true,
+						}}
+						buttonProps={{
+							...conform.input(fields.productionCountries, { type: 'text' }),
+						}}
+						options={COUNTRIES}
+						errors={fields.productionCountries.errors}
+					/>
+				</div>
+				<ErrorList id={form.errorId} errors={form.errors} />
+				<div className="flex justify-end gap-2">
+					<Button form={form.id} variant="destructive" type="reset">
+						Reset
+					</Button>
+					<StatusButton
+						form={form.id}
+						type="submit"
+						disabled={isPending}
+						status={isPending ? 'pending' : 'idle'}
+					>
+						Submit
+					</StatusButton>
+				</div>
+			</Form>
+			<ProductionCompaniesTable
+				data={data.productionCompanies}
+				columns={columns}
+			/>
+		</div>
 	)
 }

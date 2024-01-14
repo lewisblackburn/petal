@@ -434,7 +434,6 @@ export function SearchSelectField({
 					aria-describedby={errorId}
 					{...props}
 					onChange={state => {
-						console.log(state)
 						control.change(state.currentTarget.value)
 						buttonProps.onChange?.(state)
 					}}
@@ -580,8 +579,6 @@ export function MultiSelectField({
 	const handleUnselect = (item: string) => {
 		setSelected(selected.filter(i => i !== item))
 	}
-
-	console.log(selected)
 
 	return (
 		<div className={cn('flex flex-col space-y-2', className)}>

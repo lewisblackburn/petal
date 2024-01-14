@@ -51,7 +51,6 @@ export const columns: ColumnDef<
 			</div>
 		),
 		filterFn: (row, id, value) => {
-			console.log(row.original)
 			return value.includes(row.original.countryCode)
 		},
 	},
