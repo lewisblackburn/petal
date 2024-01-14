@@ -1,9 +1,9 @@
+import { remember } from '@epic-web/remember'
 import { PrismaClient } from '@prisma/client'
 import chalk from 'chalk'
-import { results } from './middleware.server.ts'
-import { singleton } from './singleton.server.ts'
+import { results } from './middleware.server'
 
-const prisma = singleton('prisma', () => {
+export const prisma = remember('prisma', () => {
 	// NOTE: if you change anything in this function you'll need to restart
 	// the dev server to see your changes.
 
@@ -23,12 +23,12 @@ const prisma = singleton('prisma', () => {
 			e.duration < logThreshold * 1.1
 				? 'green'
 				: e.duration < logThreshold * 1.2
-				? 'blue'
-				: e.duration < logThreshold * 1.3
-				? 'yellow'
-				: e.duration < logThreshold * 1.4
-				? 'redBright'
-				: 'red'
+				  ? 'blue'
+				  : e.duration < logThreshold * 1.3
+				    ? 'yellow'
+				    : e.duration < logThreshold * 1.4
+				      ? 'redBright'
+				      : 'red'
 		const dur = chalk[color](`${e.duration}ms`)
 		console.info(`prisma:query - ${dur} - ${e.query}`)
 	})
@@ -36,5 +36,3 @@ const prisma = singleton('prisma', () => {
 	client.$connect()
 	return client
 }).$extends(results)
-
-export { prisma }

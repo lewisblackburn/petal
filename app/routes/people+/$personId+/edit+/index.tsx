@@ -2,8 +2,8 @@ import { json, type DataFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { invariantResponse } from '#app/utils/misc.tsx'
 import { PersonEditor, action } from '../../__person-editor.tsx'
+import { invariantResponse } from '@epic-web/invariant'
 
 export { action }
 

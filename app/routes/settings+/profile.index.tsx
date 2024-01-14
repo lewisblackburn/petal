@@ -1,29 +1,38 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
+import { invariantResponse } from '@epic-web/invariant'
+import { type SEOHandle } from '@nasa-gcn/remix-seo'
+import {
+	json,
+	type LoaderFunctionArgs,
+	type ActionFunctionArgs,
+} from '@remix-run/node'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId, sessionKey } from '#app/utils/auth.server.ts'
+import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import {
-	getUserImgSrc,
-	invariantResponse,
-	useDoubleCheck,
-} from '#app/utils/misc.tsx'
-import { sessionStorage } from '#app/utils/session.server.ts'
+import { getUserImgSrc, useDoubleCheck } from '#app/utils/misc.tsx'
+import { authSessionStorage } from '#app/utils/session.server.ts'
+import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { NameSchema, UsernameSchema } from '#app/utils/user-validation.ts'
 import { twoFAVerificationType } from './profile.two-factor.tsx'
+
+export const handle: SEOHandle = {
+	getSitemapEntries: () => null,
+}
 
 const ProfileFormSchema = z.object({
 	name: NameSchema.optional(),
 	username: UsernameSchema,
 })
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const userId = await requireUserId(request)
 	const user = await prisma.user.findUniqueOrThrow({
 		where: { id: userId },
@@ -73,9 +82,10 @@ const profileUpdateActionIntent = 'update-profile'
 const signOutOfSessionsActionIntent = 'sign-out-of-sessions'
 const deleteDataActionIntent = 'delete-data'
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
+	await validateCSRF(formData, request.headers)
 	const intent = formData.get('intent')
 	switch (intent) {
 		case profileUpdateActionIntent: {
@@ -123,7 +133,7 @@ export default function EditUserProfile() {
 			</div>
 			<UpdateProfile />
 
-			<div className="col-span-6 mb-12 mt-6 h-1 border-b-[1.5px]" />
+			<div className="col-span-6 my-6 h-1 border-b-[1.5px] border-foreground" />
 			<div className="col-span-full flex flex-col gap-6">
 				<div>
 					<Link to="change-email">
@@ -180,7 +190,7 @@ async function profileUpdateAction({ userId, formData }: ProfileActionArgs) {
 			if (existingUsername && existingUsername.id !== userId) {
 				ctx.addIssue({
 					path: ['username'],
-					code: 'custom',
+					code: z.ZodIssueCode.custom,
 					message: 'A user already exists with this username',
 				})
 			}
@@ -228,6 +238,7 @@ function UpdateProfile() {
 
 	return (
 		<fetcher.Form method="POST" {...form.props}>
+			<AuthenticityTokenInput />
 			<div className="grid grid-cols-6 gap-x-10">
 				<Field
 					className="col-span-3"
@@ -268,10 +279,10 @@ function UpdateProfile() {
 }
 
 async function signOutOfSessionsAction({ request, userId }: ProfileActionArgs) {
-	const cookieSession = await sessionStorage.getSession(
+	const authSession = await authSessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
-	const sessionId = cookieSession.get(sessionKey)
+	const sessionId = authSession.get(sessionKey)
 	invariantResponse(
 		sessionId,
 		'You must be authenticated to sign out of other sessions',
@@ -295,6 +306,7 @@ function SignOutOfSessions() {
 		<div>
 			{otherSessionsCount ? (
 				<fetcher.Form method="POST">
+					<AuthenticityTokenInput />
 					<StatusButton
 						{...dc.getButtonProps({
 							type: 'submit',
@@ -324,7 +336,11 @@ function SignOutOfSessions() {
 
 async function deleteDataAction({ userId }: ProfileActionArgs) {
 	await prisma.user.delete({ where: { id: userId } })
-	return redirect('/')
+	return redirectWithToast('/', {
+		type: 'success',
+		title: 'Data Deleted',
+		description: 'All of your data has been deleted',
+	})
 }
 
 function DeleteData() {
@@ -334,6 +350,7 @@ function DeleteData() {
 	return (
 		<div>
 			<fetcher.Form method="POST">
+				<AuthenticityTokenInput />
 				<StatusButton
 					{...dc.getButtonProps({
 						type: 'submit',

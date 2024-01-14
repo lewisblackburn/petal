@@ -1,14 +1,20 @@
 import { useForm } from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import { parse } from '@conform-to/zod'
+import { invariantResponse } from '@epic-web/invariant'
+import {
+	json,
+	type LoaderFunctionArgs,
+	type ActionFunctionArgs,
+} from '@remix-run/node'
 import {
 	Form,
 	Link,
 	useActionData,
 	useLoaderData,
-	type V2_MetaFunction,
+	type MetaFunction,
 } from '@remix-run/react'
 import { formatDistanceToNow } from 'date-fns'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { floatingToolbarClassName } from '#app/components/floating-toolbar.tsx'
@@ -17,12 +23,9 @@ import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
+import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import {
-	getNoteImgSrc,
-	invariantResponse,
-	useIsPending,
-} from '#app/utils/misc.tsx'
+import { getNoteImgSrc, useIsPending } from '#app/utils/misc.tsx'
 import {
 	requireUserWithPermission,
 	userHasPermission,
@@ -31,7 +34,7 @@ import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { useOptionalUser } from '#app/utils/user.ts'
 import { type loader as notesLoader } from './notes.tsx'
 
-export async function loader({ params }: DataFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
 	const note = await prisma.note.findUnique({
 		where: { id: params.noteId },
 		select: {
@@ -65,9 +68,10 @@ const DeleteFormSchema = z.object({
 	noteId: z.string(),
 })
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
+	await validateCSRF(formData, request.headers)
 	const submission = parse(formData, {
 		schema: DeleteFormSchema,
 	})
@@ -164,14 +168,11 @@ export function DeleteNote({ id }: { id: string }) {
 	const [form] = useForm({
 		id: 'delete-note',
 		lastSubmission: actionData?.submission,
-		constraint: getFieldsetConstraint(DeleteFormSchema),
-		onValidate({ formData }) {
-			return parse(formData, { schema: DeleteFormSchema })
-		},
 	})
 
 	return (
-		<Form method="post" {...form.props}>
+		<Form method="POST" {...form.props}>
+			<AuthenticityTokenInput />
 			<input type="hidden" name="noteId" value={id} />
 			<StatusButton
 				type="submit"
@@ -191,7 +192,7 @@ export function DeleteNote({ id }: { id: string }) {
 	)
 }
 
-export const meta: V2_MetaFunction<
+export const meta: MetaFunction<
 	typeof loader,
 	{ 'routes/users+/$username_+/notes': typeof notesLoader }
 > = ({ data, params, matches }) => {

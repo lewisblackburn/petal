@@ -5,14 +5,8 @@ import { handlers as githubHandlers } from './github.ts'
 import { handlers as resendHandlers } from './resend.ts'
 
 const miscHandlers = [
-	process.env.REMIX_DEV_HTTP_ORIGIN
-		? http.post(`${process.env.REMIX_DEV_HTTP_ORIGIN}ping`, passthrough)
-		: null,
-	process.env.STORAGE_BUCKET
-		? http.post(
-				`https://petal-image-host.s3.eu-west-2.amazonaws.com/:route/:filmId/poster/:language/:imageName`,
-				passthrough,
-		  )
+	process.env.REMIX_DEV_ORIGIN
+		? http.post(`${process.env.REMIX_DEV_ORIGIN}ping`, passthrough)
 		: null,
 ].filter(Boolean)
 
@@ -22,18 +16,7 @@ export const server = setupServer(
 	...githubHandlers,
 )
 
-server.listen({
-	onUnhandledRequest(request, print) {
-		if (
-			request.url.includes(process.cwd()) ||
-			request.url.includes('node_modules') ||
-			request.url.startsWith('node:')
-		) {
-			return
-		}
-		print.warning()
-	},
-})
+server.listen({ onUnhandledRequest: 'warn' })
 
 if (process.env.NODE_ENV !== 'test') {
 	console.info('🔶 Mock server installed')

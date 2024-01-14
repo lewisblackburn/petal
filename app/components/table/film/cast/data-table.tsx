@@ -27,7 +27,6 @@ import {
 	getSortedRowModel,
 } from '@tanstack/react-table'
 import React, { useState } from 'react'
-import { EpicToaster } from '#app/components/toaster.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import {
 	Table,
@@ -140,14 +139,14 @@ export function CastTable<TData, TValue>({
 		const dataCopyIds = dataCopy.map((item: any) => item.id)
 		if (sortedRows.join() !== dataCopyIds.join()) {
 			// FIX: This isn't showing the toast
-			EpicToaster({
-				toast: {
-					id: 'cast-member-reorder-error',
-					title: 'Error',
-					description: 'You must remove all sorting before reordering.',
-					type: 'error',
-				},
-			})
+			// EpicToaster({
+			// 	toast: {
+			// 		id: 'cast-member-reorder-error',
+			// 		title: 'Error',
+			// 		description: 'You must remove all sorting before reordering.',
+			// 		type: 'error',
+			// 	},
+			// })
 
 			return false
 		}

@@ -1,7 +1,6 @@
 import { parse } from '@conform-to/zod'
 import {
 	json,
-	type DataFunctionArgs,
 	unstable_parseMultipartFormData,
 } from '@remix-run/server-runtime'
 import { z } from 'zod'
@@ -10,6 +9,7 @@ import { MAX_SIZE } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { s3UploadHandler } from '#app/utils/s3.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
+import { ActionFunctionArgs } from '@remix-run/node'
 
 export const AddPersonImageSchema = z.object({
 	personId: z.string(),
@@ -18,7 +18,7 @@ export const AddPersonImageSchema = z.object({
 	}, 'Image size must be less than 3MB'),
 })
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	await requireUserId(request)
 	const clonedRequest = request.clone()
 	const formData = await request.formData()
@@ -52,22 +52,20 @@ export async function action({ request }: DataFunctionArgs) {
 	await prisma.person.update({
 		where: { id: personId },
 		data: {
-			image: parsedImage.payload.image,
+			image: parsedImage.payload.image as string,
 			photos: {
 				create: {
-					image: parsedImage.payload.image,
+					image: parsedImage.payload.image as string,
 				},
 			},
 		},
 	})
 
-	return json(
-		{ success: true },
-		{
-			headers: await createToastHeaders({
-				description: 'Added Person Photo',
-				type: 'success',
-			}),
-		},
-	)
+	return json({ status: 'success', submission } as const, {
+		headers: await createToastHeaders({
+			description: 'Added Person Photo',
+			type: 'success',
+		}),
+	})
 }
+export { action as AddPersonPhotoAction }

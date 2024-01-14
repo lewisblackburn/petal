@@ -1,13 +1,8 @@
 import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
-import { useParams } from '@remix-run/react'
+import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { useFetcher } from 'react-router-dom'
-import {
-	CheckboxField,
-	ErrorList,
-	FilterSelectField,
-} from '#app/components/forms.tsx'
+import { CheckboxField, ErrorList, FilterSelectField  } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -19,13 +14,13 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { AddFilmCrewMemberSchema } from '#app/routes/resources+/film+/add-crew-member.ts'
 import { PersonSearch } from '#app/routes/resources+/people.tsx'
-import { CREW_ROLES, getAllJobs } from '#app/utils/constants.ts'
+import { AddFilmCrewMemberAction, AddFilmCrewMemberSchema } from '#app/routes/resources+/film+/add-crew-member'
+import { CREW_ROLES, getAllJobs } from '#app/utils/constants'
 
 export function DataTableAddCrewMember() {
 	const { filmId } = useParams()
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof AddFilmCrewMemberAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({

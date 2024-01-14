@@ -2,7 +2,6 @@ import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { ServerOnly } from 'remix-utils'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import {
@@ -15,11 +14,11 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { AddPersonImageSchema } from '#app/routes/resources+/person+/add-photo.ts'
+import { AddPersonImageSchema, AddPersonPhotoAction } from '#app/routes/resources+/person+/add-photo.ts'
 
 export function DataTableAddPhoto() {
 	const { personId } = useParams()
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof AddPersonPhotoAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({
@@ -80,16 +79,6 @@ export function DataTableAddPhoto() {
 						<Button variant="default" type="submit">
 							Add Photo
 						</Button>
-						{/* This is here for progressive enhancement. If the client doesn't
-						hydrate (or hasn't yet) this button will be available to submit the
-						selected photo. */}
-						<ServerOnly>
-							{() => (
-								<Button type="submit" className="server-only">
-									Add Photo
-								</Button>
-							)}
-						</ServerOnly>
 					</DialogFooter>
 				</fetcher.Form>
 			</DialogContent>

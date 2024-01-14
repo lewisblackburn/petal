@@ -16,7 +16,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { DeleteFilmCastMembersSchema } from '#app/routes/resources+/film+/delete-cast-members.ts'
+import { type DeleteFilmCastMembersAction, DeleteFilmCastMembersSchema } from '#app/routes/resources+/film+/delete-cast-members.ts'
 
 interface DataTableDeleteCastMembers<TData> {
 	table: Table<TData>
@@ -29,7 +29,7 @@ export function DataTableDeleteCastMembers<TData>({
 	const peopleSelected = table
 		.getSelectedRowModel()
 		.rows.map(row => (row.original as CastMember).id)
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof DeleteFilmCastMembersAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form] = useForm({

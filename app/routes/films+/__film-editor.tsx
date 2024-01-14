@@ -3,7 +3,6 @@ import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { type Language, type Film } from '@prisma/client'
 import { Form, useFetcher } from '@remix-run/react'
 import {
-	type DataFunctionArgs,
 	json,
 	type SerializeFrom,
 } from '@remix-run/server-runtime'
@@ -23,6 +22,7 @@ import { AGE_RATINGS, STATUSES } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { LanguageSearch } from '../resources+/languages.tsx'
+import { ActionFunctionArgs } from '@remix-run/node'
 
 const FilmEditorSchema = z.object({
 	id: z.string().optional(),
@@ -38,7 +38,7 @@ const FilmEditorSchema = z.object({
 	revenue: z.number().positive().optional(),
 })
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	await requireUserId(request)
 
 	const formData = await request.formData()
@@ -239,7 +239,7 @@ export function FilmEditor({
 					}}
 					buttonProps={{
 						...conform.input(fields.language, { type: 'text' }),
-						// @ts-expect-error custom attribute in the DOM
+						// @ts-expect-error custom DOM attribute
 						defaultlabel: film?.language?.name,
 					}}
 					errors={fields.language.errors}

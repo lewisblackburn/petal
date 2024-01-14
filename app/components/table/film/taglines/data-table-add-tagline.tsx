@@ -14,11 +14,11 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { AddFilmTaglineSchema } from '#app/routes/resources+/film+/add-tagline.ts'
+import { AddFilmTaglineAction, AddFilmTaglineSchema } from '#app/routes/resources+/film+/add-tagline.ts'
 
 export function DataTableAddTagline() {
 	const { filmId } = useParams()
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof AddFilmTaglineAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({

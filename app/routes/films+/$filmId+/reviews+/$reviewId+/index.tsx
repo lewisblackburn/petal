@@ -1,8 +1,7 @@
 import { useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { type V2_MetaFunction } from '@remix-run/node'
 import { Form, Link, useActionData, useLoaderData } from '@remix-run/react'
-import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList } from '#app/components/forms.tsx'
@@ -13,7 +12,6 @@ import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import {
-  invariantResponse,
   useDoubleCheck,
   useIsPending,
 } from '#app/utils/misc.tsx'
@@ -24,8 +22,10 @@ import {
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { useOptionalUser } from '#app/utils/user.ts'
 import { type loader as filmsLoader } from './index.tsx'
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
+import { invariantResponse } from '@epic-web/invariant'
 
-export async function loader({ params, request }: DataFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
   const userId = await requireUserId(request)
   const filmReview = await prisma.filmReview.findUnique({
     where: {
@@ -60,7 +60,7 @@ const DeleteFormSchema = z.object({
   reviewId: z.string(),
 })
 
-export async function action({ params, request }: DataFunctionArgs) {
+export async function action({ params, request }: ActionFunctionArgs) {
   const userId = await requireUserId(request)
   const formData = await request.formData()
   const submission = parse(formData, {
@@ -170,7 +170,7 @@ export function DeleteFilmReview({ id }: { id: string }) {
   )
 }
 
-export const meta: V2_MetaFunction<
+export const meta: MetaFunction<
   typeof loader,
   // FIX: This will need to be a reveiws loader
   { 'routes/films+/$filmId+/review/$reviewId': typeof filmsLoader }

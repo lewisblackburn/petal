@@ -1,13 +1,13 @@
 import { type Prisma } from '@prisma/client'
 import { useFetcher } from '@remix-run/react'
-import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { json } from '@remix-run/server-runtime'
 import { useSpinDelay } from 'spin-delay'
-import { SearchSelectField, type ListOfErrors } from '#app/components/forms.tsx'
-import { type PopoverProps } from '#app/components/ui/popover.tsx'
+import { SearchSelectField, type ListOfErrors, PopoverProps } from '#app/components/forms.tsx'
 import { prisma } from '#app/utils/db.server.ts'
 import { getTableParams } from '#app/utils/request.helper.ts'
+import { LoaderFunctionArgs } from '@remix-run/node'
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const { search, take } = getTableParams(request, 5, {
     orderBy: 'createdAt',
     order: 'desc',

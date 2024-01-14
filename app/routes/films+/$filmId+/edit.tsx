@@ -1,6 +1,6 @@
 import { Outlet } from '@remix-run/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import ButtonGroup from '#app/components/ui/button-group.tsx'
+import ButtonGroup from '#app/components/button-group';
 
 const NavigationLinks: { name: string; path: string }[] = [
 	{ name: 'Primary Facts', path: '' },

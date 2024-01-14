@@ -16,7 +16,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { DeleteFilmReleaseInformationSchema } from '#app/routes/resources+/film+/delete-release-information.ts'
+import { DeleteFilmReleaseInformationAction, DeleteFilmReleaseInformationSchema } from '#app/routes/resources+/film+/delete-release-information.ts'
 
 interface DataTableDeleteReleaseInformation<TData> {
 	table: Table<TData>
@@ -29,7 +29,7 @@ export function DataTableDeleteReleaseInformation<TData>({
 	const releaseInformationSelected = table
 		.getSelectedRowModel()
 		.rows.map(row => (row.original as FilmReleaseInformation).id)
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof DeleteFilmReleaseInformationAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form] = useForm({

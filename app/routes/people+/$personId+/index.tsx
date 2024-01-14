@@ -7,7 +7,7 @@ import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { GENDERS, MEDIA_ROLES } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { invariantResponse } from '#app/utils/misc.tsx'
+import { invariantResponse } from '@epic-web/invariant'
 
 export async function loader({ params }: DataFunctionArgs) {
 	const person = await prisma.person.findUnique({

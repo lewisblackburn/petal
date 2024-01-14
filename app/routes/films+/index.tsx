@@ -1,8 +1,8 @@
 import { type Prisma } from '@prisma/client'
 import {
 	json,
-	type DataFunctionArgs,
-	type V2_MetaFunction,
+	type MetaFunction,
+	LoaderFunctionArgs,
 } from '@remix-run/node'
 import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
@@ -12,7 +12,7 @@ import { getTableParams } from '#app/utils/request.helper.ts'
 
 const TAKE = 20
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const { orderBy, search, skip, take } = getTableParams(request, TAKE, {
 		orderBy: 'createdAt',
 		order: 'desc',
@@ -72,15 +72,16 @@ export default function FilmsRoute() {
 	)
 }
 
-export const meta: V2_MetaFunction = () => {
-	return [
+export const meta: MetaFunction = () => [
+
 		{ title: 'Films | Petal' },
 		{
 			name: 'description',
 			content: `Films on Petal`,
 		},
-	]
-}
+]
+
+
 
 export function ErrorBoundary() {
 	return <GeneralErrorBoundary />

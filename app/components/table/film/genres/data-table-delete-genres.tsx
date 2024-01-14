@@ -16,7 +16,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { DeleteFilmGenresSchema } from '#app/routes/resources+/film+/delete-genres.ts'
+import { DeleteFilmGenresAction, DeleteFilmGenresSchema } from '#app/routes/resources+/film+/delete-genres.ts'
 
 interface DataTableDeleteGenres<TData> {
 	table: Table<TData>
@@ -29,7 +29,7 @@ export function DataTableDeleteGenres<TData>({
 	const genresSelected = table
 		.getSelectedRowModel()
 		.rows.map(row => (row.original as Genre).id)
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof DeleteFilmGenresAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form] = useForm({

@@ -4,16 +4,20 @@ import * as E from '@react-email/components'
 import {
 	json,
 	redirect,
-	type DataFunctionArgs,
-	type V2_MetaFunction,
+	type ActionFunctionArgs,
+	type MetaFunction,
 } from '@remix-run/node'
 import { Link, useFetcher } from '@remix-run/react'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
+import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { sendEmail } from '#app/utils/email.server.ts'
+import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { EmailSchema, UsernameSchema } from '#app/utils/user-validation.ts'
 import { prepareVerification } from './verify.tsx'
 
@@ -21,8 +25,10 @@ const ForgotPasswordSchema = z.object({
 	usernameOrEmail: z.union([EmailSchema, UsernameSchema]),
 })
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
+	await validateCSRF(formData, request.headers)
+	checkHoneypot(formData)
 	const submission = await parse(formData, {
 		schema: ForgotPasswordSchema.superRefine(async (data, ctx) => {
 			const user = await prisma.user.findFirst({
@@ -108,7 +114,7 @@ function ForgotPasswordEmail({
 	)
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
 	return [{ title: 'Password Recovery for Epic Notes' }]
 }
 
@@ -134,8 +140,10 @@ export default function ForgotPasswordRoute() {
 						No worries, we'll send you reset instructions.
 					</p>
 				</div>
-				<div className="mx-auto mt-16 min-w-[368px] max-w-sm">
+				<div className="mx-auto mt-16 min-w-full max-w-sm sm:min-w-[368px]">
 					<forgotPassword.Form method="POST" {...form.props}>
+						<AuthenticityTokenInput />
+						<HoneypotInputs />
 						<div>
 							<Field
 								labelProps={{

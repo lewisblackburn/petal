@@ -16,7 +16,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { DeleteFilmAlternativeTitlesSchema } from '#app/routes/resources+/film+/delete-alternative-titles.ts'
+import { type DeleteFilmAlternativeTitlesAction, DeleteFilmAlternativeTitlesSchema } from '#app/routes/resources+/film+/delete-alternative-titles.ts'
 
 interface DataTableDeleteAlternativeTitles<TData> {
 	table: Table<TData>
@@ -29,7 +29,7 @@ export function DataTableDeleteAlternativeTitles<TData>({
 	const alternativeTitlesSelected = table
 		.getSelectedRowModel()
 		.rows.map(row => (row.original as FilmAlternateTitle).id)
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof DeleteFilmAlternativeTitlesAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form] = useForm({

@@ -16,7 +16,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { DeleteFilmPhotosSchema } from '#app/routes/resources+/film+/delete-photos.ts'
+import { DeleteFilmPhotosAction, DeleteFilmPhotosSchema } from '#app/routes/resources+/film+/delete-photos.ts'
 
 interface DataTableDeletePhotos<TData> {
 	table: Table<TData>
@@ -29,7 +29,7 @@ export function DataTableDeletePhotos<TData>({
 	const photosSelected = table
 		.getSelectedRowModel()
 		.rows.map(row => (row.original as FilmPhoto).id)
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof DeleteFilmPhotosAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form] = useForm({

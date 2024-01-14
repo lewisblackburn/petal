@@ -1,7 +1,14 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
+import { type SEOHandle } from '@nasa-gcn/remix-seo'
+import {
+	json,
+	redirect,
+	type LoaderFunctionArgs,
+	type ActionFunctionArgs,
+} from '@remix-run/node'
 import { Form, Link, useActionData } from '@remix-run/react'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
@@ -12,13 +19,16 @@ import {
 	requireUserId,
 	verifyUserPassword,
 } from '#app/utils/auth.server.ts'
+import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { PasswordSchema } from '#app/utils/user-validation.ts'
+import { type BreadcrumbHandle } from './profile.tsx'
 
-export const handle = {
+export const handle: BreadcrumbHandle & SEOHandle = {
 	breadcrumb: <Icon name="dots-horizontal">Password</Icon>,
+	getSitemapEntries: () => null,
 }
 
 const ChangePasswordForm = z
@@ -31,7 +41,7 @@ const ChangePasswordForm = z
 		if (confirmNewPassword !== newPassword) {
 			ctx.addIssue({
 				path: ['confirmNewPassword'],
-				code: 'custom',
+				code: z.ZodIssueCode.custom,
 				message: 'The passwords must match',
 			})
 		}
@@ -47,16 +57,17 @@ async function requirePassword(userId: string) {
 	}
 }
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const userId = await requireUserId(request)
 	await requirePassword(userId)
 	return json({})
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	await requirePassword(userId)
 	const formData = await request.formData()
+	await validateCSRF(formData, request.headers)
 	const submission = await parse(formData, {
 		async: true,
 		schema: ChangePasswordForm.superRefine(
@@ -66,7 +77,7 @@ export async function action({ request }: DataFunctionArgs) {
 					if (!user) {
 						ctx.addIssue({
 							path: ['currentPassword'],
-							code: 'custom',
+							code: z.ZodIssueCode.custom,
 							message: 'Incorrect password.',
 						})
 					}
@@ -115,7 +126,7 @@ export default function ChangePasswordRoute() {
 	const isPending = useIsPending()
 
 	const [form, fields] = useForm({
-		id: 'signup-form',
+		id: 'password-change-form',
 		constraint: getFieldsetConstraint(ChangePasswordForm),
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
@@ -126,21 +137,31 @@ export default function ChangePasswordRoute() {
 
 	return (
 		<Form method="POST" {...form.props} className="mx-auto max-w-md">
+			<AuthenticityTokenInput />
 			<Field
 				labelProps={{ children: 'Current Password' }}
-				inputProps={conform.input(fields.currentPassword, { type: 'password' })}
+				inputProps={{
+					...conform.input(fields.currentPassword, { type: 'password' }),
+					autoComplete: 'current-password',
+				}}
 				errors={fields.currentPassword.errors}
 			/>
 			<Field
 				labelProps={{ children: 'New Password' }}
-				inputProps={conform.input(fields.newPassword, { type: 'password' })}
+				inputProps={{
+					...conform.input(fields.newPassword, { type: 'password' }),
+					autoComplete: 'new-password',
+				}}
 				errors={fields.newPassword.errors}
 			/>
 			<Field
 				labelProps={{ children: 'Confirm New Password' }}
-				inputProps={conform.input(fields.confirmNewPassword, {
-					type: 'password',
-				})}
+				inputProps={{
+					...conform.input(fields.confirmNewPassword, {
+						type: 'password',
+					}),
+					autoComplete: 'new-password',
+				}}
 				errors={fields.confirmNewPassword.errors}
 			/>
 			<ErrorList id={form.errorId} errors={form.errors} />

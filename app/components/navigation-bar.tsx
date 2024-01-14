@@ -79,7 +79,7 @@ export function NavigationBar() {
 						{user ? (
 							<>
 								<div className="w-[300px]">
-									<SearchBar />
+									<SearchBar status="idle" />
 								</div>
 								<AddMediaDropdown />
 								<UserDropdown />

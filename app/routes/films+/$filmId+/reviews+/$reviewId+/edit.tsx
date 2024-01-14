@@ -1,4 +1,4 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import { LoaderFunctionArgs, json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import {
 	FilmReviewEditor,
@@ -6,11 +6,11 @@ import {
 } from '#app/routes/films+/__film-review-editor.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { invariantResponse } from '#app/utils/misc.tsx'
+import { invariantResponse } from '@epic-web/invariant'
 
 export { action }
 
-export async function loader({ params, request }: DataFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
 	await requireUserId(request)
 	const filmReview = await prisma.filmReview.findFirst({
 		select: {

@@ -1,6 +1,6 @@
 import { parse } from '@conform-to/zod'
 import { useFetcher } from '@remix-run/react'
-import { type DataFunctionArgs, json } from '@remix-run/server-runtime'
+import { json } from '@remix-run/server-runtime'
 import { useState } from 'react'
 import { z } from 'zod'
 import { Spinner } from '#app/components/spinner.tsx'
@@ -16,13 +16,14 @@ import { prisma } from '#app/utils/db.server.ts'
 import { cn } from '#app/utils/misc.tsx'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 import { useOptionalUser } from '#app/utils/user.ts'
+import {  ActionFunctionArgs } from '@remix-run/node'
 
 export const RateFilmSchema = z.object({
 	filmId: z.string(),
 	rating: z.number(),
 })
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
 
@@ -33,6 +34,7 @@ export async function action({ request }: DataFunctionArgs) {
 		return json(
 			{
 				status: 'error',
+				rating: 0,
 				submission,
 			} as const,
 			{ status: 400 },
@@ -80,15 +82,12 @@ export async function action({ request }: DataFunctionArgs) {
 		},
 	})
 
-	return json(
-		{ rating },
-		{
-			headers: await createToastHeaders({
+	return json({ status: 'success', rating, submission } as const, {
+		headers: await createToastHeaders({
 				description: 'Film Rated',
-				type: 'success',
-			}),
-		},
-	)
+			type: 'success',
+		}),
+	})
 }
 
 export const FilmRatingDropdown = ({
@@ -99,7 +98,7 @@ export const FilmRatingDropdown = ({
 	defaultRating: number
 }) => {
 	const user = useOptionalUser()
-	const ratingFetcher = useFetcher()
+	const ratingFetcher = useFetcher<typeof action>()
 	const rating = ratingFetcher.data?.rating ?? defaultRating ?? 0
 	const isRated = rating !== 0
 	const [open, setOpen] = useState(false)
@@ -115,7 +114,7 @@ export const FilmRatingDropdown = ({
 			{ method: 'POST', action: '/resources/film/rate' },
 		)
 		setOpen(false)
-		setHoveredRating(null)
+		setHoveredRating(0);
 	}
 
 	const busy = ratingFetcher.state !== 'idle'
@@ -169,3 +168,5 @@ export const FilmRatingDropdown = ({
 		</Popover>
 	)
 }
+
+export {action as RateFilmAction}

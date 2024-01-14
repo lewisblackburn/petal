@@ -1,4 +1,4 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import { LoaderFunctionArgs, json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import {
 	FilmReviewEditor,
@@ -9,7 +9,7 @@ import { prisma } from '#app/utils/db.server.ts'
 
 export { action }
 
-export async function loader({ params, request }: DataFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
 	const userId = await requireUserId(request)
 	const filmRating = await prisma.filmRating.findFirst({
 		select: {

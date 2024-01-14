@@ -1,11 +1,14 @@
+import { invariantResponse } from '@epic-web/invariant'
+import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import {
 	json,
-	type DataFunctionArgs,
+	type LoaderFunctionArgs,
+	type ActionFunctionArgs,
 	type SerializeFrom,
+	type HeadersFunction,
 } from '@remix-run/node'
-import { Form, useFetcher, useLoaderData } from '@remix-run/react'
+import { useFetcher, useLoaderData } from '@remix-run/react'
 import { useState } from 'react'
-import { z } from 'zod'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
@@ -15,13 +18,22 @@ import {
 	TooltipTrigger,
 } from '#app/components/ui/tooltip.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
+import { resolveConnectionData } from '#app/utils/connections.server.ts'
+import {
+	ProviderConnectionForm,
+	type ProviderName,
+	ProviderNameSchema,
+	providerIcons,
+	providerNames,
+} from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
-import { GITHUB_PROVIDER_NAME } from '#app/utils/github-auth.server.ts'
-import { invariantResponse, useIsPending } from '#app/utils/misc.tsx'
+import { makeTimings } from '#app/utils/timing.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
+import { type BreadcrumbHandle } from './profile.tsx'
 
-export const handle = {
+export const handle: BreadcrumbHandle & SEOHandle = {
 	breadcrumb: <Icon name="link-2">Connections</Icon>,
+	getSitemapEntries: () => null,
 }
 
 async function userCanDeleteConnections(userId: string) {
@@ -38,59 +50,54 @@ async function userCanDeleteConnections(userId: string) {
 	return Boolean(user?._count.connections && user?._count.connections > 1)
 }
 
-const GitHubUserSchema = z.object({ login: z.string() })
-
-async function resolveGitHubConnectionData(connection: {
-	id: string
-	providerName: string
-	providerId: string
-	createdAt: Date
-}) {
-	const response = await fetch(
-		`https://api.github.com/user/${connection.providerId}`,
-		{ headers: { Authorization: `token ${process.env.GITHUB_TOKEN}` } },
-	)
-	const rawJson = await response.json()
-	const result = GitHubUserSchema.safeParse(rawJson)
-	return {
-		id: connection.id,
-		displayName: result.success ? result.data.login : 'Unknown',
-		link: result.success ? `https://github.com/${result.data.login}` : null,
-		createdAtFormatted: connection.createdAt.toLocaleString(),
-	}
-}
-
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const userId = await requireUserId(request)
+	const timings = makeTimings('profile connections loader')
 	const rawConnections = await prisma.connection.findMany({
 		select: { id: true, providerName: true, providerId: true, createdAt: true },
 		where: { userId },
 	})
 	const connections: Array<{
+		providerName: ProviderName
 		id: string
 		displayName: string
 		link?: string | null
 		createdAtFormatted: string
 	}> = []
 	for (const connection of rawConnections) {
-		if (connection.providerName === GITHUB_PROVIDER_NAME) {
-			connections.push(await resolveGitHubConnectionData(connection))
-		} else {
-			connections.push({
-				id: connection.id,
-				displayName: 'Unknown',
-				createdAtFormatted: connection.createdAt.toLocaleString(),
-			})
-		}
+		const r = ProviderNameSchema.safeParse(connection.providerName)
+		if (!r.success) continue
+		const providerName = r.data
+		const connectionData = await resolveConnectionData(
+			providerName,
+			connection.providerId,
+			{ timings },
+		)
+		connections.push({
+			...connectionData,
+			providerName,
+			id: connection.id,
+			createdAtFormatted: connection.createdAt.toLocaleString(),
+		})
 	}
 
-	return json({
-		connections,
-		canDeleteConnections: await userCanDeleteConnections(userId),
-	})
+	return json(
+		{
+			connections,
+			canDeleteConnections: await userCanDeleteConnections(userId),
+		},
+		{ headers: { 'Server-Timing': timings.toString() } },
+	)
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export const headers: HeadersFunction = ({ loaderHeaders }) => {
+	const headers = {
+		'Server-Timing': loaderHeaders.get('Server-Timing') ?? '',
+	}
+	return headers
+}
+
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
 	invariantResponse(
@@ -118,7 +125,6 @@ export async function action({ request }: DataFunctionArgs) {
 
 export default function Connections() {
 	const data = useLoaderData<typeof loader>()
-	const isGitHubSubmitting = useIsPending({ formAction: '/auth/github' })
 
 	return (
 		<div className="mx-auto max-w-md">
@@ -139,19 +145,15 @@ export default function Connections() {
 			) : (
 				<p>You don't have any connections yet.</p>
 			)}
-			<Form
-				className="mt-5 flex items-center justify-center gap-2 border-t-2 border-border pt-3"
-				action="/auth/github"
-				method="POST"
-			>
-				<StatusButton
-					type="submit"
-					className="w-full"
-					status={isGitHubSubmitting ? 'pending' : 'idle'}
-				>
-					<Icon name="github-logo">Connect with GitHub</Icon>
-				</StatusButton>
-			</Form>
+			<div className="mt-5 flex flex-col gap-5 border-b-2 border-t-2 border-border py-3">
+				{providerNames.map(providerName => (
+					<ProviderConnectionForm
+						key={providerName}
+						type="Connect"
+						providerName={providerName}
+					/>
+				))}
+			</div>
 		</div>
 	)
 }
@@ -165,18 +167,22 @@ function Connection({
 }) {
 	const deleteFetcher = useFetcher<typeof action>()
 	const [infoOpen, setInfoOpen] = useState(false)
+	const icon = providerIcons[connection.providerName]
 	return (
 		<div className="flex justify-between gap-2">
-			<Icon name="github-logo">
-				{connection.link ? (
-					<a href={connection.link} className="underline">
-						{connection.displayName}
-					</a>
-				) : (
-					connection.displayName
-				)}{' '}
-				({connection.createdAtFormatted})
-			</Icon>
+			<span className={`inline-flex items-center gap-1.5`}>
+				{icon}
+				<span>
+					{connection.link ? (
+						<a href={connection.link} className="underline">
+							{connection.displayName}
+						</a>
+					) : (
+						connection.displayName
+					)}{' '}
+					({connection.createdAtFormatted})
+				</span>
+			</span>
 			{canDelete ? (
 				<deleteFetcher.Form method="POST">
 					<input name="connectionId" value={connection.id} type="hidden" />

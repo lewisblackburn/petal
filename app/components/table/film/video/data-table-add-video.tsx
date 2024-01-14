@@ -14,12 +14,12 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { AddFilmVideoSchema } from '#app/routes/resources+/film+/add-video.ts'
+import { AddFilmVideoAction, AddFilmVideoSchema } from '#app/routes/resources+/film+/add-video.ts'
 import { VIDEO_TYPES, QUALITY, SITES } from '#app/utils/constants.ts'
 
 export function DataTableAddVideo() {
 	const { filmId } = useParams()
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof AddFilmVideoAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({

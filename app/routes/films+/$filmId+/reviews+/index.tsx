@@ -1,8 +1,8 @@
 import { type Prisma } from '@prisma/client'
 import {
+	LoaderFunctionArgs,
+	MetaFunction,
 	json,
-	type DataFunctionArgs,
-	type V2_MetaFunction,
 } from '@remix-run/node'
 import { Link, useLoaderData, useLocation } from '@remix-run/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
@@ -13,7 +13,7 @@ import { Icon } from '#app/components/ui/icon.tsx'
 import { prisma } from '#app/utils/db.server.ts'
 import { DEFAULT_TAKE, getTableParams } from '#app/utils/request.helper.ts'
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const { orderBy, search, skip, take } = getTableParams(
 		request,
 		DEFAULT_TAKE,
@@ -91,7 +91,7 @@ export default function FilmsRoute() {
 	)
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
 	return [
 		{ title: 'Reviews | Petal' },
 		{

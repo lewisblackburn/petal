@@ -1,12 +1,13 @@
 import { useLoaderData } from '@remix-run/react'
-import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { json } from '@remix-run/server-runtime'
 import { columns } from '#app/components/table/film/keywords/columns.tsx'
 import { KeywordTable } from '#app/components/table/film/keywords/data-table.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { invariantResponse } from '#app/utils/misc.tsx'
+import { LoaderFunctionArgs } from '@remix-run/node'
+import { invariantResponse } from '@epic-web/invariant'
 
-export async function loader({ request, params }: DataFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
 	await requireUserId(request)
 
 	const film = await prisma.film.findUnique({

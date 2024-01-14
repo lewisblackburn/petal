@@ -2,7 +2,7 @@ import { type Prisma } from '@prisma/client'
 import {
   json,
   type DataFunctionArgs,
-  type V2_MetaFunction,
+  MetaFunction,
 } from '@remix-run/node'
 import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
@@ -66,7 +66,7 @@ export default function PeopleRoute() {
   )
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     { title: 'People | Petal' },
     {

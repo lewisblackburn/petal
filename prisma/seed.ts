@@ -1,8 +1,9 @@
 import { faker } from '@faker-js/faker'
-import { promiseHash } from 'remix-utils'
-import { COUNTRIES, GENRES, LANGUAGES } from '#app/utils/constants.ts'
-import { prisma } from '../app/utils/db.server.ts'
+import { promiseHash } from 'remix-utils/promise'
+import { COUNTRIES, GENRES, LANGUAGES } from '#app/utils/constants'
+import { prisma } from '#app/utils/db.server.ts'
 import {
+	cleanupDb,
 	createFilm,
 	createPassword,
 	createPerson,
@@ -10,22 +11,16 @@ import {
 	getNoteImages,
 	getUserImages,
 	img,
-} from '../tests/db-utils.ts'
+} from '#tests/db-utils.ts'
+import { insertGitHubUser } from '#tests/mocks/github.ts'
 
 async function seed() {
 	console.log('🌱 Seeding...')
 	console.time(`🌱 Database has been seeded`)
 
 	console.time('🧹 Cleaned up the database...')
-	await prisma.user.deleteMany()
-	await prisma.role.deleteMany()
-	await prisma.permission.deleteMany()
-	await prisma.genre.deleteMany()
-	await prisma.keyword.deleteMany()
-	await prisma.film.deleteMany()
-	await prisma.person.deleteMany()
-	await prisma.country.deleteMany()
-	await prisma.language.deleteMany()
+	// @ts-expect-error middleware .$extends breaks the PrismaClient type
+	await cleanupDb(prisma)
 	console.timeEnd('🧹 Cleaned up the database...')
 
 	console.time('🔑 Created permissions...')
@@ -65,12 +60,6 @@ async function seed() {
 		},
 	})
 	console.timeEnd('👑 Created roles...')
-
-	if (process.env.MINIMAL_SEED) {
-		console.log('👍 Minimal seed complete')
-		console.timeEnd(`🌱 Database has been seeded`)
-		return
-	}
 
 	const totalUsers = 5
 	console.time(`👤 Created ${totalUsers} users...`)
@@ -147,6 +136,8 @@ async function seed() {
 		}),
 	})
 
+	const githubUser = await insertGitHubUser('MOCK_CODE_GITHUB_KODY')
+
 	await prisma.user.create({
 		select: { id: true },
 		data: {
@@ -155,6 +146,9 @@ async function seed() {
 			name: 'Kody',
 			image: { create: kodyImages.kodyUser },
 			password: { create: createPassword('kodylovesyou') },
+			connections: {
+				create: { providerName: 'github', providerId: githubUser.profile.id },
+			},
 			roles: { connect: [{ name: 'admin' }, { name: 'user' }] },
 			notes: {
 				create: [

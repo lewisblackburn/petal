@@ -16,7 +16,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { DeleteFilmTaglinesSchema } from '#app/routes/resources+/film+/delete-taglines.ts'
+import { DeleteFilmTaglinesAction, DeleteFilmTaglinesSchema } from '#app/routes/resources+/film+/delete-taglines.ts'
 
 interface DataTableDeleteTaglines<TData> {
 	table: Table<TData>
@@ -29,7 +29,7 @@ export function DataTableDeleteTaglines<TData>({
 	const taglinesSelected = table
 		.getSelectedRowModel()
 		.rows.map(row => (row.original as FilmTagline).id)
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof DeleteFilmTaglinesAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form] = useForm({

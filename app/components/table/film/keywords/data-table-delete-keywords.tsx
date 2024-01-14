@@ -16,7 +16,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { DeleteFilmKeywordsSchema } from '#app/routes/resources+/film+/delete-keywords.ts'
+import { DeleteFilmKeywordsAction, DeleteFilmKeywordsSchema } from '#app/routes/resources+/film+/delete-keywords.ts'
 
 interface DataTableDeleteKeywords<TData> {
 	table: Table<TData>
@@ -29,7 +29,7 @@ export function DataTableDeleteKeywords<TData>({
 	const keywordsSelected = table
 		.getSelectedRowModel()
 		.rows.map(row => (row.original as Keyword).id)
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof DeleteFilmKeywordsAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form] = useForm({

@@ -1,8 +1,8 @@
 import { useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { type V2_MetaFunction } from '@remix-run/node'
+import { MetaFunction, type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/node'
 import { Form, Link, useActionData, useLoaderData } from '@remix-run/react'
-import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { json} from '@remix-run/server-runtime'
 import { format } from 'date-fns'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
@@ -21,7 +21,6 @@ import { getUserId } from '#app/utils/auth.server.ts'
 import { STATUSES } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import {
-	invariantResponse,
 	useDoubleCheck,
 	useIsPending,
 	formatRuntime,
@@ -36,8 +35,9 @@ import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { useOptionalUser } from '#app/utils/user.ts'
 import { type IconName } from '@/icon-name'
 import { type loader as filmsLoader } from './index.tsx'
+import { invariantResponse } from '@epic-web/invariant'
 
-export async function loader({ request, params }: DataFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
 	const userId = await getUserId(request)
 	const film = await prisma.film.findUnique({
 		where: {
@@ -155,7 +155,7 @@ const DeleteFormSchema = z.object({
 	filmId: z.string(),
 })
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	await requireUserWithRole(request, 'admin')
 	const formData = await request.formData()
 	const submission = parse(formData, {
@@ -434,7 +434,7 @@ export function DeleteFilm({ id }: { id: string }) {
 	)
 }
 
-export const meta: V2_MetaFunction<
+export const meta: MetaFunction<
 	typeof loader,
 	{ 'routes/films+/$filmId+': typeof filmsLoader }
 > = ({ data }) => {

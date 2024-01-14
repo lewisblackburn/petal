@@ -15,11 +15,11 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { CountrySearch } from '#app/routes/resources+/countries.tsx'
-import { AddFilmAlternativeTitleSchema } from '#app/routes/resources+/film+/add-alternative-title.ts'
+import { type AddFilmAlternativeTitleAction, AddFilmAlternativeTitleSchema } from '#app/routes/resources+/film+/add-alternative-title'
 
 export function DataTableAddAlternativeTitle() {
 	const { filmId } = useParams()
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof AddFilmAlternativeTitleAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({

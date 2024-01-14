@@ -1,4 +1,6 @@
 import { useInputEvent } from '@conform-to/react'
+import type * as PopoverPrimitive from '@radix-ui/react-popover'
+import type * as SelectPrimitive from '@radix-ui/react-select'
 import React, { useId, useRef } from 'react'
 import { cn } from '#app/utils/misc.tsx'
 import { Image } from './image.tsx'
@@ -20,14 +22,12 @@ import { Label } from './ui/label.tsx'
 import {
 	Popover,
 	PopoverContent,
-	type PopoverProps,
 	PopoverTrigger,
 } from './ui/popover.tsx'
 import {
 	Select,
 	SelectContent,
 	SelectItem,
-	type SelectProps,
 	SelectTrigger,
 	SelectValue,
 } from './ui/select.tsx'
@@ -39,6 +39,22 @@ export type OptionType = {
 	label: string
 	value: string
 }
+
+export type PopoverProps = Omit<
+  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Trigger>,
+  'type'
+> & {
+  type?: string
+}
+
+export type SelectProps = Omit<
+React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>,
+'type'
+> & {
+type?: string
+}
+
+
 
 export function ErrorList({
 	id,
@@ -52,7 +68,7 @@ export function ErrorList({
 	return (
 		<ul id={id} className="flex flex-col gap-1">
 			{errorsToRender.map(e => (
-				<li key={e} className="text-[10px] text-foreground-danger">
+				<li key={e} className="text-[10px] text-foreground-destructive">
 					{e}
 				</li>
 			))}
@@ -97,7 +113,7 @@ export function TextareaField({
 	className,
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
-	textareaProps: React.InputHTMLAttributes<HTMLTextAreaElement>
+	textareaProps: React.TextareaHTMLAttributes<HTMLTextAreaElement>
 	errors?: ListOfErrors
 	className?: string
 }) {

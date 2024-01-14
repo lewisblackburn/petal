@@ -1,9 +1,9 @@
-import { json, type V2_MetaFunction } from '@remix-run/node'
+import { json, type MetaFunction  } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { Carousel } from '#app/components/carousel.tsx'
 import { prisma } from '#app/utils/db.server.ts'
 
-export const meta: V2_MetaFunction = () => [{ title: 'Petal' }]
+export const meta: MetaFunction = () => [{ title: 'Petal' }]
 
 export async function loader() {
 	const popularFilms = await prisma.film.findMany({

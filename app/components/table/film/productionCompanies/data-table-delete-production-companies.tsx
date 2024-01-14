@@ -16,7 +16,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { DeleteFilmProductionCompaniesSchema } from '#app/routes/resources+/film+/delete-production-companies.ts'
+import { DeleteFilmProductionCompaniesAction, DeleteFilmProductionCompaniesSchema } from '#app/routes/resources+/film+/delete-production-companies.ts'
 
 interface DataTableDeleteProductionCompanies<TData> {
 	table: Table<TData>
@@ -29,7 +29,7 @@ export function DataTableDeleteProductionCompanies<TData>({
 	const productionCompaniesSelected = table
 		.getSelectedRowModel()
 		.rows.map(row => (row.original as FilmAlternateTitle).id)
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof DeleteFilmProductionCompaniesAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form] = useForm({

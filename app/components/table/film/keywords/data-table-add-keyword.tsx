@@ -14,11 +14,11 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { AddFilmKeywordSchema } from '#app/routes/resources+/film+/add-keyword.ts'
+import { AddFilmKeywordAction, AddFilmKeywordSchema } from '#app/routes/resources+/film+/add-keyword.ts'
 
 export function DataTableAddKeyword() {
 	const { filmId } = useParams()
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof AddFilmKeywordAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({

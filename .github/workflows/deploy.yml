@@ -17,7 +17,7 @@ permissions:
 jobs:
   lint:
     name: ⬣ ESLint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
@@ -25,7 +25,7 @@ jobs:
       - name: ⎔ Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
@@ -38,7 +38,7 @@ jobs:
 
   typecheck:
     name: ʦ TypeScript
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
@@ -46,7 +46,7 @@ jobs:
       - name: ⎔ Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
@@ -59,7 +59,7 @@ jobs:
 
   vitest:
     name: ⚡ Vitest
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
@@ -67,7 +67,7 @@ jobs:
       - name: ⎔ Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
@@ -83,7 +83,7 @@ jobs:
 
   playwright:
     name: 🎭 Playwright
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 60
     steps:
       - name: ⬇️ Checkout repo
@@ -95,7 +95,7 @@ jobs:
       - name: ⎔ Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
@@ -138,7 +138,7 @@ jobs:
 
   deploy:
     name: 🚀 Deploy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [lint, typecheck, vitest, playwright]
     # only build/deploy main branch on pushes
     if:

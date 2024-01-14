@@ -1,5 +1,5 @@
+import ButtonGroup from '#app/components/button-group';
 import { Outlet } from '@remix-run/react'
-import ButtonGroup from '#app/components/ui/button-group.tsx'
 
 const NavigationLinks: { name: string; path: string }[] = [
   { name: 'Primary Facts', path: '' },

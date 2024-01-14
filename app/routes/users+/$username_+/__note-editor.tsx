@@ -14,11 +14,12 @@ import {
 	json,
 	unstable_parseMultipartFormData as parseMultipartFormData,
 	redirect,
-	type DataFunctionArgs,
+	type ActionFunctionArgs,
 	type SerializeFrom,
 } from '@remix-run/node'
-import { Form, useFetcher } from '@remix-run/react'
+import { Form, useActionData } from '@remix-run/react'
 import { useRef, useState } from 'react'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { floatingToolbarClassName } from '#app/components/floating-toolbar.tsx'
@@ -29,8 +30,9 @@ import { Label } from '#app/components/ui/label.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { Textarea } from '#app/components/ui/textarea.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
+import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { cn, getNoteImgSrc } from '#app/utils/misc.tsx'
+import { cn, getNoteImgSrc, useIsPending } from '#app/utils/misc.tsx'
 
 const titleMinLength = 1
 const titleMaxLength = 100
@@ -55,7 +57,13 @@ type ImageFieldset = z.infer<typeof ImageFieldsetSchema>
 function imageHasFile(
 	image: ImageFieldset,
 ): image is ImageFieldset & { file: NonNullable<ImageFieldset['file']> } {
-	return Boolean(image.file)
+	return Boolean(image.file?.size && image.file?.size > 0)
+}
+
+function imageHasId(
+	image: ImageFieldset,
+): image is ImageFieldset & { id: NonNullable<ImageFieldset['id']> } {
+	return image.id != null
 }
 
 const NoteEditorSchema = z.object({
@@ -65,13 +73,14 @@ const NoteEditorSchema = z.object({
 	images: z.array(ImageFieldsetSchema).max(5).optional(),
 })
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 
 	const formData = await parseMultipartFormData(
 		request,
 		createMemoryUploadHandler({ maxPartSize: MAX_UPLOAD_SIZE }),
 	)
+	await validateCSRF(formData, request.headers)
 
 	const submission = await parse(formData, {
 		schema: NoteEditorSchema.superRefine(async (data, ctx) => {
@@ -83,23 +92,41 @@ export async function action({ request }: DataFunctionArgs) {
 			})
 			if (!note) {
 				ctx.addIssue({
-					code: 'custom',
+					code: z.ZodIssueCode.custom,
 					message: 'Note not found',
 				})
 			}
 		}).transform(async ({ images = [], ...data }) => {
 			return {
 				...data,
-				images: await Promise.all(
-					images.filter(imageHasFile).map(async image => ({
-						id: image.id,
-						altText: image.altText,
-						contentType: image.file.type,
-						blob:
-							image.file.size > 0
-								? Buffer.from(await image.file.arrayBuffer())
-								: null,
-					})),
+				imageUpdates: await Promise.all(
+					images.filter(imageHasId).map(async i => {
+						if (imageHasFile(i)) {
+							return {
+								id: i.id,
+								altText: i.altText,
+								contentType: i.file.type,
+								blob: Buffer.from(await i.file.arrayBuffer()),
+							}
+						} else {
+							return {
+								id: i.id,
+								altText: i.altText,
+							}
+						}
+					}),
+				),
+				newImages: await Promise.all(
+					images
+						.filter(imageHasFile)
+						.filter(i => !i.id)
+						.map(async image => {
+							return {
+								altText: image.altText,
+								contentType: image.file.type,
+								blob: Buffer.from(await image.file.arrayBuffer()),
+							}
+						}),
 				),
 			}
 		}),
@@ -107,58 +134,42 @@ export async function action({ request }: DataFunctionArgs) {
 	})
 
 	if (submission.intent !== 'submit') {
-		return json({ status: 'idle', submission } as const)
+		return json({ submission } as const)
 	}
 
 	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+		return json({ submission } as const, { status: 400 })
 	}
 
-	const { id: noteId, title, content, images = [] } = submission.value
+	const {
+		id: noteId,
+		title,
+		content,
+		imageUpdates = [],
+		newImages = [],
+	} = submission.value
 
-	const updatedNote = await prisma.$transaction(async $prisma => {
-		const note = await $prisma.note.upsert({
-			select: { id: true, owner: { select: { username: true } } },
-			where: { id: noteId ?? '__new_note__' },
-			create: {
-				ownerId: userId,
-				title,
-				content,
+	const updatedNote = await prisma.note.upsert({
+		select: { id: true, owner: { select: { username: true } } },
+		where: { id: noteId ?? '__new_note__' },
+		create: {
+			ownerId: userId,
+			title,
+			content,
+			images: { create: newImages },
+		},
+		update: {
+			title,
+			content,
+			images: {
+				deleteMany: { id: { notIn: imageUpdates.map(i => i.id) } },
+				updateMany: imageUpdates.map(updates => ({
+					where: { id: updates.id },
+					data: { ...updates, id: updates.blob ? cuid() : updates.id },
+				})),
+				create: newImages,
 			},
-			update: {
-				title,
-				content,
-				images: {
-					deleteMany: { id: { notIn: images.map(i => i.id).filter(Boolean) } },
-				},
-			},
-		})
-
-		for (const image of images) {
-			const { blob } = image
-			if (blob) {
-				await $prisma.noteImage.upsert({
-					select: { id: true },
-					where: { id: image.id ?? '__new_image__' },
-					create: { ...image, blob, noteId: note.id },
-					update: {
-						...image,
-						blob,
-						// update the id since it is used for caching
-						id: cuid(),
-						noteId: note.id,
-					},
-				})
-			} else if (image.id) {
-				await $prisma.noteImage.update({
-					select: { id: true },
-					where: { id: image.id },
-					data: { altText: image.altText },
-				})
-			}
-		}
-
-		return note
+		},
 	})
 
 	return redirect(
@@ -175,13 +186,13 @@ export function NoteEditor({
 		}
 	>
 }) {
-	const noteFetcher = useFetcher<typeof action>()
-	const isPending = noteFetcher.state !== 'idle'
+	const actionData = useActionData<typeof action>()
+	const isPending = useIsPending()
 
 	const [form, fields] = useForm({
 		id: 'note-editor',
 		constraint: getFieldsetConstraint(NoteEditorSchema),
-		lastSubmission: noteFetcher.data?.submission,
+		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: NoteEditorSchema })
 		},
@@ -196,11 +207,12 @@ export function NoteEditor({
 	return (
 		<div className="absolute inset-0">
 			<Form
-				method="post"
+				method="POST"
 				className="flex h-full flex-col gap-y-4 overflow-y-auto overflow-x-hidden px-10 pb-28 pt-12"
 				{...form.props}
 				encType="multipart/form-data"
 			>
+				<AuthenticityTokenInput />
 				{/*
 					This hidden submit button is here to ensure that when the user hits
 					"enter" on an input field, the primary form function is submitted
@@ -233,7 +245,7 @@ export function NoteEditor({
 									className="relative border-b-2 border-muted-foreground"
 								>
 									<button
-										className="absolute right-0 top-0 text-destructive"
+										className="absolute right-0 top-0 text-foreground-destructive"
 										{...list.remove(fields.images.name, { index })}
 									>
 										<span aria-hidden>
@@ -248,7 +260,7 @@ export function NoteEditor({
 					</div>
 					<Button
 						className="mt-3"
-						{...list.append(fields.images.name, { defaultValue: {} })}
+						{...list.insert(fields.images.name, { defaultValue: {} })}
 					>
 						<span aria-hidden>
 							<Icon name="plus">Image</Icon>
@@ -302,7 +314,7 @@ function ImageChooser({
 							className={cn('group absolute h-32 w-32 rounded-lg', {
 								'bg-accent opacity-40 focus-within:opacity-100 hover:opacity-100':
 									!previewImage,
-								'cursor-pointer focus-within:ring-4': !existingImage,
+								'cursor-pointer focus-within:ring-2': !existingImage,
 							})}
 						>
 							{previewImage ? (

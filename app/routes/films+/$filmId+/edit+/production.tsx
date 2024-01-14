@@ -1,7 +1,7 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { Form, useFetcher, useLoaderData } from '@remix-run/react'
-import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
+import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { ErrorList, MultiSelectField } from '#app/components/forms.tsx'
 import { columns } from '#app/components/table/film/productionCompanies/columns.tsx'
@@ -11,8 +11,9 @@ import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { COUNTRIES } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { invariantResponse } from '#app/utils/misc.tsx'
-import { redirectWithToast } from '#app/utils/toast.server.ts'
+import { createToastHeaders  } from '#app/utils/toast.server.ts'
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
+import { invariantResponse } from '@epic-web/invariant'
 
 const FilmProductionCountriesSchema = z.object({
 	id: z.string(),
@@ -25,7 +26,7 @@ const FilmProductionCountriesSchema = z.object({
 	// ),
 })
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	await requireUserId(request)
 
 	const formData = await request.formData()
@@ -63,7 +64,7 @@ export async function action({ request }: DataFunctionArgs) {
 		submission.value.productionCountries ?? '',
 	)
 
-	const updatedFilm = await prisma.film.update({
+	await prisma.film.update({
 		select: { id: true },
 		where: { id: submission.value.id },
 		data: {
@@ -75,14 +76,15 @@ export async function action({ request }: DataFunctionArgs) {
 		},
 	})
 
-	return redirectWithToast(`/films/${updatedFilm.id}`, {
-		type: 'success',
-		title: 'Success',
-		description: 'The film has been updated.',
+	return json({ status: 'success', submission } as const, {
+		headers: await createToastHeaders({
+			description: 'Added Processed Countries',
+			type: 'success',
+		}),
 	})
 }
 
-export async function loader({ request, params }: DataFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
 	await requireUserId(request)
 
 	const film = await prisma.film.findUnique({

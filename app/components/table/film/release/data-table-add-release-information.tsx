@@ -15,13 +15,13 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { CountrySearch } from '#app/routes/resources+/countries.tsx'
-import { AddFilmReleaseInformationSchema } from '#app/routes/resources+/film+/add-release-information.ts'
+import { AddFilmReleaseInformationAction, AddFilmReleaseInformationSchema } from '#app/routes/resources+/film+/add-release-information.ts'
 import { LanguageSearch } from '#app/routes/resources+/languages.tsx'
 import { FILM_RELEASE_TYPES } from '#app/utils/constants.ts'
 
 export function DataTableAddReleaseInformation() {
 	const { filmId } = useParams()
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof AddFilmReleaseInformationAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({

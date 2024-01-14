@@ -1,6 +1,7 @@
 import { parse } from '@conform-to/zod'
+import { type ActionFunctionArgs } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
-import { type DataFunctionArgs, json } from '@remix-run/server-runtime'
+import {  json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { Spinner } from '#app/components/spinner.tsx'
 import { Button } from '#app/components/ui/button.tsx'
@@ -16,7 +17,7 @@ export const FavouriteFilmSchema = z.object({
 	filmId: z.string(),
 })
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
 
@@ -27,6 +28,7 @@ export async function action({ request }: DataFunctionArgs) {
 		return json(
 			{
 				status: 'error',
+				favourited: false,
 				submission,
 			} as const,
 			{ status: 400 },
@@ -57,15 +59,12 @@ export async function action({ request }: DataFunctionArgs) {
 		})
 	}
 
-	return json(
-		{ favourited: !isFavourited },
-		{
-			headers: await createToastHeaders({
+	return json({ status: 'success', favourited: !isFavourited, submission } as const, {
+		headers: await createToastHeaders({
 				description: isFavourited ? 'Film Unfavourited' : 'Film Favourited',
-				type: 'success',
-			}),
-		},
-	)
+			type: 'success',
+		}),
+	})
 }
 
 export const ToggleFavouriteFilm = ({
@@ -76,8 +75,8 @@ export const ToggleFavouriteFilm = ({
 	defaultValue: boolean
 }) => {
 	const user = useOptionalUser()
-	const favouriteFetcher = useFetcher()
-	const favourited = favouriteFetcher.data?.favourated ?? defaultValue ?? false
+	const favouriteFetcher = useFetcher<typeof action>()
+	const favourited = favouriteFetcher.data?.favourited ?? defaultValue ?? false
 	const busy = favouriteFetcher.state !== 'idle'
 
 	const handleClick = () => {
@@ -103,3 +102,5 @@ export const ToggleFavouriteFilm = ({
 		</Button>
 	)
 }
+
+export { action as FavouriteFilmAction}

@@ -40,7 +40,6 @@ export async function uploadStreamToS3(data: any, filename: string) {
 	})
 	await writeAsyncIterableToWritable(data, stream.writeStream)
 	const file = await stream.promise
-	// @ts-expect-error FIX: I need to fix this type
 	return file.Location
 }
 
