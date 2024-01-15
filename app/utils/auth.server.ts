@@ -86,6 +86,7 @@ export async function login({
 			userId: user.id,
 		},
 	})
+
 	return session
 }
 

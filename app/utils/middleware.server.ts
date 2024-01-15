@@ -38,39 +38,33 @@ export const results = Prisma.defineExtension(client => {
 	})
 })
 
-// FIX: if i get this working remove log.ts
-// update i don't think this will work as im not sure how to get the previous value, unless i pass it in?
-// but then when the cast is updated and stuff that will be a pain
-// unless i do a result for the cast table updating and i don't update the film in add cast i just update the cast table directly
 export const log = Prisma.defineExtension(client => {
 	return client.$extends({
-		result: {
+		query: {
 			film: {
-				log: {
-					needs: {
-						id: true,
-					},
-					compute(film) {
-						return (userId: string) =>
-							prisma.auditLog.create({
-								data: {
-									action: 'update',
-									entity: 'film',
-									entityId: film.id,
-									userId,
-									changes: JSON.stringify({}),
-								},
-							})
-					},
+				async upsert({ args, query, model, operation }) {
+					return query(args)
+					// const [result] = await prisma.$transaction([query(args)]) // wrap the query in a batch transaction, and destructure the result to return an array
+					// return result // return the first result found in the array
+					// const [previousData, nextData]: any = await prisma.$transaction([
+					// prisma.film.findUnique({
+					// 	where: { id: args.where.id ?? '__new_film__' },
+					// }),
+					// query(args),
+					// ])
+
+					// @ts-expect-error TODO: Fix prisma client type
+					// const userId = prisma.userId
+					// console.log(userId)
+
+					// console.log(previousData, nextData)
+
+					// return previousData
 				},
 			},
 		},
 	})
 })
-
-// NOTE: Have a function before that before the table is updated it creates an audit log with an id and previous values
-// then have a function after the update that finds the audit log and updates it with the new values
-// https://github.com/prisma/prisma/discussions/12610
 
 // export const defaultTake = Prisma.defineExtension(client => {
 //   return client.$extends({

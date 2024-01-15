@@ -1,7 +1,7 @@
 import { remember } from '@epic-web/remember'
 import { PrismaClient } from '@prisma/client'
 import chalk from 'chalk'
-import { results } from './middleware.server'
+import { log, results } from './middleware.server'
 
 export const prisma = remember('prisma', () => {
 	// NOTE: if you change anything in this function you'll need to restart
@@ -23,16 +23,18 @@ export const prisma = remember('prisma', () => {
 			e.duration < logThreshold * 1.1
 				? 'green'
 				: e.duration < logThreshold * 1.2
-				  ? 'blue'
-				  : e.duration < logThreshold * 1.3
-				    ? 'yellow'
-				    : e.duration < logThreshold * 1.4
-				      ? 'redBright'
-				      : 'red'
+				? 'blue'
+				: e.duration < logThreshold * 1.3
+				? 'yellow'
+				: e.duration < logThreshold * 1.4
+				? 'redBright'
+				: 'red'
 		const dur = chalk[color](`${e.duration}ms`)
 		console.info(`prisma:query - ${dur} - ${e.query}`)
 	})
 
 	client.$connect()
 	return client
-}).$extends(results)
+})
+	.$extends(results)
+	.$extends(log)

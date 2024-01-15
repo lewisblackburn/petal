@@ -19,16 +19,17 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  image       UserImage?
-  password    Password?
+  image    UserImage?
+  password Password?
 
-  notes       Note[]
+  notes           Note[]
   ratedFilms      FilmRating[]
   filmReviews     FilmReview[]
   favouritedFilms FilmFavourite[]
   ratedSongs      SongRating[]
   songReviews     SongReview[]
   favouritedSongs SongFavourite[]
+  changes         EditLog[]
 
   roles       Role[]
   sessions    Session[]
@@ -444,13 +445,17 @@ model SongFavourite {
   @@index([songId, userId])
 }
 
-model AuditLog {
-  id       String @id @default(cuid())
-  action   String // e.g., create, update, delete
-  entity   String // e.g., film, person, etc.
-  entityId String // the ID of the entity being modified
-  userId   String // the ID of the user making the change
-  changes  String // Store previous and new attribute values as JSON string
+model EditLog {
+  id         String  @id @default(cuid())
+  action     String?
+  tableName  String?
+  columnName String?
+  columnId   String?
+  // NOTE: There is no Prisma support for JSON with SQLite
+  oldData    String? @default("{}")
+  newData    String? @default("{}")
+  user       User?   @relation(fields: [userId], references: [id])
+  userId     String?
 
   createdAt DateTime @default(now())
 }
@@ -554,4 +559,3 @@ model Language {
 
   @@index([name])
 }
-
