@@ -1,8 +1,13 @@
 import { useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { MetaFunction, type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/node'
+import { invariantResponse } from '@epic-web/invariant'
+import {
+	type MetaFunction,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import { Form, Link, useActionData, useLoaderData } from '@remix-run/react'
-import { json} from '@remix-run/server-runtime'
+import { json } from '@remix-run/server-runtime'
 import { format } from 'date-fns'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
@@ -35,7 +40,6 @@ import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { useOptionalUser } from '#app/utils/user.ts'
 import { type IconName } from '@/icon-name'
 import { type loader as filmsLoader } from './index.tsx'
-import { invariantResponse } from '@epic-web/invariant'
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
 	const userId = await getUserId(request)
@@ -434,24 +438,6 @@ export function DeleteFilm({ id }: { id: string }) {
 	)
 }
 
-export const meta: MetaFunction<
-	typeof loader,
-	{ 'routes/films+/$filmId+': typeof filmsLoader }
-> = ({ data }) => {
-	const filmTitle = data?.film.title ?? 'Film'
-	const filmTagline =
-		data?.film.tagline && data.film.tagline.length > 100
-			? data?.film.tagline.slice(0, 97) + '...'
-			: 'No content'
-	return [
-		{ title: `${filmTitle} | Petal` },
-		{
-			name: 'description',
-			content: filmTagline,
-		},
-	]
-}
-
 function Status({
 	icon,
 	title,
@@ -469,6 +455,24 @@ function Status({
 			</div>
 		</div>
 	)
+}
+
+export const meta: MetaFunction<
+	typeof loader,
+	{ 'routes/films+/$filmId+': typeof filmsLoader }
+> = ({ data }) => {
+	const filmTitle = data?.film.title ?? 'Film'
+	const filmTagline =
+		data?.film.tagline && data.film.tagline.length > 100
+			? data?.film.tagline.slice(0, 97) + '...'
+			: 'No content'
+	return [
+		{ title: `${filmTitle} | Petal` },
+		{
+			name: 'description',
+			content: filmTagline,
+		},
+	]
 }
 
 export function ErrorBoundary() {

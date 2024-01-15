@@ -8,7 +8,7 @@ import { log } from '#app/utils/log'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const DeleteFilmAlternativeTitlesSchema = z.object({
-	ids: z.string(),
+	alternativeTitleIDs: z.string(),
 	filmId: z.string(),
 })
 
@@ -28,7 +28,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		)
 	}
 
-	let { filmId, ids } = submission.value
+	let { filmId, alternativeTitleIDs } = submission.value
 
 	await prisma.film.update({
 		where: { id: filmId },
@@ -36,14 +36,14 @@ export async function action({ request }: ActionFunctionArgs) {
 			alternativeTitles: {
 				deleteMany: {
 					id: {
-						in: JSON.parse(ids) as string[],
+						in: JSON.parse(alternativeTitleIDs) as string[],
 					},
 				},
 			},
 		},
 	})
 
-	log('delete', 'Film', filmId, { ids: [] }, submission.value, userId)
+	log('Film', filmId, { alternativeTitleIDs: [] }, submission.value, userId)
 
 	return json({ status: 'success', submission } as const, {
 		headers: await createToastHeaders({

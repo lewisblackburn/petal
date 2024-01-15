@@ -1,6 +1,6 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { type Language, type Film } from '@prisma/client'
+import { type Film } from '@prisma/client'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher } from '@remix-run/react'
 import { json, type SerializeFrom } from '@remix-run/server-runtime'
@@ -22,17 +22,15 @@ import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { log } from '#app/utils/log.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
-import { LanguageSearch } from '../resources+/languages.tsx'
 
 const FilmEditorSchema = z.object({
 	id: z.string().optional(),
-	title: z.string().min(10).max(50),
+	title: z.string().min(1).max(50),
 	tagline: z.string().max(100).optional(),
 	overview: z.string().min(1).max(1000),
 	runtime: z.number().min(1).max(500).optional(),
 	releaseDate: z.date().optional(),
 	ageRating: z.string().optional(),
-	language: z.string(),
 	status: z.string().optional(),
 	budget: z.number().positive().optional(),
 	revenue: z.number().positive().optional(),
@@ -40,7 +38,7 @@ const FilmEditorSchema = z.object({
 
 export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
-	let film = null
+	let film: any = null
 
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
@@ -50,7 +48,6 @@ export async function action({ request }: ActionFunctionArgs) {
 			if (!data.id) return
 
 			film = await prisma.film.findUnique({
-				include: { language: true },
 				where: { id: data.id },
 			})
 			if (!film) {
@@ -79,7 +76,6 @@ export async function action({ request }: ActionFunctionArgs) {
 		runtime,
 		releaseDate,
 		ageRating,
-		language,
 		status,
 		budget,
 		revenue,
@@ -96,11 +92,6 @@ export async function action({ request }: ActionFunctionArgs) {
 				runtime,
 				releaseDate,
 				ageRating,
-				language: {
-					connect: {
-						id: language,
-					},
-				},
 				status,
 				budget,
 				revenue,
@@ -112,11 +103,6 @@ export async function action({ request }: ActionFunctionArgs) {
 				runtime,
 				releaseDate,
 				ageRating,
-				language: {
-					connect: {
-						id: language,
-					},
-				},
 				status,
 				budget,
 				revenue,
@@ -126,7 +112,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		return film
 	})
 
-	log('upsert', 'Film', updatedFilm.id, submission.value, film ?? {}, userId)
+	log('Film', updatedFilm.id, submission.value, film ?? {}, userId)
 
 	return redirectWithToast(`/films/${updatedFilm.id}`, {
 		type: 'success',
@@ -151,8 +137,7 @@ export function FilmEditor({
 			| 'status'
 			| 'budget'
 			| 'revenue'
-		> &
-			Partial<{ language: Language | null }>
+		>
 	>
 }) {
 	const filmFetcher = useFetcher<typeof action>()
@@ -174,7 +159,6 @@ export function FilmEditor({
 				? format(new Date(film.releaseDate), 'yyyy-MM-dd')
 				: null,
 			ageRating: film?.ageRating,
-			language: film?.language?.id,
 			status: film?.status,
 			budget: film?.budget,
 			revenue: film?.revenue,
@@ -235,19 +219,6 @@ export function FilmEditor({
 					}}
 					options={AGE_RATINGS}
 					errors={fields.ageRating.errors}
-				/>
-				<LanguageSearch
-					labelProps={{
-						htmlFor: fields.language.id,
-						children: 'Language',
-						autoFocus: true,
-					}}
-					buttonProps={{
-						...conform.input(fields.language, { type: 'text' }),
-						// @ts-expect-error custom DOM attribute
-						defaultlabel: film?.language?.name,
-					}}
-					errors={fields.language.errors}
 				/>
 				<SelectField
 					labelProps={{ children: 'Status' }}

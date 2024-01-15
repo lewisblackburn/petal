@@ -29,7 +29,7 @@ model User {
   ratedSongs      SongRating[]
   songReviews     SongReview[]
   favouritedSongs SongFavourite[]
-  changes         EditLog[]
+  edits           EditLog[]
 
   roles       Role[]
   sessions    Session[]
@@ -447,7 +447,6 @@ model SongFavourite {
 
 model EditLog {
   id         String  @id @default(cuid())
-  action     String?
   tableName  String?
   columnName String?
   columnId   String?

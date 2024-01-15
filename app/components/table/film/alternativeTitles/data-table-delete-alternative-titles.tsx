@@ -16,7 +16,10 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { type DeleteFilmAlternativeTitlesAction, DeleteFilmAlternativeTitlesSchema } from '#app/routes/resources+/film+/delete-alternative-titles.ts'
+import {
+	type DeleteFilmAlternativeTitlesAction,
+	DeleteFilmAlternativeTitlesSchema,
+} from '#app/routes/resources+/film+/delete-alternative-titles.ts'
 
 interface DataTableDeleteAlternativeTitles<TData> {
 	table: Table<TData>
@@ -80,7 +83,7 @@ export function DataTableDeleteAlternativeTitles<TData>({
 					</DialogHeader>
 					<div className="grid py-4">
 						<input
-							name="ids"
+							name="alternativeTitleIDs"
 							type="hidden"
 							value={JSON.stringify(alternativeTitlesSelected)}
 						/>

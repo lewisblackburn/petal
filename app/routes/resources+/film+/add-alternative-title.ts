@@ -48,7 +48,6 @@ export async function action({ request }: ActionFunctionArgs) {
 	})
 
 	log(
-		'create',
 		'Film',
 		filmId,
 		submission.value,

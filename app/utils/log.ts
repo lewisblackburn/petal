@@ -3,7 +3,6 @@ import { prisma } from './db.server'
 import { difference } from './misc'
 
 export const log = async (
-	action: Prisma.PrismaAction,
 	table: Prisma.ModelName,
 	id: string,
 	oldData: Object,
@@ -27,7 +26,6 @@ export const log = async (
 			},
 			oldData: diff.oldValue,
 			newData: diff.newValue,
-			action,
 			tableName: table.toLowerCase(),
 			columnId: id,
 			columnName: diff.property,

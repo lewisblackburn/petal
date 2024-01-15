@@ -1,6 +1,7 @@
+import { type MetaFunction } from '@remix-run/node'
 import { Outlet } from '@remix-run/react'
+import ButtonGroup from '#app/components/button-group'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import ButtonGroup from '#app/components/button-group';
 
 const NavigationLinks: { name: string; path: string }[] = [
 	{ name: 'Primary Facts', path: '' },
@@ -34,6 +35,8 @@ export default function FilmEditLayout() {
 		</div>
 	)
 }
+
+export const meta: MetaFunction = () => [{ title: 'Edit Film | Petal' }]
 
 export function ErrorBoundary() {
 	return (
