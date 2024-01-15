@@ -34,7 +34,7 @@ import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { cn, getNoteImgSrc, useIsPending } from '#app/utils/misc.tsx'
 
-const titleMinLength = 1
+const titleMinLength = 10
 const titleMaxLength = 100
 const contentMinLength = 1
 const contentMaxLength = 10000

@@ -1,6 +1,5 @@
 import { Prisma } from '@prisma/client'
 import { formatDistanceToNowStrict } from 'date-fns'
-import { prisma } from './db.server.ts'
 
 export const results = Prisma.defineExtension(client => {
 	return client.$extends({
@@ -32,34 +31,6 @@ export const results = Prisma.defineExtension(client => {
 
 						return formatDistanceToNowStrict(birthdate)
 					},
-				},
-			},
-		},
-	})
-})
-
-export const log = Prisma.defineExtension(client => {
-	return client.$extends({
-		query: {
-			film: {
-				async upsert({ args, query, model, operation }) {
-					return query(args)
-					// const [result] = await prisma.$transaction([query(args)]) // wrap the query in a batch transaction, and destructure the result to return an array
-					// return result // return the first result found in the array
-					// const [previousData, nextData]: any = await prisma.$transaction([
-					// prisma.film.findUnique({
-					// 	where: { id: args.where.id ?? '__new_film__' },
-					// }),
-					// query(args),
-					// ])
-
-					// @ts-expect-error TODO: Fix prisma client type
-					// const userId = prisma.userId
-					// console.log(userId)
-
-					// console.log(previousData, nextData)
-
-					// return previousData
 				},
 			},
 		},

@@ -117,9 +117,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		// something weird happened... The user is authenticated but we can't find
 		// them in the database. Maybe they were deleted? Let's log them out.
 		await logout({ request, redirectTo: '/' })
-	} else {
-		// @ts-expect-error NOTE: This is so prisma middlware can access userID for the EditLog
-		prisma.userId = user?.id
 	}
 	const { toast, headers: toastHeaders } = await getToast(request)
 	const honeyProps = honeypot.getInputProps()

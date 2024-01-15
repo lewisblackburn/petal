@@ -344,3 +344,28 @@ export function minutesToWatchTime(minutes: number): string {
 
 	return `${hours}h ${remainingMinutes}m`
 }
+
+/**
+ * Calculates the difference between two objects.
+ * @param oldData - The old object.
+ * @param newData - The new object.
+ * @returns An object containing the keys that have different values between the old and new objects.
+ */
+export const difference = (oldData: Object, newData: Object) => {
+	const result: { [key: string]: { oldValue: any; newValue: any } } = {}
+
+	const keys = new Set([...Object.keys(oldData), ...Object.keys(newData)])
+
+	for (let key of keys) {
+		// Make sure to only compare strings so dates can be compared
+		let oldValue = String(oldData[key as keyof typeof oldData])
+		let newValue = String(newData[key as keyof typeof newData])
+
+		if (key in oldData && key in newData && oldValue !== newValue) {
+			// For some reason these have to be flipped
+			result[key] = { newValue: oldValue, oldValue: newValue }
+		}
+	}
+
+	return result
+}

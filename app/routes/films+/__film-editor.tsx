@@ -1,12 +1,11 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { type Language, type Film } from '@prisma/client'
+import { type ActionFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher } from '@remix-run/react'
-import {
-	json,
-	type SerializeFrom,
-} from '@remix-run/server-runtime'
+import { json, type SerializeFrom } from '@remix-run/server-runtime'
 import { format } from 'date-fns'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import {
@@ -19,36 +18,39 @@ import { Button } from '#app/components/ui/button.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { AGE_RATINGS, STATUSES } from '#app/utils/constants.ts'
+import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
+import { log } from '#app/utils/log.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { LanguageSearch } from '../resources+/languages.tsx'
-import { ActionFunctionArgs } from '@remix-run/node'
 
 const FilmEditorSchema = z.object({
 	id: z.string().optional(),
-	title: z.string().min(1).max(50),
+	title: z.string().min(10).max(50),
 	tagline: z.string().max(100).optional(),
 	overview: z.string().min(1).max(1000),
 	runtime: z.number().min(1).max(500).optional(),
 	releaseDate: z.date().optional(),
 	ageRating: z.string().optional(),
-	language: z.any().optional(),
+	language: z.string(),
 	status: z.string().optional(),
 	budget: z.number().positive().optional(),
 	revenue: z.number().positive().optional(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
-	await requireUserId(request)
+	const userId = await requireUserId(request)
+	let film = null
 
 	const formData = await request.formData()
+	await validateCSRF(formData, request.headers)
 
 	const submission = await parse(formData, {
 		schema: FilmEditorSchema.superRefine(async (data, ctx) => {
 			if (!data.id) return
 
-			const film = await prisma.film.findUnique({
-				select: { id: true, language: true },
+			film = await prisma.film.findUnique({
+				include: { language: true },
 				where: { id: data.id },
 			})
 			if (!film) {
@@ -124,6 +126,8 @@ export async function action({ request }: ActionFunctionArgs) {
 		return film
 	})
 
+	log('upsert', 'Film', updatedFilm.id, submission.value, film ?? {}, userId)
+
 	return redirectWithToast(`/films/${updatedFilm.id}`, {
 		type: 'success',
 		title: 'Success',
@@ -183,6 +187,7 @@ export function FilmEditor({
 			className="flex h-full flex-col gap-y-4"
 			{...form.props}
 		>
+			<AuthenticityTokenInput />
 			{film ? <input type="hidden" name="id" value={film.id} /> : null}
 			<div className="flex flex-col gap-1">
 				<Field
