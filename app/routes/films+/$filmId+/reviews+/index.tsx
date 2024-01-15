@@ -1,7 +1,7 @@
 import { type Prisma } from '@prisma/client'
 import {
-	LoaderFunctionArgs,
-	MetaFunction,
+	type LoaderFunctionArgs,
+	type MetaFunction,
 	json,
 } from '@remix-run/node'
 import { Link, useLoaderData, useLocation } from '@remix-run/react'

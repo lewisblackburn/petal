@@ -386,11 +386,20 @@ export default function FilmRoute() {
 									</Button>
 								</Link>
 							</div>
-							{canDelete && (
-								<div className="w-full">
-									<DeleteFilm id={data.film.id} />
-								</div>
-							)}
+
+							<div className="flex w-full items-center justify-between gap-5">
+								<Link to="edits" className="w-full" preventScrollReset>
+									<Button variant="secondary" size="sm" className="w-full">
+										<Icon name="file-text" className="mr-1" />
+										Edit Logs
+									</Button>
+								</Link>
+								{canDelete && (
+									<div className="w-full">
+										<DeleteFilm id={data.film.id} />
+									</div>
+								)}
+							</div>
 						</div>
 					</div>
 				</div>

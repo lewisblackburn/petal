@@ -1,14 +1,11 @@
-import { type Prisma } from '@prisma/client'
+import { invariantResponse } from '@epic-web/invariant'
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
-import {
-	type LoaderFunctionArgs,
-	type MetaFunction,
-	json,
-} from '@remix-run/node'
+import { type MetaFunction } from '@remix-run/node'
 import { Link, useLoaderData, useLocation } from '@remix-run/react'
+import { type LoaderFunctionArgs, json } from '@remix-run/server-runtime'
 import { format } from 'date-fns'
-import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { InfiniteScroll } from '#app/components/infinite-scroll.tsx'
+import { GeneralErrorBoundary } from '#app/components/error-boundary'
+import { InfiniteScroll } from '#app/components/infinite-scroll'
 import {
 	Card,
 	CardContent,
@@ -16,54 +13,56 @@ import {
 	CardHeader,
 	CardTitle,
 } from '#app/components/ui/card'
-import { prisma } from '#app/utils/db.server.ts'
+import { prisma } from '#app/utils/db.server'
 import { getUserImgSrc } from '#app/utils/misc'
-import { DEFAULT_TAKE, getTableParams } from '#app/utils/request.helper.ts'
+import { getTableParams } from '#app/utils/request.helper'
 
-export async function loader({ request }: LoaderFunctionArgs) {
-	const { orderBy, search, skip, take } = getTableParams(
-		request,
-		DEFAULT_TAKE,
-		{
-			orderBy: 'createdAt',
-			order: 'desc',
-		},
-	)
+const DEFAULT_TAKE = 1
 
-	const where = {
-		OR: search ? [{ content: { contains: search } }] : undefined,
-	} satisfies Prisma.FilmReviewWhereInput
+export async function loader({ request, params }: LoaderFunctionArgs) {
+	const { orderBy, skip, take } = getTableParams(request, DEFAULT_TAKE, {
+		orderBy: 'createdAt',
+		order: 'desc',
+	})
 
 	const logs = await prisma.editLog.findMany({
 		orderBy,
-		skip,
 		take,
-		where,
-		select: {
-			id: true,
-			user: true,
-			oldData: true,
-			newData: true,
-			columnId: true,
-			columnName: true,
-			tableName: true,
-			createdAt: true,
+		skip,
+		where: {
+			tableName: 'film',
+			columnId: params.filmId,
+		},
+		include: {
+			user: {
+				select: {
+					name: true,
+					username: true,
+					image: true,
+					initials: true,
+				},
+			},
+		},
+	})
+	const count = await prisma.editLog.count({
+		where: {
+			tableName: 'film',
+			columnId: params.filmId,
 		},
 	})
 
-	const count = await prisma.editLog.count({
-		where,
-	})
+	invariantResponse(logs, 'Not found', { status: 404 })
 
 	return json({ logs, count })
 }
 
-export default function FilmEditLogsRoute() {
+export default function ChangesRoute() {
 	const data = useLoaderData<typeof loader>()
 	const location = useLocation()
 	const combined = [...(location.state?.data ?? []), ...data.logs]
+	console.log(combined)
 
-	const groupedLogs: { [key: string]: any[] } = combined.reduce(
+	const groupedLogs: { [key: string]: any[] } = data.logs.reduce(
 		(groups, log) => {
 			const date = new Date(log.createdAt).toISOString().split('T')[0] // Get the date part of the timestamp
 			if (!groups[date]) {
@@ -132,16 +131,17 @@ export default function FilmEditLogsRoute() {
 	)
 }
 
-export const meta: MetaFunction = () => {
-	return [
-		{ title: 'Film Edit Logs | Petal' },
-		{
-			name: 'description',
-			content: `Reviews on Petal`,
-		},
-	]
-}
+export const meta: MetaFunction = () => [{ title: 'Film Edits | Petal' }]
 
 export function ErrorBoundary() {
-	return <GeneralErrorBoundary />
+	return (
+		<GeneralErrorBoundary
+			statusHandlers={{
+				403: () => <p>You are not allowed to do that</p>,
+				404: ({ params }) => (
+					<p>No film with the id "{params.filmId}" exists</p>
+				),
+			}}
+		/>
+	)
 }
