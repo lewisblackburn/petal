@@ -1,20 +1,19 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { type FilmReview } from '@prisma/client'
+import { type ActionFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher } from '@remix-run/react'
-import {
-	json,
-	type SerializeFrom,
-} from '@remix-run/server-runtime'
+import { json, type SerializeFrom } from '@remix-run/server-runtime'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList, Field, TextareaField } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
+import { validateCSRF } from '#app/utils/csrf.server'
 import { prisma } from '#app/utils/db.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
-import { ActionFunctionArgs } from '@remix-run/node'
 
 const FilmReviewEditorSchema = z.object({
 	id: z.string().optional(),
@@ -27,6 +26,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 
 	const formData = await request.formData()
+	await validateCSRF(formData, request.headers)
 
 	const submission = await parse(formData, {
 		schema: FilmReviewEditorSchema.superRefine(async (data, ctx) => {
@@ -70,6 +70,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 				value: rating,
 			},
 		})
+
 		// NOTE: Update user score like in /resources/film/rate.tsx
 		const updatedAverageRating = await $prisma.filmRating.aggregate({
 			where: { filmId: params.filmId },
@@ -142,6 +143,7 @@ export function FilmReviewEditor({
 			className="flex h-full flex-col gap-y-4"
 			{...form.props}
 		>
+			<AuthenticityTokenInput />
 			{review ? <input type="hidden" name="id" value={review.id} /> : null}
 			<div className="flex flex-col gap-1">
 				<Field

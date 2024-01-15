@@ -110,14 +110,14 @@ export default function FilmEditLogsRoute() {
 									<div className="flex items-center gap-2 border border-secondary bg-accent px-5 py-3">
 										<span className="font-bold">{log.columnName}</span>
 									</div>
-									{log.oldData && (
-										<div className="flex items-center gap-2 bg-red-500/10 p-5">
-											- {JSON.stringify(log.oldData, null, 2)}
-										</div>
-									)}
 									{log.newData && (
 										<div className="flex items-center gap-2  bg-green-500/10 p-5">
 											+ {JSON.stringify(log.newData, null, 2)}
+										</div>
+									)}
+									{log.oldData && (
+										<div className="flex items-center gap-2 bg-red-500/10 p-5">
+											- {JSON.stringify(log.oldData, null, 2)}
 										</div>
 									)}
 								</CardContent>
