@@ -61,7 +61,7 @@ async function seed() {
 	})
 	console.timeEnd('👑 Created roles...')
 
-	const totalUsers = 5
+	const totalUsers = 20
 	console.time(`👤 Created ${totalUsers} users...`)
 	const noteImages = await getNoteImages()
 	const userImages = await getUserImages()
@@ -269,7 +269,7 @@ async function seed() {
 	}
 	console.timeEnd(`🎶 Created ${GENRES.length} genres...`)
 
-	const totalFilms = 40
+	const totalFilms = 100
 	console.time(`🎞️ Created ${totalFilms} films...`)
 	for (let index = 0; index < totalFilms; index++) {
 		const filmData = createFilm()

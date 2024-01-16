@@ -2,10 +2,11 @@ import { type Prisma } from '@prisma/client'
 import {
 	json,
 	type MetaFunction,
-	LoaderFunctionArgs,
+	type LoaderFunctionArgs,
 } from '@remix-run/node'
 import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { Image } from '#app/components/image'
 import { InfiniteScroll } from '#app/components/infinite-scroll.tsx'
 import { prisma } from '#app/utils/db.server.ts'
 import { getTableParams } from '#app/utils/request.helper.ts'
@@ -20,10 +21,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const where = {
 		OR: search
 			? [
-				{ title: { contains: search } },
-				{ tagline: { contains: search } },
-				{ overview: { contains: search } },
-			]
+					{ title: { contains: search } },
+					{ tagline: { contains: search } },
+					{ overview: { contains: search } },
+			  ]
 			: undefined,
 	} satisfies Prisma.FilmWhereInput
 
@@ -58,7 +59,7 @@ export default function FilmsRoute() {
 				{combined.map(film => (
 					<li key={film.id}>
 						<Link to={film.id}>
-							<img
+							<Image
 								src={film.poster}
 								alt={film.title}
 								className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
@@ -73,15 +74,12 @@ export default function FilmsRoute() {
 }
 
 export const meta: MetaFunction = () => [
-
-		{ title: 'Films | Petal' },
-		{
-			name: 'description',
-			content: `Films on Petal`,
-		},
+	{ title: 'Films | Petal' },
+	{
+		name: 'description',
+		content: `Films on Petal`,
+	},
 ]
-
-
 
 export function ErrorBoundary() {
 	return <GeneralErrorBoundary />

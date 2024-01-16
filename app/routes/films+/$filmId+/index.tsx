@@ -141,6 +141,30 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 	invariantResponse(film, 'Not found', { status: 404 })
 
+	// temporary recommendation system
+	// The overall idea is to find films that users who rated the specified film (film.id)
+	// have liked, excluding films already rated by the target user (userId). The recommendations
+	// are then ordered by average rating, and only the top 5 films are returned.
+	const recommendations = await prisma.$queryRaw<
+		{
+			filmId: number
+			title: string
+			poster: string
+			avgRating: number
+		}[]
+	>`
+    SELECT r1.filmId, f.title, f.poster, AVG(r1.value) as avgRating
+    FROM filmRating r1
+    JOIN filmRating r2 ON r1.userId = r2.userId
+    JOIN Film f ON r1.filmId = f.id
+    WHERE r2.filmId = ${film.id}
+      AND r1.filmId != ${film.id}
+      AND r1.userId != ${userId}
+    GROUP BY r1.filmId
+    ORDER BY avgRating DESC
+    LIMIT 5;
+  `
+
 	const releaseDate = format(new Date(film.releaseDate ?? ''), 'dd MMMM yyyy')
 	const runtime = formatRuntime(film.runtime ?? 0)
 
@@ -151,6 +175,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 			releaseDate,
 			runtime,
 		},
+		recommendations,
 	})
 }
 
@@ -308,8 +333,27 @@ export default function FilmRoute() {
 							</p>
 						)}
 					</div>
-					<div className="flex flex-col space-y-1">
+					<div className="flex flex-col space-y-5">
 						<h2 className="text-xl font-bold">Recommendations</h2>
+						{user ? (
+							<ul className="grid grid-cols-5 gap-5">
+								{data.recommendations?.map(recommendation => (
+									<li key={recommendation.filmId}>
+										<Link to={`/films/${recommendation.filmId}`}>
+											<Image
+												src={recommendation.poster}
+												alt={recommendation.title}
+												className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
+											/>
+										</Link>
+									</li>
+								))}
+							</ul>
+						) : (
+							<p className="text-base font-normal text-muted-foreground">
+								You must be logged in to see recommendations.
+							</p>
+						)}
 					</div>
 				</div>
 				<div className="col-span-3">
