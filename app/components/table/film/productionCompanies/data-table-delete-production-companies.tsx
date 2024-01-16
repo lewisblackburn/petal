@@ -16,7 +16,10 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { DeleteFilmProductionCompaniesAction, DeleteFilmProductionCompaniesSchema } from '#app/routes/resources+/film+/delete-production-companies.ts'
+import {
+	type DeleteFilmProductionCompaniesAction,
+	DeleteFilmProductionCompaniesSchema,
+} from '#app/routes/resources+/film+/delete-production-companies.ts'
 
 interface DataTableDeleteProductionCompanies<TData> {
 	table: Table<TData>

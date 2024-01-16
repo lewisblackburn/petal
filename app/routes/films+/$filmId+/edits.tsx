@@ -20,8 +20,8 @@ import { prisma } from '#app/utils/db.server.ts'
 import { getUserImgSrc } from '#app/utils/misc'
 import { DEFAULT_TAKE, getTableParams } from '#app/utils/request.helper.ts'
 
-export async function loader({ request }: LoaderFunctionArgs) {
-	const { orderBy, search, skip, take } = getTableParams(
+export async function loader({ params, request }: LoaderFunctionArgs) {
+	const { orderBy, skip, take } = getTableParams(
 		request,
 		DEFAULT_TAKE,
 		{
@@ -31,8 +31,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	)
 
 	const where = {
-		OR: search ? [{ content: { contains: search } }] : undefined,
-	} satisfies Prisma.FilmReviewWhereInput
+		columnId: params.filmdId
+	} satisfies Prisma.EditLogWhereInput
 
 	const logs = await prisma.editLog.findMany({
 		orderBy,

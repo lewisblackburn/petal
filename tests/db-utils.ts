@@ -1,9 +1,9 @@
 import fs from 'node:fs'
 import { faker } from '@faker-js/faker'
-import {  type PrismaClient } from '@prisma/client'
+import { type PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { UniqueEnforcer } from 'enforce-unique'
-import { AGE_RATINGS , STATUSES } from '#app/utils/constants'
+import { AGE_RATINGS, STATUSES } from '#app/utils/constants'
 
 const uniqueUsernameEnforcer = new UniqueEnforcer()
 
@@ -87,7 +87,6 @@ export function createPerson() {
 		name,
 	}
 }
-
 
 let noteImages: Array<Awaited<ReturnType<typeof img>>> | undefined
 export async function getNoteImages() {
@@ -181,4 +180,25 @@ export async function cleanupDb(prisma: PrismaClient) {
 		),
 		prisma.$executeRawUnsafe(`PRAGMA foreign_keys = ON`),
 	])
+}
+
+export async function generateRandomFilmRatings(prisma: PrismaClient) {
+	const users = await prisma.user.findMany({})
+	const films = await prisma.film.findMany({})
+
+	users.forEach(async user => {
+		films.forEach(async film => {
+			if (Math.random() > 0.5) return
+
+			try {
+				await prisma.filmRating.create({
+					data: {
+						userId: user.id,
+						filmId: film.id,
+						value: Math.floor(Math.random() * 5) + 1,
+					},
+				})
+			} catch {}
+		})
+	})
 }

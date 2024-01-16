@@ -14,7 +14,10 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { AddPersonImageSchema, AddPersonPhotoAction } from '#app/routes/resources+/person+/add-photo.ts'
+import {
+	AddPersonImageSchema,
+	type AddPersonPhotoAction,
+} from '#app/routes/resources+/person+/add-photo.ts'
 
 export function DataTableAddPhoto() {
 	const { personId } = useParams()

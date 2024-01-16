@@ -7,8 +7,9 @@ export function Spinner({
 }) {
 	return (
 		<div
-			className={`transition-opacity ${showSpinner ? 'opacity-100' : 'opacity-0'
-				} ${className}`}
+			className={`transition-opacity ${
+				showSpinner ? 'opacity-100' : 'opacity-0'
+			} ${className}`}
 		>
 			<svg
 				className="mr-2 h-4 w-4 animate-spin"

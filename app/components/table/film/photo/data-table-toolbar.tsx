@@ -39,7 +39,7 @@ export function DataTableToolbar<TData>({
 					<DataTableFacetedFilter
 						column={table.getColumn('language')}
 						title="Language"
-						options={LANGUAGES}
+						options={LANGUAGES.map(language => ({ label: language.name, value: language.name }))}
 					/>
 				)}
 				{isFiltered && (

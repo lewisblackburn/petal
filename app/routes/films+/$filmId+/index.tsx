@@ -8,7 +8,6 @@ import {
 } from '@remix-run/node'
 import { Form, Link, useActionData, useLoaderData } from '@remix-run/react'
 import { json } from '@remix-run/server-runtime'
-import { format } from 'date-fns'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList } from '#app/components/forms.tsx'
@@ -25,10 +24,10 @@ import { FilmRatingDropdown } from '#app/routes/resources+/film+/rate.tsx'
 import { getUserId } from '#app/utils/auth.server.ts'
 import { STATUSES } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
+import { getFilmRecommendations } from '#app/utils/film.ts'
 import {
 	useDoubleCheck,
 	useIsPending,
-	formatRuntime,
 	orderByRationalProperty,
 } from '#app/utils/misc.tsx'
 import {
@@ -141,39 +140,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 	invariantResponse(film, 'Not found', { status: 404 })
 
-	// temporary recommendation system
-	// The overall idea is to find films that users who rated the specified film (film.id)
-	// have liked, excluding films already rated by the target user (userId). The recommendations
-	// are then ordered by average rating, and only the top 5 films are returned.
-	const recommendations = await prisma.$queryRaw<
-		{
-			filmId: number
-			title: string
-			poster: string
-			avgRating: number
-		}[]
-	>`
-    SELECT r1.filmId, f.title, f.poster, AVG(r1.value) as avgRating
-    FROM filmRating r1
-    JOIN filmRating r2 ON r1.userId = r2.userId
-    JOIN Film f ON r1.filmId = f.id
-    WHERE r2.filmId = ${film.id}
-      AND r1.filmId != ${film.id}
-      AND r1.userId != ${userId}
-    GROUP BY r1.filmId
-    ORDER BY avgRating DESC
-    LIMIT 5;
-  `
-
-	const releaseDate = format(new Date(film.releaseDate ?? ''), 'dd MMMM yyyy')
-	const runtime = formatRuntime(film.runtime ?? 0)
+	const recommendations = await getFilmRecommendations(film.id, userId)
 
 	return json({
 		film: {
 			...film,
 			cast: orderByRationalProperty(film.cast),
-			releaseDate,
-			runtime,
 		},
 		recommendations,
 	})
@@ -335,6 +307,11 @@ export default function FilmRoute() {
 					</div>
 					<div className="flex flex-col space-y-5">
 						<h2 className="text-xl font-bold">Recommendations</h2>
+						{data.recommendations?.length === 0 && (
+							<p className="text-base font-normal text-muted-foreground">
+								This film has no recommendations.
+							</p>
+						)}
 						{user ? (
 							<ul className="grid grid-cols-5 gap-5">
 								{data.recommendations?.map(recommendation => (

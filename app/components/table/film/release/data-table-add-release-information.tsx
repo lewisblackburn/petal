@@ -15,7 +15,10 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { CountrySearch } from '#app/routes/resources+/countries.tsx'
-import { AddFilmReleaseInformationAction, AddFilmReleaseInformationSchema } from '#app/routes/resources+/film+/add-release-information.ts'
+import {
+	type AddFilmReleaseInformationAction,
+	AddFilmReleaseInformationSchema,
+} from '#app/routes/resources+/film+/add-release-information.ts'
 import { LanguageSearch } from '#app/routes/resources+/languages.tsx'
 import { FILM_RELEASE_TYPES } from '#app/utils/constants.ts'
 

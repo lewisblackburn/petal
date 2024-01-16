@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
-import { formatDistanceToNowStrict } from 'date-fns'
+import { format, formatDistanceToNowStrict } from 'date-fns'
+import { formatRuntime } from './misc'
 
 export const results = Prisma.defineExtension(client => {
 	return client.$extends({
@@ -30,6 +31,30 @@ export const results = Prisma.defineExtension(client => {
 						const birthdate = new Date(person.birthdate)
 
 						return formatDistanceToNowStrict(birthdate)
+					},
+				},
+			},
+			film: {
+				releaseDate: {
+					needs: {
+						releaseDate: true,
+					},
+					compute(film) {
+						if (!film.releaseDate) return null
+
+						return film.releaseDate
+							? format(new Date(film.releaseDate), 'dd MMMM yyyy')
+							: 'N/A'
+					},
+				},
+				runtime: {
+					needs: {
+						runtime: true,
+					},
+					compute(film) {
+						if (!film.runtime) return null
+
+						return film.runtime ? Number(formatRuntime(film.runtime)) : null
 					},
 				},
 			},

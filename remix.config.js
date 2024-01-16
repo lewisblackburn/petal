@@ -13,8 +13,8 @@ export default {
 	watchPaths: ['./tailwind.config.ts'],
 	browserNodeBuiltinsPolyfill: {
 		modules: {
-			querystring: true
-		}
+			querystring: true,
+		},
 	},
 	routes: async defineRoutes => {
 		return flatRoutes('routes', defineRoutes, {

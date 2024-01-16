@@ -1,10 +1,10 @@
+import { invariantResponse } from '@epic-web/invariant'
 import { useLoaderData } from '@remix-run/react'
 import { json, type DataFunctionArgs } from '@remix-run/server-runtime'
 import { columns } from '#app/components/table/person/photo/columns.tsx'
 import { PhotoTable } from '#app/components/table/person/photo/data-table.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { invariantResponse } from '@epic-web/invariant'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	await requireUserId(request)

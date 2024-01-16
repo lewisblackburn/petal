@@ -16,7 +16,10 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { DeleteFilmPhotosAction, DeleteFilmPhotosSchema } from '#app/routes/resources+/film+/delete-photos.ts'
+import {
+	type DeleteFilmPhotosAction,
+	DeleteFilmPhotosSchema,
+} from '#app/routes/resources+/film+/delete-photos.ts'
 
 interface DataTableDeletePhotos<TData> {
 	table: Table<TData>

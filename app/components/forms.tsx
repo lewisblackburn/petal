@@ -19,11 +19,7 @@ import {
 import { Icon } from './ui/icon.tsx'
 import { Input } from './ui/input.tsx'
 import { Label } from './ui/label.tsx'
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from './ui/popover.tsx'
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover.tsx'
 import {
 	Select,
 	SelectContent,
@@ -41,20 +37,18 @@ export type OptionType = {
 }
 
 export type PopoverProps = Omit<
-  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Trigger>,
-  'type'
+	React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Trigger>,
+	'type'
 > & {
-  type?: string
+	type?: string
 }
 
 export type SelectProps = Omit<
-React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>,
-'type'
+	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>,
+	'type'
 > & {
-type?: string
+	type?: string
 }
-
-
 
 export function ErrorList({
 	id,

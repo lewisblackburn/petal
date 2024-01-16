@@ -1,7 +1,7 @@
+import { type LoaderFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/router'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { FilmEditor, action } from './__film-editor.tsx'
-import { LoaderFunctionArgs } from '@remix-run/node'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserId(request)

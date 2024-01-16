@@ -1,4 +1,5 @@
 import path from 'node:path'
+import { PrismaClient } from '@prisma/client'
 import fsExtra from 'fs-extra'
 import { afterAll, afterEach, beforeAll } from 'vitest'
 import { cleanupDb } from '#tests/db-utils.ts'
@@ -15,12 +16,13 @@ beforeAll(async () => {
 // we *must* use dynamic imports here so the process.env.DATABASE_URL is set
 // before prisma is imported and initialized
 afterEach(async () => {
-	const { prisma } = await import('#app/utils/db.server.ts')
+	const prisma = new PrismaClient() // Create a new instance of PrismaClient
 	await cleanupDb(prisma)
+	await prisma.$disconnect() // Disconnect PrismaClient
 })
 
 afterAll(async () => {
-	const { prisma } = await import('#app/utils/db.server.ts')
-	await prisma.$disconnect()
+	const prisma = new PrismaClient() // Create a new instance of PrismaClient
+	await prisma.$disconnect() // Disconnect PrismaClient
 	await fsExtra.remove(databasePath)
 })

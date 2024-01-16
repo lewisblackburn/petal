@@ -2,7 +2,11 @@ import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { CheckboxField, ErrorList, FilterSelectField  } from '#app/components/forms.tsx'
+import {
+	CheckboxField,
+	ErrorList,
+	FilterSelectField,
+} from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -14,8 +18,11 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import {
+	type AddFilmCrewMemberAction,
+	AddFilmCrewMemberSchema,
+} from '#app/routes/resources+/film+/add-crew-member'
 import { PersonSearch } from '#app/routes/resources+/people.tsx'
-import { AddFilmCrewMemberAction, AddFilmCrewMemberSchema } from '#app/routes/resources+/film+/add-crew-member'
 import { CREW_ROLES, getAllJobs } from '#app/utils/constants'
 
 export function DataTableAddCrewMember() {

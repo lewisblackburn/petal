@@ -19,7 +19,10 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { AddFilmPhotoAction, AddFilmPhotoSchema } from '#app/routes/resources+/film+/add-photo.ts'
+import {
+	type AddFilmPhotoAction,
+	AddFilmPhotoSchema,
+} from '#app/routes/resources+/film+/add-photo.ts'
 import { LANGUAGES, PHOTO_TYPES } from '#app/utils/constants.ts'
 
 export function DataTableAddPhoto() {
@@ -99,7 +102,10 @@ export function DataTableAddPhoto() {
 								...conform.input(fields.language, { type: 'text' }),
 							}}
 							// TODO: This will need to be a connect query at some point, maybe?
-							options={LANGUAGES.map(language => ({ label: language.name, value: language.name }))}
+							options={LANGUAGES.map(language => ({
+								label: language.name,
+								value: language.name,
+							}))}
 							errors={fields.language.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />

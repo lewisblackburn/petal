@@ -14,7 +14,10 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { type AddFilmCastMemberAction, AddFilmCastMemberSchema } from '#app/routes/resources+/film+/add-cast-member.ts'
+import {
+	type AddFilmCastMemberAction,
+	AddFilmCastMemberSchema,
+} from '#app/routes/resources+/film+/add-cast-member.ts'
 import { PersonSearch } from '#app/routes/resources+/people.tsx'
 
 export function DataTableAddCastMember() {

@@ -1,7 +1,7 @@
 import { parse } from '@conform-to/zod'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
-import {  json } from '@remix-run/server-runtime'
+import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { Spinner } from '#app/components/spinner.tsx'
 import { Button } from '#app/components/ui/button.tsx'
@@ -59,12 +59,15 @@ export async function action({ request }: ActionFunctionArgs) {
 		})
 	}
 
-	return json({ status: 'success', favourited: !isFavourited, submission } as const, {
-		headers: await createToastHeaders({
+	return json(
+		{ status: 'success', favourited: !isFavourited, submission } as const,
+		{
+			headers: await createToastHeaders({
 				description: isFavourited ? 'Film Unfavourited' : 'Film Favourited',
-			type: 'success',
-		}),
-	})
+				type: 'success',
+			}),
+		},
+	)
 }
 
 export const ToggleFavouriteFilm = ({
@@ -103,4 +106,4 @@ export const ToggleFavouriteFilm = ({
 	)
 }
 
-export { action as FavouriteFilmAction}
+export { action as FavouriteFilmAction }

@@ -16,7 +16,10 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { DeleteFilmKeywordsAction, DeleteFilmKeywordsSchema } from '#app/routes/resources+/film+/delete-keywords.ts'
+import {
+	type DeleteFilmKeywordsAction,
+	DeleteFilmKeywordsSchema,
+} from '#app/routes/resources+/film+/delete-keywords.ts'
 
 interface DataTableDeleteKeywords<TData> {
 	table: Table<TData>

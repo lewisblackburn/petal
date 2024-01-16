@@ -14,7 +14,10 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { AddFilmProductionCompanyAction, AddFilmProductionCompanySchema } from '#app/routes/resources+/film+/add-production-company.ts'
+import {
+	type AddFilmProductionCompanyAction,
+	AddFilmProductionCompanySchema,
+} from '#app/routes/resources+/film+/add-production-company.ts'
 import { ProductionCompanySearch } from '#app/routes/resources+/productionCompanies.tsx'
 
 export function DataTableAddProductionCompany() {

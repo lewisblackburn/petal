@@ -43,11 +43,12 @@ export function RatingDropdown({ defaultValue }: RatingDropdownProps) {
 								key={i}
 								name="star-filled"
 								size="md"
-								className={`${i < hoveredStar ||
-										(selectedRating !== null && i < selectedRating)
+								className={`${
+									i < hoveredStar ||
+									(selectedRating !== null && i < selectedRating)
 										? 'transition-color text-yellow-500 duration-150 ease-in-out'
 										: 'transition-color text-gray-500 duration-150 ease-in-out'
-									} cursor-pointer hover:text-yellow-500`}
+								} cursor-pointer hover:text-yellow-500`}
 								onMouseEnter={() => setHoveredStar(i + 1)}
 								onClick={() => {
 									handleRatingClick(i + 1)

@@ -1,14 +1,18 @@
 import { parse } from '@conform-to/zod'
 import { type Prisma } from '@prisma/client'
+import { type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
-import { json} from '@remix-run/server-runtime'
+import { json } from '@remix-run/server-runtime'
 import { useSpinDelay } from 'spin-delay'
 import { z } from 'zod'
-import { SearchSelectField, type ListOfErrors, PopoverProps } from '#app/components/forms.tsx'
+import {
+	SearchSelectField,
+	type ListOfErrors,
+	type PopoverProps,
+} from '#app/components/forms.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { getTableParams } from '#app/utils/request.helper.ts'
-import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { search, take } = getTableParams(request, 5, {

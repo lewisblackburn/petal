@@ -1,4 +1,5 @@
 import { parse } from '@conform-to/zod'
+import { type ActionFunctionArgs } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
 import { json } from '@remix-run/server-runtime'
 import { useState } from 'react'
@@ -16,7 +17,6 @@ import { prisma } from '#app/utils/db.server.ts'
 import { cn } from '#app/utils/misc.tsx'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 import { useOptionalUser } from '#app/utils/user.ts'
-import {  ActionFunctionArgs } from '@remix-run/node'
 
 export const RateFilmSchema = z.object({
 	filmId: z.string(),
@@ -84,7 +84,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	return json({ status: 'success', rating, submission } as const, {
 		headers: await createToastHeaders({
-				description: 'Film Rated',
+			description: 'Film Rated',
 			type: 'success',
 		}),
 	})
@@ -114,7 +114,7 @@ export const FilmRatingDropdown = ({
 			{ method: 'POST', action: '/resources/film/rate' },
 		)
 		setOpen(false)
-		setHoveredRating(0);
+		setHoveredRating(0)
 	}
 
 	const busy = ratingFetcher.state !== 'idle'
@@ -169,4 +169,4 @@ export const FilmRatingDropdown = ({
 	)
 }
 
-export {action as RateFilmAction}
+export { action as RateFilmAction }

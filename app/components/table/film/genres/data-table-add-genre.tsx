@@ -14,7 +14,10 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { AddFilmGenreAction, AddFilmGenreSchema } from '#app/routes/resources+/film+/add-genre.ts'
+import {
+	type AddFilmGenreAction,
+	AddFilmGenreSchema,
+} from '#app/routes/resources+/film+/add-genre.ts'
 import { GenreSearch } from '#app/routes/resources+/genres.tsx'
 
 export function DataTableAddGenre() {

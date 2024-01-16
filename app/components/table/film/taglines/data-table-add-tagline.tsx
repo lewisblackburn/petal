@@ -14,7 +14,10 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { AddFilmTaglineAction, AddFilmTaglineSchema } from '#app/routes/resources+/film+/add-tagline.ts'
+import {
+	type AddFilmTaglineAction,
+	AddFilmTaglineSchema,
+} from '#app/routes/resources+/film+/add-tagline.ts'
 
 export function DataTableAddTagline() {
 	const { filmId } = useParams()

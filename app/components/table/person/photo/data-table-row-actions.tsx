@@ -1,6 +1,7 @@
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Row } from '@tanstack/react-table'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { type SetPrimaryPersonPhotoAction } from '#app/routes/resources+/person+/set-primary'
 
 interface DataTableRowActionsProps<TData> {
 	row: Row<TData>
@@ -9,7 +10,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
 	row,
 }: DataTableRowActionsProps<TData>) {
-	const fetcher = useFetcher()
+	const fetcher = useFetcher<typeof SetPrimaryPersonPhotoAction>()
 	const { personId } = useParams()
 
 	return (
