@@ -442,3 +442,55 @@ export function calculateCategorySimilarity(
 
 	return categorySimilarity
 }
+
+interface calculateSimilarity {
+	texts: Array<{ text1: string; text2: string; weighting: number }>
+	numbers: Array<{
+		number1: number
+		number2: number
+		weighting: number
+	}>
+	categories: Array<{
+		categories1: Array<{ name: string }>
+		categories2: Array<{ name: string }>
+		weighting: number
+	}>
+}
+
+export function calculateSimilarity({
+	texts,
+	numbers,
+	categories,
+}: calculateSimilarity): number {
+	const similarities: Array<number> = []
+
+	// Text comparisons
+	for (const text of texts) {
+		const textSimilarity =
+			cosineSimilarity(text.text1, text.text2) * text.weighting
+		similarities.push(textSimilarity)
+	}
+
+	// Number comparisons
+	for (const number of numbers) {
+		const numberSimilarity =
+			(1 / (1 + euclideanDistance(number.number1, number.number2))) *
+			number.weighting
+		similarities.push(numberSimilarity)
+	}
+
+	// Category comparisons
+	for (const category of categories) {
+		const categorySimilarity =
+			calculateCategorySimilarity(category.categories1, category.categories2) *
+			category.weighting
+		similarities.push(categorySimilarity)
+	}
+
+	const summedSimilarities = similarities.reduce(
+		(partialSum, a) => partialSum + a,
+		0,
+	)
+
+	return summedSimilarities
+}

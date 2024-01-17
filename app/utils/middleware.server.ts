@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { format, formatDistanceToNowStrict } from 'date-fns'
 import { formatRuntime } from './misc'
 
@@ -103,6 +103,7 @@ export const queries = Prisma.defineExtension(client => {
 					if (!updatedAtOperations.includes(operation)) return query(args)
 
 					const accepted =
+						// @ts-expect-error this will be there
 						Object.keys(args.data ?? args ?? {}).filter(table =>
 							acceptedRelationTables.includes(table),
 						).length > 0

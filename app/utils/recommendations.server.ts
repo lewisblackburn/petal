@@ -1,10 +1,66 @@
 import { type Keyword, type Film, type Genre } from '@prisma/client'
 import { prisma } from '#app/utils/db.server'
-import {
-	calculateCategorySimilarity,
-	cosineSimilarity,
-	euclideanDistance,
-} from './misc'
+import { calculateSimilarity } from './misc'
+
+type FilmRecommendation = Partial<Film> & {
+	genres: Pick<Genre, 'name'>[]
+	keywords: Pick<Keyword, 'name'>[]
+	cast: {
+		person: {
+			name: string
+		}
+		character: string
+	}[]
+}
+
+const calculateFilmSimilarity = (
+	film1: FilmRecommendation,
+	film2: FilmRecommendation,
+): number => {
+	return calculateSimilarity({
+		texts: [
+			{
+				text1: film1.title ?? '',
+				text2: film2.title ?? '',
+				weighting: 0.016,
+			},
+			{
+				text1: film1.overview ?? '',
+				text2: film2.overview ?? '',
+				weighting: 0.016,
+			},
+			{
+				text1: film1.tagline ?? '',
+				text2: film2.tagline ?? '',
+				weighting: 0.016,
+			},
+		],
+		numbers: [
+			{
+				number1: film1.runtime ?? 0,
+				number2: film2.runtime ?? 0,
+				weighting: 0.05,
+			},
+		],
+		categories: [
+			{
+				categories1: film1.keywords,
+				categories2: film2.keywords,
+				weighting: 0.052,
+			},
+			{
+				categories1: film1.genres,
+				categories2: film2.genres,
+				weighting: 0.55,
+			},
+			{
+				categories1: film1.cast.map(cast => ({ name: cast.person.name })),
+				categories2: film2.cast.map(cast => ({ name: cast.person.name })),
+				weighting: 0.3,
+			},
+		],
+	})
+}
 
 export async function generateFilmRecommendations(
 	updatedOrCreatedFilmFromDate: Date,
@@ -52,7 +108,7 @@ export async function generateFilmRecommendations(
 		const recommendedFilms = existingFilms
 			.map(existingFilm => ({
 				...existingFilm,
-				similarity: calculateSimilarity(updatedOrNewFilm, existingFilm),
+				similarity: calculateFilmSimilarity(updatedOrNewFilm, existingFilm),
 			}))
 			.filter(film => film.id !== updatedOrNewFilm.id) // Exclude the input film
 			.sort((a, b) => b.similarity - a.similarity) // Sort in descending order
@@ -61,6 +117,7 @@ export async function generateFilmRecommendations(
 		// NOTE: This operation is ignored in middleware, so it won't
 		// trigger an infinite loop as the updatedAt field is not updated.
 		// If it was updated, it would trigger the recommendations again.
+		// This is the same for the next await prisma.film.update too.
 		await prisma.film.update({
 			where: { id: updatedOrNewFilm.id },
 			data: {
@@ -84,7 +141,7 @@ export async function generateFilmRecommendations(
 			const recommendedRecommendedFilms = existingFilms
 				.map(existingFilm => ({
 					...existingFilm,
-					similarity: calculateSimilarity(recommendedFilm, existingFilm),
+					similarity: calculateFilmSimilarity(recommendedFilm, existingFilm),
 				}))
 				.filter(film => film.id !== recommendedFilm.id) // Exclude the input film
 				.sort((a, b) => b.similarity - a.similarity) // Sort in descending order
@@ -111,61 +168,4 @@ export async function generateFilmRecommendations(
 			})
 		}
 	}
-}
-
-type FilmRecommendation = Partial<Film> & {
-	genres: Pick<Genre, 'name'>[]
-	keywords: Pick<Keyword, 'name'>[]
-	cast: {
-		person: {
-			name: string
-		}
-		character: string
-	}[]
-}
-
-export function calculateSimilarity(
-	film1: FilmRecommendation,
-	film2: FilmRecommendation,
-): number {
-	// Calculate similarity for text data (e.g., title, overview, tagline, genres, keywords)
-	const textSimilarity = cosineSimilarity(
-		film1.title + ' ' + film1.overview + ' ' + film1.tagline,
-		film2.title + ' ' + film2.overview + ' ' + film2.tagline,
-	)
-
-	// Calculate similarity for numerical data (e.g., runtime)
-	const runtimeSimilarity =
-		1 / (1 + euclideanDistance(film1.runtime ?? 0, film2.runtime ?? 0))
-
-	// Calculate similarity for cast members
-	const castSimilarity = calculateCategorySimilarity(
-		film1.cast.map(castMember => ({ name: castMember.person.name })),
-		film2.cast.map(castMember => ({ name: castMember.person.name })),
-	)
-	const genreSimilarity = calculateCategorySimilarity(
-		film1.genres,
-		film2.genres,
-	)
-	const keywordSimilarity = calculateCategorySimilarity(
-		film1.keywords,
-		film2.keywords,
-	)
-
-	// Adjust weights for different features based on their importance
-	const textWeight = 0.05
-	const runtimeWeight = 0.05
-	const genreWeight = 0.55
-	const castWeight = 0.3
-	const keywordWeight = 0.05
-
-	// Combine similarity scores with weights
-	const overallSimilarity =
-		textWeight * textSimilarity +
-		runtimeWeight * runtimeSimilarity +
-		genreWeight * genreSimilarity +
-		castWeight * castSimilarity +
-		keywordWeight * keywordSimilarity
-
-	return overallSimilarity
 }
