@@ -1,4 +1,4 @@
-import { type Film } from '@prisma/client'
+import { type Keyword, type Film, type Genre } from '@prisma/client'
 import { json } from '@remix-run/server-runtime'
 import { prisma } from '#app/utils/db.server'
 
@@ -14,46 +14,43 @@ import { prisma } from '#app/utils/db.server'
 export async function generateFilmRecommendations(
 	updatedOrCreatedFilmFromDate: Date,
 ) {
-	const select = {
-		id: true,
-		runtime: true,
-		title: true,
-		overview: true,
-		tagline: true,
-		genres: {
-			select: {
-				name: true,
-			},
-		},
-		keywords: {
-			select: {
-				name: true,
-			},
-		},
-		cast: {
-			select: {
-				person: {
-					select: {
-						name: true,
-					},
+	const existingFilms = await prisma.film.findMany({
+		select: {
+			id: true,
+			runtime: true,
+			title: true,
+			overview: true,
+			tagline: true,
+			genres: {
+				select: {
+					name: true,
 				},
-				character: true,
 			},
+			keywords: {
+				select: {
+					name: true,
+				},
+			},
+			cast: {
+				select: {
+					person: {
+						select: {
+							name: true,
+						},
+					},
+					character: true,
+				},
+			},
+			createdAt: true,
+			updatedAt: true,
 		},
-	}
-
-	// TODO: Instead of doing two queries, I could filter the existingFilms for updatedOrNewFilms instead!
-	const updatedOrNewFilms = await prisma.film.findMany({
-		where: {
-			// This will find films updatedAt, createdAt with the date/time specified
-			updatedAt: { gte: updatedOrCreatedFilmFromDate },
-			createdAt: { gte: updatedOrCreatedFilmFromDate },
-		},
-		select,
 	})
 
-	const existingFilms = await prisma.film.findMany({
-		select,
+	const updatedOrNewFilms = existingFilms.filter(film => {
+		return (
+			film.createdAt >= updatedOrCreatedFilmFromDate ||
+			film.updatedAt >= updatedOrCreatedFilmFromDate
+		)
 	})
 
 	for (const updatedOrNewFilm of updatedOrNewFilms) {
@@ -130,7 +127,21 @@ export function euclideanDistance(number1: number, number2: number): number {
 	return Math.abs(number1 - number2)
 }
 
-export function calculateSimilarity(film1: Film, film2: Film): number {
+type FilmRecommendation = Film & {
+	genres: Pick<Genre, 'name'>[]
+	keywords: Pick<Keyword, 'name'>[]
+	cast: {
+		person: {
+			name: string
+		}
+		character: string
+	}[]
+}
+
+export function calculateSimilarity(
+	film1: FilmRecommendation,
+	film2: FilmRecommendation,
+): number {
 	// Calculate similarity for text data (e.g., title, overview, tagline, genres, keywords)
 	const textSimilarity = cosineSimilarity(
 		film1.title +
@@ -158,7 +169,18 @@ export function calculateSimilarity(film1: Film, film2: Film): number {
 		1 / (1 + euclideanDistance(film1.runtime ?? 0, film2.runtime ?? 0))
 
 	// Calculate similarity for cast members
-	const castSimilarity = calculateCastSimilarity(film1.cast, film2.cast)
+	const castSimilarity = calculateCategorySimilarity(
+		film1.cast.map(castMember => ({ name: castMember.person.name })),
+		film2.cast.map(castMember => ({ name: castMember.person.name })),
+	)
+	const genreSimilarity = calculateCategorySimilarity(
+		film1.genres,
+		film2.genres,
+	)
+	const keywordSimilarity = calculateCategorySimilarity(
+		film1.keywords,
+		film2.keywords,
+	)
 
 	// Adjust weights for different features based on their importance
 	const textWeight = 0.05
@@ -171,58 +193,25 @@ export function calculateSimilarity(film1: Film, film2: Film): number {
 	const overallSimilarity =
 		textWeight * textSimilarity +
 		runtimeWeight * runtimeSimilarity +
-		genreWeight * calculateGenreSimilarity(film1.genres, film2.genres) +
+		genreWeight * genreSimilarity +
 		castWeight * castSimilarity +
-		keywordWeight * calculateKeywordSimilarity(film1.keywords, film2.keywords)
+		keywordWeight * keywordSimilarity
 
 	return overallSimilarity
 }
 
-// Function to calculate similarity for categorical data (genres)
-export function calculateGenreSimilarity(
-	genres1: { name: string }[],
-	genres2: { name: string }[],
+export function calculateCategorySimilarity(
+	category1: { name: string }[],
+	category2: { name: string }[],
 ): number {
-	const commonGenres = genres1.filter(genre1 =>
-		genres2.some(genre2 => genre1.name === genre2.name),
+	const commonCategories = category1.filter(cat1 =>
+		category2.some(cat2 => cat1.name === cat2.name),
 	)
 
-	const genreSimilarity =
-		commonGenres.length / Math.sqrt(genres1.length * genres2.length)
+	if (commonCategories.length === 0) return 0
 
-	return genreSimilarity
-}
+	const categorySimilarity =
+		commonCategories.length / Math.sqrt(category1.length * category2.length)
 
-// Function to calculate similarity for categorical data (keywords)
-export function calculateKeywordSimilarity(
-	keywords1: { name: string }[],
-	keywords2: { name: string }[],
-): number {
-	const commonKeywords = keywords1.filter(kw1 =>
-		keywords2.some(kw2 => kw1.name === kw2.name),
-	)
-
-	const keywordSimilarity =
-		commonKeywords.length / Math.sqrt(keywords1.length * keywords2.length)
-
-	return keywordSimilarity
-}
-
-// Function to calculate similarity for cast members
-export function calculateCastSimilarity(
-	cast1: { person: { name: string }; character: string }[],
-	cast2: { person: { name: string }; character: string }[],
-): number {
-	if (cast1.length === 0 || cast2.length === 0) {
-		return 0 // If either cast array is empty, similarity is 0
-	}
-
-	const commonCast = cast1.filter(member1 =>
-		cast2.some(member2 => member1.person.name === member2.person.name),
-	)
-
-	const castSimilarity =
-		commonCast.length / Math.sqrt(cast1.length * cast2.length)
-
-	return castSimilarity
+	return categorySimilarity
 }

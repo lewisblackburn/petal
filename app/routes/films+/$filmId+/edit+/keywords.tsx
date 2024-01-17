@@ -15,7 +15,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 			id: params.filmId,
 		},
 		select: {
-			keywords: true,
+			keywords: {
+				orderBy: {
+					updatedAt: 'desc',
+				},
+			},
 		},
 	})
 

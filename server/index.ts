@@ -262,14 +262,14 @@ ${chalk.bold('Press Ctrl+C to stop')}
 })
 
 cron.schedule(
-	oneHourAgo.cronTime,
+	oneHourAgo().cronTime,
 	() => {
 		console.log(
 			`${chalk.bold('Running cron job:')}  ${chalk.cyan(
 				'generateFilmRecommendations',
 			)}`,
 		)
-		generateFilmRecommendations(oneHourAgo.date)
+		generateFilmRecommendations(oneHourAgo().date)
 	},
 	{
 		timezone: 'Europe/London',

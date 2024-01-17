@@ -1587,20 +1587,25 @@ export const FILM_RELEASE_TYPES = [
 	},
 ]
 
-export const oneHourAgo = {
+export const oneMinuteAgo = () => ({
+	date: new Date(new Date().setMinutes(new Date().getMinutes() - 1)),
+	cronTime: '* * * * *',
+})
+
+export const oneHourAgo = () => ({
 	date: new Date(new Date().setHours(new Date().getHours() - 1)),
 	cronTime: '0 * * * *',
-}
+})
 
-export const oneDayAgo = {
+export const oneDayAgo = () => ({
 	date: new Date(new Date().setDate(new Date().getDate() - 1)),
 	cronTime: '0 0 * * *',
-}
+})
 
-export const oneWeekAgo = {
+export const oneWeekAgo = () => ({
 	date: new Date(new Date().setDate(new Date().getDate() - 7)),
 	cronTime: '0 0 * * 0',
-}
+})
 
 // NOTE: This is max file size
 export const MAX_SIZE = 1024 * 1024 * 3 // 3MB

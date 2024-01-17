@@ -76,6 +76,46 @@ export const results = Prisma.defineExtension(client => {
 	})
 })
 
+export const queries = Prisma.defineExtension(client => {
+	return client.$extends({
+		query: {
+			film: {
+				// NOTE: Updates updatedAt to include relation tables (this is for the recommendations cron job)
+				async $allOperations({ model, operation, args, query }) {
+					const updatedAtOperations = [
+						'create',
+						'update',
+						'updateMany',
+						'upsert',
+						'delete',
+						'deleteMany',
+					]
+
+					console.log(model, operation, args)
+
+					// NOTE: This is here to prevent there being an infinite recommendation loop
+					// as recommendations find recently updated films so this would update
+					// the recommendaitons and then set the updatedAt to within the week
+					// therfore the cron job would run on the same film again
+					// @ts-expect-error this will be there
+					const isRecommendationOperation = !!args.data?.recommendations
+
+					if (
+						updatedAtOperations.includes(operation) &&
+						!isRecommendationOperation
+					) {
+						// @ts-expect-error this will be there
+						console.log(args.data)
+						// args.data.updatedAt = new Date()
+					}
+
+					return query(args)
+				},
+			},
+		},
+	})
+})
+
 // https://github.com/prisma/prisma/discussions/20016
 // export const queries = Prisma.defineExtension(client => {
 // 	return client.$extends({
