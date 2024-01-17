@@ -146,7 +146,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 							poster: true,
 						},
 					},
-					similarity: true,
+					formattedSimilarity: true,
 				},
 				orderBy: {
 					similarity: 'desc',
@@ -331,7 +331,7 @@ export default function FilmRoute() {
 												alt={recommendation.film.title}
 												className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
 											/>
-											{recommendation.similarity}
+											{recommendation.formattedSimilarity}
 										</Link>
 									</li>
 								))}

@@ -1,112 +1,91 @@
 import { type Film } from '@prisma/client'
-import { type LoaderFunctionArgs, json } from '@remix-run/server-runtime'
+import { json } from '@remix-run/server-runtime'
 import { prisma } from '#app/utils/db.server'
 
-let lastFilm = 'clrh2enj2000qb812kgzlzhhp'
+// TODOS
+// TODO: 1. update respective films (this is more complicated than I throught)
+//            - this needs to be done as say a new film is added, recommendations would
+//              get added for it, but the film it got recommended would not get updated
+//              and would have the old recommendations even though this film might match it.
+//              I THINK I SOLVED THIS, just updated the updatedAt value of the respective films
+//              so that next time the cron job runs, it will update the respective films too.
+// TODO: 2. compartmentalise this file, fix errors ans make it more readable
 
-export async function loader({ request }: LoaderFunctionArgs) {
-	console.log(lastFilm)
-	const inputFilm = await prisma.film.findFirst({
+export async function generateFilmRecommendations(
+	updatedOrCreatedFilmFromDate: Date,
+) {
+	const select = {
+		id: true,
+		runtime: true,
+		title: true,
+		overview: true,
+		tagline: true,
+		genres: {
+			select: {
+				name: true,
+			},
+		},
+		keywords: {
+			select: {
+				name: true,
+			},
+		},
+		cast: {
+			select: {
+				person: {
+					select: {
+						name: true,
+					},
+				},
+				character: true,
+			},
+		},
+	}
+
+	const updatedOrNewFilms = await prisma.film.findMany({
 		where: {
-			id: lastFilm,
-			// id: {
-			// 	gt: lastFilm,
-			// },
+			// This will find films updatedAt, createdAt with the date/time specified
+			updatedAt: { gte: updatedOrCreatedFilmFromDate },
+			createdAt: { gte: updatedOrCreatedFilmFromDate },
 		},
-		orderBy: {
-			id: 'asc', // Order by ID in ascending order to get the next film
-		},
-		select: {
-			id: true,
-			runtime: true,
-			title: true,
-			overview: true,
-			tagline: true,
-			genres: {
-				select: {
-					name: true,
-				},
-			},
-			keywords: {
-				select: {
-					name: true,
-				},
-			},
-			cast: {
-				select: {
-					person: {
-						select: {
-							name: true,
-						},
-					},
-					character: true,
-				},
-			},
-		},
+		select,
 	})
 
-	const films = await prisma.film.findMany({
-		select: {
-			id: true,
-			runtime: true,
-			title: true,
-			overview: true,
-			tagline: true,
-			genres: {
-				select: {
-					name: true,
-				},
-			},
-			keywords: {
-				select: {
-					name: true,
-				},
-			},
-			cast: {
-				select: {
-					person: {
-						select: {
-							name: true,
-						},
-					},
-					character: true,
-				},
-			},
-		},
+	const existingFilms = await prisma.film.findMany({
+		select,
 	})
 
-	const recommended = films
-		.map(film => ({
-			...film,
-			similarity: calculateSimilarity(inputFilm, film),
-		}))
-		.filter(film => film.id !== inputFilm.id) // Exclude the input film
-		.sort((a, b) => b.similarity - a.similarity) // Sort in descending order
-
-	const topFiveSimilarFilms = recommended.slice(0, 5)
-
-	// TODO: I can probably update the other films in the top five similarty scores too at the same time?
-	await prisma.film.update({
-		where: { id: inputFilm.id },
-		data: {
-			recommendations: {
-				// Delete previous recommended films
-				deleteMany: {},
-				create: topFiveSimilarFilms.map(film => ({
-					film: {
-						connect: {
-							id: film.id,
+	for (const updatedOrNewFilm of updatedOrNewFilms) {
+		const recommended = existingFilms
+			.map(existingFilm => ({
+				...existingFilm,
+				similarity: calculateSimilarity(updatedOrNewFilm, existingFilm),
+			}))
+			.filter(film => film.id !== updatedOrNewFilm.id) // Exclude the input film
+			.sort((a, b) => b.similarity - a.similarity) // Sort in descending order
+			.slice(0, 5) // Only keep the top 5 most similar films
+		console.log('Updating: ', updatedOrNewFilm.title)
+		//NOTE: I don't think this updates the updatedAt field, so It shouldn't create an endless OneDayAgo loop so to speak
+		await prisma.film.update({
+			where: { id: updatedOrNewFilm.id },
+			data: {
+				recommendations: {
+					// Delete previous recommended films
+					deleteMany: {},
+					create: recommended.map(film => ({
+						film: {
+							connect: {
+								id: film.id,
+							},
 						},
-					},
-					similarity: film.similarity,
-				})),
+						similarity: film.similarity,
+					})),
+				},
 			},
-		},
-	})
+		})
+	}
 
-	lastFilm = inputFilm.id
-
-	return json({ topFiveSimilarFilms })
+	return json({})
 }
 
 // Function to calculate cosine similarity for text data
@@ -182,8 +161,8 @@ export function calculateSimilarity(film1: Film, film2: Film): number {
 
 	// Adjust weights for different features based on their importance
 	const textWeight = 0.05
-	const runtimeWeight = 0.1
-	const genreWeight = 0.5
+	const runtimeWeight = 0.05
+	const genreWeight = 0.55
 	const castWeight = 0.3
 	const keywordWeight = 0.05
 

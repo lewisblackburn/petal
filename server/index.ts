@@ -20,6 +20,8 @@ import rateLimit from 'express-rate-limit'
 import getPort, { portNumbers } from 'get-port'
 import helmet from 'helmet'
 import morgan from 'morgan'
+import cron from 'node-cron'
+import { generateFilmRecommendations } from '#app/utils/recommendations.server'
 
 installGlobals()
 
@@ -256,6 +258,15 @@ ${chalk.bold('Press Ctrl+C to stop')}
 	if (MODE === 'development') {
 		broadcastDevReady(build)
 	}
+})
+
+// const cronAtMidnight = '0 0 * * *' // This represents midnight
+const cronEveryHour = '0 * * * *' // This represents every hour
+// NOTE: This should be the same time the cron job updates e.g. if it runs every week, get the films updated/created in the last week
+const oneHourAgo = new Date()
+oneHourAgo.setHours(oneHourAgo.getHours() - 1)
+cron.schedule(cronEveryHour, () => {
+	generateFilmRecommendations(oneHourAgo)
 })
 
 closeWithGrace(async () => {

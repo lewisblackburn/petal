@@ -59,7 +59,7 @@ export const results = Prisma.defineExtension(client => {
 				},
 			},
 			filmRecommendation: {
-				similarity: {
+				formattedSimilarity: {
 					needs: {
 						similarity: true,
 					},
