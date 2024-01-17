@@ -42,6 +42,7 @@ export async function generateFilmRecommendations(
 		},
 	}
 
+	// TODO: Instead of doing two queries, I could filter the existingFilms for updatedOrNewFilms instead!
 	const updatedOrNewFilms = await prisma.film.findMany({
 		where: {
 			// This will find films updatedAt, createdAt with the date/time specified

@@ -21,6 +21,7 @@ import getPort, { portNumbers } from 'get-port'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import cron from 'node-cron'
+import { oneHourAgo } from '#app/utils/constants'
 import { generateFilmRecommendations } from '#app/utils/recommendations.server'
 
 installGlobals()
@@ -260,14 +261,20 @@ ${chalk.bold('Press Ctrl+C to stop')}
 	}
 })
 
-// const cronAtMidnight = '0 0 * * *' // This represents midnight
-const cronEveryHour = '0 * * * *' // This represents every hour
-// NOTE: This should be the same time the cron job updates e.g. if it runs every week, get the films updated/created in the last week
-const oneHourAgo = new Date()
-oneHourAgo.setHours(oneHourAgo.getHours() - 1)
-cron.schedule(cronEveryHour, () => {
-	generateFilmRecommendations(oneHourAgo)
-})
+cron.schedule(
+	oneHourAgo.cronTime,
+	() => {
+		console.log(
+			`${chalk.bold('Running cron job:')}  ${chalk.cyan(
+				'generateFilmRecommendations',
+			)}`,
+		)
+		generateFilmRecommendations(oneHourAgo.date)
+	},
+	{
+		timezone: 'Europe/London',
+	},
+)
 
 closeWithGrace(async () => {
 	await new Promise((resolve, reject) => {

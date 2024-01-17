@@ -214,7 +214,6 @@ model Film {
   voteAverage  Float     @default(0)
   voteCount    Int?      @default(0)
   contentScore Float?
-  popularity   Float?
   website      String?
 
   // external ids

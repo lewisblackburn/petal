@@ -1,6 +1,7 @@
 import { json, type MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { Carousel } from '#app/components/carousel.tsx'
+import { oneWeekAgo } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server.ts'
 
 export const meta: MetaFunction = () => [{ title: 'Petal' }]
@@ -19,19 +20,33 @@ export async function loader() {
 	})
 
 	const trendingFilms = await prisma.film.findMany({
-		take: 10,
+		take: 20,
+		where: {
+			ratings: {
+				// NOTE: All films where one or more of its ratings were created in the last week
+				some: {
+					createdAt: {
+						gte: oneWeekAgo.date,
+					},
+				},
+			},
+		},
 		select: {
 			id: true,
 			title: true,
 			poster: true,
-		},
-		where: {
-			updatedAt: {
-				gte: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7), // 7 days
+			ratings: {
+				select: {
+					value: true,
+				},
 			},
 		},
+		// NOTE: This orders by most ratings (within the week) which is correct as we want the most relevent
+		// films not the most popular
 		orderBy: {
-			voteAverage: 'desc',
+			ratings: {
+				_count: 'desc',
+			},
 		},
 	})
 
