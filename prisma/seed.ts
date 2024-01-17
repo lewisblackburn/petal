@@ -269,7 +269,7 @@ async function seed() {
 	}
 	console.timeEnd(`🎶 Created ${GENRES.length} genres...`)
 
-	const totalFilms = 100
+	const totalFilms = 10
 	console.time(`🎞️ Created ${totalFilms} films...`)
 	for (let index = 0; index < totalFilms; index++) {
 		const filmData = createFilm()

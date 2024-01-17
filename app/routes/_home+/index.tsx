@@ -14,7 +14,7 @@ export async function loader() {
 			poster: true,
 		},
 		orderBy: {
-			userScore: 'desc',
+			voteAverage: 'desc',
 		},
 	})
 
@@ -31,7 +31,7 @@ export async function loader() {
 			},
 		},
 		orderBy: {
-			userScore: 'desc',
+			voteAverage: 'desc',
 		},
 	})
 

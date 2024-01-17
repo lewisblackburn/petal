@@ -14,6 +14,7 @@ import {
 } from '#app/components/ui/popover.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
+import { updateFilmVoteAverageAndCount } from '#app/utils/film'
 import { cn } from '#app/utils/misc.tsx'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 import { useOptionalUser } from '#app/utils/user.ts'
@@ -44,43 +45,37 @@ export async function action({ request }: ActionFunctionArgs) {
 	let { filmId, rating } = submission.value
 
 	if (rating === 0) {
-		await prisma.filmRating.delete({
-			where: {
-				filmId_userId: {
-					filmId,
-					userId,
+		await prisma.$transaction(async $prisma => {
+			await $prisma.filmRating.delete({
+				where: {
+					filmId_userId: {
+						filmId,
+						userId,
+					},
 				},
-			},
+			})
+
+			await updateFilmVoteAverageAndCount($prisma, filmId)
 		})
 	} else {
-		await prisma.filmRating.upsert({
-			where: {
-				filmId_userId: { filmId, userId },
-			},
-			create: {
-				filmId,
-				userId,
-				value: rating,
-			},
-			update: {
-				value: rating,
-			},
+		await prisma.$transaction(async $prisma => {
+			await $prisma.filmRating.upsert({
+				where: {
+					filmId_userId: { filmId, userId },
+				},
+				create: {
+					filmId,
+					userId,
+					value: rating,
+				},
+				update: {
+					value: rating,
+				},
+			})
+
+			await updateFilmVoteAverageAndCount($prisma, filmId)
 		})
 	}
-
-	const updatedAverageRating = await prisma.filmRating.aggregate({
-		where: { filmId: filmId },
-		_avg: { value: true },
-	})
-
-	await prisma.film.update({
-		where: { id: filmId },
-		data: {
-			userScore: {
-				set: updatedAverageRating._avg.value ?? 0,
-			},
-		},
-	})
 
 	return json({ status: 'success', rating, submission } as const, {
 		headers: await createToastHeaders({

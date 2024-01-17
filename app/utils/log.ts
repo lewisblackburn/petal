@@ -11,31 +11,31 @@ export const log = async (
 ) => {
 	const diff = difference(oldData, newData)
 
-	const diffArray = Object.entries(diff).map(([key, value]) => ({
-		property: key,
-		newValue: value.newValue,
-		oldValue: value.oldValue,
-	}))
-
-	const dataTest = diffArray.map(diff => {
-		return {
-			user: {
-				connect: {
-					id: userId,
+	const diffArray = Object.entries(diff)
+		.map(([key, value]) => ({
+			property: key,
+			newValue: value.newValue,
+			oldValue: value.oldValue,
+		}))
+		.map(diff => {
+			return {
+				user: {
+					connect: {
+						id: userId,
+					},
 				},
-			},
-			oldData: diff.oldValue,
-			newData: diff.newValue,
-			tableName: table.toLowerCase(),
-			columnId: id,
-			columnName: diff.property,
-		}
-	})
+				oldData: diff.oldValue,
+				newData: diff.newValue,
+				tableName: table.toLowerCase(),
+				columnId: id,
+				columnName: diff.property,
+			}
+		})
 
 	// NOTE: SQLite does not support Prisma createMany
 	// https://github.com/prisma/prisma/issues/10710
 	const inserts = []
-	for (const data of dataTest) {
+	for (const data of diffArray) {
 		inserts.push(prisma.editLog.create({ data }))
 	}
 

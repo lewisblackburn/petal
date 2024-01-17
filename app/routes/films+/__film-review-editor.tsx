@@ -13,6 +13,7 @@ import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { validateCSRF } from '#app/utils/csrf.server'
 import { prisma } from '#app/utils/db.server.ts'
+import { updateFilmVoteAverageAndCount } from '#app/utils/film'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 
 const FilmReviewEditorSchema = z.object({
@@ -71,20 +72,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 			},
 		})
 
-		// NOTE: Update user score like in /resources/film/rate.tsx
-		const updatedAverageRating = await $prisma.filmRating.aggregate({
-			where: { filmId: params.filmId },
-			_avg: { value: true },
-		})
-
-		await $prisma.film.update({
-			where: { id: params.filmId },
-			data: {
-				userScore: {
-					set: updatedAverageRating._avg.value ?? 0,
-				},
-			},
-		})
 		const review = await $prisma.filmReview.upsert({
 			select: { id: true },
 			where: { id: reviewId ?? '__new_review__' },
@@ -99,6 +86,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
 				content,
 			},
 		})
+
+		await updateFilmVoteAverageAndCount($prisma, params.filmId!)
 
 		return review
 	})

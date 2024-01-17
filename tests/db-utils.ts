@@ -48,7 +48,6 @@ export function createFilm() {
 		0,
 		1,
 	)[0].value
-	const userScore = 0
 	// TODO: Connect random language to film
 	// const language = LANGUAGES.sort(() => Math.random() - Math.random()).slice(
 	// 	0,
@@ -70,7 +69,6 @@ export function createFilm() {
 		runtime,
 		releaseDate,
 		ageRating,
-		userScore,
 		// language,
 		status,
 		popularity,
@@ -180,25 +178,4 @@ export async function cleanupDb(prisma: PrismaClient) {
 		),
 		prisma.$executeRawUnsafe(`PRAGMA foreign_keys = ON`),
 	])
-}
-
-export async function generateRandomFilmRatings(prisma: PrismaClient) {
-	const users = await prisma.user.findMany({})
-	const films = await prisma.film.findMany({})
-
-	users.forEach(async user => {
-		films.forEach(async film => {
-			if (Math.random() > 0.5) return
-
-			try {
-				await prisma.filmRating.create({
-					data: {
-						userId: user.id,
-						filmId: film.id,
-						value: Math.floor(Math.random() * 5) + 1,
-					},
-				})
-			} catch {}
-		})
-	})
 }

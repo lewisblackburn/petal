@@ -8,6 +8,7 @@ import {
 } from '@remix-run/node'
 import { Form, Link, useActionData, useLoaderData } from '@remix-run/react'
 import { json } from '@remix-run/server-runtime'
+import React from 'react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList } from '#app/components/forms.tsx'
@@ -24,7 +25,6 @@ import { FilmRatingDropdown } from '#app/routes/resources+/film+/rate.tsx'
 import { getUserId } from '#app/utils/auth.server.ts'
 import { STATUSES } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { getFilmRecommendations } from '#app/utils/film.ts'
 import {
 	useDoubleCheck,
 	useIsPending,
@@ -51,10 +51,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 			title: true,
 			tagline: true,
 			overview: true,
-			runtime: true,
+			formattedRuntime: true,
 			releaseDate: true,
 			ageRating: true,
-			userScore: true,
+			voteAverage: true,
 			language: true,
 			status: true,
 			genres: true,
@@ -135,19 +135,33 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 					},
 				},
 			},
+			recommendations: {
+				// There should only be five anyway
+				take: 5,
+				select: {
+					film: {
+						select: {
+							id: true,
+							title: true,
+							poster: true,
+						},
+					},
+					similarity: true,
+				},
+				orderBy: {
+					similarity: 'desc',
+				},
+			},
 		},
 	})
 
 	invariantResponse(film, 'Not found', { status: 404 })
-
-	const recommendations = await getFilmRecommendations(film.id, userId)
 
 	return json({
 		film: {
 			...film,
 			cast: orderByRationalProperty(film.cast),
 		},
-		recommendations,
 	})
 }
 
@@ -229,7 +243,7 @@ export default function FilmRoute() {
 				<div className="col-span-7 flex flex-col space-y-10">
 					<div className="flex items-center justify-between rounded-lg border px-7 py-6">
 						<Status title="Runtime" icon="clock">
-							{data.film.runtime ?? 'N/A'}
+							{data.film.formattedRuntime ?? 'N/A'}
 						</Status>
 						<Status title="Release Date" icon="calendar">
 							{data.film.releaseDate ?? 'N/A'}
@@ -238,7 +252,7 @@ export default function FilmRoute() {
 							{data.film.ageRating ?? 'N/A'}
 						</Status>
 						<Status title="User score" icon="star">
-							{data.film.userScore ?? 'N/A'}
+							{data.film.voteAverage ?? 'N/A'}
 						</Status>
 						<Status title="Language" icon="language">
 							{data.film.language?.name ?? 'N/A'}
@@ -307,28 +321,24 @@ export default function FilmRoute() {
 					</div>
 					<div className="flex flex-col space-y-5">
 						<h2 className="text-xl font-bold">Recommendations</h2>
-						{data.recommendations?.length === 0 && (
-							<p className="text-base font-normal text-muted-foreground">
-								This film has no recommendations.
-							</p>
-						)}
-						{user ? (
+						{data.film.recommendations.length > 0 ? (
 							<ul className="grid grid-cols-5 gap-5">
-								{data.recommendations?.map(recommendation => (
-									<li key={recommendation.filmId}>
-										<Link to={`/films/${recommendation.filmId}`}>
+								{data.film.recommendations.map(recommendation => (
+									<li key={recommendation.film.id}>
+										<Link to={`/films/${recommendation.film.id}`}>
 											<Image
-												src={recommendation.poster}
-												alt={recommendation.title}
+												src={recommendation.film.poster!}
+												alt={recommendation.film.title}
 												className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
 											/>
+											{recommendation.similarity}
 										</Link>
 									</li>
 								))}
 							</ul>
 						) : (
 							<p className="text-base font-normal text-muted-foreground">
-								You must be logged in to see recommendations.
+								There are currently no recommendations.
 							</p>
 						)}
 					</div>
