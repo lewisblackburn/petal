@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { format, formatDistanceToNowStrict } from 'date-fns'
 import { formatRuntime } from './misc'
 
@@ -92,25 +92,25 @@ export const queries = Prisma.defineExtension(client => {
 						'delete',
 						'deleteMany',
 					]
+					// NOTE: Recommendations are not in this table as it would
+					// create an infinite recommendation loop as recommendations
+					// find recently updated films so this would update the
+					// recommendaitons and then set the updatedAt to within the
+					// week therfore the cron job would run on the same film again
+					// These are the only tables that affect recommendations.
+					const acceptedRelationTables = ['cast', 'genres', 'keywords']
 
-					// TODO: DON'T RUN updatedAt update IF REGULAR UPDATE
-					// console.log(model, operation, args)
+					if (!updatedAtOperations.includes(operation)) return query(args)
 
-					// NOTE: This is here to prevent there being an infinite recommendation loop
-					// as recommendations find recently updated films so this would update
-					// the recommendaitons and then set the updatedAt to within the week
-					// therfore the cron job would run on the same film again
+					const accepted =
+						Object.keys(args.data ?? args ?? {}).filter(table =>
+							acceptedRelationTables.includes(table),
+						).length > 0
+
+					if (!accepted) return query(args)
+
 					// @ts-expect-error this will be there
-					const isRecommendationOperation = !!args.data?.recommendations
-
-					if (
-						updatedAtOperations.includes(operation) &&
-						!isRecommendationOperation
-					) {
-						// @ts-expect-error this will be there
-						// console.log(args.data)
-						// args.data.updatedAt = new Date()
-					}
+					args.data.updatedAt = new Date()
 
 					return query(args)
 				},

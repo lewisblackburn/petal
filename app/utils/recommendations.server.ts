@@ -1,5 +1,10 @@
 import { type Keyword, type Film, type Genre } from '@prisma/client'
 import { prisma } from '#app/utils/db.server'
+import {
+	calculateCategorySimilarity,
+	cosineSimilarity,
+	euclideanDistance,
+} from './misc'
 
 export async function generateFilmRecommendations(
 	updatedOrCreatedFilmFromDate: Date,
@@ -73,6 +78,7 @@ export async function generateFilmRecommendations(
 				},
 			},
 		})
+		console.log('Updated recommendations for film', updatedOrNewFilm.id)
 
 		for (const recommendedFilm of recommendedFilms) {
 			const recommendedRecommendedFilms = existingFilms
@@ -83,6 +89,8 @@ export async function generateFilmRecommendations(
 				.filter(film => film.id !== recommendedFilm.id) // Exclude the input film
 				.sort((a, b) => b.similarity - a.similarity) // Sort in descending order
 				.slice(0, 5) // Only keep the top 5 most similar films
+
+			console.log('Updated recommendations for film', recommendedFilm.id)
 
 			await prisma.film.update({
 				where: { id: recommendedFilm.id },
@@ -105,47 +113,6 @@ export async function generateFilmRecommendations(
 	}
 }
 
-// Function to calculate cosine similarity for text data
-export function cosineSimilarity(text1: string, text2: string): number {
-	// Tokenize the text into words
-	const words1 = text1.split(' ')
-	const words2 = text2.split(' ')
-
-	// Create a set of unique words from both texts
-	const uniqueWords = new Set([...words1, ...words2])
-
-	// Create vectors for each text based on word frequency
-	const vector1 = Array.from(uniqueWords).map(word =>
-		words1.includes(word) ? 1 : 0,
-	)
-	const vector2 = Array.from(uniqueWords).map(word =>
-		words2.includes(word) ? 1 : 0,
-	)
-
-	// Calculate cosine similarity
-	const dotProduct = vector1.reduce(
-		(sum: number, value, index) => sum + value * vector2[index],
-		0,
-	)
-	const magnitude1 = Math.sqrt(
-		vector1.reduce((sum: number, value) => sum + value ** 2, 0),
-	)
-	const magnitude2 = Math.sqrt(
-		vector2.reduce((sum: number, value) => sum + value ** 2, 0),
-	)
-
-	if (magnitude1 === 0 || magnitude2 === 0) {
-		return 0 // Avoid division by zero
-	}
-
-	return dotProduct / (magnitude1 * magnitude2)
-}
-
-// Function to calculate Euclidean distance for numerical data
-export function euclideanDistance(number1: number, number2: number): number {
-	return Math.abs(number1 - number2)
-}
-
 type FilmRecommendation = Partial<Film> & {
 	genres: Pick<Genre, 'name'>[]
 	keywords: Pick<Keyword, 'name'>[]
@@ -163,24 +130,8 @@ export function calculateSimilarity(
 ): number {
 	// Calculate similarity for text data (e.g., title, overview, tagline, genres, keywords)
 	const textSimilarity = cosineSimilarity(
-		film1.title +
-			' ' +
-			film1.overview +
-			' ' +
-			film1.tagline +
-			' ' +
-			film1.genres.map(genre => genre.name).join(' ') +
-			' ' +
-			film1.keywords.map(kw => kw.name).join(' '),
-		film2.title +
-			' ' +
-			film2.overview +
-			' ' +
-			film2.tagline +
-			' ' +
-			film2.genres.map(genre => genre.name).join(' ') +
-			' ' +
-			film2.keywords.map(kw => kw.name).join(' '),
+		film1.title + ' ' + film1.overview + ' ' + film1.tagline,
+		film2.title + ' ' + film2.overview + ' ' + film2.tagline,
 	)
 
 	// Calculate similarity for numerical data (e.g., runtime)
@@ -217,20 +168,4 @@ export function calculateSimilarity(
 		keywordWeight * keywordSimilarity
 
 	return overallSimilarity
-}
-
-export function calculateCategorySimilarity(
-	category1: { name: string }[],
-	category2: { name: string }[],
-): number {
-	const commonCategories = category1.filter(cat1 =>
-		category2.some(cat2 => cat1.name === cat2.name),
-	)
-
-	if (commonCategories.length === 0) return 0
-
-	const categorySimilarity =
-		commonCategories.length / Math.sqrt(category1.length * category2.length)
-
-	return categorySimilarity
 }

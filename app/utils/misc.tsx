@@ -369,3 +369,76 @@ export const difference = (oldData: Object, newData: Object) => {
 
 	return result
 }
+
+/**
+ * Calculates the cosine similarity between two texts.
+ * @param text1 The first text.
+ * @param text2 The second text.
+ * @returns The cosine similarity between the two texts.
+ */
+export function cosineSimilarity(text1: string, text2: string): number {
+	// Tokenize the text into words
+	const words1 = text1.split(' ')
+	const words2 = text2.split(' ')
+
+	// Create a set of unique words from both texts
+	const uniqueWords = new Set([...words1, ...words2])
+
+	// Create vectors for each text based on word frequency
+	const vector1 = Array.from(uniqueWords).map(word =>
+		words1.includes(word) ? 1 : 0,
+	)
+	const vector2 = Array.from(uniqueWords).map(word =>
+		words2.includes(word) ? 1 : 0,
+	)
+
+	// Calculate cosine similarity
+	const dotProduct = vector1.reduce(
+		(sum: number, value, index) => sum + value * vector2[index],
+		0,
+	)
+	const magnitude1 = Math.sqrt(
+		vector1.reduce((sum: number, value) => sum + value ** 2, 0),
+	)
+	const magnitude2 = Math.sqrt(
+		vector2.reduce((sum: number, value) => sum + value ** 2, 0),
+	)
+
+	if (magnitude1 === 0 || magnitude2 === 0) {
+		return 0 // Avoid division by zero
+	}
+
+	return dotProduct / (magnitude1 * magnitude2)
+}
+
+/**
+ * Calculates the Euclidean distance between two numbers.
+ * @param number1 - The first number.
+ * @param number2 - The second number.
+ * @returns The Euclidean distance between the two numbers.
+ */
+export function euclideanDistance(number1: number, number2: number): number {
+	return Math.abs(number1 - number2)
+}
+
+/**
+ * Calculates the similarity between two arrays of categories based on their names.
+ * @param category1 The first array of categories.
+ * @param category2 The second array of categories.
+ * @returns The similarity between the two arrays of categories.
+ */
+export function calculateCategorySimilarity(
+	category1: { name: string }[],
+	category2: { name: string }[],
+): number {
+	const commonCategories = category1.filter(cat1 =>
+		category2.some(cat2 => cat1.name === cat2.name),
+	)
+
+	if (commonCategories.length === 0) return 0
+
+	const categorySimilarity =
+		commonCategories.length / Math.sqrt(category1.length * category2.length)
+
+	return categorySimilarity
+}
