@@ -265,7 +265,7 @@ cron.schedule(
 	oneHourAgo().cronTime,
 	() => {
 		console.log(
-			`${chalk.bold('Running cron job:')}  ${chalk.cyan(
+			`${chalk.bold('CRON JOB:')}  ${chalk.cyan(
 				'generateFilmRecommendations',
 			)}`,
 		)

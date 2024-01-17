@@ -66,6 +66,8 @@ export const results = Prisma.defineExtension(client => {
 					compute(filmRecommendation) {
 						if (!filmRecommendation.similarity) return null
 
+						if (filmRecommendation.similarity === 1) return '100%'
+
 						return `${Number(filmRecommendation.similarity * 100).toPrecision(
 							2,
 						)}%`
@@ -91,7 +93,8 @@ export const queries = Prisma.defineExtension(client => {
 						'deleteMany',
 					]
 
-					console.log(model, operation, args)
+					// TODO: DON'T RUN updatedAt update IF REGULAR UPDATE
+					// console.log(model, operation, args)
 
 					// NOTE: This is here to prevent there being an infinite recommendation loop
 					// as recommendations find recently updated films so this would update
@@ -105,7 +108,7 @@ export const queries = Prisma.defineExtension(client => {
 						!isRecommendationOperation
 					) {
 						// @ts-expect-error this will be there
-						console.log(args.data)
+						// console.log(args.data)
 						// args.data.updatedAt = new Date()
 					}
 

@@ -1,15 +1,5 @@
 import { type Keyword, type Film, type Genre } from '@prisma/client'
-import { json } from '@remix-run/server-runtime'
 import { prisma } from '#app/utils/db.server'
-
-// TODOS
-// TODO: 1. update respective films (this is more complicated than I throught)
-//            - this needs to be done as say a new film is added, recommendations would
-//              get added for it, but the film it got recommended would not get updated
-//              and would have the old recommendations even though this film might match it.
-//              I THINK I SOLVED THIS, just updated the updatedAt value of the respective films
-//              so that next time the cron job runs, it will update the respective films too.
-// TODO: 2. compartmentalise this file, fix errors ans make it more readable
 
 export async function generateFilmRecommendations(
 	updatedOrCreatedFilmFromDate: Date,
@@ -54,7 +44,7 @@ export async function generateFilmRecommendations(
 	})
 
 	for (const updatedOrNewFilm of updatedOrNewFilms) {
-		const recommended = existingFilms
+		const recommendedFilms = existingFilms
 			.map(existingFilm => ({
 				...existingFilm,
 				similarity: calculateSimilarity(updatedOrNewFilm, existingFilm),
@@ -62,15 +52,17 @@ export async function generateFilmRecommendations(
 			.filter(film => film.id !== updatedOrNewFilm.id) // Exclude the input film
 			.sort((a, b) => b.similarity - a.similarity) // Sort in descending order
 			.slice(0, 5) // Only keep the top 5 most similar films
-		console.log('Updating: ', updatedOrNewFilm.title)
-		//NOTE: I don't think this updates the updatedAt field, so It shouldn't create an endless OneDayAgo loop so to speak
+
+		// NOTE: This operation is ignored in middleware, so it won't
+		// trigger an infinite loop as the updatedAt field is not updated.
+		// If it was updated, it would trigger the recommendations again.
 		await prisma.film.update({
 			where: { id: updatedOrNewFilm.id },
 			data: {
 				recommendations: {
 					// Delete previous recommended films
 					deleteMany: {},
-					create: recommended.map(film => ({
+					create: recommendedFilms.map(film => ({
 						film: {
 							connect: {
 								id: film.id,
@@ -81,9 +73,36 @@ export async function generateFilmRecommendations(
 				},
 			},
 		})
-	}
 
-	return json({})
+		for (const recommendedFilm of recommendedFilms) {
+			const recommendedRecommendedFilms = existingFilms
+				.map(existingFilm => ({
+					...existingFilm,
+					similarity: calculateSimilarity(recommendedFilm, existingFilm),
+				}))
+				.filter(film => film.id !== recommendedFilm.id) // Exclude the input film
+				.sort((a, b) => b.similarity - a.similarity) // Sort in descending order
+				.slice(0, 5) // Only keep the top 5 most similar films
+
+			await prisma.film.update({
+				where: { id: recommendedFilm.id },
+				data: {
+					recommendations: {
+						// Delete previous recommended films
+						deleteMany: {},
+						create: recommendedRecommendedFilms.map(film => ({
+							film: {
+								connect: {
+									id: film.id,
+								},
+							},
+							similarity: film.similarity,
+						})),
+					},
+				},
+			})
+		}
+	}
 }
 
 // Function to calculate cosine similarity for text data
@@ -105,14 +124,14 @@ export function cosineSimilarity(text1: string, text2: string): number {
 
 	// Calculate cosine similarity
 	const dotProduct = vector1.reduce(
-		(sum, value, index) => sum + value * vector2[index],
+		(sum: number, value, index) => sum + value * vector2[index],
 		0,
 	)
 	const magnitude1 = Math.sqrt(
-		vector1.reduce((sum, value) => sum + value ** 2, 0),
+		vector1.reduce((sum: number, value) => sum + value ** 2, 0),
 	)
 	const magnitude2 = Math.sqrt(
-		vector2.reduce((sum, value) => sum + value ** 2, 0),
+		vector2.reduce((sum: number, value) => sum + value ** 2, 0),
 	)
 
 	if (magnitude1 === 0 || magnitude2 === 0) {
@@ -127,7 +146,7 @@ export function euclideanDistance(number1: number, number2: number): number {
 	return Math.abs(number1 - number2)
 }
 
-type FilmRecommendation = Film & {
+type FilmRecommendation = Partial<Film> & {
 	genres: Pick<Genre, 'name'>[]
 	keywords: Pick<Keyword, 'name'>[]
 	cast: {
