@@ -1,5 +1,7 @@
 import { type Prisma } from '@prisma/client'
 
+export type Sort = { orderBy: string; order: Prisma.SortOrder }
+
 export function getOrderBy(orderBy: string, order: string) {
 	let object = {} as { [key: string]: unknown }
 	const result = object

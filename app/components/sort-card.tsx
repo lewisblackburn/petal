@@ -1,5 +1,7 @@
+import queryString from 'querystring'
+import { useSearchParams } from '@remix-run/react'
 import React from 'react'
-import { SelectField } from './forms'
+import { type Sort } from '#app/utils/request.helper'
 import { Button } from './ui/button'
 import {
 	Collapsible,
@@ -7,11 +9,20 @@ import {
 	CollapsibleTrigger,
 } from './ui/collapsible'
 import { Icon } from './ui/icon'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from './ui/select'
 
 export function SortCard() {
-	const [isOpen, setIsOpen] = React.useState(true)
+	const [isOpen, setIsOpen] = React.useState(false)
+
 	const SORT_OPTIONS = [
-		{ label: 'Title (A-Z)', value: 'title' },
+		{ label: 'Title (A-Z)', value: { orderBy: 'title', order: 'asc' } },
+		{ label: 'Title (A-Z)', value: { orderBy: 'title', order: 'desc' } },
 		{ label: 'Popularity Ascending', value: 'popularity_asc' },
 		{ label: 'Popularity Descending', value: 'popularity_desc' },
 		{ label: 'Rating Ascending', value: 'rating_asc' },
@@ -19,6 +30,12 @@ export function SortCard() {
 		{ label: 'Release Date Ascending', value: 'release_date_asc' },
 		{ label: 'Release Date Descending', value: 'release_date_desc' },
 	]
+
+	const [params, setParams] = useSearchParams()
+	const handleSort = (order: Sort) => {
+		const existingParams = queryString.parse(params.toString())
+		setParams(queryString.stringify({ ...existingParams, ...order }))
+	}
 
 	return (
 		<Collapsible
@@ -37,16 +54,29 @@ export function SortCard() {
 			</div>
 			<CollapsibleContent className="space-y-2">
 				<div className="rounded-md border px-4 py-3 font-mono text-sm">
-					<div className="flex-1">
-						<SelectField
-							labelProps={{
-								children: 'Sort Results By',
-								className: 'sr-only',
-							}}
-							buttonProps={{}}
-							options={SORT_OPTIONS}
-						/>
-					</div>
+					<Select
+						onValueChange={value => {
+							const parsedValue = JSON.parse(value) as Sort
+							handleSort({
+								orderBy: parsedValue.orderBy,
+								order: parsedValue.order,
+							})
+						}}
+					>
+						<SelectTrigger>
+							<SelectValue placeholder="Sort Results By" />
+						</SelectTrigger>
+						<SelectContent>
+							{SORT_OPTIONS.map(option => (
+								<SelectItem
+									key={JSON.stringify(option.value)}
+									value={JSON.stringify(option.value)}
+								>
+									{option.label}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				</div>
 			</CollapsibleContent>
 		</Collapsible>
