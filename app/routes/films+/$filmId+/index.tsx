@@ -233,11 +233,13 @@ export default function FilmRoute() {
 					alt={data.film.title}
 					className="h-[600px] w-[400px]"
 				/>
-				<Image
-					src={data.film.backdrop ?? ''}
-					alt={data.film.title}
-					className="h-[600px] w-full"
-				/>
+				<div>
+					<Image
+						src={data.film.backdrop ?? ''}
+						alt={data.film.title}
+						className="h-[600px] w-full"
+					/>
+				</div>
 			</div>
 			<div className="grid grid-cols-10 gap-10">
 				<div className="col-span-7 flex flex-col space-y-10">

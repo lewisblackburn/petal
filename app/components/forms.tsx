@@ -255,9 +255,11 @@ export function SelectField({
 					))}
 				</SelectContent>
 			</Select>
-			<div className="px-4 pb-3 pt-1">
-				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
-			</div>
+			{errorId ? (
+				<div className="px-4 pb-3 pt-1">
+					<ErrorList id={errorId} errors={errors} />
+				</div>
+			) : null}
 		</div>
 	)
 }

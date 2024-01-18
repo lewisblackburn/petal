@@ -1,8 +1,12 @@
 import { type Prisma } from '@prisma/client'
 import { json, type DataFunctionArgs, type MetaFunction } from '@remix-run/node'
-import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react'
+import { Link, useLoaderData, useLocation } from '@remix-run/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { FiltersCard } from '#app/components/filters-card'
+import { Image } from '#app/components/image'
 import { InfiniteScroll } from '#app/components/infinite-scroll.tsx'
+import { SortCard } from '#app/components/sort-card'
+import { WhereToWatchCard } from '#app/components/where-to-watch-card'
 import { prisma } from '#app/utils/db.server.ts'
 import { getTableParams } from '#app/utils/request.helper.ts'
 
@@ -42,22 +46,28 @@ export default function PeopleRoute() {
 	const combined = [...(location.state?.data ?? []), ...data.people]
 
 	return (
-		<main className="container py-6">
-			<Outlet />
-			<ul className="grid grid-cols-4 gap-5">
-				{combined.map(person => (
-					<li key={person.id}>
-						<Link to={person.id}>
-							<img
-								src={person.image}
-								alt={person.name}
-								className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
-							/>
-						</Link>
-					</li>
-				))}
-			</ul>
-			<InfiniteScroll take={TAKE} count={data.count} data={combined} />
+		<main className="container flex gap-10 py-6">
+			<div className="flex flex-col gap-2">
+				<SortCard />
+				<WhereToWatchCard />
+				<FiltersCard />
+			</div>
+			<div className="w-full">
+				<ul className="grid grid-cols-4 gap-5">
+					{combined.map(person => (
+						<li key={person.id}>
+							<Link to={person.id}>
+								<Image
+									src={person.image}
+									alt={person.name}
+									className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
+								/>
+							</Link>
+						</li>
+					))}
+				</ul>
+				<InfiniteScroll take={TAKE} count={data.count} data={combined} />
+			</div>
 		</main>
 	)
 }

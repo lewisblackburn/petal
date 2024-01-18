@@ -85,9 +85,14 @@ export function NavigationBar() {
 								<UserDropdown />
 							</>
 						) : (
-							<Button asChild variant="default" size="sm">
-								<Link to={`/login?redirectTo=${pathname}`}>Log In</Link>
-							</Button>
+							<>
+								<div className="w-[300px]">
+									<SearchBar status="idle" />
+								</div>
+								<Button asChild variant="default" size="sm">
+									<Link to={`/login?redirectTo=${pathname}`}>Log In</Link>
+								</Button>
+							</>
 						)}
 					</div>
 				</nav>
