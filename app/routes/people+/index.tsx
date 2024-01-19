@@ -7,6 +7,7 @@ import { Image } from '#app/components/image'
 import { InfiniteScroll } from '#app/components/infinite-scroll.tsx'
 import { SortCard } from '#app/components/sort-card'
 import { WhereToWatchCard } from '#app/components/where-to-watch-card'
+import { PEOPLE_SORT_OPTIONS } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server.ts'
 import { getTableParams } from '#app/utils/request.helper.ts'
 
@@ -48,7 +49,7 @@ export default function PeopleRoute() {
 	return (
 		<main className="container flex gap-10 py-6">
 			<div className="flex flex-col gap-2">
-				<SortCard />
+				<SortCard sortOptions={PEOPLE_SORT_OPTIONS} />
 				<WhereToWatchCard />
 				<FiltersCard />
 			</div>

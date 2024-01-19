@@ -29,15 +29,14 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	let { filmId, ids } = submission.value
 
+	const parsedIds = JSON.parse(ids) as string[]
+
 	await prisma.film.update({
 		where: { id: filmId },
 		data: {
 			genres: {
-				deleteMany: {
-					id: {
-						in: JSON.parse(ids) as string[],
-					},
-				},
+				// NOTE: In this we case we want to disconnect no deleteMany
+				disconnect: parsedIds.map(id => ({ id })),
 			},
 		},
 	})

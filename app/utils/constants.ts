@@ -1,5 +1,8 @@
 // TODO: Move this file entirely to the prisma database
 // TODO: Setup a seed variable file that contains this data instead.
+
+import { type Sort } from './request.helper'
+
 // TODO: Maybe just make the seed script be runnable from the admin dashboard to seed the languages
 export const COUNTRIES = [
 	{ label: 'Aruba', value: 'AW', flag: '🇦🇼' },
@@ -1585,6 +1588,48 @@ export const FILM_RELEASE_TYPES = [
 		label: 'TV',
 		value: 'tv',
 	},
+]
+
+export const FILM_SORT_OPTIONS: Array<{ label: string; value: Sort }> = [
+	{ label: 'Title (A-Z)', value: { orderBy: 'title', order: 'asc' } },
+	{ label: 'Title (Z-A)', value: { orderBy: 'title', order: 'desc' } },
+	// {
+	// 	label: 'Popularity Ascending',
+	// 	value: { orderBy: 'popularity', order: 'asc' },
+	// },
+	// {
+	// 	label: 'Popularity Descending',
+	// 	value: { orderBy: 'popularity', order: 'desc' },
+	// },
+	{
+		label: 'Rating Ascending',
+		value: { orderBy: 'voteAverage', order: 'asc' },
+	},
+	{
+		label: 'Rating Descending',
+		value: { orderBy: 'voteAverage', order: 'desc' },
+	},
+	{
+		label: 'Release Date Ascending',
+		value: { orderBy: 'releaseDate', order: 'asc' },
+	},
+	{
+		label: 'Release Date Descending',
+		value: { orderBy: 'releaseDate', order: 'desc' },
+	},
+]
+
+export const PEOPLE_SORT_OPTIONS: Array<{ label: string; value: Sort }> = [
+	{ label: 'Name (A-Z)', value: { orderBy: 'name', order: 'asc' } },
+	{ label: 'Name (Z-A)', value: { orderBy: 'name', order: 'desc' } },
+	// {
+	// 	label: 'Popularity Ascending',
+	// 	value: { orderBy: 'popularity', order: 'asc' },
+	// },
+	// {
+	// 	label: 'Popularity Descending',
+	// 	value: { orderBy: 'popularity', order: 'desc' },
+	// },
 ]
 
 export const oneMinuteAgo = () => ({

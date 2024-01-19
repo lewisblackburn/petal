@@ -214,6 +214,7 @@ model Film {
   voteAverage  Float     @default(0)
   voteCount    Int?      @default(0)
   contentScore Float?
+  popularity   Float     @default(0)
   website      String?
 
   // external ids
@@ -256,9 +257,9 @@ model Film {
 
 model FilmRecommendation {
   id                String   @id @unique @default(cuid())
-  film              Film     @relation("FilmRecommendations", fields: [filmId], references: [id])
+  film              Film     @relation("FilmRecommendations", fields: [filmId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   filmId            String
-  recommendedFilm   Film     @relation("FilmRecommendedBy", fields: [recommendedFilmId], references: [id])
+  recommendedFilm   Film     @relation("FilmRecommendedBy", fields: [recommendedFilmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   recommendedFilmId String
   similarity        Float
   createdAt         DateTime @default(now())
@@ -271,8 +272,8 @@ model CastMember {
   numerator   Int
   denominator Int
   character   String
-  film        Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  person      Person   @relation(fields: [personId], references: [id])
+  film        Film     @relation(fields: [filmId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  person      Person   @relation(fields: [personId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -282,8 +283,8 @@ model CastMember {
 
 model CrewMember {
   id         String   @id @unique @default(cuid())
-  film       Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  person     Person   @relation(fields: [personId], references: [id])
+  film       Film     @relation(fields: [filmId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  person     Person   @relation(fields: [personId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   department String
   job        String
   featured   Boolean? @default(false)
@@ -296,7 +297,7 @@ model CrewMember {
 
 model FilmPhoto {
   id        String   @id @unique @default(cuid())
-  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   filmId    String
   type      String
   language  String
@@ -307,7 +308,7 @@ model FilmPhoto {
 
 model PersonImage {
   id        String   @id @unique @default(cuid())
-  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  person    Person   @relation(fields: [personId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   personId  String
   image     String
   createdAt DateTime @default(now())
@@ -316,7 +317,7 @@ model PersonImage {
 
 model FilmVideo {
   id        String   @id @unique @default(cuid())
-  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   filmId    String
   site      String
   type      String
@@ -328,9 +329,9 @@ model FilmVideo {
 }
 
 model FilmRating {
-  film      Film        @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  film      Film        @relation(fields: [filmId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   filmId    String
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   userId    String
   value     Int         @default(0)
   review    FilmReview?
@@ -348,6 +349,7 @@ model FilmReview {
   userId    String
   title     String
   content   String
+  // NOTE: I decided to delete the review if the rating is deleted, but show a message notifying the user before doing so
   rating    FilmRating? @relation(fields: [filmId, userId], references: [filmId, userId], onDelete: Cascade, onUpdate: Cascade)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
@@ -357,10 +359,10 @@ model FilmReview {
 
 model FilmAlternateTitle {
   id          String   @id @unique @default(cuid())
-  film        Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  film        Film     @relation(fields: [filmId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   filmId      String
   title       String
-  country     Country  @relation(fields: [countryCode], references: [code])
+  country     Country  @relation(fields: [countryCode], references: [code], onDelete: NoAction, onUpdate: NoAction)
   countryCode String
   locked      Boolean? @default(false)
 
@@ -370,7 +372,7 @@ model FilmAlternateTitle {
 
 model FilmTagline {
   id        String   @id @unique @default(cuid())
-  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   filmId    String
   tagline   String
   createdAt DateTime @default(now())
@@ -379,16 +381,16 @@ model FilmTagline {
 
 model FilmReleaseInformation {
   id             String   @id @unique @default(cuid())
-  film           Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  film           Film     @relation(fields: [filmId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   filmId         String
-  country        Country  @relation(fields: [countryCode], references: [code])
+  country        Country  @relation(fields: [countryCode], references: [code], onDelete: NoAction, onUpdate: Cascade)
   countryCode    String
-  language       Language @relation(fields: [languageId], references: [id])
+  language       Language @relation(fields: [languageId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   languageId     String
   date           DateTime
-  // NOTE: I think I will keep this as a string not an ENUM as tehre are so many different classificationss per country
+  // NOTE: I think I will keep this as a string not an ENUM as there are so many different classificationss per country
   classification String?
-  // TODO: This will be an ENUM at some point
+  // TODO: This will be a table at some point
   type           String?
   note           String?
   locked         Boolean? @default(false)
@@ -401,7 +403,7 @@ model ProductionCompany {
   id          String   @id @unique @default(cuid())
   name        String   @unique
   location    String?
-  country     Country? @relation(fields: [countryCode], references: [code])
+  country     Country? @relation(fields: [countryCode], references: [code], onDelete: NoAction, onUpdate: Cascade)
   countryCode String?
   logo        String?  @default("https://placehold.co/300x450?text=Image")
   homepage    String?
@@ -437,9 +439,9 @@ model Location {
 
 model FilmFavourite {
   id        String   @id @unique @default(cuid())
-  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   filmId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -449,9 +451,9 @@ model FilmFavourite {
 
 model SongFavourite {
   id        String   @id @unique @default(cuid())
-  song      Song     @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  song      Song     @relation(fields: [songId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   songId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -467,7 +469,8 @@ model EditLog {
   // NOTE: There is no Prisma support for JSON with SQLite
   oldData    String? @default("{}")
   newData    String? @default("{}")
-  user       User?   @relation(fields: [userId], references: [id])
+  // I would rather keep onUpdate NoAction here to preserve the history of the data
+  user       User?   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   userId     String?
 
   createdAt DateTime @default(now())
@@ -486,7 +489,7 @@ model Song {
   ratings    SongRating[]
   reviews    SongReview[]
 
-  album   Album?  @relation(fields: [albumId], references: [id])
+  album   Album?  @relation(fields: [albumId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   albumId String?
 
   createdAt DateTime @default(now())
@@ -494,9 +497,9 @@ model Song {
 }
 
 model SongRating {
-  song      Song        @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  song      Song        @relation(fields: [songId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   songId    String
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   userId    String
   value     Int         @default(0)
   review    SongReview?
@@ -508,13 +511,13 @@ model SongRating {
 
 model SongReview {
   id        String      @id @unique @default(cuid())
-  song      Song        @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  song      Song        @relation(fields: [songId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   songId    String
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   userId    String
   title     String
   content   String
-  rating    SongRating? @relation(fields: [songId, userId], references: [songId, userId], onDelete: Cascade, onUpdate: Cascade)
+  rating    SongRating? @relation(fields: [songId, userId], references: [songId, userId], onDelete: NoAction, onUpdate: Cascade)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
@@ -538,7 +541,7 @@ model Album {
 model Artist {
   id       String   @id @unique @default(cuid())
   name     String
-  person   Person   @relation(fields: [personId], references: [id])
+  person   Person   @relation(fields: [personId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   personId String
   locked   Boolean? @default(false)
 

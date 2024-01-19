@@ -1,6 +1,7 @@
 import queryString from 'querystring'
 import { useSearchParams } from '@remix-run/react'
 import React from 'react'
+import { type FILM_SORT_OPTIONS } from '#app/utils/constants'
 import { type Sort } from '#app/utils/request.helper'
 import { Button } from './ui/button'
 import {
@@ -17,19 +18,12 @@ import {
 	SelectValue,
 } from './ui/select'
 
-export function SortCard() {
-	const [isOpen, setIsOpen] = React.useState(false)
+interface SortCardProps {
+	sortOptions: typeof FILM_SORT_OPTIONS
+}
 
-	const SORT_OPTIONS = [
-		{ label: 'Title (A-Z)', value: { orderBy: 'title', order: 'asc' } },
-		{ label: 'Title (A-Z)', value: { orderBy: 'title', order: 'desc' } },
-		{ label: 'Popularity Ascending', value: 'popularity_asc' },
-		{ label: 'Popularity Descending', value: 'popularity_desc' },
-		{ label: 'Rating Ascending', value: 'rating_asc' },
-		{ label: 'Rating Descending', value: 'rating_desc' },
-		{ label: 'Release Date Ascending', value: 'release_date_asc' },
-		{ label: 'Release Date Descending', value: 'release_date_desc' },
-	]
+export function SortCard({ sortOptions }: SortCardProps) {
+	const [isOpen, setIsOpen] = React.useState(false)
 
 	const [params, setParams] = useSearchParams()
 	const handleSort = (order: Sort) => {
@@ -67,7 +61,7 @@ export function SortCard() {
 							<SelectValue placeholder="Sort Results By" />
 						</SelectTrigger>
 						<SelectContent>
-							{SORT_OPTIONS.map(option => (
+							{sortOptions.map(option => (
 								<SelectItem
 									key={JSON.stringify(option.value)}
 									value={JSON.stringify(option.value)}
