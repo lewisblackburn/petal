@@ -197,6 +197,8 @@ model Person {
   crews  CrewMember[]
   songs  Artist[]
   photos PersonImage[]
+
+  @@unique([name, birthdate])
 }
 
 model Film {
