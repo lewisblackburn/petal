@@ -1,6 +1,7 @@
 import { Form, Link, NavLink, useLocation, useSubmit } from '@remix-run/react'
 import { useRef } from 'react'
 import { cn, getUserImgSrc } from '#app/utils/misc.tsx'
+import { userHasRole } from '#app/utils/permissions.ts'
 import { useOptionalUser, useUser } from '#app/utils/user.ts'
 import { SearchBar } from './search-bar.tsx'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar.tsx'
@@ -103,6 +104,7 @@ export function NavigationBar() {
 
 function UserDropdown() {
 	const user = useUser()
+	const userIsAdmin = userHasRole(user, 'admin')
 	const submit = useSubmit()
 	const formRef = useRef<HTMLFormElement>(null)
 	return (
@@ -152,6 +154,16 @@ function UserDropdown() {
 					</Link>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
+				{userIsAdmin && (
+					<>
+						<DropdownMenuGroup>
+							<Link to="/admin/dashboard">
+								<DropdownMenuItem>Dashboard</DropdownMenuItem>
+							</Link>
+						</DropdownMenuGroup>
+						<DropdownMenuSeparator />
+					</>
+				)}
 				<Form action="/logout" method="POST" ref={formRef}>
 					<DropdownMenuItem
 						// this prevents the menu from closing before the form submission is completed
