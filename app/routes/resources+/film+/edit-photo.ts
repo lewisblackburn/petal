@@ -6,10 +6,13 @@ import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
-export const SetPrimaryFilmPhotoSchema = z.object({
+export const EditFilmPhotoSchema = z.object({
+	id: z.string(),
 	filmId: z.string(),
-	image: z.string(),
 	type: z.enum(['poster', 'backdrop']),
+	language: z.string(),
+	url: z.string(),
+	primary: z.boolean().optional(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -17,7 +20,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
 
 	const submission = parse(formData, {
-		schema: SetPrimaryFilmPhotoSchema,
+		schema: EditFilmPhotoSchema,
 	})
 
 	if (!submission.value) {
@@ -30,23 +33,47 @@ export async function action({ request }: ActionFunctionArgs) {
 		)
 	}
 
-	let { filmId, image, type } = submission.value
+	let { id, filmId, type, language, url, primary } = submission.value
+
+	if (primary) {
+		const existingPrimaryPhoto = await prisma.filmPhoto.findFirst({
+			where: { filmId, primary: true },
+		})
+
+		if (existingPrimaryPhoto && primary) {
+			await prisma.filmPhoto.update({
+				where: { id: existingPrimaryPhoto.id },
+				data: { primary: false },
+			})
+		}
+	}
 
 	await prisma.film.update({
 		where: { id: filmId },
 		data: {
-			[type]: {
-				set: image,
+			photos: {
+				update: {
+					where: {
+						id,
+					},
+					data: {
+						type,
+						language,
+						primary,
+					},
+				},
 			},
+
+			...(primary ? { [type]: url } : {}),
 		},
 	})
 
 	return json({ status: 'success', submission } as const, {
 		headers: await createToastHeaders({
-			description: `Set Primary ${type}`,
+			description: 'Added Film Photo',
 			type: 'success',
 		}),
 	})
 }
 
-export { action as SetPrimaryFilmPhotoAction }
+export { action as EditFilmPhotoAction }

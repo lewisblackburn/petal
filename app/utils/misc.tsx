@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto'
+import { URL } from 'url'
 import { useFormAction, useNavigation } from '@remix-run/react'
 import { clsx, type ClassValue } from 'clsx'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -216,7 +218,7 @@ export function useDoubleCheck() {
 				: e => {
 						e.preventDefault()
 						setDoubleCheck(true)
-				  }
+					}
 
 		const onKeyUp: React.ButtonHTMLAttributes<HTMLButtonElement>['onKeyUp'] =
 			e => {
@@ -493,4 +495,105 @@ export function calculateSimilarity({
 	)
 
 	return summedSimilarities
+}
+
+interface ImageData {
+	type: string
+	data: AsyncIterable<Uint8Array>
+	contentType: string
+	filename: string
+}
+
+export async function getImageData(url: string): Promise<ImageData> {
+	try {
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(
+				`Failed to fetch image. Status: ${response.status} ${response.statusText}`,
+			)
+		}
+
+		const urlObject = new URL(url)
+		const pathArray = urlObject.pathname.split('/')
+		const filename = pathArray[pathArray.length - 1]
+
+		const contentType =
+			response.headers.get('content-type') || 'application/octet-stream'
+		const type = contentType.split('/')[0] // Extracting the file type
+
+		const arrayBuffer = await response.arrayBuffer()
+		const uint8Array = new Uint8Array(arrayBuffer)
+
+		console.log('Image data fetched successfully.')
+
+		// Creating a custom async iterable object
+		const asyncIterable: AsyncIterable<Uint8Array> = {
+			async *[Symbol.asyncIterator]() {
+				yield uint8Array
+			},
+		}
+
+		return { type, data: asyncIterable, contentType, filename }
+	} catch (error) {
+		console.error('Error fetching image data:', error)
+		throw error
+	}
+}
+
+export async function fetchAndUploadImage(path: string, s3UploadHandler: any) {
+	const imageData = await getImageData(path)
+
+	const fileExtension = path.split('.').pop() // Extract file extension from the path
+
+	const uploadedImage = await s3UploadHandler({
+		contentType: imageData.contentType,
+		data: imageData.data,
+		name: imageData.type,
+		filename: `${randomUUID()}.${fileExtension}`,
+	})
+
+	return uploadedImage
+}
+
+export async function fetchAndUploadImages(
+	imagePaths: string[],
+	s3UploadHandler: any,
+) {
+	const uploadPromises = imagePaths.map(async path => {
+		return fetchAndUploadImage(path, s3UploadHandler)
+	})
+
+	return Promise.all(uploadPromises)
+}
+
+export async function fetchWithDelay<T>(
+	url: string,
+	options: any,
+	delay: number,
+): Promise<T> {
+	return new Promise<T>((resolve, reject) => {
+		setTimeout(() => {
+			fetch(url, options)
+				.then((res: Response) => {
+					if (!res.ok) {
+						throw new Error(`HTTP error! Status: ${res.status}`)
+					}
+					return res.json() as Promise<T>
+				})
+				.then(resolve)
+				.catch(reject)
+		}, delay)
+	})
+}
+
+export function extractFileName(url: string): string {
+	const parts: string[] = url.split('/')
+
+	const fileName: string = parts[parts.length - 1]
+
+	const urlObject = new URL(url)
+	const fileNameFromURL = urlObject.pathname.split('/').pop()
+
+	return fileNameFromURL || fileName
 }

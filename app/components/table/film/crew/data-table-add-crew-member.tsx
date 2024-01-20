@@ -23,7 +23,7 @@ import {
 	AddFilmCrewMemberSchema,
 } from '#app/routes/resources+/film+/add-crew-member'
 import { PersonSearch } from '#app/routes/resources+/people.tsx'
-import { CREW_ROLES, getAllJobs } from '#app/utils/constants'
+import { ROLES, getAllJobs } from '#app/utils/constants'
 
 export function DataTableAddCrewMember() {
 	const { filmId } = useParams()
@@ -88,7 +88,10 @@ export function DataTableAddCrewMember() {
 							buttonProps={{
 								...conform.input(fields.department, { type: 'text' }),
 							}}
-							options={CREW_ROLES}
+							options={ROLES.map(role => ({
+								label: role.department,
+								value: role.department,
+							}))}
 							errors={fields.department.errors}
 						/>
 						<FilterSelectField
@@ -99,7 +102,7 @@ export function DataTableAddCrewMember() {
 							buttonProps={{
 								...conform.input(fields.job, { type: 'text' }),
 							}}
-							options={getAllJobs()}
+							options={getAllJobs().map(job => ({ label: job, value: job }))}
 							errors={fields.job.errors}
 						/>
 						<CheckboxField

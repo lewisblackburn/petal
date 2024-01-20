@@ -229,7 +229,9 @@ export default function FilmRoute() {
 			</div>
 			<div className="flex items-center gap-5">
 				<Image
-					src={data.film.poster ?? ''}
+					src={
+						data.film.poster !== null ? data.film.poster : '/img/300x450.png'
+					}
 					alt={data.film.title}
 					className="h-[600px] w-[400px]"
 				/>
@@ -257,7 +259,7 @@ export default function FilmRoute() {
 							{data.film.voteAverage ?? 'N/A'}
 						</Status>
 						<Status title="Language" icon="language">
-							{data.film.language?.name ?? 'N/A'}
+							{data.film.language ?? 'N/A'}
 						</Status>
 						{data.film.status && (
 							<Status
@@ -395,7 +397,7 @@ export default function FilmRoute() {
 						<div className="flex flex-wrap gap-5">
 							{data.film.keywords.map(keyword => (
 								<Badge
-									key={keyword.id}
+									key={keyword.name}
 									className="rounded-md p-2"
 									variant="secondary"
 								>

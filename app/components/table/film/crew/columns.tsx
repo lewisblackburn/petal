@@ -1,7 +1,6 @@
 import { type CrewMember } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
-import { CREW_ROLES, getAllJobs } from '#app/utils/constants.ts'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 
 export const columns: ColumnDef<Partial<CrewMember>>[] = [
@@ -45,15 +44,7 @@ export const columns: ColumnDef<Partial<CrewMember>>[] = [
 			<DataTableColumnHeader column={column} title="Department" />
 		),
 		cell: ({ row }) => {
-			const department = CREW_ROLES.find(
-				department => department.value === row.getValue('department'),
-			)
-
-			if (!department) {
-				return null
-			}
-
-			return <span>{department.label}</span>
+			return <span>{row.getValue('department')}</span>
 		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
@@ -65,13 +56,7 @@ export const columns: ColumnDef<Partial<CrewMember>>[] = [
 			<DataTableColumnHeader column={column} title="Job" />
 		),
 		cell: ({ row }) => {
-			const job = getAllJobs().find(job => job.value === row.getValue('job'))
-
-			if (!job) {
-				return null
-			}
-
-			return <span>{job.label}</span>
+			return <span>{row.getValue('job')}</span>
 		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))

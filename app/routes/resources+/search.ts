@@ -16,7 +16,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 					{ title: { contains: search } },
 					{ tagline: { contains: search } },
 					{ overview: { contains: search } },
-			  ]
+				]
 			: undefined,
 	} satisfies Prisma.FilmWhereInput
 	const personWhere = {
@@ -25,7 +25,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 					{ name: { contains: search } },
 					{ biography: { contains: search } },
 					{ knownForDepartment: { contains: search } },
-			  ]
+				]
 			: undefined,
 	} satisfies Prisma.PersonWhereInput
 
@@ -53,6 +53,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	// for people I could just implement a views column or just have it as the last else
 	// in the if else block. I think that would be the best idea. Maybe if total votes each are
 	// below a certain threshold then just go to people.
+	// OR I CAN JUST DO POPULARITY SCORES I THINK THAT'S HOW TMDB DOES IT
 	if (films._count?.id && films._sum?.voteCount) {
 		redirectTo = '/films'
 	} else if (people._count?.id) {

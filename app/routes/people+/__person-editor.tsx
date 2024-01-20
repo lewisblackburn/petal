@@ -20,7 +20,7 @@ import {
 import { Button } from '#app/components/ui/button.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
-import { GENDERS, MEDIA_ROLES } from '#app/utils/constants.ts'
+import { GENDERS, ROLES } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 
@@ -171,7 +171,10 @@ export function PersonEditor({
 					buttonProps={{
 						...conform.input(fields.knownForDepartment),
 					}}
-					options={MEDIA_ROLES}
+					options={ROLES.map(role => ({
+						label: role.department,
+						value: role.department,
+					}))}
 					errors={fields.knownForDepartment.errors}
 				/>
 				<Field

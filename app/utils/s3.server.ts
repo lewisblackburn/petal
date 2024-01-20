@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto'
+import path from 'path'
 import { PassThrough } from 'stream'
 import { S3 } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
@@ -51,6 +53,46 @@ export const s3UploadHandler: UploadHandler = async ({
 	if (name !== 'image') {
 		return undefined
 	}
-	const uploadedFileLocation = await uploadStreamToS3(data, filename!)
+
+	const fileType = path.extname(filename!).toLowerCase() // Extract file type
+	const newFilename = randomUUID() + fileType
+
+	const uploadedFileLocation = await uploadStreamToS3(data, newFilename)
 	return uploadedFileLocation
+}
+
+const deleteFromS3 = async (keys: string[]) => {
+	const s3 = new S3({
+		credentials: {
+			accessKeyId: STORAGE_ACCESS_KEY,
+			secretAccessKey: STORAGE_SECRET,
+		},
+		region: STORAGE_REGION,
+	})
+
+	const deletePromises = keys.map(async key => {
+		const params = {
+			Bucket: STORAGE_BUCKET,
+			Key: key,
+		}
+
+		try {
+			await s3.deleteObject(params)
+			console.log(`Successfully deleted ${key} from S3.`)
+		} catch (error) {
+			console.error(`Error deleting ${key} from S3:`, error)
+			throw error
+		}
+	})
+
+	await Promise.all(deletePromises)
+}
+
+export const s3DeleteHandler = async (filenames: string[]) => {
+	try {
+		await deleteFromS3(filenames)
+		return `Successfully deleted ${filenames.length} files from S3.`
+	} catch (error) {
+		return `Error deleting files from S3: ${error}`
+	}
 }

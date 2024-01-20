@@ -33,8 +33,13 @@ export async function action({ request }: ActionFunctionArgs) {
 		where: { id: filmId },
 		data: {
 			keywords: {
-				create: {
-					name: keyword,
+				connectOrCreate: {
+					where: {
+						name: keyword,
+					},
+					create: {
+						name: keyword,
+					},
 				},
 			},
 		},

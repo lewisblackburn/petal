@@ -8,8 +8,8 @@ import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const AddFilmReleaseInformationSchema = z.object({
 	filmId: z.string(),
-	code: z.string(),
-	languageId: z.string(),
+	country: z.string(),
+	language: z.string(),
 	date: z.date(),
 	classification: z.string(),
 	// TODO: This should be the film release types enum
@@ -33,7 +33,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		)
 	}
 
-	let { filmId, code, languageId, date, classification, type, note } =
+	let { filmId, country, language, date, classification, type, note } =
 		submission.value
 
 	await prisma.film.update({
@@ -41,8 +41,8 @@ export async function action({ request }: ActionFunctionArgs) {
 		data: {
 			releaseInformation: {
 				create: {
-					countryCode: code,
-					languageId,
+					country,
+					language,
 					date,
 					classification,
 					type,

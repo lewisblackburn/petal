@@ -31,7 +31,7 @@ export function DataTableDeleteKeywords<TData>({
 	const { filmId } = useParams()
 	const keywordsSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as Keyword).id)
+		.rows.map(row => (row.original as Keyword).name)
 	const fetcher = useFetcher<typeof DeleteFilmKeywordsAction>()
 	const [open, setOpen] = useState(false)
 
@@ -83,7 +83,7 @@ export function DataTableDeleteKeywords<TData>({
 					</DialogHeader>
 					<div className="grid py-4">
 						<input
-							name="ids"
+							name="names"
 							type="hidden"
 							value={JSON.stringify(keywordsSelected)}
 						/>

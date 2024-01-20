@@ -33,7 +33,10 @@ export function DataTableToolbar<TData>({
 					<DataTableFacetedFilter
 						column={table.getColumn('country')}
 						title="Country"
-						options={COUNTRIES}
+						options={COUNTRIES.map(country => ({
+							label: country.name,
+							value: country.name,
+						}))}
 					/>
 				)}
 				{isFiltered && (

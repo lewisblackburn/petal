@@ -3,6 +3,7 @@ import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import {
+	CheckboxField,
 	ErrorList,
 	Field,
 	FilterSelectField,
@@ -101,12 +102,19 @@ export function DataTableAddPhoto() {
 							buttonProps={{
 								...conform.input(fields.language, { type: 'text' }),
 							}}
-							// TODO: This will need to be a connect query at some point, maybe?
 							options={LANGUAGES.map(language => ({
 								label: language.name,
 								value: language.name,
 							}))}
 							errors={fields.language.errors}
+						/>
+						<CheckboxField
+							labelProps={{
+								htmlFor: fields.primary.id,
+								children: 'Primary',
+							}}
+							buttonProps={conform.input(fields.primary, { type: 'checkbox' })}
+							errors={fields.primary.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>

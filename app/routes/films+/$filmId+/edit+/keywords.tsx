@@ -15,18 +15,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 			id: params.filmId,
 		},
 		select: {
-			keywords: {
-				orderBy: {
-					updatedAt: 'desc',
-				},
-			},
+			keywords: true,
 		},
 	})
 
 	invariantResponse(film, 'Not found', { status: 404 })
 
 	const keywords = film.keywords.map(keyword => ({
-		id: keyword.id,
 		name: keyword.name,
 		created: new Date(keyword.createdAt),
 		updated: new Date(keyword.updatedAt),

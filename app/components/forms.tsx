@@ -255,11 +255,9 @@ export function SelectField({
 					))}
 				</SelectContent>
 			</Select>
-			{errorId ? (
-				<div className="px-4 pb-3 pt-1">
-					<ErrorList id={errorId} errors={errors} />
-				</div>
-			) : null}
+			<div className="px-4 pb-3 pt-1">
+				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
+			</div>
 		</div>
 	)
 }
@@ -421,7 +419,7 @@ export function SearchSelectField({
 				// @ts-expect-error defaultlabel custom attribute in the DOM due to value being different from label in some cases
 				label: buttonProps.defaultlabel ?? buttonProps.defaultValue?.toString(),
 				value: buttonProps.defaultValue?.toString(),
-		  }
+			}
 		: undefined
 
 	const [selectedItem, setSelectedItem] = React.useState<

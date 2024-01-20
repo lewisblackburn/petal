@@ -6,7 +6,7 @@ import { Image } from '#app/components/image.tsx'
 import { Slider } from '#app/components/slider.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { GENDERS, MEDIA_ROLES } from '#app/utils/constants.ts'
+import { GENDERS } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
 
 export async function loader({ params }: DataFunctionArgs) {
@@ -26,6 +26,7 @@ export async function loader({ params }: DataFunctionArgs) {
 			placeOfBirth: true,
 			// This is technically a list of all the Films/TV shows/etc the person has been in
 			casts: {
+				take: 10,
 				select: {
 					film: {
 						select: {
@@ -37,13 +38,31 @@ export async function loader({ params }: DataFunctionArgs) {
 				},
 				orderBy: {
 					film: {
-						releaseDate: 'desc',
+						voteAverage: 'desc',
+					},
+				},
+			},
+			crews: {
+				take: 10,
+				select: {
+					film: {
+						select: {
+							id: true,
+							title: true,
+							poster: true,
+						},
+					},
+				},
+				orderBy: {
+					film: {
+						voteAverage: 'desc',
 					},
 				},
 			},
 			_count: {
 				select: {
 					casts: true,
+					crews: true,
 				},
 			},
 		},
@@ -63,6 +82,7 @@ export async function loader({ params }: DataFunctionArgs) {
 
 export default function PersonRoute() {
 	const data = useLoaderData<typeof loader>()
+	const knownForItems = [...data.person.casts, ...data.person.crews]
 
 	return (
 		<div className="container grid grid-cols-4 gap-10 py-6">
@@ -77,16 +97,12 @@ export default function PersonRoute() {
 					{data.person.knownForDepartment && (
 						<div>
 							<h2 className="font-bold">Known For</h2>
-							{
-								MEDIA_ROLES.filter(
-									role => role.value === data.person.knownForDepartment,
-								)[0].label
-							}
+							{data.person.knownForDepartment}
 						</div>
 					)}
 					<div>
 						<h2 className="font-bold">Known Credits</h2>
-						{data.person._count.casts}
+						{data.person._count.casts + data.person._count.crews}
 					</div>
 					{data.person.gender && (
 						<div>
@@ -129,11 +145,10 @@ export default function PersonRoute() {
 					})}
 				</div>
 				<div>
-					{data.person.casts.length > 0 && (
+					{knownForItems.length > 0 && (
 						<Slider
 							title="Known For"
-							// TODO: This will need to be replaced with a list of the person's most popular films
-							items={data.person.casts?.map(credit => {
+							items={knownForItems.map(credit => {
 								return {
 									to: `/films/${credit.film.id}`,
 									image: credit.film.poster ?? '',

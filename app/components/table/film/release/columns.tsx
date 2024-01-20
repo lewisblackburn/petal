@@ -1,6 +1,7 @@
 import { type FilmReleaseInformation } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
+import { COUNTRIES } from '#app/utils/constants.ts'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 
 export const columns: ColumnDef<
@@ -46,12 +47,13 @@ export const columns: ColumnDef<
 			<DataTableColumnHeader column={column} title="Country" />
 		),
 		cell: ({ row }) => (
-			<div className="">
-				{row.original.flag} {row.getValue('country')}
+			<div>
+				{COUNTRIES.find(country => country.name === row.original.country)?.flag}{' '}
+				{row.getValue('country')}
 			</div>
 		),
 		filterFn: (row, id, value) => {
-			return value.includes(row.original.countryCode)
+			return value.includes(row.original.country)
 		},
 	},
 	{

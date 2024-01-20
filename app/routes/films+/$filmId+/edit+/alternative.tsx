@@ -32,8 +32,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 	const alternativeTitles = film.alternativeTitles.map(alternativeTitle => ({
 		id: alternativeTitle.id,
 		title: alternativeTitle.title,
-		countryName: alternativeTitle.country.name,
-		flag: alternativeTitle.country.flag,
+		country: alternativeTitle.country,
 		created: new Date(alternativeTitle.createdAt),
 		updated: new Date(alternativeTitle.updatedAt),
 	}))

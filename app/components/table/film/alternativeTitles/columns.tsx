@@ -1,9 +1,10 @@
-import { type Country, type FilmAlternateTitle } from '@prisma/client'
+import { type FilmAlternateTitle } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
+import { COUNTRIES } from '#app/utils/constants.ts'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 
-export const columns: ColumnDef<Partial<FilmAlternateTitle & Country>>[] = [
+export const columns: ColumnDef<Partial<FilmAlternateTitle>>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -39,14 +40,19 @@ export const columns: ColumnDef<Partial<FilmAlternateTitle & Country>>[] = [
 		cell: ({ row }) => <div className="w-[200px]">{row.getValue('title')}</div>,
 	},
 	{
-		accessorKey: 'countryName',
+		accessorKey: 'country',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Country" />
 		),
 		cell: ({ row }) => (
 			<div className="flex w-[200px] items-center space-x-2">
-				<div>{row.original.flag}</div>
-				<div>{row.getValue('countryName')}</div>
+				<div>
+					{
+						COUNTRIES.find(country => country.name === row.original.country)
+							?.flag
+					}
+				</div>
+				<div>{row.getValue('country')}</div>
 			</div>
 		),
 	},

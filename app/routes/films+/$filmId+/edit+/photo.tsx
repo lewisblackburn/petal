@@ -23,9 +23,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 	const photos = film.photos.map(photo => ({
 		id: photo.id,
-		image: photo.image,
+		filename: photo.filename,
+		url: photo.url,
 		type: photo.type,
 		language: photo.language,
+		primary: photo.primary,
 	}))
 
 	return json({ photos })

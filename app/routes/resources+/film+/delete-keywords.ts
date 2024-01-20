@@ -7,7 +7,7 @@ import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const DeleteFilmKeywordsSchema = z.object({
-	ids: z.string(),
+	names: z.string(),
 	filmId: z.string(),
 })
 
@@ -27,17 +27,16 @@ export async function action({ request }: ActionFunctionArgs) {
 		)
 	}
 
-	let { filmId, ids } = submission.value
+	let { filmId, names } = submission.value
+
+	const parsedNames = JSON.parse(names) as string[]
 
 	await prisma.film.update({
 		where: { id: filmId },
 		data: {
 			keywords: {
-				deleteMany: {
-					id: {
-						in: JSON.parse(ids) as string[],
-					},
-				},
+				// NOTE: In this we case we want to disconnect no deleteMany
+				disconnect: parsedNames.map(name => ({ name })),
 			},
 		},
 	})

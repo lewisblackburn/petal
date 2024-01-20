@@ -8,6 +8,7 @@ import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { MAX_SIZE } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
+import { extractFileName } from '#app/utils/misc'
 import { s3UploadHandler } from '#app/utils/s3.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
@@ -18,6 +19,7 @@ export const AddFilmPhotoSchema = z.object({
 	}, 'Image size must be less than 3MB'),
 	type: z.enum(['poster', 'backdrop']),
 	language: z.string(),
+	primary: z.boolean().optional(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -39,31 +41,62 @@ export async function action({ request }: ActionFunctionArgs) {
 		)
 	}
 
-	let { filmId, type, language } = submission.value
+	let { filmId, type, language, primary } = submission.value
 
-	const image = await unstable_parseMultipartFormData(clonedRequest, params =>
-		s3UploadHandler({
+	const image = await unstable_parseMultipartFormData(clonedRequest, params => {
+		return s3UploadHandler({
 			...params,
-			filename: `films/${filmId}/${language}/${params.filename}`,
-		}),
-	)
+		})
+	})
 
-	//TODO: Fix type
 	const parsedImage = parse(image, { schema: z.any() })
 
-	await prisma.film.update({
-		where: { id: filmId },
-		data: {
-			[type]: parsedImage.payload.image,
-			photos: {
-				create: {
-					type,
-					language,
-					image: parsedImage.payload.image as string,
+	if (primary) {
+		const existingPrimaryPhotoOfSameType = await prisma.filmPhoto.findFirst({
+			where: { filmId, primary: true, type },
+		})
+
+		if (existingPrimaryPhotoOfSameType && primary) {
+			await prisma.$transaction(async $prisma => {
+				await $prisma.filmPhoto.update({
+					where: { id: existingPrimaryPhotoOfSameType.id },
+					data: { primary: false },
+				})
+
+				await $prisma.film.update({
+					where: { id: filmId },
+					data: {
+						[type]: parsedImage.payload.image as string,
+						photos: {
+							create: {
+								type,
+								language,
+								filename: extractFileName(parsedImage.payload.image as string),
+								url: parsedImage.payload.image as string,
+								primary,
+							},
+						},
+					},
+				})
+			})
+		}
+	} else {
+		await prisma.film.update({
+			where: { id: filmId },
+			data: {
+				poster: null,
+				photos: {
+					create: {
+						type,
+						language,
+						filename: extractFileName(parsedImage.payload.image as string),
+						url: parsedImage.payload.image as string,
+						primary,
+					},
 				},
 			},
-		},
-	})
+		})
+	}
 
 	return json({ status: 'success', submission } as const, {
 		headers: await createToastHeaders({

@@ -3,7 +3,7 @@ import { type Table } from '@tanstack/react-table'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Input } from '#app/components/ui/input.tsx'
-import { CREW_ROLES, getAllJobs } from '#app/utils/constants.ts'
+import { ROLES, getAllJobs } from '#app/utils/constants.ts'
 import { DataTableFacetedFilter } from '../../data-table-faceted-filter.tsx'
 import { DataTableViewOptions } from '../../data-table-view-options.tsx'
 import { DataTableAddCrewMember } from './data-table-add-crew-member.tsx'
@@ -31,14 +31,17 @@ export function DataTableToolbar<TData>({
 					<DataTableFacetedFilter
 						column={table.getColumn('department')}
 						title="Department"
-						options={CREW_ROLES}
+						options={ROLES.map(role => ({
+							label: role.department,
+							value: role.department,
+						}))}
 					/>
 				)}
 				{table.getColumn('job') && (
 					<DataTableFacetedFilter
 						column={table.getColumn('job')}
 						title="Job"
-						options={getAllJobs()}
+						options={getAllJobs().map(job => ({ label: job, value: job }))}
 					/>
 				)}
 				{isFiltered && (

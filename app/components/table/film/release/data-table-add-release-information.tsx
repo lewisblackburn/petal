@@ -14,13 +14,15 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { CountrySearch } from '#app/routes/resources+/countries.tsx'
 import {
 	type AddFilmReleaseInformationAction,
 	AddFilmReleaseInformationSchema,
 } from '#app/routes/resources+/film+/add-release-information.ts'
-import { LanguageSearch } from '#app/routes/resources+/languages.tsx'
-import { FILM_RELEASE_TYPES } from '#app/utils/constants.ts'
+import {
+	COUNTRIES,
+	FILM_RELEASE_TYPES,
+	LANGUAGES,
+} from '#app/utils/constants.ts'
 
 export function DataTableAddReleaseInformation() {
 	const { filmId } = useParams()
@@ -68,25 +70,33 @@ export function DataTableAddReleaseInformation() {
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<CountrySearch
+						<FilterSelectField
 							labelProps={{
-								htmlFor: fields.code.id,
+								htmlFor: fields.country.id,
 								children: 'Country',
 							}}
 							buttonProps={{
-								...conform.input(fields.code, { type: 'text' }),
+								...conform.input(fields.country),
 							}}
-							errors={fields.code.errors}
+							options={COUNTRIES.map(country => ({
+								label: country.name,
+								value: country.name,
+							}))}
+							errors={fields.country.errors}
 						/>
-						<LanguageSearch
+						<FilterSelectField
 							labelProps={{
-								htmlFor: fields.languageId.id,
+								htmlFor: fields.language.id,
 								children: 'Language',
 							}}
 							buttonProps={{
-								...conform.input(fields.languageId, { type: 'text' }),
+								...conform.input(fields.language),
 							}}
-							errors={fields.languageId.errors}
+							options={LANGUAGES.map(language => ({
+								label: language.name,
+								value: language.name,
+							}))}
+							errors={fields.language.errors}
 						/>
 						<Field
 							labelProps={{ children: 'Date' }}

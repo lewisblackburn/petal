@@ -59,7 +59,7 @@ model NoteImage {
   id          String  @id @default(cuid())
   altText     String?
   contentType String
-  blob        Bytes
+  blob        Bytes /// @zod.custom.use(z.any())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -75,7 +75,7 @@ model UserImage {
   id          String  @id @default(cuid())
   altText     String?
   contentType String
-  blob        Bytes
+  blob        Bytes /// @zod.custom.use(z.any())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -208,8 +208,7 @@ model Film {
   releaseDate  DateTime?
   ageRating    String?
   runtime      Float?
-  language     Language? @relation(fields: [languageId], references: [id])
-  languageId   String?
+  language     String?
   budget       Float?
   revenue      Float?
   status       String?
@@ -250,8 +249,9 @@ model Film {
   favourited          FilmFavourite[]
   alternativeTitles   FilmAlternateTitle[]
   releaseInformation  FilmReleaseInformation[]
-  productionCountries Country[]
   productionCompanies ProductionCompany[]
+
+  productionCountries String?
 
   recommendedBy   FilmRecommendation[] @relation("FilmRecommendations")
   recommendations FilmRecommendation[] @relation("FilmRecommendedBy")
@@ -302,8 +302,10 @@ model FilmPhoto {
   film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   filmId    String
   type      String
+  filename  String
+  url       String
   language  String
-  image     String
+  primary   Boolean? @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -312,7 +314,9 @@ model PersonImage {
   id        String   @id @unique @default(cuid())
   person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   personId  String
-  image     String
+  filename  String
+  url       String
+  primary   Boolean? @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -360,13 +364,12 @@ model FilmReview {
 }
 
 model FilmAlternateTitle {
-  id          String   @id @unique @default(cuid())
-  film        Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  filmId      String
-  title       String
-  country     Country  @relation(fields: [countryCode], references: [code], onDelete: Cascade, onUpdate: NoAction)
-  countryCode String
-  locked      Boolean? @default(false)
+  id      String   @id @unique @default(cuid())
+  film    Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId  String
+  title   String
+  country String
+  locked  Boolean? @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -385,10 +388,8 @@ model FilmReleaseInformation {
   id             String   @id @unique @default(cuid())
   film           Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   filmId         String
-  country        Country  @relation(fields: [countryCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  countryCode    String
-  language       Language @relation(fields: [languageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  languageId     String
+  country        String?
+  language       String?
   date           DateTime
   // NOTE: I think I will keep this as a string not an ENUM as there are so many different classificationss per country
   classification String?
@@ -402,16 +403,15 @@ model FilmReleaseInformation {
 }
 
 model ProductionCompany {
-  id          String   @id @unique @default(cuid())
-  name        String   @unique
-  location    String?
-  country     Country? @relation(fields: [countryCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  countryCode String?
-  logo        String?  @default("https://placehold.co/300x450?text=Image")
-  homepage    String?
-  films       Film[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @unique @default(cuid())
+  name      String   @unique
+  location  String?
+  country   String?
+  logo      String?  @default("https://placehold.co/300x450?text=Image")
+  homepage  String?
+  films     Film[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Genre {
@@ -424,8 +424,7 @@ model Genre {
 }
 
 model Keyword {
-  id        String   @id @unique @default(cuid())
-  name      String
+  name      String   @id @unique
   films     Film[]   @relation("FilmToKeyword")
   songs     Song[]   @relation("SongToKeyword")
   createdAt DateTime @default(now())
@@ -551,29 +550,4 @@ model Artist {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model Country {
-  code                   String                   @id @unique
-  flag                   String
-  name                   String                   @unique
-  languages              Language[]
-  films                  Film[]
-  productionCompanies    ProductionCompany[]
-  filmAlternativeTitles  FilmAlternateTitle[]
-  filmReleaseInformation FilmReleaseInformation[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Language {
-  id                     String                   @id @unique @default(cuid())
-  name                   String
-  nativeName             String
-  countries              Country[]
-  films                  Film[]
-  filmReleaseInformation FilmReleaseInformation[]
-
-  @@index([name])
 }

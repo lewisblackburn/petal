@@ -33,6 +33,11 @@ export default function DashboardRoute() {
 		shouldRevalidate: 'onBlur',
 	})
 
+	// const isSubmitting = useIsPending({
+	// 	formMethod: 'GET',
+	// 	formAction: '/resources/search',
+	// })
+
 	useEffect(() => {
 		if (fetcher.data?.status !== 'error') setOpen(false)
 	}, [fetcher])
@@ -70,7 +75,6 @@ export default function DashboardRoute() {
 								inputProps={{
 									...conform.input(fields.tmdbID, { type: 'text' }),
 									autoComplete: 'off',
-									defaultValue: '122906-about-time',
 								}}
 								errors={fields.tmdbID.errors}
 							/>

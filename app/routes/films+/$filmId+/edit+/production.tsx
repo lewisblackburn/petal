@@ -1,7 +1,10 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
-import { type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/node'
+import {
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import { Form, useFetcher, useLoaderData } from '@remix-run/react'
 import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
@@ -17,7 +20,7 @@ import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 const FilmProductionCountriesSchema = z.object({
 	id: z.string(),
-	productionCountries: z.string().optional(),
+	productionCountries: z.string(),
 	// TODO: Can it not work like this instead?
 	// productionCountries: z.array(
 	// 	z.object({
@@ -59,19 +62,12 @@ export async function action({ request }: ActionFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	// TODO: Fix type
-	const productionCountriesJSON: any = JSON.parse(
-		submission.value.productionCountries ?? '',
-	)
-
 	await prisma.film.update({
 		select: { id: true },
 		where: { id: submission.value.id },
 		data: {
 			productionCountries: {
-				set: productionCountriesJSON.map((code: any) => ({
-					code,
-				})),
+				set: submission.value.productionCountries,
 			},
 		},
 	})
@@ -93,19 +89,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 		},
 		select: {
 			id: true,
-			productionCountries: {
-				select: {
-					code: true,
-					name: true,
-					flag: true,
-				},
-			},
+			productionCountries: true,
 			productionCompanies: {
 				select: {
 					id: true,
 					name: true,
 					logo: true,
-					countryCode: true,
 					createdAt: true,
 					updatedAt: true,
 				},
@@ -140,9 +129,9 @@ export default function FilmEditProductionInformationRoute() {
 			return parse(formData, { schema: FilmProductionCountriesSchema })
 		},
 		defaultValue: {
-			productionCountries: data.film.productionCountries.map(
-				country => country.code,
-			),
+			productionCountries: data.film.productionCountries
+				? JSON.parse(data.film.productionCountries)
+				: [],
 		},
 	})
 
@@ -166,7 +155,10 @@ export default function FilmEditProductionInformationRoute() {
 						buttonProps={{
 							...conform.input(fields.productionCountries, { type: 'text' }),
 						}}
-						options={COUNTRIES}
+						options={COUNTRIES.map(country => ({
+							label: country.name,
+							value: country.name,
+						}))}
 						errors={fields.productionCountries.errors}
 					/>
 				</div>

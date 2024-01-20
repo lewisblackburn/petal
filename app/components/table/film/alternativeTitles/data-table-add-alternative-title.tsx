@@ -2,7 +2,7 @@ import { conform, useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { ErrorList, Field, FilterSelectField } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -14,11 +14,11 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
-import { CountrySearch } from '#app/routes/resources+/countries.tsx'
 import {
 	type AddFilmAlternativeTitleAction,
 	AddFilmAlternativeTitleSchema,
 } from '#app/routes/resources+/film+/add-alternative-title'
+import { COUNTRIES } from '#app/utils/constants'
 
 export function DataTableAddAlternativeTitle() {
 	const { filmId } = useParams()
@@ -74,16 +74,19 @@ export function DataTableAddAlternativeTitle() {
 							}}
 							errors={fields.alternativeTitle.errors}
 						/>
-						<CountrySearch
+						<FilterSelectField
 							labelProps={{
-								htmlFor: fields.code.id,
+								htmlFor: fields.country.id,
 								children: 'Country',
-								autoFocus: true,
 							}}
 							buttonProps={{
-								...conform.input(fields.code, { type: 'text' }),
+								...conform.input(fields.country),
 							}}
-							errors={fields.code.errors}
+							options={COUNTRIES.map(country => ({
+								label: country.name,
+								value: country.name,
+							}))}
+							errors={fields.country.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>

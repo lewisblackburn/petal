@@ -10,7 +10,7 @@ import { createToastHeaders } from '#app/utils/toast.server.ts'
 export const AddFilmAlternativeTitleSchema = z.object({
 	filmId: z.string(),
 	alternativeTitle: z.string(),
-	code: z.string(),
+	country: z.string(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -29,7 +29,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		)
 	}
 
-	let { filmId, alternativeTitle } = submission.value
+	let { filmId, alternativeTitle, country } = submission.value
 
 	await prisma.film.update({
 		where: { id: filmId },
@@ -37,11 +37,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			alternativeTitles: {
 				create: {
 					title: alternativeTitle,
-					country: {
-						connect: {
-							code: submission.value.code,
-						},
-					},
+					country,
 				},
 			},
 		},

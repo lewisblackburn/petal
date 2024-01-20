@@ -1,12 +1,12 @@
 import { type FilmPhoto } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
-import { LANGUAGES, PHOTO_TYPES } from '#app/utils/constants.ts'
+import { PHOTO_TYPES } from '#app/utils/constants.ts'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 import { DataTableRowActions } from './data-table-row-actions.tsx'
 
 export const columns: ColumnDef<
-	Pick<FilmPhoto, 'image' | 'type' | 'language'>
+	Pick<FilmPhoto, 'filename' | 'url' | 'type' | 'language'>
 >[] = [
 	{
 		id: 'select',
@@ -36,14 +36,14 @@ export const columns: ColumnDef<
 		enableHiding: false,
 	},
 	{
-		accessorKey: 'image',
+		accessorKey: 'filename',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Image" />
+			<DataTableColumnHeader column={column} title="Filename" />
 		),
 		cell: ({ row }) => {
 			return (
 				<div className="w-[300px] truncate">
-					<a href={row.getValue('image')}>{row.getValue('image')}</a>
+					<a href={row.original.url}>{row.getValue('filename')}</a>
 				</div>
 			)
 		},
@@ -72,18 +72,27 @@ export const columns: ColumnDef<
 			<DataTableColumnHeader column={column} title="Language" />
 		),
 		cell: ({ row }) => {
-			const language = LANGUAGES.find(
-				language => language.name === row.getValue('language'),
-			)
-
-			if (!language) {
-				return null
-			}
-
-			return <div className="w-[150px]">{language.name}</div>
+			return <div className="w-[150px]">{row.getValue('language')}</div>
 		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
+		},
+	},
+	{
+		accessorKey: 'primary',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Primary" />
+		),
+		cell: ({ row }) => {
+			return (
+				<Checkbox
+					checked={row.getValue('primary')}
+					aria-label="Primary"
+					className={
+						row.getValue('primary') ? 'translate-y-[4px]' : '-translate-y-[4px]'
+					}
+				/>
+			)
 		},
 	},
 	{
