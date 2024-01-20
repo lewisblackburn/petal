@@ -8,6 +8,7 @@ import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { MAX_SIZE } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
+import { extractFileName } from '#app/utils/misc'
 import { s3UploadHandler } from '#app/utils/s3.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
@@ -55,7 +56,9 @@ export async function action({ request }: ActionFunctionArgs) {
 			image: parsedImage.payload.image as string,
 			photos: {
 				create: {
-					image: parsedImage.payload.image as string,
+					filename: extractFileName(parsedImage.payload.image as string),
+					url: parsedImage.payload.image as string,
+					primary: true,
 				},
 			},
 		},

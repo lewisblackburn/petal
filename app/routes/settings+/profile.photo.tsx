@@ -205,8 +205,8 @@ export default function PhotoRoute() {
 							pendingIntent === 'submit'
 								? 'pending'
 								: lastSubmissionIntent === 'submit'
-								  ? actionData?.status ?? 'idle'
-								  : 'idle'
+									? actionData?.status ?? 'idle'
+									: 'idle'
 						}
 					>
 						Save Photo
@@ -231,8 +231,8 @@ export default function PhotoRoute() {
 								pendingIntent === 'delete'
 									? 'pending'
 									: lastSubmissionIntent === 'delete'
-									  ? actionData?.status ?? 'idle'
-									  : 'idle'
+										? actionData?.status ?? 'idle'
+										: 'idle'
 							}
 						>
 							<Icon name="trash">

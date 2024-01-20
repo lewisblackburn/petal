@@ -22,7 +22,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 
 	const photos = person.photos.map(photo => ({
 		id: photo.id,
-		image: photo.filename,
+		filename: photo.filename,
 	}))
 
 	return json({ photos })

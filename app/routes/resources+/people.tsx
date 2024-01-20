@@ -1,6 +1,9 @@
 import { parse } from '@conform-to/zod'
 import { type Prisma } from '@prisma/client'
-import { type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/node'
+import {
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
 import { json } from '@remix-run/server-runtime'
 import { useSpinDelay } from 'spin-delay'

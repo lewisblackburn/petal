@@ -1,7 +1,7 @@
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Row } from '@tanstack/react-table'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { type SetPrimaryFilmPhotoAction } from '#app/routes/resources+/film+/set-primary-photo'
+import { type SetPrimaryFilmVideoAction } from '#app/routes/resources+/film+/set-primary-video'
 
 interface DataTableRowActionsProps<TData> {
 	row: Row<TData>
@@ -10,7 +10,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
 	row,
 }: DataTableRowActionsProps<TData>) {
-	const fetcher = useFetcher<typeof SetPrimaryFilmPhotoAction>()
+	const fetcher = useFetcher<typeof SetPrimaryFilmVideoAction>()
 	const { filmId } = useParams()
 
 	if (row.getValue('type') === 'trailer') {

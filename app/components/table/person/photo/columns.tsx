@@ -4,7 +4,7 @@ import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 import { DataTableRowActions } from './data-table-row-actions.tsx'
 
-export const columns: ColumnDef<Pick<PersonImage, 'id' | 'image'>>[] = [
+export const columns: ColumnDef<Pick<PersonImage, 'id' | 'filename'>>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -46,14 +46,14 @@ export const columns: ColumnDef<Pick<PersonImage, 'id' | 'image'>>[] = [
 		},
 	},
 	{
-		accessorKey: 'image',
+		accessorKey: 'filename',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Image" />
+			<DataTableColumnHeader column={column} title="Filename" />
 		),
 		cell: ({ row }) => {
 			return (
 				<div className="w-[600px] truncate">
-					<a href={row.getValue('image')}>{row.getValue('image')}</a>
+					<a href={row.getValue('filename')}>{row.getValue('filename')}</a>
 				</div>
 			)
 		},

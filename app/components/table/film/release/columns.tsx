@@ -4,16 +4,7 @@ import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { COUNTRIES } from '#app/utils/constants.ts'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 
-export const columns: ColumnDef<
-	Partial<
-		FilmReleaseInformation & {
-			flag: string
-			country: string
-			language: string
-			releaseDate: string
-		}
-	>
->[] = [
+export const columns: ColumnDef<Partial<FilmReleaseInformation>>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
