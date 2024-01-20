@@ -119,6 +119,7 @@ function UserDropdown() {
 						/>
 						<AvatarFallback>{user.initials}</AvatarFallback>
 					</Avatar>
+					<span className="sr-only">Open Dropdown</span>
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-56" align="center" forceMount>
