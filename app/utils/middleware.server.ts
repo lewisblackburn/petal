@@ -35,7 +35,7 @@ export const results = Prisma.defineExtension(client => {
 				},
 			},
 			film: {
-				releaseDate: {
+				formattedReleaseDate: {
 					needs: {
 						releaseDate: true,
 					},

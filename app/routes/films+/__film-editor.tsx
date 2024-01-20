@@ -29,11 +29,17 @@ const FilmEditorSchema = z.object({
 	title: z.string().min(1).max(50),
 	tagline: z.string().max(100).optional(),
 	overview: z.string().min(1).max(1000),
-	runtime: z.number().min(1).max(500).optional(),
+	runtime: z.number().min(1).max(500).nullable(),
 	releaseDate: z.date().optional(),
-	language: z.enum(LANGUAGES.map(language => language.name) as any).optional(),
-	ageRating: z.enum(AGE_RATINGS.map(rating => rating.value) as any).optional(),
-	status: z.enum(STATUSES.map(status => status.value) as any).optional(),
+	language: z
+		.enum(LANGUAGES.map(language => language.name) as [string, ...string[]])
+		.optional(),
+	ageRating: z
+		.enum(AGE_RATINGS.map(rating => rating.value) as [string, ...string[]])
+		.optional(),
+	status: z
+		.enum(STATUSES.map(status => status.value) as [string, ...string[]])
+		.optional(),
 	budget: z.number().positive().optional(),
 	revenue: z.number().positive().optional(),
 })

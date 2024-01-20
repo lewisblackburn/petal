@@ -2,7 +2,11 @@ import { parse } from '@conform-to/zod'
 import { type ActionFunctionArgs, json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { prisma } from '#app/utils/db.server'
-import { fetchAndUploadImages, fetchWithDelay } from '#app/utils/misc'
+import {
+	extractFileName,
+	fetchAndUploadImages,
+	fetchWithDelay,
+} from '#app/utils/misc'
 import { requireUserWithRole } from '#app/utils/permissions'
 import { s3UploadHandler } from '#app/utils/s3.server'
 import { createToastHeaders } from '#app/utils/toast.server'
@@ -183,11 +187,17 @@ export async function action({ request }: ActionFunctionArgs) {
 						create: [
 							{
 								type: 'poster',
-								image: poster,
+								filename: extractFileName(poster),
+								url: poster,
+								language: 'English',
+								primary: true,
 							},
 							{
 								type: 'backdrop',
-								image: backdrop,
+								filename: extractFileName(poster),
+								url: backdrop,
+								language: 'English',
+								primary: true,
 							},
 						],
 					},
@@ -258,10 +268,17 @@ export async function action({ request }: ActionFunctionArgs) {
 						})
 					} else {
 						// If the person doesn't exist, perform the create
-						const [image] = await fetchAndUploadImages(
-							[`https://image.tmdb.org/t/p/w500${castMember.profile_path}`],
-							s3UploadHandler,
-						)
+						let image = null
+
+						if (castMember.profile_path === null) image = null
+						else {
+							const [imageResult] = await fetchAndUploadImages(
+								[`https://image.tmdb.org/t/p/w500${castMember.profile_path}`],
+								s3UploadHandler,
+							)
+							image = imageResult
+						}
+
 						await prisma.person.create({
 							data: {
 								name: json.name,
@@ -269,7 +286,9 @@ export async function action({ request }: ActionFunctionArgs) {
 								image: image,
 								photos: {
 									create: {
-										image,
+										url: image,
+										filename: extractFileName(image),
+										primary: true,
 									},
 								},
 								knownForDepartment: json.known_for_department,
@@ -338,10 +357,17 @@ export async function action({ request }: ActionFunctionArgs) {
 						})
 					} else {
 						// If the person doesn't exist, perform the create
-						const [image] = await fetchAndUploadImages(
-							[`https://image.tmdb.org/t/p/w500${crewMember.profile_path}`],
-							s3UploadHandler,
-						)
+						let image = null
+
+						if (crewMember.profile_path === null) image = null
+						else {
+							const [imageResult] = await fetchAndUploadImages(
+								[`https://image.tmdb.org/t/p/w500${crewMember.profile_path}`],
+								s3UploadHandler,
+							)
+							image = imageResult
+						}
+
 						await prisma.person.create({
 							data: {
 								name: json.name,
@@ -349,7 +375,9 @@ export async function action({ request }: ActionFunctionArgs) {
 								image: image,
 								photos: {
 									create: {
-										image,
+										url: image,
+										filename: extractFileName(image),
+										primary: true,
 									},
 								},
 								knownForDepartment: crewMember.known_for_department,

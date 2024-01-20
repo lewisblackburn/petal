@@ -346,10 +346,6 @@ export function minutesToWatchTime(minutes: number): string {
 
 	return `${hours}h ${remainingMinutes}m`
 }
-// Helper function to check if a value is a valid date
-const isValidDate = (value: any): boolean => {
-	return value instanceof Date && !isNaN(value.getTime())
-}
 
 /**
  * Calculates the difference between two objects.
@@ -367,11 +363,17 @@ export const difference = (oldData: Object, newData: Object) => {
 		let oldValue: any = String(oldData[key as keyof typeof oldData])
 		let newValue: any = String(newData[key as keyof typeof newData])
 
-		// Use Date constructor to convert values to dates if they are valid dates
-		oldValue = isValidDate(oldValue) ? new Date(oldValue) : oldValue
-		newValue = isValidDate(newValue) ? new Date(newValue) : newValue
+		// Skip if one value is undefined and the other is null
+		if (
+			(oldValue === 'undefined' && newValue === 'null') ||
+			(oldValue === 'null' && newValue === 'undefined')
+		) {
+			continue
+		}
 
 		if (key in oldData && key in newData && oldValue !== newValue) {
+			console.log(oldValue, newValue)
+
 			// For some reason these have to be flipped
 			result[key] = { newValue: oldValue, oldValue: newValue }
 		}

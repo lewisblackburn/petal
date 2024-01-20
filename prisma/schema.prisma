@@ -207,7 +207,7 @@ model Film {
   releaseDate  DateTime?
   ageRating    String?
   runtime      Float?
-  language     String?
+  language     String?   @default("English")
   budget       Float?
   revenue      Float?
   status       String?
@@ -303,7 +303,7 @@ model FilmPhoto {
   type      String
   filename  String
   url       String
-  language  String
+  language  String?  @default("English")
   primary   Boolean? @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -388,7 +388,7 @@ model FilmReleaseInformation {
   film           Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   filmId         String
   country        String?
-  language       String?
+  language       String?  @default("English")
   date           DateTime
   // NOTE: I think I will keep this as a string not an ENUM as there are so many different classificationss per country
   classification String?

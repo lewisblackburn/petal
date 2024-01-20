@@ -52,7 +52,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 			tagline: true,
 			overview: true,
 			formattedRuntime: true,
-			releaseDate: true,
+			formattedReleaseDate: true,
 			ageRating: true,
 			voteAverage: true,
 			language: true,
@@ -249,7 +249,7 @@ export default function FilmRoute() {
 							{data.film.formattedRuntime ?? 'N/A'}
 						</Status>
 						<Status title="Release Date" icon="calendar">
-							{data.film.releaseDate ?? 'N/A'}
+							{data.film.formattedReleaseDate ?? 'N/A'}
 						</Status>
 						<Status title="Age Rating" icon="person">
 							{data.film.ageRating ?? 'N/A'}
@@ -260,18 +260,16 @@ export default function FilmRoute() {
 						<Status title="Language" icon="language">
 							{data.film.language ?? 'N/A'}
 						</Status>
-						{data.film.status && (
-							<Status
-								title="Status"
-								icon={
-									(STATUSES.find(status => status.value === data.film.status)
-										?.icon as IconName) ?? 'question-mark'
-								}
-							>
-								{STATUSES.find(status => status.value === data.film.status)
-									?.label ?? 'N/A'}
-							</Status>
-						)}
+						<Status
+							title="Status"
+							icon={
+								(STATUSES.find(status => status.value === data.film.status)
+									?.icon as IconName) ?? 'question-mark'
+							}
+						>
+							{STATUSES.find(status => status.value === data.film.status)
+								?.label ?? 'N/A'}
+						</Status>
 					</div>
 					<div className="flex flex-col space-y-1">
 						<h2 className="text-xl font-bold">Overview</h2>
