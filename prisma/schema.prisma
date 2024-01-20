@@ -190,8 +190,7 @@ model Person {
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
-  // Primary image
-  image String? @default("https://placehold.co/300x450?text=Image")
+  image String? @default("/img/300x450.png")
 
   casts  CastMember[]
   crews  CrewMember[]
@@ -232,8 +231,8 @@ model Film {
   updatedAt DateTime @updatedAt
 
   // Primary images, videos, taglines, etc.
-  poster   String? @default("https://placehold.co/300x450?text=Image")
-  backdrop String? @default("https://placehold.co/1920x1080?text=Image")
+  poster   String? @default("/img/300x450.png")
+  backdrop String? @default("/img/1920x1080.png")
   trailer  String? @default("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
   tagline  String?
 
@@ -407,7 +406,7 @@ model ProductionCompany {
   name      String   @unique
   location  String?
   country   String?
-  logo      String?  @default("https://placehold.co/300x450?text=Image")
+  logo      String?  @default("/img/300x450.png")
   homepage  String?
   films     Film[]
   createdAt DateTime @default(now())
@@ -529,7 +528,7 @@ model Album {
   id     String   @id @unique @default(cuid())
   title  String
   year   Int
-  cover  String?  @default("https://placehold.co/300x450?text=Image")
+  cover  String?  @default("/img/300x450.png")
   locked Boolean? @default(false)
 
   songs   Song[]

@@ -52,48 +52,42 @@ export async function action({ request }: ActionFunctionArgs) {
 	const parsedImage = parse(image, { schema: z.any() })
 
 	if (primary) {
-		const existingPrimaryPhotoOfSameType = await prisma.filmPhoto.findFirst({
-			where: { filmId, primary: true, type },
-		})
-
-		if (existingPrimaryPhotoOfSameType && primary) {
-			await prisma.$transaction(async $prisma => {
+		await prisma.$transaction(async $prisma => {
+			const existingPrimaryPhoto = await $prisma.filmPhoto.findFirst({
+				where: { filmId, primary: true, type },
+			})
+			if (existingPrimaryPhoto) {
 				await $prisma.filmPhoto.update({
-					where: { id: existingPrimaryPhotoOfSameType.id },
+					where: { id: existingPrimaryPhoto.id },
 					data: { primary: false },
 				})
-
-				await $prisma.film.update({
-					where: { id: filmId },
-					data: {
-						[type]: parsedImage.payload.image as string,
-						photos: {
-							create: {
-								type,
-								language,
-								filename: extractFileName(parsedImage.payload.image as string),
-								url: parsedImage.payload.image as string,
-								primary,
-							},
+			}
+			await $prisma.film.update({
+				where: {
+					id: filmId,
+				},
+				data: {
+					[type]: parsedImage.value.image,
+					photos: {
+						create: {
+							url: parsedImage.value.image,
+							filename: extractFileName(parsedImage.value.image),
+							language,
+							type,
+							primary: true,
 						},
 					},
-				})
-			})
-		}
-	} else {
-		await prisma.film.update({
-			where: { id: filmId },
-			data: {
-				poster: null,
-				photos: {
-					create: {
-						type,
-						language,
-						filename: extractFileName(parsedImage.payload.image as string),
-						url: parsedImage.payload.image as string,
-						primary,
-					},
 				},
+			})
+		})
+	} else {
+		await prisma.filmPhoto.create({
+			data: {
+				url: parsedImage.value.image,
+				filename: extractFileName(parsedImage.value.image),
+				language,
+				type,
+				film: { connect: { id: filmId } },
 			},
 		})
 	}

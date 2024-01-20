@@ -17,6 +17,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 			overview: true,
 			runtime: true,
 			releaseDate: true,
+			language: true,
 			ageRating: true,
 			status: true,
 			budget: true,

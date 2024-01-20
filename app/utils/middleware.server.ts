@@ -81,6 +81,11 @@ export const results = Prisma.defineExtension(client => {
 export const queries = Prisma.defineExtension(client => {
 	return client.$extends({
 		query: {
+			user: {
+				async $allOperations({ model, operation, args, query }) {
+					return query(args)
+				},
+			},
 			film: {
 				// NOTE: Updates updatedAt to include relation tables (this is for the recommendations cron job)
 				async $allOperations({ model, operation, args, query }) {

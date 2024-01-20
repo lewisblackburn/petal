@@ -10,7 +10,6 @@ import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const DeleteFilmPhotosSchema = z.object({
 	ids: z.string(),
-	filmId: z.string(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -29,7 +28,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		)
 	}
 
-	let { filmId, ids } = submission.value
+	let { ids } = submission.value
 
 	await prisma.$transaction(async $prisma => {
 		const images = await $prisma.filmPhoto.findMany({
@@ -50,16 +49,10 @@ export async function action({ request }: ActionFunctionArgs) {
 			}),
 		)
 
-		await $prisma.film.update({
-			where: { id: filmId },
-			data: {
-				poster: '',
-				photos: {
-					deleteMany: {
-						id: {
-							in: JSON.parse(ids) as string[],
-						},
-					},
+		await $prisma.filmPhoto.deleteMany({
+			where: {
+				id: {
+					in: JSON.parse(ids) as string[],
 				},
 			},
 		})

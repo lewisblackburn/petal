@@ -1,7 +1,7 @@
 import { useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { type FilmPhoto } from '@prisma/client'
-import { useFetcher, useParams } from '@remix-run/react'
+import { useFetcher } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import { ErrorList } from '#app/components/forms.tsx'
@@ -28,7 +28,6 @@ interface DataTableDeletePhotos<TData> {
 export function DataTableDeletePhotos<TData>({
 	table,
 }: DataTableDeletePhotos<TData>) {
-	const { filmId } = useParams()
 	const photosSelected = table
 		.getSelectedRowModel()
 		.rows.map(row => (row.original as FilmPhoto).id)
@@ -84,7 +83,6 @@ export function DataTableDeletePhotos<TData>({
 							type="hidden"
 							value={JSON.stringify(photosSelected)}
 						/>
-						<input name="filmId" type="hidden" value={filmId} />
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>

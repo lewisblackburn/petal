@@ -71,6 +71,7 @@ export default function FilmsRoute() {
 							<Link to={film.id}>
 								<Image
 									src={film.poster}
+									fallbackSrc={'/img/300x450.png'}
 									alt={film.title}
 									className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
 								/>

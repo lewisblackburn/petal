@@ -1,4 +1,3 @@
-import { type Prisma } from '@prisma/client'
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import {
 	type LoaderFunctionArgs,
@@ -21,24 +20,22 @@ import { getUserImgSrc } from '#app/utils/misc'
 import { DEFAULT_TAKE, getTableParams } from '#app/utils/request.helper.ts'
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
-	const { orderBy, skip, take } = getTableParams(
-		request,
-		DEFAULT_TAKE,
-		{
-			orderBy: 'createdAt',
-			order: 'desc',
-		},
-	)
+	const { orderBy, skip, take } = getTableParams(request, DEFAULT_TAKE, {
+		orderBy: 'createdAt',
+		order: 'desc',
+	})
 
-	const where = {
-		columnId: params.filmdId
-	} satisfies Prisma.EditLogWhereInput
+	// const where = {
+	// 	columnId: params.filmdId,
+	// } satisfies Prisma.EditLogWhereInput
 
 	const logs = await prisma.editLog.findMany({
 		orderBy,
 		skip,
 		take,
-		where,
+		where: {
+			columnId: params.filmId,
+		},
 		select: {
 			id: true,
 			user: true,
@@ -52,7 +49,9 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	})
 
 	const count = await prisma.editLog.count({
-		where,
+		where: {
+			columnId: params.filmId,
+		},
 	})
 
 	return json({ logs, count })

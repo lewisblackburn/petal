@@ -11,13 +11,14 @@ import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import {
 	ErrorList,
 	Field,
+	FilterSelectField,
 	SelectField,
 	TextareaField,
 } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
-import { AGE_RATINGS, STATUSES } from '#app/utils/constants.ts'
+import { AGE_RATINGS, LANGUAGES, STATUSES } from '#app/utils/constants.ts'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { log } from '#app/utils/log.ts'
@@ -30,8 +31,9 @@ const FilmEditorSchema = z.object({
 	overview: z.string().min(1).max(1000),
 	runtime: z.number().min(1).max(500).optional(),
 	releaseDate: z.date().optional(),
-	ageRating: z.string().optional(),
-	status: z.string().optional(),
+	language: z.enum(LANGUAGES.map(language => language.name) as any).optional(),
+	ageRating: z.enum(AGE_RATINGS.map(rating => rating.value) as any).optional(),
+	status: z.enum(STATUSES.map(status => status.value) as any).optional(),
 	budget: z.number().positive().optional(),
 	revenue: z.number().positive().optional(),
 })
@@ -75,6 +77,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		overview,
 		runtime,
 		releaseDate,
+		language,
 		ageRating,
 		status,
 		budget,
@@ -91,6 +94,7 @@ export async function action({ request }: ActionFunctionArgs) {
 				overview,
 				runtime,
 				releaseDate,
+				language,
 				ageRating,
 				status,
 				budget,
@@ -102,6 +106,7 @@ export async function action({ request }: ActionFunctionArgs) {
 				overview,
 				runtime,
 				releaseDate,
+				language,
 				ageRating,
 				status,
 				budget,
@@ -133,6 +138,7 @@ export function FilmEditor({
 			| 'overview'
 			| 'runtime'
 			| 'releaseDate'
+			| 'language'
 			| 'ageRating'
 			| 'status'
 			| 'budget'
@@ -158,6 +164,7 @@ export function FilmEditor({
 			releaseDate: film?.releaseDate
 				? format(new Date(film.releaseDate), 'yyyy-MM-dd')
 				: null,
+			language: film?.language,
 			ageRating: film?.ageRating,
 			status: film?.status,
 			budget: film?.budget,
@@ -211,6 +218,20 @@ export function FilmEditor({
 						...conform.input(fields.releaseDate, { ariaAttributes: true }),
 					}}
 					errors={fields.releaseDate.errors}
+				/>
+				<FilterSelectField
+					labelProps={{
+						htmlFor: fields.language.id,
+						children: 'Language',
+					}}
+					buttonProps={{
+						...conform.input(fields.language, { type: 'text' }),
+					}}
+					options={LANGUAGES.map(language => ({
+						label: language.name,
+						value: language.name,
+					}))}
+					errors={fields.language.errors}
 				/>
 				<SelectField
 					labelProps={{ children: 'Age Rating' }}

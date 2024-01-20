@@ -3,7 +3,7 @@ import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Input } from '#app/components/ui/input.tsx'
 import { DataTableViewOptions } from '../../data-table-view-options.tsx'
-import { DataTableAddKeyword } from './data-table-add-keyword.tsx'
+import { DataTableAddKeywords } from './data-table-add-keywords.tsx'
 import { DataTableDeleteKeywords } from './data-table-delete-keywords.tsx'
 
 interface DataTableToolbarProps<TData> {
@@ -37,7 +37,7 @@ export function DataTableToolbar<TData>({
 			</div>
 			<div className="flex flex-1 items-center space-x-2">
 				<DataTableViewOptions table={table} />
-				<DataTableAddKeyword />
+				<DataTableAddKeywords />
 				<DataTableDeleteKeywords table={table} />
 			</div>
 		</div>

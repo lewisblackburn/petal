@@ -15,20 +15,20 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import {
-	type AddFilmKeywordAction,
-	AddFilmKeywordSchema,
-} from '#app/routes/resources+/film+/add-keyword.ts'
+	type AddFilmKeywordsAction,
+	AddFilmKeywordsSchema,
+} from '#app/routes/resources+/film+/add-keywords.ts'
 
-export function DataTableAddKeyword() {
+export function DataTableAddKeywords() {
 	const { filmId } = useParams()
-	const fetcher = useFetcher<typeof AddFilmKeywordAction>()
+	const fetcher = useFetcher<typeof AddFilmKeywordsAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({
-		id: 'add-film-keyword-form',
+		id: 'add-film-keywords-form',
 		lastSubmission: fetcher.data?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddFilmKeywordSchema })
+			return parse(formData, { schema: AddFilmKeywordsSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
@@ -46,38 +46,38 @@ export function DataTableAddKeyword() {
 					className="ml-auto hidden h-8 lg:flex"
 				>
 					<Icon name="plus" className="mr-2 h-4 w-4" />
-					Add Keyword
+					Add Keywords
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<fetcher.Form
 					method="POST"
-					action="/resources/film/add-keyword"
-					name="add-film-keyword-form"
+					action="/resources/film/add-keywords"
+					name="add-film-keywords-form"
 					{...form.props}
 				>
 					<DialogHeader>
-						<DialogTitle>Add Keyword</DialogTitle>
+						<DialogTitle>Add Keywords</DialogTitle>
 						<DialogDescription>
-							Add a new keyword to the keywords table.
+							Add new keywords to the keywords table.
 						</DialogDescription>
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
 						<Field
 							labelProps={{
-								htmlFor: fields.keyword.id,
+								htmlFor: fields.keywords.id,
 							}}
 							inputProps={{
-								...conform.input(fields.keyword, { type: 'text' }),
+								...conform.input(fields.keywords, { type: 'text' }),
 							}}
-							errors={fields.keyword.errors}
+							errors={fields.keywords.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
 						<Button variant="default" type="submit">
-							Add Keyword
+							Add Keywords
 						</Button>
 					</DialogFooter>
 				</fetcher.Form>

@@ -6,16 +6,16 @@ import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
-export const AddFilmKeywordSchema = z.object({
+export const AddFilmKeywordsSchema = z.object({
 	filmId: z.string(),
-	keyword: z.string(),
+	keywords: z.string(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
 	const submission = parse(formData, {
-		schema: AddFilmKeywordSchema,
+		schema: AddFilmKeywordsSchema,
 	})
 	if (!submission.value) {
 		return json(
@@ -27,29 +27,27 @@ export async function action({ request }: ActionFunctionArgs) {
 		)
 	}
 
-	let { filmId, keyword } = submission.value
+	let { filmId, keywords } = submission.value
+
+	const keywordList = keywords.split(',')
 
 	await prisma.film.update({
 		where: { id: filmId },
 		data: {
 			keywords: {
-				connectOrCreate: {
-					where: {
-						name: keyword,
-					},
-					create: {
-						name: keyword,
-					},
-				},
+				connectOrCreate: keywordList.map(keyword => ({
+					where: { name: keyword },
+					create: { name: keyword },
+				})),
 			},
 		},
 	})
 
 	return json({ status: 'success', submission } as const, {
 		headers: await createToastHeaders({
-			description: 'Added Film Keyword',
+			description: 'Added Film Keywords',
 			type: 'success',
 		}),
 	})
 }
-export { action as AddFilmKeywordAction }
+export { action as AddFilmKeywordsAction }

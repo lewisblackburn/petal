@@ -229,9 +229,8 @@ export default function FilmRoute() {
 			</div>
 			<div className="flex items-center gap-5">
 				<Image
-					src={
-						data.film.poster !== null ? data.film.poster : '/img/300x450.png'
-					}
+					src={data.film.poster!}
+					fallbackSrc={'/img/300x450.png'}
 					alt={data.film.title}
 					className="h-[600px] w-[400px]"
 				/>
@@ -332,6 +331,7 @@ export default function FilmRoute() {
 										<Link to={`/films/${recommendation.film.id}`}>
 											<Image
 												src={recommendation.film.poster!}
+												fallbackSrc={'/img/300x450.png'}
 												alt={recommendation.film.title}
 												className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
 											/>

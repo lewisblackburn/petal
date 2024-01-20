@@ -50,6 +50,7 @@ export function DataTableRowActions<TData>({
 		defaultValue: {
 			type: photo.type,
 			language: photo.language,
+			primary: photo.primary ? 'on' : 'off',
 		},
 	})
 

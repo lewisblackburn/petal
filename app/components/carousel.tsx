@@ -102,6 +102,10 @@ export function Carousel({ title, description, items }: CarouselProps) {
 							<img
 								ref={imageRef}
 								src={item.image}
+								onError={({ currentTarget }) => {
+									currentTarget.onerror = null // prevents looping
+									currentTarget.src = '/img/300x450.png'
+								}}
 								alt="poster"
 								className="aspect-[2/3] rounded-lg object-cover"
 								draggable={false}
