@@ -263,12 +263,11 @@ export default function FilmRoute() {
 						<Status
 							title="Status"
 							icon={
-								(STATUSES.find(status => status.value === data.film.status)
+								(STATUSES.find(status => status.name === data.film.status)
 									?.icon as IconName) ?? 'question-mark'
 							}
 						>
-							{STATUSES.find(status => status.value === data.film.status)
-								?.label ?? 'N/A'}
+							{data.film.status ?? 'N/A'}
 						</Status>
 					</div>
 					<div className="flex flex-col space-y-1">

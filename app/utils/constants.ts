@@ -2460,12 +2460,12 @@ export const AGE_RATINGS = [
 ]
 
 export const STATUSES = [
-	{ value: 'rumored', label: 'Rumored', icon: 'question-mark' },
-	{ value: 'planned', label: 'Planned', icon: 'reader' },
-	{ value: 'in production', label: 'In Production', icon: 'scissors' },
-	{ value: 'post production', label: 'Post Production', icon: 'magic-wand' },
-	{ value: 'released', label: 'Released', icon: 'check' },
-	{ value: 'cancelled', label: 'Cancelled', icon: 'cross-1' },
+	{ name: 'Rumoured', icon: 'question-mark' },
+	{ name: 'Planned', icon: 'reader' },
+	{ name: 'In Production', icon: 'scissors' },
+	{ name: 'Post Production', icon: 'magic-wand' },
+	{ name: 'Released', icon: 'check' },
+	{ name: 'Cancelled', icon: 'cross-1' },
 ]
 
 type Role = {

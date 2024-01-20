@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 import { type PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { UniqueEnforcer } from 'enforce-unique'
-import { AGE_RATINGS, STATUSES } from '#app/utils/constants'
+import { AGE_RATINGS, LANGUAGES, STATUSES } from '#app/utils/constants'
 
 const uniqueUsernameEnforcer = new UniqueEnforcer()
 
@@ -48,15 +48,14 @@ export function createFilm() {
 		0,
 		1,
 	)[0].value
-	// TODO: Connect random language to film
-	// const language = LANGUAGES.sort(() => Math.random() - Math.random()).slice(
-	// 	0,
-	// 	1,
-	// )[0].name
+	const language = LANGUAGES.sort(() => Math.random() - Math.random()).slice(
+		0,
+		1,
+	)[0].name
 	const status = STATUSES.sort(() => Math.random() - Math.random()).slice(
 		0,
 		1,
-	)[0].value
+	)[0].name
 	const popularity = faker.number.float({ min: 0, max: 100, precision: 0.1 })
 	const contentScore = faker.number.float({ min: 0, max: 100, precision: 0.1 })
 	const budget = faker.number.int({ min: 0, max: 1000000000 })
@@ -69,7 +68,7 @@ export function createFilm() {
 		runtime,
 		releaseDate,
 		ageRating,
-		// language,
+		language,
 		status,
 		popularity,
 		contentScore,

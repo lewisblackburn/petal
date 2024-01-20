@@ -38,7 +38,7 @@ const FilmEditorSchema = z.object({
 		.enum(AGE_RATINGS.map(rating => rating.value) as [string, ...string[]])
 		.optional(),
 	status: z
-		.enum(STATUSES.map(status => status.value) as [string, ...string[]])
+		.enum(STATUSES.map(status => status.name) as [string, ...string[]])
 		.optional(),
 	budget: z.number().positive().optional(),
 	revenue: z.number().positive().optional(),
@@ -252,7 +252,10 @@ export function FilmEditor({
 					buttonProps={{
 						...conform.input(fields.status, { ariaAttributes: true }),
 					}}
-					options={STATUSES}
+					options={STATUSES.map(status => ({
+						label: status.name,
+						value: status.name,
+					}))}
 					errors={fields.status.errors}
 				/>
 				<Field
