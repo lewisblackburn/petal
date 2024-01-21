@@ -260,8 +260,8 @@ ${chalk.bold('Press Ctrl+C to stop')}
 })
 
 cron.schedule(
-	// NOTE: Every Hour
-	'* * * * *',
+	// NOTE: Every week
+	'0 0 * * 0',
 	async () => {
 		try {
 			console.log(
@@ -274,6 +274,7 @@ cron.schedule(
 					method: 'GET',
 					headers: {
 						'Content-Type': 'application/json',
+						'x-internal-request': 'true',
 					},
 				},
 			)
