@@ -1,28 +1,36 @@
-import { type Keyword, type Film, type Genre } from '@prisma/client'
-import {
-	redirect,
-	type ActionFunctionArgs,
-	json,
-} from '@remix-run/server-runtime'
-import { getInstanceInfo } from 'litefs-js'
+import { type Film, type Genre, type Keyword } from '@prisma/client'
+import { intervalTrigger } from '@trigger.dev/sdk'
 import { oneWeekAgo } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server'
 import { calculateSimilarity } from '#app/utils/misc'
+import { client } from '#app/utils/trigger.server'
 
-export async function action({ request }: ActionFunctionArgs) {
-	const { primaryInstance } = await getInstanceInfo()
-	if (!primaryInstance) {
-		// nah, you can't be here...
-		return redirect('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-	}
+export const job = client.defineJob({
+	id: 'recommendations',
+	name: 'Recommendations Job: generate film recommendations',
+	version: '0.0.1',
+	trigger: intervalTrigger({
+		seconds: 60 * 60 * 24 * 7, // Once a week (this should match the time period in recommendation params)
+	}),
+	run: async (payload, io, ctx) => {
+		await io.runTask(
+			'film-recommendations',
+			async () => {
+				await generateFilmRecommendations(oneWeekAgo())
+			},
+			{
+				retry: {
+					limit: 2,
+					factor: 2,
+					minTimeoutInMs: 1000 * 60, // 1 minute
+					maxTimeoutInMs: 1000 * 60 * 10, // 10 minutes
+				},
+			},
+		)
 
-	console.log('hello')
-	await generateFilmRecommendations(oneWeekAgo()).catch(error => {
-		return json({ success: false, error })
-	})
-
-	return { success: true }
-}
+		await io.logger.info('✨ Success ✨')
+	},
+})
 
 type FilmRecommendation = Partial<Film> & {
 	genres: Pick<Genre, 'name'>[]
@@ -119,6 +127,7 @@ export async function generateFilmRecommendations(
 		},
 	})
 
+	// NOTE: Finds updated films within the last {time period} provided.
 	const updatedOrNewFilms = existingFilms.filter(film => {
 		return (
 			film.createdAt >= updatedOrCreatedFilmFromDate ||
