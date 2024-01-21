@@ -20,7 +20,6 @@ import rateLimit from 'express-rate-limit'
 import getPort, { portNumbers } from 'get-port'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import cron from 'node-cron'
 
 installGlobals()
 
@@ -258,37 +257,6 @@ ${chalk.bold('Press Ctrl+C to stop')}
 		broadcastDevReady(build)
 	}
 })
-
-cron.schedule(
-	// NOTE: Every week
-	'0 0 * * 0',
-	async () => {
-		try {
-			console.log(
-				`${chalk.bold('CRON JOB:')}  ${chalk.cyan('generateFilmRecommendations')}`,
-			)
-
-			const response = await fetch(
-				'https://petal.fly.dev/resources/film/recommendations',
-				{
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-						'x-internal-request': 'true',
-					},
-				},
-			)
-
-			const data = await response.json()
-			console.log(data)
-		} catch (error) {
-			console.error('Error making HTTP request:', error)
-		}
-	},
-	{
-		timezone: 'Europe/London',
-	},
-)
 
 closeWithGrace(async () => {
 	await new Promise((resolve, reject) => {

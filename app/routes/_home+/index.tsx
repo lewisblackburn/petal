@@ -26,7 +26,7 @@ export async function loader() {
 				// NOTE: All films where one or more of its ratings were created in the last week
 				some: {
 					createdAt: {
-						gte: oneWeekAgo().date,
+						gte: oneWeekAgo(),
 					},
 				},
 			},

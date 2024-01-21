@@ -57,3 +57,12 @@ interval = "30s"
 method = "GET"
 timeout = "5s"
 path = "/litefs/health"
+
+[[services.film_recommendations]]
+interval = "1m"
+grace_period = "1m"
+method = "post"
+path = "/resources/film/recommendations"
+protocol = "http"
+timeout = "10m"
+headers = {}
