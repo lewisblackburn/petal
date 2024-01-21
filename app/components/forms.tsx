@@ -155,8 +155,6 @@ export function CheckboxField({
 	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
 	const errorId = errors?.length ? `${id}-error` : undefined
 
-	console.log(buttonProps)
-
 	return (
 		<div className={className}>
 			<div className="flex gap-2">
