@@ -110,17 +110,29 @@ function UserDropdown() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="ghost" className="relative h-8 w-8 rounded-full">
-					<Avatar className="h-8 w-8">
-						<AvatarImage
-							className="object-cover"
-							src={getUserImgSrc(user.image?.id)}
-							alt={user.name ?? user.username}
-						/>
-						<AvatarFallback>{user.initials}</AvatarFallback>
-					</Avatar>
-					<span className="sr-only">Open Dropdown</span>
+				<Button asChild variant="secondary">
+					<Link
+						to={`/users/${user.username}`}
+						// this is for progressive enhancement
+						onClick={e => e.preventDefault()}
+						className="flex items-center gap-2"
+					>
+						<Avatar className="h-8 w-8">
+							<AvatarImage
+								className="object-cover"
+								src={getUserImgSrc(user.image?.id)}
+								alt={user.name ?? user.username}
+							/>
+							<AvatarFallback>{user.initials}</AvatarFallback>
+						</Avatar>
+						<span className="text-body-sm font-bold">
+							{user.name ?? user.username}
+						</span>
+					</Link>
 				</Button>
+				{/* <Button variant="ghost" className="relative h-8 w-8 rounded-full"> */}
+				{/* 	<span className="sr-only">Open Dropdown</span> */}
+				{/* </Button> */}
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-56" align="center" forceMount>
 				<DropdownMenuLabel className="font-normal">
