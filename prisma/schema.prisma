@@ -59,7 +59,7 @@ model NoteImage {
   id          String  @id @default(cuid())
   altText     String?
   contentType String
-  blob        Bytes /// @zod.custom.use(z.any())
+  blob        Bytes
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -75,7 +75,7 @@ model UserImage {
   id          String  @id @default(cuid())
   altText     String?
   contentType String
-  blob        Bytes /// @zod.custom.use(z.any())
+  blob        Bytes
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
