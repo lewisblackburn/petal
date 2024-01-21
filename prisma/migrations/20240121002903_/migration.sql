@@ -1,4 +1,111 @@
 -- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "email" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "name" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Note" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "title" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    "ownerId" TEXT NOT NULL,
+    CONSTRAINT "Note_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "NoteImage" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "altText" TEXT,
+    "contentType" TEXT NOT NULL,
+    "blob" BLOB NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    "noteId" TEXT NOT NULL,
+    CONSTRAINT "NoteImage_noteId_fkey" FOREIGN KEY ("noteId") REFERENCES "Note" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "UserImage" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "altText" TEXT,
+    "contentType" TEXT NOT NULL,
+    "blob" BLOB NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    "userId" TEXT NOT NULL,
+    CONSTRAINT "UserImage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Password" (
+    "hash" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    CONSTRAINT "Password_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Session" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "expirationDate" DATETIME NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    "userId" TEXT NOT NULL,
+    CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Permission" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "action" TEXT NOT NULL,
+    "entity" TEXT NOT NULL,
+    "access" TEXT NOT NULL,
+    "description" TEXT NOT NULL DEFAULT '',
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Role" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL DEFAULT '',
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Verification" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "type" TEXT NOT NULL,
+    "target" TEXT NOT NULL,
+    "secret" TEXT NOT NULL,
+    "algorithm" TEXT NOT NULL,
+    "digits" INTEGER NOT NULL,
+    "period" INTEGER NOT NULL,
+    "charSet" TEXT NOT NULL,
+    "expiresAt" DATETIME
+);
+
+-- CreateTable
+CREATE TABLE "Connection" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "providerName" TEXT NOT NULL,
+    "providerId" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    "userId" TEXT NOT NULL,
+    CONSTRAINT "Connection_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "Person" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
@@ -11,7 +118,7 @@ CREATE TABLE "Person" (
     "homepage" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "image" TEXT DEFAULT 'https://placehold.co/300x450?text=Image'
+    "image" TEXT DEFAULT '/img/300x450.png'
 );
 
 -- CreateTable
@@ -22,13 +129,14 @@ CREATE TABLE "Film" (
     "releaseDate" DATETIME,
     "ageRating" TEXT,
     "runtime" REAL,
-    "languageId" TEXT,
+    "language" TEXT DEFAULT 'English',
     "budget" REAL,
     "revenue" REAL,
     "status" TEXT,
-    "userScore" REAL NOT NULL DEFAULT 0,
+    "voteAverage" REAL NOT NULL DEFAULT 0,
+    "voteCount" INTEGER DEFAULT 0,
     "contentScore" REAL,
-    "popularity" REAL,
+    "popularity" REAL NOT NULL DEFAULT 0,
     "website" TEXT,
     "facebook" TEXT,
     "instagram" TEXT,
@@ -39,11 +147,23 @@ CREATE TABLE "Film" (
     "locked" BOOLEAN DEFAULT false,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "poster" TEXT DEFAULT 'https://placehold.co/300x450?text=Image',
-    "backdrop" TEXT DEFAULT 'https://placehold.co/1920x1080?text=Image',
+    "poster" TEXT DEFAULT '/img/300x450.png',
+    "backdrop" TEXT DEFAULT '/img/1920x1080.png',
     "trailer" TEXT DEFAULT 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    "tagline" TEXT DEFAULT '',
-    CONSTRAINT "Film_languageId_fkey" FOREIGN KEY ("languageId") REFERENCES "Language" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    "tagline" TEXT,
+    "productionCountries" TEXT
+);
+
+-- CreateTable
+CREATE TABLE "FilmRecommendation" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "filmId" TEXT NOT NULL,
+    "recommendedFilmId" TEXT NOT NULL,
+    "similarity" REAL NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "FilmRecommendation_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "FilmRecommendation_recommendedFilmId_fkey" FOREIGN KEY ("recommendedFilmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -57,7 +177,7 @@ CREATE TABLE "CastMember" (
     "filmId" TEXT NOT NULL,
     "personId" TEXT NOT NULL,
     CONSTRAINT "CastMember_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "CastMember_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "CastMember_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -71,7 +191,7 @@ CREATE TABLE "CrewMember" (
     "filmId" TEXT NOT NULL,
     "personId" TEXT NOT NULL,
     CONSTRAINT "CrewMember_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "CrewMember_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "CrewMember_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -79,8 +199,10 @@ CREATE TABLE "FilmPhoto" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "filmId" TEXT NOT NULL,
     "type" TEXT NOT NULL,
-    "language" TEXT NOT NULL,
-    "image" TEXT NOT NULL,
+    "filename" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+    "language" TEXT DEFAULT 'English',
+    "primary" BOOLEAN DEFAULT false,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     CONSTRAINT "FilmPhoto_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE
@@ -90,7 +212,9 @@ CREATE TABLE "FilmPhoto" (
 CREATE TABLE "PersonImage" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "personId" TEXT NOT NULL,
-    "image" TEXT NOT NULL,
+    "filename" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+    "primary" BOOLEAN DEFAULT false,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     CONSTRAINT "PersonImage_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person" ("id") ON DELETE CASCADE ON UPDATE CASCADE
@@ -140,12 +264,11 @@ CREATE TABLE "FilmAlternateTitle" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "filmId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "countryCode" TEXT NOT NULL,
+    "country" TEXT NOT NULL,
     "locked" BOOLEAN DEFAULT false,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "FilmAlternateTitle_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "FilmAlternateTitle_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "Country" ("code") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "FilmAlternateTitle_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -162,8 +285,8 @@ CREATE TABLE "FilmTagline" (
 CREATE TABLE "FilmReleaseInformation" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "filmId" TEXT NOT NULL,
-    "countryCode" TEXT NOT NULL,
-    "languageId" TEXT NOT NULL,
+    "country" TEXT,
+    "language" TEXT DEFAULT 'English',
     "date" DATETIME NOT NULL,
     "classification" TEXT,
     "type" TEXT,
@@ -171,9 +294,7 @@ CREATE TABLE "FilmReleaseInformation" (
     "locked" BOOLEAN DEFAULT false,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "FilmReleaseInformation_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "FilmReleaseInformation_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "Country" ("code") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "FilmReleaseInformation_languageId_fkey" FOREIGN KEY ("languageId") REFERENCES "Language" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "FilmReleaseInformation_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -181,12 +302,11 @@ CREATE TABLE "ProductionCompany" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "location" TEXT,
-    "countryCode" TEXT,
-    "logo" TEXT DEFAULT 'https://placehold.co/300x450?text=Image',
+    "country" TEXT,
+    "logo" TEXT DEFAULT '/img/300x450.png',
     "homepage" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "ProductionCompany_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "Country" ("code") ON DELETE SET NULL ON UPDATE CASCADE
+    "updatedAt" DATETIME NOT NULL
 );
 
 -- CreateTable
@@ -199,8 +319,7 @@ CREATE TABLE "Genre" (
 
 -- CreateTable
 CREATE TABLE "Keyword" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT NOT NULL,
+    "name" TEXT NOT NULL PRIMARY KEY,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
@@ -236,14 +355,16 @@ CREATE TABLE "SongFavourite" (
 );
 
 -- CreateTable
-CREATE TABLE "AuditLog" (
+CREATE TABLE "EditLog" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "action" TEXT NOT NULL,
-    "entity" TEXT NOT NULL,
-    "entityId" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "changes" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "tableName" TEXT,
+    "columnName" TEXT,
+    "columnId" TEXT,
+    "oldData" TEXT DEFAULT '{}',
+    "newData" TEXT DEFAULT '{}',
+    "userId" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "EditLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 -- CreateTable
@@ -256,7 +377,7 @@ CREATE TABLE "Song" (
     "albumId" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Song_albumId_fkey" FOREIGN KEY ("albumId") REFERENCES "Album" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "Song_albumId_fkey" FOREIGN KEY ("albumId") REFERENCES "Album" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -289,7 +410,7 @@ CREATE TABLE "Album" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "title" TEXT NOT NULL,
     "year" INTEGER NOT NULL,
-    "cover" TEXT DEFAULT 'https://placehold.co/300x450?text=Image',
+    "cover" TEXT DEFAULT '/img/300x450.png',
     "locked" BOOLEAN DEFAULT false,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
@@ -303,23 +424,23 @@ CREATE TABLE "Artist" (
     "locked" BOOLEAN DEFAULT false,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Artist_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Artist_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
-CREATE TABLE "Country" (
-    "code" TEXT NOT NULL PRIMARY KEY,
-    "flag" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+CREATE TABLE "_PermissionToRole" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL,
+    CONSTRAINT "_PermissionToRole_A_fkey" FOREIGN KEY ("A") REFERENCES "Permission" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_PermissionToRole_B_fkey" FOREIGN KEY ("B") REFERENCES "Role" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
-CREATE TABLE "Language" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT NOT NULL,
-    "nativeName" TEXT NOT NULL
+CREATE TABLE "_RoleToUser" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL,
+    CONSTRAINT "_RoleToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Role" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_RoleToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -335,7 +456,7 @@ CREATE TABLE "_FilmToKeyword" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
     CONSTRAINT "_FilmToKeyword_A_fkey" FOREIGN KEY ("A") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_FilmToKeyword_B_fkey" FOREIGN KEY ("B") REFERENCES "Keyword" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "_FilmToKeyword_B_fkey" FOREIGN KEY ("B") REFERENCES "Keyword" ("name") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -358,7 +479,7 @@ CREATE TABLE "_SongToGenre" (
 CREATE TABLE "_SongToKeyword" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
-    CONSTRAINT "_SongToKeyword_A_fkey" FOREIGN KEY ("A") REFERENCES "Keyword" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_SongToKeyword_A_fkey" FOREIGN KEY ("A") REFERENCES "Keyword" ("name") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "_SongToKeyword_B_fkey" FOREIGN KEY ("B") REFERENCES "Song" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -370,27 +491,53 @@ CREATE TABLE "_AlbumToArtist" (
     CONSTRAINT "_AlbumToArtist_B_fkey" FOREIGN KEY ("B") REFERENCES "Artist" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- CreateTable
-CREATE TABLE "_CountryToLanguage" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL,
-    CONSTRAINT "_CountryToLanguage_A_fkey" FOREIGN KEY ("A") REFERENCES "Country" ("code") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_CountryToLanguage_B_fkey" FOREIGN KEY ("B") REFERENCES "Language" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
--- CreateTable
-CREATE TABLE "_CountryToFilm" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL,
-    CONSTRAINT "_CountryToFilm_A_fkey" FOREIGN KEY ("A") REFERENCES "Country" ("code") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_CountryToFilm_B_fkey" FOREIGN KEY ("B") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
+-- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+
+-- CreateIndex
+CREATE INDEX "Note_ownerId_idx" ON "Note"("ownerId");
+
+-- CreateIndex
+CREATE INDEX "Note_ownerId_updatedAt_idx" ON "Note"("ownerId", "updatedAt");
+
+-- CreateIndex
+CREATE INDEX "NoteImage_noteId_idx" ON "NoteImage"("noteId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UserImage_userId_key" ON "UserImage"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Password_userId_key" ON "Password"("userId");
+
+-- CreateIndex
+CREATE INDEX "Session_userId_idx" ON "Session"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Permission_action_entity_access_key" ON "Permission"("action", "entity", "access");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Verification_target_type_key" ON "Verification"("target", "type");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Connection_providerName_providerId_key" ON "Connection"("providerName", "providerId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Person_id_key" ON "Person"("id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Person_name_birthdate_key" ON "Person"("name", "birthdate");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Film_id_key" ON "Film"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "FilmRecommendation_id_key" ON "FilmRecommendation"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CastMember_id_key" ON "CastMember"("id");
@@ -438,7 +585,7 @@ CREATE UNIQUE INDEX "Genre_id_key" ON "Genre"("id");
 CREATE UNIQUE INDEX "Genre_name_key" ON "Genre"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Keyword_id_key" ON "Keyword"("id");
+CREATE UNIQUE INDEX "Keyword_name_key" ON "Keyword"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Location_id_key" ON "Location"("id");
@@ -477,16 +624,16 @@ CREATE UNIQUE INDEX "Album_id_key" ON "Album"("id");
 CREATE UNIQUE INDEX "Artist_id_key" ON "Artist"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Country_code_key" ON "Country"("code");
+CREATE UNIQUE INDEX "_PermissionToRole_AB_unique" ON "_PermissionToRole"("A", "B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Country_name_key" ON "Country"("name");
+CREATE INDEX "_PermissionToRole_B_index" ON "_PermissionToRole"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Language_id_key" ON "Language"("id");
+CREATE UNIQUE INDEX "_RoleToUser_AB_unique" ON "_RoleToUser"("A", "B");
 
 -- CreateIndex
-CREATE INDEX "Language_name_idx" ON "Language"("name");
+CREATE INDEX "_RoleToUser_B_index" ON "_RoleToUser"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_FilmToGenre_AB_unique" ON "_FilmToGenre"("A", "B");
@@ -523,15 +670,3 @@ CREATE UNIQUE INDEX "_AlbumToArtist_AB_unique" ON "_AlbumToArtist"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_AlbumToArtist_B_index" ON "_AlbumToArtist"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_CountryToLanguage_AB_unique" ON "_CountryToLanguage"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_CountryToLanguage_B_index" ON "_CountryToLanguage"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_CountryToFilm_AB_unique" ON "_CountryToFilm"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_CountryToFilm_B_index" ON "_CountryToFilm"("B");
