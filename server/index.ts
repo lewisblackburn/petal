@@ -20,9 +20,9 @@ import rateLimit from 'express-rate-limit'
 import getPort, { portNumbers } from 'get-port'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import cron from 'node-cron'
-import { oneHourAgo } from '#app/utils/constants'
-import { generateFilmRecommendations } from '#app/utils/recommendations.server'
+// import cron from 'node-cron'
+// import { oneHourAgo } from '#app/utils/constants'
+// import { generateFilmRecommendations } from '#app/utils/recommendations.server'
 
 installGlobals()
 
@@ -261,20 +261,20 @@ ${chalk.bold('Press Ctrl+C to stop')}
 	}
 })
 
-cron.schedule(
-	oneHourAgo().cronTime,
-	() => {
-		console.log(
-			`${chalk.bold('CRON JOB:')}  ${chalk.cyan(
-				'generateFilmRecommendations',
-			)}`,
-		)
-		generateFilmRecommendations(oneHourAgo().date)
-	},
-	{
-		timezone: 'Europe/London',
-	},
-)
+// cron.schedule(
+// 	oneHourAgo().cronTime,
+// 	() => {
+// 		console.log(
+// 			`${chalk.bold('CRON JOB:')}  ${chalk.cyan(
+// 				'generateFilmRecommendations',
+// 			)}`,
+// 		)
+// 		generateFilmRecommendations(oneHourAgo().date)
+// 	},
+// 	{
+// 		timezone: 'Europe/London',
+// 	},
+// )
 
 closeWithGrace(async () => {
 	await new Promise((resolve, reject) => {
