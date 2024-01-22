@@ -476,6 +476,61 @@ CREATE TABLE "_PermissionToRole" (
     CONSTRAINT "_PermissionToRole_B_fkey" FOREIGN KEY ("B") REFERENCES "Role" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- Create Permission To Role
+
+-- Admin to Any
+
+-- User
+INSERT INTO _PermissionToRole VALUES('clrnsxdsh0001gnf463ashegk', 'clrnsxdwo000wgnf44pcdcwa5');
+INSERT INTO _PermissionToRole VALUES('clrnsxdsq0003gnf4vhbzlk9j', 'clrnsxdwo000wgnf44pcdcwa5');
+INSERT INTO _PermissionToRole VALUES('clrnsxdt00005gnf4yuobac43', 'clrnsxdwo000wgnf44pcdcwa5');
+INSERT INTO _PermissionToRole VALUES('clrnsxdt90007gnf4b3ynjvnr', 'clrnsxdwo000wgnf44pcdcwa5');
+
+-- Note
+INSERT INTO _PermissionToRole VALUES('clrnsxdtj0009gnf46uxuqtni', 'clrnsxdwo000wgnf44pcdcwa5');
+INSERT INTO _PermissionToRole VALUES('clrnsxdts000bgnf4pifq8pgd', 'clrnsxdwo000wgnf44pcdcwa5');
+INSERT INTO _PermissionToRole VALUES('clrnsxdu2000dgnf4ztyjlu88', 'clrnsxdwo000wgnf44pcdcwa5');
+INSERT INTO _PermissionToRole VALUES('clrnsxdub000fgnf4hwjjv1ou', 'clrnsxdwo000wgnf44pcdcwa5');
+
+-- Film
+INSERT INTO _PermissionToRole VALUES('clrnsxdul000hgnf4gzhoh15u', 'clrnsxdwo000wgnf44pcdcwa5');
+INSERT INTO _PermissionToRole VALUES('clrnsxduu000jgnf4w2mi4k6d', 'clrnsxdwo000wgnf44pcdcwa5');
+INSERT INTO _PermissionToRole VALUES('clrnsxdv4000lgnf48vnc18sq', 'clrnsxdwo000wgnf44pcdcwa5');
+INSERT INTO _PermissionToRole VALUES('clrnsxdvh000ngnf42p7ja7po', 'clrnsxdwo000wgnf44pcdcwa5');
+
+-- Review
+INSERT INTO _PermissionToRole VALUES('clrnsxdvq000pgnf4mxgm0l12', 'clrnsxdwo000wgnf44pcdcwa5');
+INSERT INTO _PermissionToRole VALUES('clrnsxdw0000rgnf4gat9d9zd', 'clrnsxdwo000wgnf44pcdcwa5');
+INSERT INTO _PermissionToRole VALUES('clrnsxdw9000tgnf4en0fzv56', 'clrnsxdwo000wgnf44pcdcwa5');
+INSERT INTO _PermissionToRole VALUES('clrnsxdwj000vgnf40cixwl3u', 'clrnsxdwo000wgnf44pcdcwa5');
+
+
+-- User to Own
+
+-- User
+INSERT INTO _PermissionToRole VALUES('clrnsxdsc0000gnf4og0vzt1a', 'clrnsxdwu000xgnf43y4nmolr');
+INSERT INTO _PermissionToRole VALUES('clrnsxdsm0002gnf4r8ugw2q5', 'clrnsxdwu000xgnf43y4nmolr');
+INSERT INTO _PermissionToRole VALUES('clrnsxdsv0004gnf4g5mxo2xn', 'clrnsxdwu000xgnf43y4nmolr');
+INSERT INTO _PermissionToRole VALUES('clrnsxdt50006gnf4wij7a4i7', 'clrnsxdwu000xgnf43y4nmolr');
+
+-- Note
+INSERT INTO _PermissionToRole VALUES('clrnsxdte0008gnf4ubh5q7vb', 'clrnsxdwu000xgnf43y4nmolr');
+INSERT INTO _PermissionToRole VALUES('clrnsxdto000agnf4hh8y7u0p', 'clrnsxdwu000xgnf43y4nmolr');
+INSERT INTO _PermissionToRole VALUES('clrnsxdtx000cgnf4m48axmqw', 'clrnsxdwu000xgnf43y4nmolr');
+INSERT INTO _PermissionToRole VALUES('clrnsxdu7000egnf4jtf1s1ab', 'clrnsxdwu000xgnf43y4nmolr');
+
+-- Film
+INSERT INTO _PermissionToRole VALUES('clrnsxdug000ggnf4at7zq5j9', 'clrnsxdwu000xgnf43y4nmolr');
+INSERT INTO _PermissionToRole VALUES('clrnsxdul000hgnf4gzhoh15u', 'clrnsxdwu000xgnf43y4nmolr');
+INSERT INTO _PermissionToRole VALUES('clrnsxduu000jgnf4w2mi4k6d', 'clrnsxdwu000xgnf43y4nmolr');
+INSERT INTO _PermissionToRole VALUES('clrnsxduz000kgnf45t1xtn8a', 'clrnsxdwu000xgnf43y4nmolr');
+
+-- Review
+INSERT INTO _PermissionToRole VALUES('clrnsxdvl000ognf4ff7tpthv', 'clrnsxdwu000xgnf43y4nmolr');
+INSERT INTO _PermissionToRole VALUES('clrnsxdvv000qgnf4ff5jvkza', 'clrnsxdwu000xgnf43y4nmolr');
+INSERT INTO _PermissionToRole VALUES('clrnsxdw4000sgnf4mjtcn4j8', 'clrnsxdwu000xgnf43y4nmolr');
+INSERT INTO _PermissionToRole VALUES('clrnsxdwe000ugnf4z5z3kahx', 'clrnsxdwu000xgnf43y4nmolr');
+
 -- CreateTable
 CREATE TABLE "_RoleToUser" (
     "A" TEXT NOT NULL,

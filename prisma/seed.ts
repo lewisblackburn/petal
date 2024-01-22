@@ -23,43 +23,44 @@ async function seed() {
 	await cleanupDb(prisma)
 	console.timeEnd('🧹 Cleaned up the database...')
 
-	console.time('🔑 Created permissions...')
-	const entities = ['user', 'note', 'film', 'review']
-	const actions = ['create', 'read', 'update', 'delete']
-	const accesses = ['own', 'any'] as const
-	for (const entity of entities) {
-		for (const action of actions) {
-			for (const access of accesses) {
-				await prisma.permission.create({ data: { entity, action, access } })
-			}
-		}
-	}
-	console.timeEnd('🔑 Created permissions...')
-
-	console.time('👑 Created roles...')
-	await prisma.role.create({
-		data: {
-			name: 'admin',
-			permissions: {
-				connect: await prisma.permission.findMany({
-					select: { id: true },
-					where: { access: 'any' },
-				}),
-			},
-		},
-	})
-	await prisma.role.create({
-		data: {
-			name: 'user',
-			permissions: {
-				connect: await prisma.permission.findMany({
-					select: { id: true },
-					where: { access: 'own' },
-				}),
-			},
-		},
-	})
-	console.timeEnd('👑 Created roles...')
+	// NOTE: This is now done in the initial migration!
+	// console.time('🔑 Created permissions...')
+	// const entities = ['user', 'note', 'film', 'review']
+	// const actions = ['create', 'read', 'update', 'delete']
+	// const accesses = ['own', 'any'] as const
+	// for (const entity of entities) {
+	// 	for (const action of actions) {
+	// 		for (const access of accesses) {
+	// 			await prisma.permission.create({ data: { entity, action, access } })
+	// 		}
+	// 	}
+	// }
+	// console.timeEnd('🔑 Created permissions...')
+	//
+	// console.time('👑 Created roles...')
+	// await prisma.role.create({
+	// 	data: {
+	// 		name: 'admin',
+	// 		permissions: {
+	// 			connect: await prisma.permission.findMany({
+	// 				select: { id: true },
+	// 				where: { access: 'any' },
+	// 			}),
+	// 		},
+	// 	},
+	// })
+	// await prisma.role.create({
+	// 	data: {
+	// 		name: 'user',
+	// 		permissions: {
+	// 			connect: await prisma.permission.findMany({
+	// 				select: { id: true },
+	// 				where: { access: 'own' },
+	// 			}),
+	// 		},
+	// 	},
+	// })
+	// console.timeEnd('👑 Created roles...')
 
 	const totalUsers = 20
 	console.time(`👤 Created ${totalUsers} users...`)
