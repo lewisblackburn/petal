@@ -10,11 +10,9 @@ import {
 	type MetaFunction,
 } from '@remix-run/node'
 import {
-	Link,
 	Links,
 	LiveReload,
 	Meta,
-	Outlet,
 	Scripts,
 	ScrollRestoration,
 	useFetcher,
@@ -27,7 +25,7 @@ import { HoneypotProvider } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from './components/error-boundary.tsx'
 import { ErrorList } from './components/forms.tsx'
-import { NavigationBar } from './components/navigation-bar.tsx'
+import { Layout } from './components/layout/index.tsx'
 import { EpicProgress } from './components/progress-bar.tsx'
 import { useToast } from './components/toaster.tsx'
 import { Icon, href as iconsHref } from './components/ui/icon.tsx'
@@ -222,29 +220,10 @@ function App() {
 
 	return (
 		<Document nonce={nonce} theme={theme} env={data.ENV}>
-			<div className="flex h-screen flex-col justify-between">
-				<NavigationBar />
-
-				<div className="flex-1">
-					<Outlet />
-				</div>
-
-				<div className="container flex justify-between py-10">
-					<Logo />
-					<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
-				</div>
-			</div>
+			<Layout />
 			<EpicToaster closeButton position="top-center" theme={theme} />
 			<EpicProgress />
 		</Document>
-	)
-}
-
-function Logo() {
-	return (
-		<Link to="/" className="group grid leading-snug">
-			<span className="font-bold transition">Petal</span>
-		</Link>
 	)
 }
 
@@ -291,7 +270,11 @@ export function useOptimisticThemeMode() {
 	}
 }
 
-function ThemeSwitch({ userPreference }: { userPreference?: Theme | null }) {
+export function ThemeSwitch({
+	userPreference,
+}: {
+	userPreference?: Theme | null
+}) {
 	const fetcher = useFetcher<typeof action>()
 
 	const [form] = useForm({
