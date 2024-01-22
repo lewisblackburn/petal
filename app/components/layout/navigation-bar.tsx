@@ -3,9 +3,9 @@ import { useRef } from 'react'
 import { cn, getUserImgSrc } from '#app/utils/misc.tsx'
 import { userHasRole } from '#app/utils/permissions.ts'
 import { useOptionalUser, useUser } from '#app/utils/user.ts'
-import { SearchBar } from './search-bar.tsx'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar.tsx'
-import { Button } from './ui/button.tsx'
+import { SearchBar } from '../search-bar'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { Button } from '../ui/button'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -15,8 +15,8 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
-} from './ui/dropdown-menu.tsx'
-import { Icon } from './ui/icon.tsx'
+} from '../ui/dropdown-menu'
+import { Icon } from '../ui/icon'
 
 const LINKS = [
 	{
@@ -130,9 +130,6 @@ function UserDropdown() {
 						</span>
 					</Link>
 				</Button>
-				{/* <Button variant="ghost" className="relative h-8 w-8 rounded-full"> */}
-				{/* 	<span className="sr-only">Open Dropdown</span> */}
-				{/* </Button> */}
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-56" align="center" forceMount>
 				<DropdownMenuLabel className="font-normal">
