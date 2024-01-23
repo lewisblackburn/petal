@@ -31,6 +31,7 @@ export type IconName =
 	| 'film'
 	| 'folder'
 	| 'github-logo'
+	| 'globe'
 	| 'heart-filled'
 	| 'heart'
 	| 'language'

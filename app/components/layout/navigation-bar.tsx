@@ -1,8 +1,8 @@
 import { Form, Link, NavLink, useLocation, useSubmit } from '@remix-run/react'
 import { useRef } from 'react'
-import { cn, getUserImgSrc } from '#app/utils/misc.tsx'
-import { userHasRole } from '#app/utils/permissions.ts'
-import { useOptionalUser, useUser } from '#app/utils/user.ts'
+import { cn, getUserImgSrc } from '#app/utils/misc'
+import { userHasRole } from '#app/utils/permissions'
+import { useOptionalUser, useUser } from '#app/utils/user'
 import { SearchBar } from '../search-bar'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Button } from '../ui/button'
@@ -17,6 +17,7 @@ import {
 	DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
 import { Icon } from '../ui/icon'
+import { MobileSidebar } from './mobile-side-bar'
 
 const LINKS = [
 	{
@@ -41,68 +42,85 @@ const LINKS = [
 	},
 ]
 
-export function NavigationBar() {
+export default function NavigationBar({
+	isOnDashboardPage,
+}: {
+	isOnDashboardPage?: boolean
+}) {
 	const user = useOptionalUser()
 	const pathname = useLocation().pathname
 
 	return (
-		<div className="flex items-center border-b">
-			<header className="container py-3">
-				<nav className="flex items-center justify-between">
-					<nav className="flex items-center space-x-4 lg:space-x-6">
+		<div
+			className={cn(
+				'supports-backdrop-blur:bg-background/60 left-0 right-0 top-0 z-20 border-b bg-background/95 backdrop-blur',
+				isOnDashboardPage && 'fixed',
+			)}
+		>
+			<nav
+				className={cn(
+					'flex h-16 items-center justify-between',
+					!isOnDashboardPage && 'container',
+					isOnDashboardPage && 'px-4',
+				)}
+			>
+				<div className="flex items-center space-x-4 lg:space-x-6">
+					<NavLink
+						to="/"
+						className={({ isActive }) =>
+							cn(
+								'text-sm font-bold transition-colors hover:text-primary',
+								isActive && 'text-primary',
+							)
+						}
+					>
+						Petal
+					</NavLink>
+					{LINKS.map(({ href, label }) => (
 						<NavLink
-							to="/"
+							key={href}
+							to={href}
 							className={({ isActive }) =>
 								cn(
-									'text-sm font-bold transition-colors hover:text-primary',
+									'text-sm font-medium text-muted-foreground transition-colors hover:text-primary',
 									isActive && 'text-primary',
 								)
 							}
 						>
-							Petal
+							{label}
 						</NavLink>
-						{LINKS.map(({ href, label }) => (
-							<NavLink
-								key={href}
-								to={href}
-								className={({ isActive }) =>
-									cn(
-										'text-sm font-medium text-muted-foreground transition-colors hover:text-primary',
-										isActive && 'text-primary',
-									)
-								}
-							>
-								{label}
-							</NavLink>
-						))}
-					</nav>
-					<div className="flex items-center gap-5">
-						{user ? (
-							<>
-								<div className="w-[300px]">
-									<SearchBar status="idle" />
-								</div>
-								<AddMediaDropdown />
-								<UserDropdown />
-							</>
-						) : (
-							<>
-								<div className="w-[300px]">
-									<SearchBar status="idle" />
-								</div>
-								<Button asChild variant="default" size="sm">
-									<Link to={`/login?redirectTo=${pathname}`}>Log In</Link>
-								</Button>
-							</>
-						)}
-					</div>
-				</nav>
-			</header>
+					))}
+				</div>
+				<div className={cn('block md:!hidden')}>
+					<MobileSidebar />
+				</div>
+
+				<div className="flex items-center gap-5">
+					{user ? (
+						<>
+							<div className="w-[300px]">
+								<SearchBar status="idle" />
+							</div>
+							<AddMediaDropdown />
+							<UserDropdown />
+						</>
+					) : (
+						<>
+							<div className="w-[300px]">
+								<SearchBar status="idle" />
+							</div>
+							<Button asChild variant="default" size="sm">
+								<Link to={`/login?redirectTo=${pathname}`}>Log In</Link>
+							</Button>
+						</>
+					)}
+				</div>
+			</nav>
 		</div>
 	)
 }
 
-function UserDropdown() {
+export function UserDropdown() {
 	const user = useUser()
 	const userIsAdmin = userHasRole(user, 'admin')
 	const submit = useSubmit()

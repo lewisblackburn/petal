@@ -1,36 +1,40 @@
 import { invariant } from '@epic-web/invariant'
-import { Link, Outlet, useMatches, useRouteLoaderData } from '@remix-run/react'
+import { Outlet, useMatches, useRouteLoaderData } from '@remix-run/react'
 import { ThemeSwitch, type loader as rootLoader } from '#app/root'
-import { NavigationBar } from './navigation-bar'
+import { Logo } from '../logo'
+import NavigationBar from './navigation-bar'
+import Sidebar from './side-bar'
 
 export const Layout = () => {
 	const data = useRouteLoaderData<typeof rootLoader>('root')
 	const matches = useMatches()
 	invariant(data?.requestInfo, 'No requestInfo found in root loader')
 
-	const isOnDashboardPage = !!matches.find(
-		m => m.pathname === '/admin/dashboard',
+	const isOnDashboardPage = !!matches.find(m =>
+		m.pathname.startsWith('/admin/dashboard'),
 	)
 
 	if (isOnDashboardPage) {
 		return (
-			<div className="flex h-screen flex-col justify-between">
-				<NavigationBar />
-
-				<div className="flex-1">
-					<Outlet />
+			<>
+				<NavigationBar isOnDashboardPage={isOnDashboardPage} />
+				<div className="flex h-screen border-collapse overflow-hidden">
+					<Sidebar />
+					<main className="flex-1 overflow-y-auto overflow-x-hidden bg-secondary/10 px-8 pb-12 pt-24">
+						<div className="flex flex-col gap-5">
+							<div className="flex items-center justify-between space-y-2">
+								<h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+							</div>
+							<Outlet />
+						</div>
+					</main>
 				</div>
-
-				<div className="container flex justify-between py-10">
-					<Logo />
-					<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
-				</div>
-			</div>
+			</>
 		)
 	} else
 		return (
 			<div className="flex h-screen flex-col justify-between">
-				<NavigationBar />
+				<NavigationBar isOnDashboardPage={isOnDashboardPage} />
 
 				<div className="flex-1">
 					<Outlet />
@@ -42,12 +46,4 @@ export const Layout = () => {
 				</div>
 			</div>
 		)
-}
-
-function Logo() {
-	return (
-		<Link to="/" className="group grid leading-snug">
-			<span className="font-bold transition">Petal</span>
-		</Link>
-	)
 }
