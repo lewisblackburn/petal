@@ -293,7 +293,7 @@ export async function downloadFile(url: string, retries: number = 0) {
  * Returns formatted runtime
  */
 export function formatRuntime(runtime: number) {
-	const runtimeInHours = Math.round(runtime / 60)
+	const runtimeInHours = Math.floor(runtime / 60)
 	const runtimeInMinutes = runtime % 60
 
 	return `${runtimeInHours}h ${runtimeInMinutes}m`
