@@ -61,7 +61,7 @@ export default function NavigationBar({
 				className={cn(
 					'flex h-16 items-center justify-between',
 					!isOnDashboardPage && 'container',
-					isOnDashboardPage && 'px-4',
+					isOnDashboardPage && 'pl-5 pr-4',
 				)}
 			>
 				<div className="flex items-center space-x-4 lg:space-x-6">
@@ -91,9 +91,9 @@ export default function NavigationBar({
 						</NavLink>
 					))}
 				</div>
-				<div className={cn('block md:!hidden')}>
-					<MobileSidebar />
-				</div>
+				{/* <div className={cn('block md:!hidden')}> */}
+				{/* 	<MobileSidebar /> */}
+				{/* </div> */}
 
 				<div className="flex items-center gap-5">
 					{user ? (

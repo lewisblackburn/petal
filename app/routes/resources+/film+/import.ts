@@ -5,7 +5,10 @@ import { prisma } from '#app/utils/db.server'
 import { extractFileName, fetchAndUploadImages } from '#app/utils/misc'
 import { requireUserWithRole } from '#app/utils/permissions'
 import { s3UploadHandler } from '#app/utils/s3.server'
-import { createOrUpdatePerson, fetchTMDBFilm } from '#app/utils/tmdb.service'
+import {
+	createOrUpdatePerson as createOrUpdatePersonAndConnectToFilm,
+	fetchTMDBFilm,
+} from '#app/utils/tmdb.service'
 import { createToastHeaders } from '#app/utils/toast.server'
 
 export const ImportFilmSchema = z.object({
@@ -131,11 +134,11 @@ export async function action({ request }: ActionFunctionArgs) {
 	})
 
 	for (const castMember of credits.cast) {
-		await createOrUpdatePerson(castMember, newFilm.id, true)
+		await createOrUpdatePersonAndConnectToFilm(castMember, newFilm.id, true)
 	}
 
 	for (const crewMember of credits.crew) {
-		await createOrUpdatePerson(crewMember, newFilm.id, false)
+		await createOrUpdatePersonAndConnectToFilm(crewMember, newFilm.id, false)
 	}
 
 	return json({ status: 'success', submission } as const, {
