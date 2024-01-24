@@ -190,14 +190,14 @@ model Person {
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
+  tmdbID String? @unique
+
   image String? @default("/img/300x450.png")
 
-  casts  CastMember[]
-  crews  CrewMember[]
+  casts  FilmCastMember[]
+  crews  FilmCrewMember[]
   songs  Artist[]
   photos PersonImage[]
-
-  @@unique([name, birthdate])
 }
 
 model Film {
@@ -222,9 +222,9 @@ model Film {
   instagram String?
   twitter   String?
 
-  imdbID     String?
-  wikiDataID String?
-  tmdbID     String?
+  imdbID     String? @unique
+  wikiDataID String? @unique
+  tmdbID     String? @unique
 
   locked    Boolean? @default(false)
   createdAt DateTime @default(now())
@@ -236,8 +236,8 @@ model Film {
   trailer  String? @default("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
   tagline  String?
 
-  cast                CastMember[]
-  crew                CrewMember[]
+  cast                FilmCastMember[]
+  crew                FilmCrewMember[]
   photos              FilmPhoto[]
   videos              FilmVideo[]
   taglines            FilmTagline[]
@@ -267,7 +267,7 @@ model FilmRecommendation {
   updatedAt         DateTime @updatedAt
 }
 
-model CastMember {
+model FilmCastMember {
   id          String   @id @unique @default(cuid())
   // NOTE: This is for the order
   numerator   Int
@@ -282,7 +282,7 @@ model CastMember {
   personId String
 }
 
-model CrewMember {
+model FilmCrewMember {
   id         String   @id @unique @default(cuid())
   film       Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   person     Person   @relation(fields: [personId], references: [id], onDelete: Cascade, onUpdate: Cascade)

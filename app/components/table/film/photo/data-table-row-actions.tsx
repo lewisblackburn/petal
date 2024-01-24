@@ -20,6 +20,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog'
 import { Icon } from '#app/components/ui/icon'
+import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type EditFilmPhotoAction,
 	EditFilmPhotoSchema,
@@ -55,7 +56,7 @@ export function DataTableRowActions<TData>({
 	})
 
 	useEffect(() => {
-		if (fetcher.data?.status !== 'error') setOpen(false)
+		fetcher.data?.status === 'success' && setOpen(false)
 	}, [fetcher])
 
 	return (
@@ -117,9 +118,21 @@ export function DataTableRowActions<TData>({
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
-						<Button variant="default" type="submit">
-							Edit Photo
-						</Button>
+						<StatusButton
+							type="submit"
+							variant="outline"
+							status={
+								fetcher.state !== 'idle'
+									? 'pending'
+									: fetcher.data?.status ?? 'idle'
+							}
+							disabled={fetcher.state !== 'idle'}
+							className="w-full max-md:aspect-square max-md:px-0"
+						>
+							<Icon name="pencil-1" className="scale-125 max-md:scale-150">
+								<span className="max-md:hidden">Edit Photo</span>
+							</Icon>
+						</StatusButton>
 					</DialogFooter>
 				</fetcher.Form>
 			</DialogContent>

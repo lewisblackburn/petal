@@ -70,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	return json({ status: 'success', submission } as const, {
 		headers: await createToastHeaders({
-			description: 'Added Film Photo',
+			description: 'Edited Film Photo',
 			type: 'success',
 		}),
 	})

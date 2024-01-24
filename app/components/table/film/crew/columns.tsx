@@ -1,9 +1,9 @@
-import { type CrewMember } from '@prisma/client'
+import { type FilmCrewMember } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 
-export const columns: ColumnDef<Partial<CrewMember>>[] = [
+export const columns: ColumnDef<Partial<FilmCrewMember>>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (

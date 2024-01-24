@@ -1,6 +1,6 @@
 import { useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
-import { type CrewMember } from '@prisma/client'
+import { type FilmCrewMember } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
@@ -16,6 +16,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type DeleteFilmCrewMembersAction,
 	DeleteFilmCrewMembersSchema,
@@ -31,7 +32,7 @@ export function DataTableDeleteCrewMembers<TData>({
 	const { filmId } = useParams()
 	const peopleSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as CrewMember).id)
+		.rows.map(row => (row.original as FilmCrewMember).id)
 	const fetcher = useFetcher<typeof DeleteFilmCrewMembersAction>()
 	const [open, setOpen] = useState(false)
 
@@ -48,7 +49,7 @@ export function DataTableDeleteCrewMembers<TData>({
 		if (fetcher.state === 'idle') {
 			table.setRowSelection({})
 		}
-		if (fetcher.data?.status !== 'error') setOpen(false)
+		fetcher.data?.status === 'success' && setOpen(false)
 	}, [fetcher, table])
 
 	return (
@@ -88,7 +89,21 @@ export function DataTableDeleteCrewMembers<TData>({
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
-						<Button type="submit">Delete Crew Member</Button>
+						<StatusButton
+							type="submit"
+							variant="outline"
+							status={
+								fetcher.state !== 'idle'
+									? 'pending'
+									: fetcher.data?.status ?? 'idle'
+							}
+							disabled={fetcher.state !== 'idle'}
+							className="w-full max-md:aspect-square max-md:px-0"
+						>
+							<Icon name="trash" className="scale-125 max-md:scale-150">
+								<span className="max-md:hidden">Delete Crew Members</span>
+							</Icon>
+						</StatusButton>
 					</DialogFooter>
 				</fetcher.Form>
 			</DialogContent>

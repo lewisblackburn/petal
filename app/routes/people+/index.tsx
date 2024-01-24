@@ -1,5 +1,9 @@
 import { type Prisma } from '@prisma/client'
-import { json, type DataFunctionArgs, type MetaFunction } from '@remix-run/node'
+import {
+	json,
+	type LoaderFunctionArgs,
+	type MetaFunction,
+} from '@remix-run/node'
 import { Link, useLoaderData, useLocation } from '@remix-run/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { FiltersCard } from '#app/components/filters-card'
@@ -13,7 +17,7 @@ import { getTableParams } from '#app/utils/request.helper.ts'
 
 const TAKE = 20
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const { orderBy, search, skip, take } = getTableParams(request, TAKE, {
 		orderBy: 'createdAt',
 		order: 'desc',

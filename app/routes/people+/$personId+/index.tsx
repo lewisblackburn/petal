@@ -1,5 +1,5 @@
 import { invariantResponse } from '@epic-web/invariant'
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import { json, type LoaderFunctionArgs } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 import { format } from 'date-fns'
 import { Image } from '#app/components/image.tsx'
@@ -9,7 +9,7 @@ import { Icon } from '#app/components/ui/icon.tsx'
 import { GENDERS } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
 
-export async function loader({ params }: DataFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
 	const person = await prisma.person.findUnique({
 		where: {
 			id: params.personId,

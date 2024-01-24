@@ -16,6 +16,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type DeleteFilmAlternativeTitlesAction,
 	DeleteFilmAlternativeTitlesSchema,
@@ -48,7 +49,7 @@ export function DataTableDeleteAlternativeTitles<TData>({
 		if (fetcher.state === 'idle') {
 			table.setRowSelection({})
 		}
-		if (fetcher.data?.status !== 'error') setOpen(false)
+		fetcher.data?.status === 'success' && setOpen(false)
 	}, [fetcher, table])
 
 	return (
@@ -91,7 +92,19 @@ export function DataTableDeleteAlternativeTitles<TData>({
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
-						<Button type="submit">Delete Alternative Titles</Button>
+						<StatusButton
+							type="submit"
+							variant="outline"
+							status={
+								fetcher.state !== 'idle'
+									? 'pending'
+									: fetcher.data?.status ?? 'idle'
+							}
+							disabled={fetcher.state !== 'idle'}
+							className="w-full max-md:aspect-square max-md:px-0"
+						>
+							Delete Alternative Titles
+						</StatusButton>
 					</DialogFooter>
 				</fetcher.Form>
 			</DialogContent>

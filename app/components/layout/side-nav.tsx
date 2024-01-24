@@ -129,6 +129,7 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
 			setLastOpenItem(openItem)
 			setOpenItem('')
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isOpen])
 
 	return (

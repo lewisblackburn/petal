@@ -1,5 +1,5 @@
 import { parse } from '@conform-to/zod'
-import { type CastMember } from '@prisma/client'
+import { type FilmCastMember } from '@prisma/client'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
@@ -35,8 +35,8 @@ export async function action({ request }: ActionFunctionArgs) {
 	let { filmId, castMemberBefore, castMemberId, castMemberAfter } =
 		submission.value
 
-	const castMemberBeforeParsed = JSON.parse(castMemberBefore) as CastMember
-	const castMemberAfterParsed = JSON.parse(castMemberAfter) as CastMember
+	const castMemberBeforeParsed = JSON.parse(castMemberBefore) as FilmCastMember
+	const castMemberAfterParsed = JSON.parse(castMemberAfter) as FilmCastMember
 
 	// Calculate the new Numerator and Denominator values
 	const numerator =
@@ -47,7 +47,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		(castMemberAfterParsed?.denominator ?? 0)
 
 	// TODO: At some point the values will need to be reindexed to prevent duplicate order values
-	await prisma.castMember.update({
+	await prisma.filmCastMember.update({
 		where: { id: castMemberId },
 		data: { numerator: numerator, denominator: denominator },
 	})

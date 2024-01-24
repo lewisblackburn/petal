@@ -1,10 +1,10 @@
-import { type CastMember } from '@prisma/client'
+import { type FilmCastMember } from '@prisma/client'
 import { Link } from '@remix-run/react'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 
-export const columns: ColumnDef<Partial<CastMember>>[] = [
+export const columns: ColumnDef<Partial<FilmCastMember>>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (

@@ -15,31 +15,27 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog'
 import { Icon } from '#app/components/ui/icon'
+import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type ImportFilmFromTMDBAction,
-	ImportFilmFromTMDBSchema,
-} from '#app/routes/resources+/film+/import-film-from-tmdb'
+	ImportFilmSchema,
+} from '#app/routes/resources+/film+/import'
 
 export default function DashboardFilmsRoute() {
 	const fetcher = useFetcher<typeof ImportFilmFromTMDBAction>()
 	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({
-		id: 'import-film-from-tmdb-form',
+		id: 'import-film-form',
 		lastSubmission: fetcher.data?.submission,
 		onValidate({ formData }) {
-			return parse(formData, { schema: ImportFilmFromTMDBSchema })
+			return parse(formData, { schema: ImportFilmSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
 
-	// const isSubmitting = useIsPending({
-	// 	formMethod: 'GET',
-	// 	formAction: '/resources/search',
-	// })
-
 	useEffect(() => {
-		if (fetcher.data?.status !== 'error') setOpen(false)
+		fetcher.data?.status === 'success' && setOpen(false)
 	}, [fetcher])
 
 	return (
@@ -53,8 +49,8 @@ export default function DashboardFilmsRoute() {
 			<DialogContent className="sm:max-w-[425px]">
 				<fetcher.Form
 					method="POST"
-					action="/resources/film/import-film-from-tmdb"
-					name="import-film-from-tmdb-form"
+					action="/resources/film/import"
+					name="import-film-form"
 					{...form.props}
 				>
 					<DialogHeader>
@@ -65,7 +61,7 @@ export default function DashboardFilmsRoute() {
 						<Field
 							labelProps={{
 								htmlFor: fields.tmdbID.id,
-								children: 'Name',
+								children: 'TMDB ID',
 							}}
 							inputProps={{
 								...conform.input(fields.tmdbID, { type: 'text' }),
@@ -76,9 +72,21 @@ export default function DashboardFilmsRoute() {
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
-						<Button variant="default" type="submit">
-							Import Film
-						</Button>
+						<StatusButton
+							type="submit"
+							variant="outline"
+							status={
+								fetcher.state !== 'idle'
+									? 'pending'
+									: fetcher.data?.status ?? 'idle'
+							}
+							disabled={fetcher.state !== 'idle'}
+							className="w-full max-md:aspect-square max-md:px-0"
+						>
+							<Icon name="plus" className="scale-125 max-md:scale-150">
+								<span className="max-md:hidden">Import Film</span>
+							</Icon>
+						</StatusButton>
 					</DialogFooter>
 				</fetcher.Form>
 			</DialogContent>

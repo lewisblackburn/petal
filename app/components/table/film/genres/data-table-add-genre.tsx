@@ -14,6 +14,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type AddFilmGenreAction,
 	AddFilmGenreSchema,
@@ -35,7 +36,7 @@ export function DataTableAddGenre() {
 	})
 
 	useEffect(() => {
-		if (fetcher.data?.status !== 'error') setOpen(false)
+		fetcher.data?.status === 'success' && setOpen(false)
 	}, [fetcher])
 
 	return (
@@ -78,9 +79,21 @@ export function DataTableAddGenre() {
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
-						<Button variant="default" type="submit">
-							Add Genre
-						</Button>
+						<StatusButton
+							type="submit"
+							variant="outline"
+							status={
+								fetcher.state !== 'idle'
+									? 'pending'
+									: fetcher.data?.status ?? 'idle'
+							}
+							disabled={fetcher.state !== 'idle'}
+							className="w-full max-md:aspect-square max-md:px-0"
+						>
+							<Icon name="plus" className="scale-125 max-md:scale-150">
+								<span className="max-md:hidden">Add Genre</span>
+							</Icon>
+						</StatusButton>
 					</DialogFooter>
 				</fetcher.Form>
 			</DialogContent>

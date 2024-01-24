@@ -3,7 +3,7 @@ import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { type Person } from '@prisma/client'
 import { Form, useFetcher } from '@remix-run/react'
 import {
-	type DataFunctionArgs,
+	type ActionFunctionArgs,
 	json,
 	type SerializeFrom,
 } from '@remix-run/server-runtime'
@@ -36,7 +36,7 @@ const PersonEditorSchema = z.object({
 	homepage: z.string().optional(),
 })
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	await requireUserId(request)
 
 	const formData = await request.formData()

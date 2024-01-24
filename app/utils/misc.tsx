@@ -580,8 +580,8 @@ export async function fetchWithDelay<T>(
 	url: string,
 	options: any,
 	delay: number,
-): Promise<T> {
-	return new Promise<T>((resolve, reject) => {
+): Promise<{ data?: T; error?: Error }> {
+	return new Promise<{ data?: T; error?: Error }>(resolve => {
 		setTimeout(() => {
 			fetch(url, options)
 				.then((res: Response) => {
@@ -590,8 +590,8 @@ export async function fetchWithDelay<T>(
 					}
 					return res.json() as Promise<T>
 				})
-				.then(resolve)
-				.catch(reject)
+				.then((data: T) => resolve({ data }))
+				.catch((error: Error) => resolve({ error }))
 		}, delay)
 	})
 }

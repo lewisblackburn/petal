@@ -16,6 +16,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type DeleteFilmVideosAction,
 	DeleteFilmVideosSchema,
@@ -48,7 +49,7 @@ export function DataTableDeleteVideos<TData>({
 		if (fetcher.state === 'idle') {
 			table.setRowSelection({})
 		}
-		if (fetcher.data?.status !== 'error') setOpen(false)
+		fetcher.data?.status === 'success' && setOpen(false)
 	}, [fetcher, table])
 
 	return (
@@ -88,7 +89,21 @@ export function DataTableDeleteVideos<TData>({
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
-						<Button type="submit">Delete Videos</Button>
+						<StatusButton
+							type="submit"
+							variant="outline"
+							status={
+								fetcher.state !== 'idle'
+									? 'pending'
+									: fetcher.data?.status ?? 'idle'
+							}
+							disabled={fetcher.state !== 'idle'}
+							className="w-full max-md:aspect-square max-md:px-0"
+						>
+							<Icon name="trash" className="scale-125 max-md:scale-150">
+								<span className="max-md:hidden">Delete Videos</span>
+							</Icon>
+						</StatusButton>
 					</DialogFooter>
 				</fetcher.Form>
 			</DialogContent>
