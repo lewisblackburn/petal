@@ -1,4 +1,3 @@
-import { SelectPortal } from '@radix-ui/react-select'
 import { type Table } from '@tanstack/react-table'
 import { Button } from '../ui/button.tsx'
 import { Icon } from '../ui/icon.tsx'

@@ -17,7 +17,6 @@ import {
 	DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
 import { Icon } from '../ui/icon'
-import { MobileSidebar } from './mobile-side-bar'
 
 const LINKS = [
 	{
