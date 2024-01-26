@@ -38,6 +38,5 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function FilmEditCrewRoute() {
 	const { crew } = useLoaderData<typeof loader>()
 
-	// FIX: Dropdown resetting scroll
 	return <CrewTable data={crew} columns={columns} />
 }

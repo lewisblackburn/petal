@@ -41,6 +41,5 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function FilmEditCastRoute() {
 	const { cast } = useLoaderData<typeof loader>()
 
-	// FIX: Dropdown resetting scroll
 	return <CastTable data={cast} columns={columns} />
 }

@@ -33,6 +33,5 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function FilmEditKeywordsRoute() {
 	const { keywords } = useLoaderData<typeof loader>()
 
-	// FIX: Dropdown resetting scroll
 	return <KeywordTable data={keywords} columns={columns} />
 }

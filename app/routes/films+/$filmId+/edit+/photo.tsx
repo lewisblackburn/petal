@@ -36,6 +36,5 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function FilmEditPhotoRoute() {
 	const { photos } = useLoaderData<typeof loader>()
 
-	// FIX: Dropdown resetting scroll
 	return <PhotoTable data={photos} columns={columns} />
 }

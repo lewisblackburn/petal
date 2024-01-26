@@ -41,6 +41,5 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function FilmEditTaglinesRoute() {
 	const { taglines } = useLoaderData<typeof loader>()
 
-	// FIX: Dropdown resetting scroll
 	return <TaglineTable data={taglines} columns={columns} />
 }

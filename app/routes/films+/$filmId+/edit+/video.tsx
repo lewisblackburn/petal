@@ -36,6 +36,5 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function FilmEditVideoRoute() {
 	const { videos } = useLoaderData<typeof loader>()
 
-	// FIX: Dropdown resetting scroll
 	return <VideoTable data={videos} columns={columns} />
 }

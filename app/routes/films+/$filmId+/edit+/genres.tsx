@@ -34,6 +34,5 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function FilmEditGenresRoute() {
 	const { genres } = useLoaderData<typeof loader>()
 
-	// FIX: Dropdown resetting scroll
 	return <GenreTable data={genres} columns={columns} />
 }

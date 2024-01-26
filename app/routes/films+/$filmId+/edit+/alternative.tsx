@@ -43,6 +43,5 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function FilmEditAlternativeTitlesRoute() {
 	const { alternativeTitles } = useLoaderData<typeof loader>()
 
-	// FIX: Dropdown resetting scroll
 	return <AlternativeTitleTable data={alternativeTitles} columns={columns} />
 }
