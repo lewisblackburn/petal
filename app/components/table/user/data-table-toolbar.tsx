@@ -3,8 +3,7 @@ import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Input } from '#app/components/ui/input.tsx'
 import { DataTableViewOptions } from '../data-table-view-options.tsx'
-import { DataTableAddGenre } from './data-table-add-genre.tsx'
-import { DataTableDeleteGenres } from './data-table-delete-genres.tsx'
+import { DataTableDeleteGenres } from './data-table-delete-users.tsx'
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>
@@ -19,7 +18,7 @@ export function DataTableToolbar<TData>({
 		<div className="flex items-center justify-between">
 			<div className="flex flex-1 items-center space-x-2">
 				<Input
-					placeholder="Filter genres..."
+					placeholder="Filter users..."
 					value={table.getState().globalFilter ?? ''}
 					onChange={event => table.setGlobalFilter(event.target.value)}
 					className="h-8 w-[150px] lg:w-[250px]"
@@ -37,7 +36,6 @@ export function DataTableToolbar<TData>({
 			</div>
 			<div className="flex flex-1 items-center space-x-2">
 				<DataTableViewOptions table={table} />
-				<DataTableAddGenre />
 				<DataTableDeleteGenres table={table} />
 			</div>
 		</div>

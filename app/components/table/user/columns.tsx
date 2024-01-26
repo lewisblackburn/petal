@@ -1,9 +1,9 @@
-import { type Genre } from '@prisma/client'
+import { type User } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../data-table-column-header'
 
-export const columns: ColumnDef<Partial<Genre>>[] = [
+export const columns: ColumnDef<Partial<User>>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -32,28 +32,24 @@ export const columns: ColumnDef<Partial<Genre>>[] = [
 		enableHiding: false,
 	},
 	{
+		accessorKey: 'email',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Email" />
+		),
+		cell: ({ row }) => <div>{row.getValue('email')}</div>,
+	},
+	{
 		accessorKey: 'name',
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Name" />
 		),
-		cell: ({ row }) => <div className="w-[400px]">{row.getValue('name')}</div>,
+		cell: ({ row }) => <div>{row.getValue('name')}</div>,
 	},
 	{
-		accessorKey: 'created',
+		accessorKey: 'username',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="createdAt" />
+			<DataTableColumnHeader column={column} title="Username" />
 		),
-		cell: ({ row }) => (
-			<div className="w-[250px]">{row.getValue('created')}</div>
-		),
-	},
-	{
-		accessorKey: 'updated',
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="updatedAt" />
-		),
-		cell: ({ row }) => (
-			<div className="w-[250px]">{row.getValue('updated')}</div>
-		),
+		cell: ({ row }) => <div>{row.getValue('username')}</div>,
 	},
 ]
