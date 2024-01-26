@@ -77,6 +77,8 @@ export default function DashboardUsersRoute() {
 				preventScrollReset: true,
 			},
 		)
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [pageIndex])
 
 	return (
