@@ -111,12 +111,12 @@ export default function FilmEditLogsRoute() {
 									</div>
 									{log.newData && (
 										<div className="flex items-center gap-2  bg-green-500/10 p-5">
-											+ {JSON.stringify(log.newData, null, 2)}
+											+ {log.newData}
 										</div>
 									)}
 									{log.oldData && (
 										<div className="flex items-center gap-2 bg-red-500/10 p-5">
-											- {JSON.stringify(log.oldData, null, 2)}
+											- {log.oldData}
 										</div>
 									)}
 								</CardContent>
