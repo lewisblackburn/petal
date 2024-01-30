@@ -5,7 +5,6 @@ import { type ActionFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher } from '@remix-run/react'
 import { json, type SerializeFrom } from '@remix-run/server-runtime'
 import { format } from 'date-fns'
-import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import {
@@ -19,7 +18,6 @@ import { Button } from '#app/components/ui/button.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { AGE_RATINGS, LANGUAGES, STATUSES } from '#app/utils/constants.ts'
-import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { log } from '#app/utils/log.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
@@ -49,7 +47,6 @@ export async function action({ request }: ActionFunctionArgs) {
 	let film: any = null
 
 	const formData = await request.formData()
-	await validateCSRF(formData, request.headers)
 
 	const submission = await parse(formData, {
 		schema: FilmEditorSchema.superRefine(async (data, ctx) => {
@@ -184,7 +181,6 @@ export function FilmEditor({
 			className="flex h-full flex-col gap-y-4"
 			{...form.props}
 		>
-			<AuthenticityTokenInput />
 			{film ? <input type="hidden" name="id" value={film.id} /> : null}
 			<div className="flex flex-col gap-1">
 				<Field
