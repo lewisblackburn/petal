@@ -3,7 +3,7 @@ import { type ActionFunctionArgs, json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { prisma } from '#app/utils/db.server'
 import { extractFileName, fetchAndUploadImages } from '#app/utils/misc'
-import { requireUserWithRole } from '#app/utils/permissions'
+import { requireUserWithRole } from '#app/utils/permissions.server'
 import { s3UploadHandler } from '#app/utils/s3.server'
 import {
 	createOrUpdatePerson as createOrUpdatePersonAndConnectToFilm,

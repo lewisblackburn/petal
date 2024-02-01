@@ -33,10 +33,9 @@ import {
 import {
 	requireUserWithPermission,
 	requireUserWithRole,
-	userHasPermission,
-} from '#app/utils/permissions.ts'
+} from '#app/utils/permissions.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
-import { useOptionalUser } from '#app/utils/user.ts'
+import { useOptionalUser, userHasPermission } from '#app/utils/user.ts'
 import { type IconName } from '@/icon-name'
 import { type loader as filmsLoader } from './index.tsx'
 
