@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
+import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, type MetaFunction } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
@@ -27,16 +27,16 @@ export default function DashboardFilmsRoute() {
 
 	const [form, fields] = useForm({
 		id: 'import-film-form',
-		lastSubmission: fetcher.data?.submission,
+		lastResult: fetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: ImportFilmSchema })
+			return parseWithZod(formData, { schema: ImportFilmSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
 
 	useEffect(() => {
-		fetcher.data?.status === 'success' && setOpen(false)
-	}, [fetcher])
+		form.status === 'success' && setOpen(false)
+	}, [form])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -51,7 +51,7 @@ export default function DashboardFilmsRoute() {
 					method="POST"
 					action="/resources/film/import"
 					name="import-film-form"
-					{...form.props}
+					{...getFormProps(form)}
 				>
 					<DialogHeader>
 						<DialogTitle>Import Film</DialogTitle>
@@ -64,7 +64,7 @@ export default function DashboardFilmsRoute() {
 								children: 'TMDB ID',
 							}}
 							inputProps={{
-								...conform.input(fields.tmdbID, { type: 'text' }),
+								...getInputProps(fields.tmdbID, { type: 'text' }),
 								autoComplete: 'off',
 							}}
 							errors={fields.tmdbID.errors}
@@ -76,9 +76,7 @@ export default function DashboardFilmsRoute() {
 							type="submit"
 							variant="outline"
 							status={
-								fetcher.state !== 'idle'
-									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+								fetcher.state !== 'idle' ? 'pending' : form.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"

@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
+import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { ErrorList, Field } from '#app/components/forms.tsx'
@@ -27,16 +27,16 @@ export function DataTableAddPhoto() {
 
 	const [form, fields] = useForm({
 		id: 'add-person-photo-form',
-		lastSubmission: fetcher.data?.submission,
+		lastResult: fetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddPersonImageSchema })
+			return parseWithZod(formData, { schema: AddPersonImageSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
 
 	useEffect(() => {
-		fetcher.data?.status === 'success' && setOpen(false)
-	}, [fetcher])
+		form.status === 'success' && setOpen(false)
+	}, [form])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -56,7 +56,7 @@ export function DataTableAddPhoto() {
 					action="/resources/person/add-photo"
 					name="add-person-photo-form"
 					encType="multipart/form-data"
-					{...form.props}
+					{...getFormProps(form)}
 				>
 					<DialogHeader>
 						<DialogTitle>Add Photo</DialogTitle>
@@ -72,7 +72,7 @@ export function DataTableAddPhoto() {
 								children: 'Image',
 							}}
 							inputProps={{
-								...conform.input(fields.image, { type: 'file' }),
+								...getInputProps(fields.image, { type: 'file' }),
 								accept: 'image/*',
 							}}
 							errors={fields.image.errors}
@@ -84,9 +84,7 @@ export function DataTableAddPhoto() {
 							type="submit"
 							variant="outline"
 							status={
-								fetcher.state !== 'idle'
-									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+								fetcher.state !== 'idle' ? 'pending' : form.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"

@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
+import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { ErrorList, Field, FilterSelectField } from '#app/components/forms.tsx'
@@ -32,16 +32,16 @@ export function DataTableAddReleaseInformation() {
 
 	const [form, fields] = useForm({
 		id: 'add-film-release-information-form',
-		lastSubmission: fetcher.data?.submission,
+		lastResult: fetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddFilmReleaseInformationSchema })
+			return parseWithZod(formData, { schema: AddFilmReleaseInformationSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
 
 	useEffect(() => {
-		fetcher.data?.status === 'success' && setOpen(false)
-	}, [fetcher])
+		form.status === 'success' && setOpen(false)
+	}, [form])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -60,7 +60,7 @@ export function DataTableAddReleaseInformation() {
 					method="POST"
 					action="/resources/film/add-release-information"
 					name="add-film-release-information-form"
-					{...form.props}
+					{...getFormProps(form)}
 				>
 					<DialogHeader>
 						<DialogTitle>Add Release Information</DialogTitle>
@@ -77,7 +77,7 @@ export function DataTableAddReleaseInformation() {
 								children: 'Country',
 							}}
 							buttonProps={{
-								...conform.input(fields.country),
+								...getInputProps(fields.country, { type: 'text' }),
 							}}
 							options={COUNTRIES.map(country => ({
 								label: country.name,
@@ -91,7 +91,7 @@ export function DataTableAddReleaseInformation() {
 								children: 'Language',
 							}}
 							buttonProps={{
-								...conform.input(fields.language),
+								...getInputProps(fields.language, { type: 'text' }),
 							}}
 							options={LANGUAGES.map(language => ({
 								label: language.name,
@@ -102,8 +102,10 @@ export function DataTableAddReleaseInformation() {
 						<Field
 							labelProps={{ children: 'Date' }}
 							inputProps={{
-								type: 'date',
-								...conform.input(fields.date, { ariaAttributes: true }),
+								...getInputProps(fields.date, {
+									ariaAttributes: true,
+									type: 'text',
+								}),
 							}}
 							errors={fields.date.errors}
 						/>
@@ -113,7 +115,7 @@ export function DataTableAddReleaseInformation() {
 								children: 'Classification',
 							}}
 							inputProps={{
-								...conform.input(fields.classification, { type: 'text' }),
+								...getInputProps(fields.classification, { type: 'text' }),
 							}}
 							errors={fields.classification.errors}
 						/>
@@ -123,7 +125,7 @@ export function DataTableAddReleaseInformation() {
 								children: 'Type',
 							}}
 							buttonProps={{
-								...conform.input(fields.type),
+								...getInputProps(fields.type, { type: 'text' }),
 							}}
 							options={FILM_RELEASE_TYPES}
 							errors={fields.type.errors}
@@ -134,7 +136,7 @@ export function DataTableAddReleaseInformation() {
 								children: 'Note',
 							}}
 							inputProps={{
-								...conform.input(fields.note, { type: 'text' }),
+								...getInputProps(fields.note, { type: 'text' }),
 							}}
 							errors={fields.note.errors}
 						/>
@@ -145,9 +147,7 @@ export function DataTableAddReleaseInformation() {
 							type="submit"
 							variant="outline"
 							status={
-								fetcher.state !== 'idle'
-									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+								fetcher.state !== 'idle' ? 'pending' : form.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"

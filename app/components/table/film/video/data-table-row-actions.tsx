@@ -22,11 +22,12 @@ export function DataTableRowActions<TData>({
 				<StatusButton
 					variant="secondary"
 					className="w-full"
-					status={
-						fetcher.state === 'submitting'
-							? 'pending'
-							: fetcher.data?.status ?? 'idle'
-					}
+					status="idle"
+					// status={
+					// 	fetcher.state === 'submitting'
+					// 		? 'pending'
+					// 		: fetcher.data?.status ?? 'idle'
+					// }
 					type="submit"
 					disabled={fetcher.state !== 'idle'}
 				>

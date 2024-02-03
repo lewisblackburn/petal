@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
+import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { ErrorList, Field, FilterSelectField } from '#app/components/forms.tsx'
@@ -28,16 +28,16 @@ export function DataTableAddVideo() {
 
 	const [form, fields] = useForm({
 		id: 'add-film-video-form',
-		lastSubmission: fetcher.data?.submission,
+		lastResult: fetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddFilmVideoSchema })
+			return parseWithZod(formData, { schema: AddFilmVideoSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
 
 	useEffect(() => {
-		fetcher.data?.status === 'success' && setOpen(false)
-	}, [fetcher])
+		form.status === 'success' && setOpen(false)
+	}, [form])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -56,7 +56,7 @@ export function DataTableAddVideo() {
 					method="POST"
 					action="/resources/film/add-video"
 					name="add-film-video-form"
-					{...form.props}
+					{...getFormProps(form)}
 				>
 					<DialogHeader>
 						<DialogTitle>Add Video</DialogTitle>
@@ -72,7 +72,7 @@ export function DataTableAddVideo() {
 								children: 'URL',
 							}}
 							inputProps={{
-								...conform.input(fields.url, { type: 'text' }),
+								...getInputProps(fields.url, { type: 'text' }),
 								autoComplete: 'off',
 							}}
 							errors={fields.url.errors}
@@ -83,7 +83,7 @@ export function DataTableAddVideo() {
 								children: 'Name',
 							}}
 							inputProps={{
-								...conform.input(fields.name, { type: 'text' }),
+								...getInputProps(fields.name, { type: 'text' }),
 								autoComplete: 'off',
 							}}
 							errors={fields.name.errors}
@@ -94,7 +94,7 @@ export function DataTableAddVideo() {
 								children: 'Site',
 							}}
 							buttonProps={{
-								...conform.input(fields.site, { type: 'text' }),
+								...getInputProps(fields.site, { type: 'text' }),
 							}}
 							options={SITES}
 							errors={fields.site.errors}
@@ -105,7 +105,7 @@ export function DataTableAddVideo() {
 								children: 'Type',
 							}}
 							buttonProps={{
-								...conform.input(fields.type, { type: 'text' }),
+								...getInputProps(fields.type, { type: 'text' }),
 							}}
 							options={VIDEO_TYPES}
 							errors={fields.type.errors}
@@ -116,7 +116,7 @@ export function DataTableAddVideo() {
 								children: 'Quality',
 							}}
 							buttonProps={{
-								...conform.input(fields.quality, { type: 'text' }),
+								...getInputProps(fields.quality, { type: 'text' }),
 							}}
 							options={QUALITY}
 							errors={fields.quality.errors}
@@ -128,9 +128,7 @@ export function DataTableAddVideo() {
 							type="submit"
 							variant="outline"
 							status={
-								fetcher.state !== 'idle'
-									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+								fetcher.state !== 'idle' ? 'pending' : form.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"

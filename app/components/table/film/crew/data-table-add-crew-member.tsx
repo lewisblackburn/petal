@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
+import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import {
@@ -33,16 +33,16 @@ export function DataTableAddCrewMember() {
 
 	const [form, fields] = useForm({
 		id: 'add-film-crew-member-form',
-		lastSubmission: fetcher.data?.submission,
+		lastResult: fetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddFilmCrewMemberSchema })
+			return parseWithZod(formData, { schema: AddFilmCrewMemberSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
 
 	useEffect(() => {
-		fetcher.data?.status === 'success' && setOpen(false)
-	}, [fetcher])
+		form.status === 'success' && setOpen(false)
+	}, [form])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -61,7 +61,7 @@ export function DataTableAddCrewMember() {
 					method="POST"
 					action="/resources/film/add-crew-member"
 					name="add-film-crew-member-form"
-					{...form.props}
+					{...getFormProps(form)}
 				>
 					<DialogHeader>
 						<DialogTitle>Add Person</DialogTitle>
@@ -77,7 +77,7 @@ export function DataTableAddCrewMember() {
 								children: 'Person',
 							}}
 							buttonProps={{
-								...conform.input(fields.personId, { type: 'text' }),
+								...getInputProps(fields.personId, { type: 'text' }),
 							}}
 							errors={fields.personId.errors}
 						/>
@@ -87,7 +87,7 @@ export function DataTableAddCrewMember() {
 								children: 'Department',
 							}}
 							buttonProps={{
-								...conform.input(fields.department, { type: 'text' }),
+								...getInputProps(fields.department, { type: 'text' }),
 							}}
 							options={ROLES.map(role => ({
 								label: role.department,
@@ -101,7 +101,7 @@ export function DataTableAddCrewMember() {
 								children: 'Job',
 							}}
 							buttonProps={{
-								...conform.input(fields.job, { type: 'text' }),
+								...getInputProps(fields.job, { type: 'text' }),
 							}}
 							options={getAllJobs().map(job => ({ label: job, value: job }))}
 							errors={fields.job.errors}
@@ -112,7 +112,7 @@ export function DataTableAddCrewMember() {
 								children: 'Featured',
 							}}
 							buttonProps={{
-								...conform.input(fields.featured, { type: 'checkbox' }),
+								...getInputProps(fields.featured, { type: 'checkbox' }),
 							}}
 							errors={fields.featured.errors}
 						/>
@@ -123,9 +123,7 @@ export function DataTableAddCrewMember() {
 							type="submit"
 							variant="outline"
 							status={
-								fetcher.state !== 'idle'
-									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+								fetcher.state !== 'idle' ? 'pending' : form.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"

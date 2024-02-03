@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
 import {
 	type ActionFunctionArgs,
@@ -30,7 +30,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const formData = await request.formData()
 
-	const submission = await parse(formData, {
+	const submission = await parseWithZod(formData, {
 		schema: FilmExternalIDSchema.superRefine(async (data, ctx) => {
 			if (!data.id) return
 
@@ -48,12 +48,13 @@ export async function action({ request }: ActionFunctionArgs) {
 		async: true,
 	})
 
-	if (submission.intent !== 'submit') {
-		return json({ status: 'idle', submission } as const)
-	}
-
-	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+	if (submission.status !== 'success') {
+		return json(
+			{ result: submission.reply() },
+			{
+				status: submission.status === 'error' ? 400 : 200,
+			},
+		)
 	}
 
 	const updatedFilm = await prisma.film.update({
@@ -104,10 +105,10 @@ export default function FilmEditExternalRoute() {
 
 	const [form, fields] = useForm({
 		id: 'film-editor',
-		constraint: getFieldsetConstraint(FilmExternalIDSchema),
-		lastSubmission: filmFetcher.data?.submission,
+		constraint: getZodConstraint(FilmExternalIDSchema),
+		lastResult: filmFetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: FilmExternalIDSchema })
+			return parseWithZod(formData, { schema: FilmExternalIDSchema })
 		},
 		defaultValue: {
 			facebook: data.film.facebook,
@@ -123,7 +124,7 @@ export default function FilmEditExternalRoute() {
 		<Form
 			method="post"
 			className="flex h-full flex-col gap-y-4"
-			{...form.props}
+			{...getFormProps(form)}
 		>
 			{data.film ? (
 				<input type="hidden" name="id" value={data.film.id} />
@@ -133,42 +134,60 @@ export default function FilmEditExternalRoute() {
 					labelProps={{ children: 'Facebook' }}
 					inputProps={{
 						autoFocus: true,
-						...conform.input(fields.facebook, { ariaAttributes: true }),
+						...getInputProps(fields.facebook, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					errors={fields.facebook.errors}
 				/>
 				<Field
 					labelProps={{ children: 'Instagram' }}
 					inputProps={{
-						...conform.input(fields.instagram, { ariaAttributes: true }),
+						...getInputProps(fields.instagram, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					errors={fields.instagram.errors}
 				/>
 				<Field
 					labelProps={{ children: 'Twitter' }}
 					inputProps={{
-						...conform.input(fields.twitter, { ariaAttributes: true }),
+						...getInputProps(fields.twitter, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					errors={fields.twitter.errors}
 				/>
 				<Field
 					labelProps={{ children: 'IMDB ID' }}
 					inputProps={{
-						...conform.input(fields.imdbID, { ariaAttributes: true }),
+						...getInputProps(fields.imdbID, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					errors={fields.imdbID.errors}
 				/>
 				<Field
 					labelProps={{ children: 'Wikidata ID' }}
 					inputProps={{
-						...conform.input(fields.wikiDataID, { ariaAttributes: true }),
+						...getInputProps(fields.wikiDataID, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					errors={fields.wikiDataID.errors}
 				/>
 				<Field
 					labelProps={{ children: 'TMDB ID' }}
 					inputProps={{
-						...conform.input(fields.tmdbID, { ariaAttributes: true }),
+						...getInputProps(fields.tmdbID, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					errors={fields.tmdbID.errors}
 				/>

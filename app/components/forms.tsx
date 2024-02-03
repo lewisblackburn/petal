@@ -1,4 +1,4 @@
-import { useInputEvent } from '@conform-to/react'
+import { useInputControl } from '@conform-to/react'
 import type * as PopoverPrimitive from '@radix-ui/react-popover'
 import type * as SelectPrimitive from '@radix-ui/react-select'
 import React, { useId, useRef } from 'react'
@@ -137,47 +137,47 @@ export function CheckboxField({
 	className,
 }: {
 	labelProps: JSX.IntrinsicElements['label']
-	buttonProps: CheckboxProps
+	buttonProps: CheckboxProps & {
+		name: string
+		form: string
+		value?: string
+	}
 	errors?: ListOfErrors
 	className?: string
 }) {
+	const { key, defaultChecked, ...checkboxProps } = buttonProps
 	const fallbackId = useId()
-	const buttonRef = useRef<HTMLButtonElement>(null)
-	// To emulate native events that Conform listen to:
-	// See https://conform.guide/integrations
-	const control = useInputEvent({
-		// Retrieve the checkbox element by name instead as Radix does not expose the internal checkbox element
-		// See https://github.com/radix-ui/primitives/discussions/874
-		ref: () =>
-			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
-		onFocus: () => buttonRef.current?.focus(),
+	const checkedValue = buttonProps.value ?? 'on'
+	const input = useInputControl({
+		key,
+		name: buttonProps.name,
+		formId: buttonProps.form,
+		initialValue: defaultChecked ? checkedValue : undefined,
 	})
-	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
+	const id = buttonProps.id ?? fallbackId
 	const errorId = errors?.length ? `${id}-error` : undefined
 
 	return (
 		<div className={className}>
 			<div className="flex gap-2">
 				<Checkbox
+					{...checkboxProps}
 					id={id}
-					ref={buttonRef}
 					aria-invalid={errorId ? true : undefined}
 					aria-describedby={errorId}
 					{...buttonProps}
 					onCheckedChange={state => {
-						control.change(Boolean(state.valueOf()))
+						input.change(state.valueOf() ? checkedValue : '')
 						buttonProps.onCheckedChange?.(state)
 					}}
 					onFocus={event => {
-						control.focus()
+						input.focus()
 						buttonProps.onFocus?.(event)
 					}}
 					onBlur={event => {
-						control.blur()
+						input.blur()
 						buttonProps.onBlur?.(event)
 					}}
-					name={buttonProps.name}
-					// defaultChecked={buttonProps.defaultValue}
 					type="button"
 				/>
 				<label
@@ -201,26 +201,27 @@ export function SelectField({
 	options,
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
-	buttonProps: SelectProps
+	buttonProps: SelectProps & {
+		name: string
+		form: string
+		value?: string
+	}
 	errors?: ListOfErrors
 	className?: string
 	options: OptionType[]
 }) {
 	const [value, setValue] = React.useState(buttonProps.defaultValue?.toString())
 	const [open, setOpen] = React.useState(false)
+	const { key, name, ...selectProps } = buttonProps
 	const fallbackId = useId()
-	const buttonRef = useRef<HTMLButtonElement>(null)
-	const control = useInputEvent({
-		ref: () =>
-			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
-		onFocus: () => buttonRef.current?.focus(),
-		onBlur: () => buttonRef.current?.blur(),
-		onReset: () => setValue(buttonProps.defaultValue?.toString() ?? ''),
+	const input = useInputControl({
+		key,
+		name: buttonProps.name,
+		formId: buttonProps.form,
+		initialValue: buttonProps.defaultValue?.toString(),
 	})
-	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
+	const id = buttonProps.id ?? fallbackId
 	const errorId = errors?.length ? `${id}-error` : undefined
-
-	const { name, ...props } = buttonProps
 
 	return (
 		<div className={className}>
@@ -233,17 +234,16 @@ export function SelectField({
 				onValueChange={value => setValue(value)}
 			>
 				<SelectTrigger
+					{...selectProps}
 					id={id}
-					ref={buttonRef}
 					aria-invalid={errorId ? true : undefined}
 					aria-describedby={errorId}
-					{...props}
 					onFocus={event => {
-						control.focus()
+						input.focus()
 						buttonProps.onFocus?.(event)
 					}}
 					onBlur={event => {
-						control.blur()
+						input.blur()
 						buttonProps.onBlur?.(event)
 					}}
 					type="button"
@@ -273,26 +273,27 @@ export function FilterSelectField({
 	className,
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
-	buttonProps: PopoverProps
+	buttonProps: PopoverProps & {
+		name: string
+		form: string
+		value?: string
+	}
 	options: OptionType[]
 	errors?: ListOfErrors
 	className?: string
 }) {
 	const [value, setValue] = React.useState(buttonProps.defaultValue)
 	const [open, setOpen] = React.useState(false)
+	const { key, name, ...selectProps } = buttonProps
 	const fallbackId = useId()
-	const buttonRef = useRef<HTMLButtonElement>(null)
-	const control = useInputEvent({
-		ref: () =>
-			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
-		onFocus: () => buttonRef.current?.focus(),
-		onBlur: () => buttonRef.current?.blur(),
-		onReset: () => setValue(buttonProps.defaultValue?.toString() ?? ''),
+	const input = useInputControl({
+		key,
+		name: buttonProps.name,
+		formId: buttonProps.form,
+		initialValue: buttonProps.defaultValue?.toString(),
 	})
-	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
+	const id = buttonProps.id ?? fallbackId
 	const errorId = errors?.length ? `${id}-error` : undefined
-
-	const { name, ...props } = buttonProps
 
 	return (
 		<div className={cn('flex flex-col space-y-2', className)}>
@@ -306,17 +307,16 @@ export function FilterSelectField({
 			<Label htmlFor={id} {...labelProps} />
 			<Popover open={open} onOpenChange={setOpen} modal={false}>
 				<PopoverTrigger
+					{...selectProps}
 					id={id}
-					ref={buttonRef}
 					aria-invalid={errorId ? true : undefined}
 					aria-describedby={errorId}
-					{...props}
 					onFocus={event => {
-						control.focus()
+						input.focus()
 						buttonProps.onFocus?.(event)
 					}}
 					onBlur={event => {
-						control.blur()
+						input.blur()
 						buttonProps.onBlur?.(event)
 					}}
 					type="button"
@@ -392,7 +392,11 @@ export function SearchSelectField({
 	onCreate,
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
-	buttonProps: PopoverProps
+	buttonProps: PopoverProps & {
+		name: string
+		form: string
+		value?: string
+	}
 	items: any
 	busy: boolean
 	errors?: ListOfErrors
@@ -402,19 +406,18 @@ export function SearchSelectField({
 	onCreate: (value: string) => void
 }) {
 	const [open, setOpen] = React.useState(false)
-	const fallbackId = useId()
-	const buttonRef = useRef<HTMLButtonElement>(null)
 	const inputRef = useRef<HTMLInputElement>(null)
-	const control = useInputEvent({
-		ref: () =>
-			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
-		onFocus: () => buttonRef.current?.focus(),
-		onBlur: () => buttonRef.current?.blur(),
-	})
-	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
-	const errorId = errors?.length ? `${id}-error` : undefined
 
-	const { name, ...props } = buttonProps
+	const { key, name, ...selectProps } = buttonProps
+	const fallbackId = useId()
+	const input = useInputControl({
+		key,
+		name: buttonProps.name,
+		formId: buttonProps.form,
+		initialValue: buttonProps.defaultValue?.toString(),
+	})
+	const id = buttonProps.id ?? fallbackId
+	const errorId = errors?.length ? `${id}-error` : undefined
 
 	const defaultItem = buttonProps.defaultValue?.toString()
 		? {
@@ -441,21 +444,20 @@ export function SearchSelectField({
 			<Label htmlFor={id} {...labelProps} />
 			<Popover open={open} onOpenChange={setOpen} modal>
 				<PopoverTrigger
+					{...selectProps}
 					id={id}
-					ref={buttonRef}
 					aria-invalid={errorId ? true : undefined}
 					aria-describedby={errorId}
-					{...props}
 					onChange={state => {
-						control.change(state.currentTarget.value)
+						input.change(state.currentTarget.value)
 						buttonProps.onChange?.(state)
 					}}
 					onFocus={event => {
-						control.focus()
+						input.focus()
 						buttonProps.onFocus?.(event)
 					}}
 					onBlur={event => {
-						control.blur()
+						input.blur()
 						buttonProps.onBlur?.(event)
 					}}
 					type="button"
@@ -563,7 +565,11 @@ export function MultiSelectField({
 	className,
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
-	buttonProps: PopoverProps
+	buttonProps: PopoverProps & {
+		name: string
+		form: string
+		value?: string
+	}
 	options: OptionType[]
 	errors?: ListOfErrors
 	className?: string
@@ -574,20 +580,16 @@ export function MultiSelectField({
 		buttonProps.defaultValue ?? [],
 	)
 
+	const { key, name, ...selectProps } = buttonProps
 	const fallbackId = useId()
-	const buttonRef = useRef<HTMLButtonElement>(null)
-	const control = useInputEvent({
-		ref: () =>
-			buttonRef.current?.form?.elements.namedItem(buttonProps.name ?? ''),
-		onFocus: () => buttonRef.current?.focus(),
-		onBlur: () => buttonRef.current?.blur(),
-		// @ts-expect-error TODO: fix type issue
-		onReset: () => setSelected(buttonProps.defaultValue ?? []),
+	const input = useInputControl({
+		key,
+		name: buttonProps.name,
+		formId: buttonProps.form,
+		initialValue: buttonProps.defaultValue?.toString(),
 	})
-	const id = buttonProps.id ?? buttonProps.name ?? fallbackId
+	const id = buttonProps.id ?? fallbackId
 	const errorId = errors?.length ? `${id}-error` : undefined
-
-	const { name, ...props } = buttonProps
 
 	const handleUnselect = (item: string) => {
 		setSelected(selected.filter(i => i !== item))
@@ -603,18 +605,18 @@ export function MultiSelectField({
 				className="hidden"
 			/>
 			<Label htmlFor={id} {...labelProps} />
-			<Popover open={open} onOpenChange={setOpen} {...props}>
+			<Popover open={open} onOpenChange={setOpen}>
 				<PopoverTrigger
+					{...selectProps}
 					id={id}
-					ref={buttonRef}
 					aria-invalid={errorId ? true : undefined}
 					aria-describedby={errorId}
 					onFocus={event => {
-						control.focus()
+						input.focus()
 						buttonProps.onFocus?.(event)
 					}}
 					onBlur={event => {
-						control.blur()
+						input.blur()
 						buttonProps.onBlur?.(event)
 					}}
 					type="button"

@@ -1,4 +1,4 @@
-import { parse } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
 import { json } from '@remix-run/server-runtime'
@@ -28,17 +28,15 @@ export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
 
-	const submission = parse(formData, {
+	const submission = parseWithZod(formData, {
 		schema: RateFilmSchema,
 	})
-	if (!submission.value) {
+	if (submission.status !== 'success') {
 		return json(
+			{ result: { ...submission.reply(), rating: 0 } },
 			{
-				status: 'error',
-				rating: 0,
-				submission,
-			} as const,
-			{ status: 400 },
+				status: submission.status === 'error' ? 400 : 200,
+			},
 		)
 	}
 
@@ -77,12 +75,15 @@ export async function action({ request }: ActionFunctionArgs) {
 		})
 	}
 
-	return json({ status: 'success', rating, submission } as const, {
-		headers: await createToastHeaders({
-			description: 'Film Rated',
-			type: 'success',
-		}),
-	})
+	return json(
+		{ result: { ...submission.reply(), rating } },
+		{
+			headers: await createToastHeaders({
+				description: 'Film Rated',
+				type: 'success',
+			}),
+		},
+	)
 }
 
 export const FilmRatingDropdown = ({
@@ -94,6 +95,7 @@ export const FilmRatingDropdown = ({
 }) => {
 	const user = useOptionalUser()
 	const ratingFetcher = useFetcher<typeof action>()
+	// @ts-expect-error this should also exist
 	const rating = ratingFetcher.data?.rating ?? defaultRating ?? 0
 	const isRated = rating !== 0
 	const [open, setOpen] = useState(false)

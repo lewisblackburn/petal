@@ -1,4 +1,4 @@
-import { parse } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod'
 import { type FilmCastMember } from '@prisma/client'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/server-runtime'
@@ -19,16 +19,15 @@ export const ReorderFilmCastSchema = z.object({
 export async function action({ request }: ActionFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
-	const submission = parse(formData, {
+	const submission = parseWithZod(formData, {
 		schema: ReorderFilmCastSchema,
 	})
-	if (!submission.value) {
+	if (submission.status !== 'success') {
 		return json(
+			{ result: submission.reply() },
 			{
-				status: 'error',
-				submission,
-			} as const,
-			{ status: 400 },
+				status: submission.status === 'error' ? 400 : 200,
+			},
 		)
 	}
 

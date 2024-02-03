@@ -1,4 +1,4 @@
-import { parse } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import {
 	json,
@@ -27,17 +27,16 @@ export async function action({ request }: ActionFunctionArgs) {
 	const clonedRequest = request.clone()
 	const formData = await request.formData()
 
-	const submission = parse(formData, {
+	const submission = parseWithZod(formData, {
 		schema: AddFilmPhotoSchema,
 	})
 
-	if (!submission.value) {
+	if (submission.status !== 'success') {
 		return json(
+			{ result: submission.reply() },
 			{
-				status: 'error',
-				submission,
-			} as const,
-			{ status: 400 },
+				status: submission.status === 'error' ? 400 : 200,
+			},
 		)
 	}
 
@@ -49,7 +48,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		})
 	})
 
-	const parsedImage = parse(image, { schema: z.any() })
+	const parsedImage = parseWithZod(image, { schema: z.any() })
 
 	if (primary) {
 		await prisma.$transaction(async $prisma => {
@@ -67,11 +66,11 @@ export async function action({ request }: ActionFunctionArgs) {
 					id: filmId,
 				},
 				data: {
-					[type]: parsedImage.value.image,
+					[type]: parsedImage.payload.image,
 					photos: {
 						create: {
-							url: parsedImage.value.image,
-							filename: extractFileName(parsedImage.value.image),
+							url: parsedImage.payload.image as string,
+							filename: extractFileName(parsedImage.payload.image as string),
 							language,
 							type,
 							primary: true,
@@ -83,8 +82,8 @@ export async function action({ request }: ActionFunctionArgs) {
 	} else {
 		await prisma.filmPhoto.create({
 			data: {
-				url: parsedImage.value.image,
-				filename: extractFileName(parsedImage.value.image),
+				url: parsedImage.payload.image as string,
+				filename: extractFileName(parsedImage.payload.image as string),
 				language,
 				type,
 				film: { connect: { id: filmId } },
@@ -92,12 +91,15 @@ export async function action({ request }: ActionFunctionArgs) {
 		})
 	}
 
-	return json({ status: 'success', submission } as const, {
-		headers: await createToastHeaders({
-			description: 'Added Film Photo',
-			type: 'success',
-		}),
-	})
+	return json(
+		{ result: submission.reply() },
+		{
+			headers: await createToastHeaders({
+				description: 'Added Film Photo',
+				type: 'success',
+			}),
+		},
+	)
 }
 
 export { action as AddFilmPhotoAction }

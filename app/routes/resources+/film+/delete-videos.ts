@@ -1,4 +1,4 @@
-import { parse } from '@conform-to/zod'
+import { invariantResponse } from '@epic-web/invariant'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
@@ -7,27 +7,26 @@ import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const DeleteFilmVideosSchema = z.object({
-	ids: z.string(),
+	intent: z.literal('delete-film-videos'),
 	filmId: z.string(),
+	videoIds: z.string(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
-	const submission = parse(formData, {
-		schema: DeleteFilmVideosSchema,
-	})
-	if (!submission.value) {
-		return json(
-			{
-				status: 'error',
-				submission,
-			} as const,
-			{ status: 400 },
-		)
-	}
+	invariantResponse(
+		formData.get('intent') === 'delete-film-videos',
+		'Invalid intent',
+	)
 
-	let { filmId, ids } = submission.value
+	const filmId = formData.get('filmId') as string
+	const videoIds = formData.get('videoIds') as string
+
+	invariantResponse(filmId, 'Invalid filmId')
+	invariantResponse(videoIds, 'Invalid videoIds')
+
+	const parsedIds = JSON.parse(videoIds) as string[]
 
 	await prisma.film.update({
 		where: { id: filmId },
@@ -35,14 +34,14 @@ export async function action({ request }: ActionFunctionArgs) {
 			videos: {
 				deleteMany: {
 					id: {
-						in: JSON.parse(ids) as string[],
+						in: parsedIds,
 					},
 				},
 			},
 		},
 	})
 
-	return json({ status: 'success', submission } as const, {
+	return json({ status: 'success' } as const, {
 		headers: await createToastHeaders({
 			description: 'Deleted Film Videos',
 			type: 'success',

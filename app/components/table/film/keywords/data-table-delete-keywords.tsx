@@ -1,10 +1,7 @@
-import { useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
 import { type Keyword } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
-import { ErrorList } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -17,10 +14,7 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
-import {
-	type DeleteFilmKeywordsAction,
-	DeleteFilmKeywordsSchema,
-} from '#app/routes/resources+/film+/delete-keywords.ts'
+import { type DeleteFilmKeywordsAction } from '#app/routes/resources+/film+/delete-keywords.ts'
 
 interface DataTableDeleteKeywords<TData> {
 	table: Table<TData>
@@ -35,15 +29,6 @@ export function DataTableDeleteKeywords<TData>({
 		.rows.map(row => (row.original as Keyword).name)
 	const fetcher = useFetcher<typeof DeleteFilmKeywordsAction>()
 	const [open, setOpen] = useState(false)
-
-	const [form] = useForm({
-		id: 'delete-film-keywords-form',
-		lastSubmission: fetcher.data?.submission,
-		onValidate({ formData }) {
-			return parse(formData, { schema: DeleteFilmKeywordsSchema })
-		},
-		shouldRevalidate: 'onBlur',
-	})
 
 	useEffect(() => {
 		if (fetcher.state === 'idle') {
@@ -70,8 +55,6 @@ export function DataTableDeleteKeywords<TData>({
 				<fetcher.Form
 					method="POST"
 					action="/resources/film/delete-keywords"
-					name="delete-film-keywords-form"
-					{...form.props}
 					onSubmit={() => {
 						setOpen(false)
 					}}
@@ -89,11 +72,12 @@ export function DataTableDeleteKeywords<TData>({
 							value={JSON.stringify(keywordsSelected)}
 						/>
 						<input name="filmId" type="hidden" value={filmId} />
-						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
 						<StatusButton
 							type="submit"
+							name="intent"
+							value="delete-film-keywords"
 							variant="outline"
 							status={
 								fetcher.state !== 'idle'

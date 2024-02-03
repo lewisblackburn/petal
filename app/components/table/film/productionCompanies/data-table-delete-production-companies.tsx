@@ -1,11 +1,8 @@
-import { useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
 import { type FilmAlternateTitle } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
-import { ErrorList } from '#app/components/forms.tsx'
-import { Button } from '#app/components/ui/button.tsx'
+import { Button } from '#app/components/ui/button'
 import {
 	Dialog,
 	DialogContent,
@@ -17,10 +14,7 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
-import {
-	type DeleteFilmProductionCompaniesAction,
-	DeleteFilmProductionCompaniesSchema,
-} from '#app/routes/resources+/film+/delete-production-companies.ts'
+import { type DeleteFilmProductionCompaniesAction } from '#app/routes/resources+/film+/delete-production-companies.ts'
 
 interface DataTableDeleteProductionCompanies<TData> {
 	table: Table<TData>
@@ -35,15 +29,6 @@ export function DataTableDeleteProductionCompanies<TData>({
 		.rows.map(row => (row.original as FilmAlternateTitle).id)
 	const fetcher = useFetcher<typeof DeleteFilmProductionCompaniesAction>()
 	const [open, setOpen] = useState(false)
-
-	const [form] = useForm({
-		id: 'delete-film-prodction-companies-form',
-		lastSubmission: fetcher.data?.submission,
-		onValidate({ formData }) {
-			return parse(formData, { schema: DeleteFilmProductionCompaniesSchema })
-		},
-		shouldRevalidate: 'onBlur',
-	})
 
 	useEffect(() => {
 		if (fetcher.state === 'idle') {
@@ -70,8 +55,6 @@ export function DataTableDeleteProductionCompanies<TData>({
 				<fetcher.Form
 					method="POST"
 					action="/resources/film/delete-production-companies"
-					name="delete-film-production-companies-form"
-					{...form.props}
 					onSubmit={() => {
 						setOpen(false)
 					}}
@@ -84,16 +67,17 @@ export function DataTableDeleteProductionCompanies<TData>({
 					</DialogHeader>
 					<div className="grid py-4">
 						<input
-							name="ids"
+							name="productionCompanyIds"
 							type="hidden"
 							value={JSON.stringify(productionCompaniesSelected)}
 						/>
 						<input name="filmId" type="hidden" value={filmId} />
-						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
 						<StatusButton
 							type="submit"
+							name="intent"
+							value="delete-film-production-companies"
 							variant="outline"
 							status={
 								fetcher.state !== 'idle'

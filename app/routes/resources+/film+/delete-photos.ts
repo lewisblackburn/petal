@@ -1,5 +1,5 @@
 import { parse as parseURL } from 'path'
-import { parse } from '@conform-to/zod'
+import { invariantResponse } from '@epic-web/invariant'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
@@ -9,32 +9,29 @@ import { s3DeleteHandler } from '#app/utils/s3.server'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const DeleteFilmPhotosSchema = z.object({
-	ids: z.string(),
+	intent: z.literal('delete-film-photos'),
+	photoIds: z.string(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
-	const submission = parse(formData, {
-		schema: DeleteFilmPhotosSchema,
-	})
-	if (!submission.value) {
-		return json(
-			{
-				status: 'error',
-				submission,
-			} as const,
-			{ status: 400 },
-		)
-	}
 
-	let { ids } = submission.value
+	invariantResponse(
+		formData.get('intent') === 'delete-film-photos',
+		'Invalid intent',
+	)
+
+	const photoIds = formData.get('photoIds') as string
+	invariantResponse(photoIds, 'Invalid ids')
+
+	const parsedIds = JSON.parse(photoIds) as string[]
 
 	await prisma.$transaction(async $prisma => {
 		const images = await $prisma.filmPhoto.findMany({
 			where: {
 				id: {
-					in: JSON.parse(ids) as string[],
+					in: parsedIds,
 				},
 			},
 			select: {
@@ -52,13 +49,13 @@ export async function action({ request }: ActionFunctionArgs) {
 		await $prisma.filmPhoto.deleteMany({
 			where: {
 				id: {
-					in: JSON.parse(ids) as string[],
+					in: parsedIds,
 				},
 			},
 		})
 	})
 
-	return json({ status: 'success', submission } as const, {
+	return json({ status: 'success' } as const, {
 		headers: await createToastHeaders({
 			description: 'Deleted Film Photos',
 			type: 'success',

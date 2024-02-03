@@ -1,4 +1,4 @@
-import { parse } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod'
 import { type ActionFunctionArgs, json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { prisma } from '#app/utils/db.server'
@@ -18,16 +18,15 @@ export const ImportFilmSchema = z.object({
 export async function action({ request }: ActionFunctionArgs) {
 	await requireUserWithRole(request, 'admin')
 	const formData = await request.formData()
-	const submission = parse(formData, {
+	const submission = parseWithZod(formData, {
 		schema: ImportFilmSchema,
 	})
-	if (!submission.value) {
+	if (submission.status !== 'success') {
 		return json(
+			{ result: submission.reply() },
 			{
-				status: 'error',
-				submission,
-			} as const,
-			{ status: 400 },
+				status: submission.status === 'error' ? 400 : 200,
+			},
 		)
 	}
 
@@ -36,12 +35,15 @@ export async function action({ request }: ActionFunctionArgs) {
 	const TMDBFilm = await fetchTMDBFilm(tmdbID)
 
 	if (!TMDBFilm) {
-		return json({ status: 'error', submission } as const, {
-			headers: await createToastHeaders({
-				description: 'That TMDB Film Does Not Exist.',
-				type: 'error',
-			}),
-		})
+		return json(
+			{ result: submission.reply() },
+			{
+				headers: await createToastHeaders({
+					description: 'That TMDB Film Does Not Exist.',
+					type: 'error',
+				}),
+			},
+		)
 	}
 
 	const {
@@ -67,12 +69,15 @@ export async function action({ request }: ActionFunctionArgs) {
 	})
 
 	if (film) {
-		return json({ status: 'error', submission } as const, {
-			headers: await createToastHeaders({
-				description: 'That Film Already Exists.',
-				type: 'error',
-			}),
-		})
+		return json(
+			{ result: submission.reply() },
+			{
+				headers: await createToastHeaders({
+					description: 'That Film Already Exists.',
+					type: 'error',
+				}),
+			},
+		)
 	}
 
 	const [poster, backdrop] = await fetchAndUploadImages(
@@ -141,12 +146,15 @@ export async function action({ request }: ActionFunctionArgs) {
 		await createOrUpdatePersonAndConnectToFilm(crewMember, newFilm.id, false)
 	}
 
-	return json({ status: 'success', submission } as const, {
-		headers: await createToastHeaders({
-			description: 'Imported film.',
-			type: 'error',
-		}),
-	})
+	return json(
+		{ result: submission.reply() },
+		{
+			headers: await createToastHeaders({
+				description: 'Imported film.',
+				type: 'error',
+			}),
+		},
+	)
 }
 
 export { action as ImportFilmFromTMDBAction }

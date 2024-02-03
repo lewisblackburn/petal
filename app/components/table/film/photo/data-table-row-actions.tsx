@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
+import { getFormProps, useForm, getInputProps } from '@conform-to/react'
+import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Row } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
@@ -43,9 +43,9 @@ export function DataTableRowActions<TData>({
 
 	const [form, fields] = useForm({
 		id: 'edit-film-photo-form',
-		lastSubmission: fetcher.data?.submission,
+		lastResult: fetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: EditFilmPhotoSchema })
+			return parseWithZod(formData, { schema: EditFilmPhotoSchema })
 		},
 		shouldRevalidate: 'onBlur',
 		defaultValue: {
@@ -56,8 +56,8 @@ export function DataTableRowActions<TData>({
 	})
 
 	useEffect(() => {
-		fetcher.data?.status === 'success' && setOpen(false)
-	}, [fetcher])
+		form.status === 'success' && setOpen(false)
+	}, [form])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -72,7 +72,7 @@ export function DataTableRowActions<TData>({
 					method="POST"
 					action="/resources/film/edit-photo"
 					name="edit-film-photo-form"
-					{...form.props}
+					{...getFormProps(form)}
 				>
 					<DialogHeader>
 						<DialogTitle>Edit Photo Details</DialogTitle>
@@ -88,7 +88,7 @@ export function DataTableRowActions<TData>({
 								children: 'Type',
 							}}
 							buttonProps={{
-								...conform.input(fields.type, { type: 'text' }),
+								...getInputProps(fields.type, { type: 'text' }),
 							}}
 							options={PHOTO_TYPES}
 							errors={fields.type.errors}
@@ -99,7 +99,7 @@ export function DataTableRowActions<TData>({
 								children: 'Language',
 							}}
 							buttonProps={{
-								...conform.input(fields.language, { type: 'text' }),
+								...getInputProps(fields.language, { type: 'text' }),
 							}}
 							options={LANGUAGES.map(language => ({
 								label: language.name,
@@ -112,7 +112,7 @@ export function DataTableRowActions<TData>({
 								htmlFor: fields.primary.id,
 								children: 'Primary',
 							}}
-							buttonProps={conform.input(fields.primary, { type: 'checkbox' })}
+							buttonProps={getInputProps(fields.primary, { type: 'checkbox' })}
 							errors={fields.primary.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
@@ -122,9 +122,7 @@ export function DataTableRowActions<TData>({
 							type="submit"
 							variant="outline"
 							status={
-								fetcher.state !== 'idle'
-									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+								fetcher.state !== 'idle' ? 'pending' : form.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"

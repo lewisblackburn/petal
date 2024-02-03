@@ -1,4 +1,4 @@
-import { parse } from '@conform-to/zod'
+import { invariantResponse } from '@epic-web/invariant'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
@@ -8,27 +8,26 @@ import { log } from '#app/utils/log'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const DeleteFilmAlternativeTitlesSchema = z.object({
-	alternativeTitleIDs: z.string(),
+	intent: z.literal('delete-film-alternative-titles'),
 	filmId: z.string(),
+	alternativeTitleIds: z.string(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
-	const submission = parse(formData, {
-		schema: DeleteFilmAlternativeTitlesSchema,
-	})
-	if (!submission.value) {
-		return json(
-			{
-				status: 'error',
-				submission,
-			} as const,
-			{ status: 400 },
-		)
-	}
+	invariantResponse(
+		formData.get('intent') === 'delete-film-alternative-titles',
+		'Invalid intent',
+	)
 
-	let { filmId, alternativeTitleIDs } = submission.value
+	const filmId = formData.get('filmId') as string
+	const alternativeTitleIds = formData.get('alternativeTitleIds') as string
+
+	invariantResponse(filmId, 'Invalid filmId')
+	invariantResponse(alternativeTitleIds, 'Invalid alternativeTitleIds')
+
+	const parsedIds = JSON.parse(alternativeTitleIds) as string[]
 
 	await prisma.film.update({
 		where: { id: filmId },
@@ -36,16 +35,16 @@ export async function action({ request }: ActionFunctionArgs) {
 			alternativeTitles: {
 				deleteMany: {
 					id: {
-						in: JSON.parse(alternativeTitleIDs) as string[],
+						in: parsedIds,
 					},
 				},
 			},
 		},
 	})
 
-	log('Film', filmId, { alternativeTitleIDs: [] }, submission.value, userId)
+	log('Film', filmId, { alternativeTitleIds: [] }, parsedIds, userId)
 
-	return json({ status: 'success', submission } as const, {
+	return json({ status: 'success' } as const, {
 		headers: await createToastHeaders({
 			description: 'Alternative Titles Deleted',
 			type: 'success',

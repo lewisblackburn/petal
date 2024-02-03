@@ -1,10 +1,7 @@
-import { useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
 import { type FilmCrewMember } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
-import { ErrorList } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -17,10 +14,7 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
-import {
-	type DeleteFilmCrewMembersAction,
-	DeleteFilmCrewMembersSchema,
-} from '#app/routes/resources+/film+/delete-crew-members.ts'
+import { type DeleteFilmCrewMembersAction } from '#app/routes/resources+/film+/delete-crew-members.ts'
 
 interface DataTableDeleteCrewMembers<TData> {
 	table: Table<TData>
@@ -35,15 +29,6 @@ export function DataTableDeleteCrewMembers<TData>({
 		.rows.map(row => (row.original as FilmCrewMember).id)
 	const fetcher = useFetcher<typeof DeleteFilmCrewMembersAction>()
 	const [open, setOpen] = useState(false)
-
-	const [form] = useForm({
-		id: 'delete-film-crew-members-form',
-		lastSubmission: fetcher.data?.submission,
-		onValidate({ formData }) {
-			return parse(formData, { schema: DeleteFilmCrewMembersSchema })
-		},
-		shouldRevalidate: 'onBlur',
-	})
 
 	useEffect(() => {
 		if (fetcher.state === 'idle') {
@@ -70,8 +55,6 @@ export function DataTableDeleteCrewMembers<TData>({
 				<fetcher.Form
 					method="POST"
 					action="/resources/film/delete-crew-members"
-					name="delete-film-crew-members-form"
-					{...form.props}
 				>
 					<DialogHeader>
 						<DialogTitle>Delete Crew Member</DialogTitle>
@@ -81,16 +64,17 @@ export function DataTableDeleteCrewMembers<TData>({
 					</DialogHeader>
 					<div className="grid py-4">
 						<input
-							name="ids"
+							name="crewMemberIds"
 							type="hidden"
 							value={JSON.stringify(peopleSelected)}
 						/>
 						<input name="filmId" type="hidden" value={filmId} />
-						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
 						<StatusButton
 							type="submit"
+							name="intent"
+							value="delete-film-crew-members"
 							variant="outline"
 							status={
 								fetcher.state !== 'idle'

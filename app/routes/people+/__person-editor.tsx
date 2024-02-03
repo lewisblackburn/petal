@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type Person } from '@prisma/client'
 import { Form, useFetcher } from '@remix-run/react'
 import {
@@ -41,7 +41,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const formData = await request.formData()
 
-	const submission = await parse(formData, {
+	const submission = await parseWithZod(formData, {
 		schema: PersonEditorSchema.superRefine(async (data, ctx) => {
 			if (!data.id) return
 
@@ -59,12 +59,13 @@ export async function action({ request }: ActionFunctionArgs) {
 		async: true,
 	})
 
-	if (submission.intent !== 'submit') {
-		return json({ status: 'idle', submission } as const)
-	}
-
-	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+	if (submission.status !== 'success') {
+		return json(
+			{ result: submission.reply() },
+			{
+				status: submission.status === 'error' ? 400 : 200,
+			},
+		)
 	}
 
 	const {
@@ -138,10 +139,10 @@ export function PersonEditor({
 
 	const [form, fields] = useForm({
 		id: 'person-editor',
-		constraint: getFieldsetConstraint(PersonEditorSchema),
-		lastSubmission: personFetcher.data?.submission,
+		constraint: getZodConstraint(PersonEditorSchema),
+		lastResult: personFetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: PersonEditorSchema })
+			return parseWithZod(formData, { schema: PersonEditorSchema })
 		},
 		defaultValue: {
 			...person,
@@ -158,7 +159,7 @@ export function PersonEditor({
 		<Form
 			method="post"
 			className="flex h-full flex-col gap-y-4"
-			{...form.props}
+			{...getFormProps(form)}
 			encType="multipart/form-data"
 		>
 			{person ? <input type="hidden" name="id" value={person.id} /> : null}
@@ -169,7 +170,7 @@ export function PersonEditor({
 						children: 'Known For',
 					}}
 					buttonProps={{
-						...conform.input(fields.knownForDepartment),
+						...getInputProps(fields.knownForDepartment, { type: 'text' }),
 					}}
 					options={ROLES.map(role => ({
 						label: role.department,
@@ -181,14 +182,17 @@ export function PersonEditor({
 					labelProps={{ children: 'Name' }}
 					inputProps={{
 						autoFocus: true,
-						...conform.input(fields.name, { ariaAttributes: true }),
+						...getInputProps(fields.name, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					errors={fields.name.errors}
 				/>
 				<TextareaField
 					labelProps={{ htmlFor: fields.biography.id, children: 'Biography' }}
 					textareaProps={{
-						...conform.input(fields.biography),
+						...getInputProps(fields.biography, { type: 'text' }),
 						autoComplete: 'biography',
 					}}
 					className="w-full"
@@ -197,7 +201,7 @@ export function PersonEditor({
 				<Field
 					labelProps={{ htmlFor: fields.birthdate.id, children: 'Birthdate' }}
 					inputProps={{
-						...conform.input(fields.birthdate),
+						...getInputProps(fields.birthdate, { type: 'text' }),
 						autoComplete: 'birthdate',
 						type: 'date',
 					}}
@@ -210,7 +214,7 @@ export function PersonEditor({
 						children: 'Day of Death',
 					}}
 					inputProps={{
-						...conform.input(fields.dayOfDeath),
+						...getInputProps(fields.dayOfDeath, { type: 'text' }),
 						autoComplete: 'dayOfDeath',
 						type: 'date',
 					}}
@@ -220,7 +224,7 @@ export function PersonEditor({
 				<SelectField
 					labelProps={{ htmlFor: fields.gender.id, children: 'Gender' }}
 					buttonProps={{
-						...conform.input(fields.gender),
+						...getInputProps(fields.gender, { type: 'text' }),
 					}}
 					options={GENDERS}
 					className="w-full"

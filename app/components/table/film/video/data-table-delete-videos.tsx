@@ -1,10 +1,7 @@
-import { useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
 import { type FilmVideo } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
-import { ErrorList } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -17,10 +14,7 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
-import {
-	type DeleteFilmVideosAction,
-	DeleteFilmVideosSchema,
-} from '#app/routes/resources+/film+/delete-videos.ts'
+import { type DeleteFilmVideosAction } from '#app/routes/resources+/film+/delete-videos.ts'
 
 interface DataTableDeleteVideos<TData> {
 	table: Table<TData>
@@ -35,15 +29,6 @@ export function DataTableDeleteVideos<TData>({
 		.rows.map(row => (row.original as FilmVideo).id)
 	const fetcher = useFetcher<typeof DeleteFilmVideosAction>()
 	const [open, setOpen] = useState(false)
-
-	const [form] = useForm({
-		id: 'delete-film-videos-form',
-		lastSubmission: fetcher.data?.submission,
-		onValidate({ formData }) {
-			return parse(formData, { schema: DeleteFilmVideosSchema })
-		},
-		shouldRevalidate: 'onBlur',
-	})
 
 	useEffect(() => {
 		if (fetcher.state === 'idle') {
@@ -67,12 +52,7 @@ export function DataTableDeleteVideos<TData>({
 				)}
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
-				<fetcher.Form
-					method="POST"
-					action="/resources/film/delete-videos"
-					name="delete-film-videos-form"
-					{...form.props}
-				>
+				<fetcher.Form method="POST" action="/resources/film/delete-videos">
 					<DialogHeader>
 						<DialogTitle>Delete Videos</DialogTitle>
 						<DialogDescription>
@@ -81,16 +61,17 @@ export function DataTableDeleteVideos<TData>({
 					</DialogHeader>
 					<div className="grid py-4">
 						<input
-							name="ids"
+							name="videoIds"
 							type="hidden"
 							value={JSON.stringify(videosSelected)}
 						/>
 						<input name="filmId" type="hidden" value={filmId} />
-						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
 						<StatusButton
 							type="submit"
+							name="intent"
+							value="delete-film-videos"
 							variant="outline"
 							status={
 								fetcher.state !== 'idle'

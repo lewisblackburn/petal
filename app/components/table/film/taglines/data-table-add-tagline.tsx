@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
+import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { ErrorList, Field } from '#app/components/forms.tsx'
@@ -26,16 +26,17 @@ export function DataTableAddTagline() {
 	const [open, setOpen] = useState(false)
 
 	const [form, fields] = useForm({
-		id: 'add-film-tagline-form',
-		lastSubmission: fetcher.data?.submission,
+		id: 'add-film-tagline',
+		constraint: getZodConstraint(AddFilmTaglineSchema),
+		lastResult: fetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddFilmTaglineSchema })
+			return parseWithZod(formData, { schema: AddFilmTaglineSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
 
 	useEffect(() => {
-		fetcher.data?.status === 'success' && setOpen(false)
+		fetcher.data?.result.status === 'success' && setOpen(false)
 	}, [fetcher])
 
 	return (
@@ -54,8 +55,7 @@ export function DataTableAddTagline() {
 				<fetcher.Form
 					method="POST"
 					action="/resources/film/add-tagline"
-					name="add-film-tagline-form"
-					{...form.props}
+					{...getFormProps(form)}
 				>
 					<DialogHeader>
 						<DialogTitle>Add Tagline</DialogTitle>
@@ -70,20 +70,22 @@ export function DataTableAddTagline() {
 								htmlFor: fields.tagline.id,
 							}}
 							inputProps={{
-								...conform.input(fields.tagline, { type: 'text' }),
+								...getInputProps(fields.tagline, { type: 'text' }),
 							}}
 							errors={fields.tagline.errors}
 						/>
-						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
+
+					<ErrorList errors={form.errors} id={form.errorId} />
+
 					<DialogFooter>
 						<StatusButton
 							type="submit"
 							variant="outline"
+							name="intent"
+							value="add-tagline"
 							status={
-								fetcher.state !== 'idle'
-									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+								fetcher.state !== 'idle' ? 'pending' : form.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"

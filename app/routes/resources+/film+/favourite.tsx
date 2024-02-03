@@ -1,4 +1,4 @@
-import { parse } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
 import { json } from '@remix-run/server-runtime'
@@ -21,17 +21,15 @@ export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
 
-	const submission = parse(formData, {
+	const submission = parseWithZod(formData, {
 		schema: FavouriteFilmSchema,
 	})
-	if (!submission.value) {
+	if (submission.status !== 'success') {
 		return json(
+			{ result: { ...submission.reply(), favourited: false } },
 			{
-				status: 'error',
-				favourited: false,
-				submission,
-			} as const,
-			{ status: 400 },
+				status: submission.status === 'error' ? 400 : 200,
+			},
 		)
 	}
 
@@ -60,7 +58,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	}
 
 	return json(
-		{ status: 'success', favourited: !isFavourited, submission } as const,
+		{ result: { ...submission.reply(), favourited: !isFavourited } },
 		{
 			headers: await createToastHeaders({
 				description: isFavourited ? 'Film Unfavourited' : 'Film Favourited',
@@ -79,6 +77,7 @@ export const ToggleFavouriteFilm = ({
 }) => {
 	const user = useOptionalUser()
 	const favouriteFetcher = useFetcher<typeof action>()
+	// @ts-expect-error this does exist?
 	const favourited = favouriteFetcher.data?.favourited ?? defaultValue ?? false
 	const busy = favouriteFetcher.state !== 'idle'
 

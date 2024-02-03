@@ -2,7 +2,6 @@ import { type PersonImage } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
-import { DataTableRowActions } from './data-table-row-actions.tsx'
 
 export const columns: ColumnDef<Pick<PersonImage, 'id' | 'filename'>>[] = [
 	{
@@ -57,9 +56,5 @@ export const columns: ColumnDef<Pick<PersonImage, 'id' | 'filename'>>[] = [
 				</div>
 			)
 		},
-	},
-	{
-		id: 'actions',
-		cell: ({ row }) => <DataTableRowActions row={row} />,
 	},
 ]

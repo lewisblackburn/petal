@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
+import { getFormProps, getInputProps, useForm } from '@conform-to/react'
+import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import {
@@ -34,16 +34,16 @@ export function DataTableAddPhoto() {
 
 	const [form, fields] = useForm({
 		id: 'add-film-photo-form',
-		lastSubmission: fetcher.data?.submission,
+		lastResult: fetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddFilmPhotoSchema })
+			return parseWithZod(formData, { schema: AddFilmPhotoSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
 
 	useEffect(() => {
-		fetcher.data?.status === 'success' && setOpen(false)
-	}, [fetcher])
+		form.status === 'success' && setOpen(false)
+	}, [form])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -63,7 +63,7 @@ export function DataTableAddPhoto() {
 					action="/resources/film/add-photo"
 					name="add-film-photo-form"
 					encType="multipart/form-data"
-					{...form.props}
+					{...getFormProps(form)}
 				>
 					<DialogHeader>
 						<DialogTitle>Add Photo</DialogTitle>
@@ -79,7 +79,7 @@ export function DataTableAddPhoto() {
 								children: 'Image',
 							}}
 							inputProps={{
-								...conform.input(fields.image, { type: 'file' }),
+								...getInputProps(fields.image, { type: 'file' }),
 								accept: 'image/*',
 							}}
 							errors={fields.image.errors}
@@ -90,7 +90,7 @@ export function DataTableAddPhoto() {
 								children: 'Type',
 							}}
 							buttonProps={{
-								...conform.input(fields.type, { type: 'text' }),
+								...getInputProps(fields.type, { type: 'text' }),
 							}}
 							options={PHOTO_TYPES}
 							errors={fields.type.errors}
@@ -101,7 +101,7 @@ export function DataTableAddPhoto() {
 								children: 'Language',
 							}}
 							buttonProps={{
-								...conform.input(fields.language, { type: 'text' }),
+								...getInputProps(fields.language, { type: 'text' }),
 							}}
 							options={LANGUAGES.map(language => ({
 								label: language.name,
@@ -114,7 +114,7 @@ export function DataTableAddPhoto() {
 								htmlFor: fields.primary.id,
 								children: 'Primary',
 							}}
-							buttonProps={conform.input(fields.primary, { type: 'checkbox' })}
+							buttonProps={getInputProps(fields.primary, { type: 'checkbox' })}
 							errors={fields.primary.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
@@ -124,9 +124,7 @@ export function DataTableAddPhoto() {
 							type="submit"
 							variant="outline"
 							status={
-								fetcher.state !== 'idle'
-									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+								fetcher.state !== 'idle' ? 'pending' : form.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"

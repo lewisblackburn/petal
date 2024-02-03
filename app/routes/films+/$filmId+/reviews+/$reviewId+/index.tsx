@@ -1,5 +1,5 @@
-import { useForm } from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { getFormProps, useForm } from '@conform-to/react'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
 import {
 	type ActionFunctionArgs,
@@ -61,14 +61,16 @@ const DeleteFormSchema = z.object({
 export async function action({ params, request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
-	const submission = parse(formData, {
+	const submission = parseWithZod(formData, {
 		schema: DeleteFormSchema,
 	})
-	if (submission.intent !== 'submit') {
-		return json({ status: 'idle', submission } as const)
-	}
-	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+	if (submission.status !== 'success') {
+		return json(
+			{ result: submission.reply() },
+			{
+				status: submission.status === 'error' ? 400 : 200,
+			},
+		)
 	}
 
 	const { reviewId } = submission.value
@@ -137,16 +139,16 @@ export function DeleteFilmReview({ id }: { id: string }) {
 	const isPending = useIsPending()
 	const [form] = useForm({
 		id: 'delete-film-review',
-		lastSubmission: actionData?.submission,
-		constraint: getFieldsetConstraint(DeleteFormSchema),
+		lastResult: actionData?.result,
+		constraint: getZodConstraint(DeleteFormSchema),
 		onValidate({ formData }) {
-			return parse(formData, { schema: DeleteFormSchema })
+			return parseWithZod(formData, { schema: DeleteFormSchema })
 		},
 	})
 	const dc = useDoubleCheck()
 
 	return (
-		<Form method="post" {...form.props}>
+		<Form method="post" {...getFormProps(form)}>
 			<input type="hidden" name="reviewId" value={id} />
 			<StatusButton
 				type="submit"
@@ -158,7 +160,7 @@ export function DeleteFilmReview({ id }: { id: string }) {
 					name: 'intent',
 					value: 'delete-review',
 				})}
-				status={isPending ? 'pending' : actionData?.status ?? 'idle'}
+				status={isPending ? 'pending' : form.status ?? 'idle'}
 				disabled={isPending}
 				className="w-full max-md:aspect-square max-md:px-0"
 			>

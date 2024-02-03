@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
 import {
 	type ActionFunctionArgs,
@@ -34,7 +34,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const formData = await request.formData()
 
-	const submission = await parse(formData, {
+	const submission = await parseWithZod(formData, {
 		schema: FilmProductionCountriesSchema.superRefine(async (data, ctx) => {
 			if (!data.id) return
 
@@ -54,12 +54,13 @@ export async function action({ request }: ActionFunctionArgs) {
 		async: true,
 	})
 
-	if (submission.intent !== 'submit') {
-		return json({ status: 'idle', submission } as const)
-	}
-
-	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+	if (submission.status !== 'success') {
+		return json(
+			{ result: submission.reply() },
+			{
+				status: submission.status === 'error' ? 400 : 200,
+			},
+		)
 	}
 
 	await prisma.film.update({
@@ -72,12 +73,15 @@ export async function action({ request }: ActionFunctionArgs) {
 		},
 	})
 
-	return json({ status: 'success', submission } as const, {
-		headers: await createToastHeaders({
-			description: 'Added Processed Countries',
-			type: 'success',
-		}),
-	})
+	return json(
+		{ result: submission.reply() },
+		{
+			headers: await createToastHeaders({
+				description: 'Added Processed Countries',
+				type: 'success',
+			}),
+		},
+	)
 }
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -123,15 +127,13 @@ export default function FilmEditProductionInformationRoute() {
 
 	const [form, fields] = useForm({
 		id: 'production-countries-form',
-		constraint: getFieldsetConstraint(FilmProductionCountriesSchema),
-		lastSubmission: filmFetcher.data?.submission,
+		constraint: getZodConstraint(FilmProductionCountriesSchema),
+		lastResult: filmFetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: FilmProductionCountriesSchema })
+			return parseWithZod(formData, { schema: FilmProductionCountriesSchema })
 		},
 		defaultValue: {
-			productionCountries: data.film.productionCountries
-				? JSON.parse(data.film.productionCountries)
-				: [],
+			productionCountries: data.film.productionCountries,
 		},
 	})
 
@@ -140,7 +142,7 @@ export default function FilmEditProductionInformationRoute() {
 			<Form
 				method="post"
 				className="flex h-full flex-col gap-y-4"
-				{...form.props}
+				{...getFormProps(form)}
 			>
 				{data.film ? (
 					<input type="hidden" name="id" value={data.film.id} />
@@ -153,7 +155,7 @@ export default function FilmEditProductionInformationRoute() {
 							autoFocus: true,
 						}}
 						buttonProps={{
-							...conform.input(fields.productionCountries, { type: 'text' }),
+							...getInputProps(fields.productionCountries, { type: 'text' }),
 						}}
 						options={COUNTRIES.map(country => ({
 							label: country.name,

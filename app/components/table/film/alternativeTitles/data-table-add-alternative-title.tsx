@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
+import { getFormProps, useForm, getInputProps } from '@conform-to/react'
+import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { ErrorList, Field, FilterSelectField } from '#app/components/forms.tsx'
@@ -28,16 +28,16 @@ export function DataTableAddAlternativeTitle() {
 
 	const [form, fields] = useForm({
 		id: 'add-film-alternative-title-form',
-		lastSubmission: fetcher.data?.submission,
+		lastResult: fetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddFilmAlternativeTitleSchema })
+			return parseWithZod(formData, { schema: AddFilmAlternativeTitleSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
 
 	useEffect(() => {
-		fetcher.data?.status === 'success' && setOpen(false)
-	}, [fetcher])
+		form.status === 'success' && setOpen(false)
+	}, [form])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -56,7 +56,7 @@ export function DataTableAddAlternativeTitle() {
 					method="POST"
 					action="/resources/film/add-alternative-title"
 					name="add-film-alternative-title-form"
-					{...form.props}
+					{...getFormProps(form)}
 				>
 					<DialogHeader>
 						<DialogTitle>Add Alternative Title</DialogTitle>
@@ -71,7 +71,7 @@ export function DataTableAddAlternativeTitle() {
 								htmlFor: fields.alternativeTitle.id,
 							}}
 							inputProps={{
-								...conform.input(fields.alternativeTitle, { type: 'text' }),
+								...getInputProps(fields.alternativeTitle, { type: 'text' }),
 							}}
 							errors={fields.alternativeTitle.errors}
 						/>
@@ -81,7 +81,7 @@ export function DataTableAddAlternativeTitle() {
 								children: 'Country',
 							}}
 							buttonProps={{
-								...conform.input(fields.country),
+								...getInputProps(fields.country, { type: 'text' }),
 							}}
 							options={COUNTRIES.map(country => ({
 								label: country.name,
@@ -96,9 +96,7 @@ export function DataTableAddAlternativeTitle() {
 							type="submit"
 							variant="outline"
 							status={
-								fetcher.state !== 'idle'
-									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+								fetcher.state !== 'idle' ? 'pending' : form.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"

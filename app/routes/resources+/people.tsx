@@ -1,4 +1,4 @@
-import { parse } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod'
 import { type Prisma } from '@prisma/client'
 import {
 	type ActionFunctionArgs,
@@ -49,16 +49,15 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const formData = await request.formData()
 
-	const submission = parse(formData, {
+	const submission = parseWithZod(formData, {
 		schema: NewPersonSchema,
 	})
-	if (!submission.value) {
+	if (submission.status !== 'success') {
 		return json(
+			{ result: submission.reply() },
 			{
-				status: 'error',
-				submission,
-			} as const,
-			{ status: 400 },
+				status: submission.status === 'error' ? 400 : 200,
+			},
 		)
 	}
 
@@ -75,7 +74,11 @@ export const PersonSearch = ({
 	...props
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
-	buttonProps: PopoverProps
+	buttonProps: PopoverProps & {
+		name: string
+		form: string
+		value?: string
+	}
 	errors?: ListOfErrors
 	className?: string
 }) => {

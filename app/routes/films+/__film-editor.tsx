@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type Film } from '@prisma/client'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher } from '@remix-run/react'
@@ -48,7 +48,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const formData = await request.formData()
 
-	const submission = await parse(formData, {
+	const submission = await parseWithZod(formData, {
 		schema: FilmEditorSchema.superRefine(async (data, ctx) => {
 			if (!data.id) return
 
@@ -65,12 +65,13 @@ export async function action({ request }: ActionFunctionArgs) {
 		async: true,
 	})
 
-	if (submission.intent !== 'submit') {
-		return json({ status: 'idle', submission } as const)
-	}
-
-	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+	if (submission.status !== 'success') {
+		return json(
+			{ result: submission.reply() },
+			{
+				status: submission.status === 'error' ? 400 : 200,
+			},
+		)
 	}
 
 	const {
@@ -154,10 +155,10 @@ export function FilmEditor({
 
 	const [form, fields] = useForm({
 		id: 'film-editor',
-		constraint: getFieldsetConstraint(FilmEditorSchema),
-		lastSubmission: filmFetcher.data?.submission,
+		constraint: getZodConstraint(FilmEditorSchema),
+		lastResult: filmFetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: FilmEditorSchema })
+			return parseWithZod(formData, { schema: FilmEditorSchema })
 		},
 		defaultValue: {
 			title: film?.title,
@@ -179,7 +180,7 @@ export function FilmEditor({
 		<Form
 			method="post"
 			className="flex h-full flex-col gap-y-4"
-			{...form.props}
+			{...getFormProps(form)}
 		>
 			{film ? <input type="hidden" name="id" value={film.id} /> : null}
 			<div className="flex flex-col gap-1">
@@ -187,37 +188,50 @@ export function FilmEditor({
 					labelProps={{ children: 'Title' }}
 					inputProps={{
 						autoFocus: true,
-						...conform.input(fields.title, { ariaAttributes: true }),
+						...getInputProps(fields.title, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					errors={fields.title.errors}
 				/>
 				<Field
 					labelProps={{ children: 'Tagline' }}
 					inputProps={{
-						...conform.input(fields.tagline, { ariaAttributes: true }),
+						...getInputProps(fields.tagline, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					errors={fields.tagline.errors}
 				/>
 				<TextareaField
 					labelProps={{ children: 'Overview' }}
 					textareaProps={{
-						...conform.textarea(fields.overview, { ariaAttributes: true }),
+						...getInputProps(fields.overview, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					errors={fields.overview.errors}
 				/>
 				<Field
 					labelProps={{ children: 'Runtime' }}
 					inputProps={{
-						type: 'number',
-						...conform.input(fields.runtime, { ariaAttributes: true }),
+						...getInputProps(fields.runtime, {
+							ariaAttributes: true,
+							type: 'number',
+						}),
 					}}
 					errors={fields.runtime.errors}
 				/>
 				<Field
 					labelProps={{ children: 'Release Date' }}
 					inputProps={{
-						type: 'date',
-						...conform.input(fields.releaseDate, { ariaAttributes: true }),
+						...getInputProps(fields.releaseDate, {
+							ariaAttributes: true,
+							type: 'date',
+						}),
 					}}
 					errors={fields.releaseDate.errors}
 				/>
@@ -227,7 +241,7 @@ export function FilmEditor({
 						children: 'Language',
 					}}
 					buttonProps={{
-						...conform.input(fields.language, { type: 'text' }),
+						...getInputProps(fields.language, { type: 'text' }),
 					}}
 					options={LANGUAGES.map(language => ({
 						label: language.name,
@@ -238,7 +252,10 @@ export function FilmEditor({
 				<SelectField
 					labelProps={{ children: 'Age Rating' }}
 					buttonProps={{
-						...conform.input(fields.ageRating, { ariaAttributes: true }),
+						...getInputProps(fields.ageRating, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					options={AGE_RATINGS}
 					errors={fields.ageRating.errors}
@@ -246,7 +263,10 @@ export function FilmEditor({
 				<SelectField
 					labelProps={{ children: 'Status' }}
 					buttonProps={{
-						...conform.input(fields.status, { ariaAttributes: true }),
+						...getInputProps(fields.status, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					options={STATUSES.map(status => ({
 						label: status.name,
@@ -257,16 +277,20 @@ export function FilmEditor({
 				<Field
 					labelProps={{ children: 'Budget' }}
 					inputProps={{
-						type: 'number',
-						...conform.input(fields.budget, { ariaAttributes: true }),
+						...getInputProps(fields.budget, {
+							ariaAttributes: true,
+							type: 'number',
+						}),
 					}}
 					errors={fields.budget.errors}
 				/>
 				<Field
 					labelProps={{ children: 'Revenue' }}
 					inputProps={{
-						type: 'number',
-						...conform.input(fields.revenue, { ariaAttributes: true }),
+						...getInputProps(fields.revenue, {
+							ariaAttributes: true,
+							type: 'number',
+						}),
 					}}
 					errors={fields.revenue.errors}
 				/>

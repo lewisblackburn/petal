@@ -1,10 +1,7 @@
-import { useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
 import { type Genre } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
-import { ErrorList } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -17,10 +14,7 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
-import {
-	type DeleteFilmGenresAction,
-	DeleteFilmGenresSchema,
-} from '#app/routes/resources+/film+/delete-genres.ts'
+import { type DeleteFilmGenresAction } from '#app/routes/resources+/film+/delete-genres.ts'
 
 interface DataTableDeleteGenres<TData> {
 	table: Table<TData>
@@ -35,15 +29,6 @@ export function DataTableDeleteGenres<TData>({
 		.rows.map(row => (row.original as Genre).id)
 	const fetcher = useFetcher<typeof DeleteFilmGenresAction>()
 	const [open, setOpen] = useState(false)
-
-	const [form] = useForm({
-		id: 'delete-film-genres-form',
-		lastSubmission: fetcher.data?.submission,
-		onValidate({ formData }) {
-			return parse(formData, { schema: DeleteFilmGenresSchema })
-		},
-		shouldRevalidate: 'onBlur',
-	})
 
 	useEffect(() => {
 		if (fetcher.state === 'idle') {
@@ -70,8 +55,6 @@ export function DataTableDeleteGenres<TData>({
 				<fetcher.Form
 					method="POST"
 					action="/resources/film/delete-genres"
-					name="delete-film-genres-form"
-					{...form.props}
 					onSubmit={() => {
 						setOpen(false)
 					}}
@@ -84,16 +67,17 @@ export function DataTableDeleteGenres<TData>({
 					</DialogHeader>
 					<div className="grid py-4">
 						<input
-							name="ids"
+							name="userIds"
 							type="hidden"
 							value={JSON.stringify(genresSelected)}
 						/>
 						<input name="filmId" type="hidden" value={filmId} />
-						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
 						<StatusButton
 							type="submit"
+							name="intent"
+							value="delete-film-users"
 							variant="outline"
 							status={
 								fetcher.state !== 'idle'

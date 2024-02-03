@@ -1,10 +1,7 @@
-import { useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
 import { type FilmAlternateTitle } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
-import { ErrorList } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -17,10 +14,7 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
-import {
-	type DeleteFilmAlternativeTitlesAction,
-	DeleteFilmAlternativeTitlesSchema,
-} from '#app/routes/resources+/film+/delete-alternative-titles.ts'
+import { type DeleteFilmAlternativeTitlesAction } from '#app/routes/resources+/film+/delete-alternative-titles.ts'
 
 interface DataTableDeleteAlternativeTitles<TData> {
 	table: Table<TData>
@@ -35,15 +29,6 @@ export function DataTableDeleteAlternativeTitles<TData>({
 		.rows.map(row => (row.original as FilmAlternateTitle).id)
 	const fetcher = useFetcher<typeof DeleteFilmAlternativeTitlesAction>()
 	const [open, setOpen] = useState(false)
-
-	const [form] = useForm({
-		id: 'delete-film-alternative-titles-form',
-		lastSubmission: fetcher.data?.submission,
-		onValidate({ formData }) {
-			return parse(formData, { schema: DeleteFilmAlternativeTitlesSchema })
-		},
-		shouldRevalidate: 'onBlur',
-	})
 
 	useEffect(() => {
 		if (fetcher.state === 'idle') {
@@ -70,8 +55,6 @@ export function DataTableDeleteAlternativeTitles<TData>({
 				<fetcher.Form
 					method="POST"
 					action="/resources/film/delete-alternative-titles"
-					name="delete-film-alternative-titles-form"
-					{...form.props}
 					onSubmit={() => {
 						setOpen(false)
 					}}
@@ -84,16 +67,17 @@ export function DataTableDeleteAlternativeTitles<TData>({
 					</DialogHeader>
 					<div className="grid py-4">
 						<input
-							name="alternativeTitleIDs"
+							name="alternativeTitleIds"
 							type="hidden"
 							value={JSON.stringify(alternativeTitlesSelected)}
 						/>
 						<input name="filmId" type="hidden" value={filmId} />
-						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>
 					<DialogFooter>
 						<StatusButton
 							type="submit"
+							name="intent"
+							value="delete-film-alternative-titles"
 							variant="outline"
 							status={
 								fetcher.state !== 'idle'

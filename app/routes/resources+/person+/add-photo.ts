@@ -1,4 +1,4 @@
-import { parse } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import {
 	json,
@@ -24,17 +24,16 @@ export async function action({ request }: ActionFunctionArgs) {
 	const clonedRequest = request.clone()
 	const formData = await request.formData()
 
-	const submission = parse(formData, {
+	const submission = parseWithZod(formData, {
 		schema: AddPersonImageSchema,
 	})
 
-	if (!submission.value) {
+	if (submission.status !== 'success') {
 		return json(
+			{ result: submission.reply() },
 			{
-				status: 'error',
-				submission,
-			} as const,
-			{ status: 400 },
+				status: submission.status === 'error' ? 400 : 200,
+			},
 		)
 	}
 
@@ -48,7 +47,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	)
 
 	//TODO: Fix type
-	const parsedImage = parse(image, { schema: z.any() })
+	const parsedImage = parseWithZod(image, { schema: z.any() })
 
 	await prisma.person.update({
 		where: { id: personId },
@@ -64,11 +63,14 @@ export async function action({ request }: ActionFunctionArgs) {
 		},
 	})
 
-	return json({ status: 'success', submission } as const, {
-		headers: await createToastHeaders({
-			description: 'Added Person Photo',
-			type: 'success',
-		}),
-	})
+	return json(
+		{ result: submission.reply() },
+		{
+			headers: await createToastHeaders({
+				description: 'Added Person Photo',
+				type: 'success',
+			}),
+		},
+	)
 }
 export { action as AddPersonPhotoAction }

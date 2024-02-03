@@ -1,4 +1,4 @@
-import { parse } from '@conform-to/zod'
+import { invariantResponse } from '@epic-web/invariant'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
@@ -7,27 +7,24 @@ import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const DeleteFilmKeywordsSchema = z.object({
-	names: z.string(),
+	intent: z.literal('delete-film-keywords'),
 	filmId: z.string(),
+	names: z.string(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
-	const submission = parse(formData, {
-		schema: DeleteFilmKeywordsSchema,
-	})
-	if (!submission.value) {
-		return json(
-			{
-				status: 'error',
-				submission,
-			} as const,
-			{ status: 400 },
-		)
-	}
+	invariantResponse(
+		formData.get('intent') === 'delete-film-keywords',
+		'Invalid intent',
+	)
 
-	let { filmId, names } = submission.value
+	const filmId = formData.get('filmId') as string
+	const names = formData.get('names') as string
+
+	invariantResponse(filmId, 'Invalid filmId')
+	invariantResponse(names, 'Invalid names')
 
 	const parsedNames = JSON.parse(names) as string[]
 
@@ -41,7 +38,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		},
 	})
 
-	return json({ status: 'success', submission } as const, {
+	return json({ status: 'success' } as const, {
 		headers: await createToastHeaders({
 			description: 'Keywords Deleted',
 			type: 'success',

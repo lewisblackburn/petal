@@ -33,7 +33,11 @@ export const ProductionCompanySearch = ({
 	...props
 }: {
 	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
-	buttonProps: PopoverProps
+	buttonProps: PopoverProps & {
+		name: string
+		form: string
+		value?: string
+	}
 	errors?: ListOfErrors
 	className?: string
 }) => {

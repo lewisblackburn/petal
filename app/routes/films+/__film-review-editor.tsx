@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type FilmReview } from '@prisma/client'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher } from '@remix-run/react'
@@ -26,7 +26,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	const formData = await request.formData()
 
-	const submission = await parse(formData, {
+	const submission = await parseWithZod(formData, {
 		schema: FilmReviewEditorSchema.superRefine(async (data, ctx) => {
 			if (!data.id) return
 
@@ -46,12 +46,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
 		async: true,
 	})
 
-	if (submission.intent !== 'submit') {
-		return json({ status: 'idle', submission } as const)
-	}
-
-	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
+	if (submission.status !== 'success') {
+		return json(
+			{ result: submission.reply() },
+			{
+				status: submission.status === 'error' ? 400 : 200,
+			},
+		)
 	}
 
 	const { id: reviewId, title, content, rating } = submission.value
@@ -111,10 +112,10 @@ export function FilmReviewEditor({
 
 	const [form, fields] = useForm({
 		id: 'film-review-editor',
-		constraint: getFieldsetConstraint(FilmReviewEditorSchema),
-		lastSubmission: filmReviewFetcher.data?.submission,
+		constraint: getZodConstraint(FilmReviewEditorSchema),
+		lastResult: filmReviewFetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: FilmReviewEditorSchema })
+			return parseWithZod(formData, { schema: FilmReviewEditorSchema })
 		},
 		defaultValue: {
 			title: review?.title,
@@ -127,29 +128,37 @@ export function FilmReviewEditor({
 		<Form
 			method="post"
 			className="flex h-full flex-col gap-y-4"
-			{...form.props}
+			{...getFormProps(form)}
 		>
 			{review ? <input type="hidden" name="id" value={review.id} /> : null}
 			<div className="flex flex-col gap-1">
 				<Field
 					labelProps={{ children: 'Rating' }}
 					inputProps={{
-						...conform.textarea(fields.rating, { ariaAttributes: true }),
-						type: 'number',
+						...getInputProps(fields.rating, {
+							ariaAttributes: true,
+							type: 'number',
+						}),
 					}}
 					errors={fields.rating.errors}
 				/>
 				<Field
 					labelProps={{ children: 'Title' }}
 					inputProps={{
-						...conform.textarea(fields.title, { ariaAttributes: true }),
+						...getInputProps(fields.title, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					errors={fields.title.errors}
 				/>
 				<TextareaField
 					labelProps={{ children: 'Content' }}
 					textareaProps={{
-						...conform.textarea(fields.content, { ariaAttributes: true }),
+						...getInputProps(fields.content, {
+							ariaAttributes: true,
+							type: 'text',
+						}),
 					}}
 					errors={fields.content.errors}
 				/>

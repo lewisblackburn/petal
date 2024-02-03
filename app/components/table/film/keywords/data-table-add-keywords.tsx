@@ -1,5 +1,5 @@
-import { conform, useForm } from '@conform-to/react'
-import { parse } from '@conform-to/zod'
+import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { ErrorList, Field } from '#app/components/forms.tsx'
@@ -27,16 +27,16 @@ export function DataTableAddKeywords() {
 
 	const [form, fields] = useForm({
 		id: 'add-film-keywords-form',
-		lastSubmission: fetcher.data?.submission,
+		lastResult: fetcher.data?.result,
 		onValidate({ formData }) {
-			return parse(formData, { schema: AddFilmKeywordsSchema })
+			return parseWithZod(formData, { schema: AddFilmKeywordsSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
 
 	useEffect(() => {
-		fetcher.data?.status === 'success' && setOpen(false)
-	}, [fetcher])
+		form.status === 'success' && setOpen(false)
+	}, [form])
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -55,7 +55,7 @@ export function DataTableAddKeywords() {
 					method="POST"
 					action="/resources/film/add-keywords"
 					name="add-film-keywords-form"
-					{...form.props}
+					{...getFormProps(form)}
 				>
 					<DialogHeader>
 						<DialogTitle>Add Keywords</DialogTitle>
@@ -70,7 +70,7 @@ export function DataTableAddKeywords() {
 								htmlFor: fields.keywords.id,
 							}}
 							inputProps={{
-								...conform.input(fields.keywords, { type: 'text' }),
+								...getInputProps(fields.keywords, { type: 'text' }),
 							}}
 							errors={fields.keywords.errors}
 						/>
@@ -81,9 +81,7 @@ export function DataTableAddKeywords() {
 							type="submit"
 							variant="outline"
 							status={
-								fetcher.state !== 'idle'
-									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+								fetcher.state !== 'idle' ? 'pending' : form.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"
