@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client'
 import { format, formatDistanceToNowStrict } from 'date-fns'
 import { formatRuntime } from './misc'
 
-export const results = Prisma.defineExtension(client => {
+export const user = Prisma.defineExtension(client => {
 	return client.$extends({
 		result: {
 			user: {
@@ -20,6 +20,13 @@ export const results = Prisma.defineExtension(client => {
 					},
 				},
 			},
+		},
+	})
+})
+
+export const person = Prisma.defineExtension(client => {
+	return client.$extends({
+		result: {
 			person: {
 				years: {
 					needs: {
@@ -34,6 +41,13 @@ export const results = Prisma.defineExtension(client => {
 					},
 				},
 			},
+		},
+	})
+})
+
+export const film = Prisma.defineExtension(client => {
+	return client.$extends({
+		result: {
 			film: {
 				formattedReleaseDate: {
 					needs: {
@@ -75,19 +89,9 @@ export const results = Prisma.defineExtension(client => {
 				},
 			},
 		},
-	})
-})
-
-export const queries = Prisma.defineExtension(client => {
-	return client.$extends({
 		query: {
-			user: {
-				async $allOperations({ model, operation, args, query }) {
-					return query(args)
-				},
-			},
 			film: {
-				// NOTE: Updates updatedAt to include relation tables (this is for the recommendations cron job)
+				// NOTE: Updates updatedAt to include relation tables being updated (this is for the recommendations cron job)
 				async $allOperations({ model, operation, args, query }) {
 					const updatedAtOperations = [
 						'create',
@@ -97,7 +101,7 @@ export const queries = Prisma.defineExtension(client => {
 						'delete',
 						'deleteMany',
 					]
-					// NOTE: Recommendations are not in this table as it would
+					// NOTE: Recommendations are not in this array as it would
 					// create an infinite recommendation loop as recommendations
 					// find recently updated films so this would update the
 					// recommendaitons and then set the updatedAt to within the

@@ -1,7 +1,7 @@
 import { remember } from '@epic-web/remember'
 import { PrismaClient } from '@prisma/client'
 import chalk from 'chalk'
-import { queries, results } from './middleware.server'
+import { film, person, user } from './middleware.server'
 
 export const prisma = remember('prisma', () => {
 	// NOTE: if you change anything in this function you'll need to restart
@@ -36,5 +36,6 @@ export const prisma = remember('prisma', () => {
 	client.$connect()
 	return client
 })
-	.$extends(results)
-	.$extends(queries)
+	.$extends(user)
+	.$extends(person)
+	.$extends(film)
