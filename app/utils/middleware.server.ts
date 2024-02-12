@@ -2,6 +2,17 @@ import { Prisma } from '@prisma/client'
 import { format, formatDistanceToNowStrict } from 'date-fns'
 import { formatRuntime } from './misc'
 
+// const WRITE_METHODS = [
+// 	'create',
+// 	'update',
+// 	'upsert',
+// 	'delete',
+// 	'createMany',
+// 	'updateMany',
+// 	'deleteMany',
+// ]
+// if (!WRITE_METHODS.includes(operation)) return query(args)
+
 export const user = Prisma.defineExtension(client => {
 	return client.$extends({
 		result: {
