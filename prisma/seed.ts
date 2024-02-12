@@ -38,6 +38,8 @@ async function seed() {
 	}
 	console.timeEnd('🔑 Created permissions...')
 
+	// NOTE: This is now done in the initial migration!
+	// However, it needs to be here to pass playwright tests
 	console.time('👑 Created roles...')
 	await prisma.role.create({
 		data: {

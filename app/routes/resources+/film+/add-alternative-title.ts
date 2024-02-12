@@ -4,7 +4,6 @@ import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { log } from '#app/utils/log'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const AddFilmAlternativeTitleSchema = z.object({
@@ -14,7 +13,7 @@ export const AddFilmAlternativeTitleSchema = z.object({
 })
 
 export async function action({ request }: ActionFunctionArgs) {
-	const userId = await requireUserId(request)
+	await requireUserId(request)
 	const formData = await request.formData()
 	const submission = parseWithZod(formData, {
 		schema: AddFilmAlternativeTitleSchema,
@@ -41,15 +40,6 @@ export async function action({ request }: ActionFunctionArgs) {
 			},
 		},
 	})
-
-	log(
-		'Film',
-		filmId,
-		submission.value,
-		// NOTE: This is so the difference has something to compare the object to
-		{ alternativeTitle: '', code: '' },
-		userId,
-	)
 
 	return json(
 		{ result: submission.reply() },

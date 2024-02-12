@@ -16,10 +16,9 @@ import {
 } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { requireUserId } from '#app/utils/auth.server.ts'
+import { requireUserId } from '#app/utils/auth.server'
 import { AGE_RATINGS, LANGUAGES, STATUSES } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { log } from '#app/utils/log.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 
 const FilmEditorSchema = z.object({
@@ -103,6 +102,7 @@ export async function action({ request }: ActionFunctionArgs) {
 				status,
 				budget,
 				revenue,
+				lastUpdatedByUserId: userId,
 			},
 			update: {
 				title,
@@ -115,13 +115,12 @@ export async function action({ request }: ActionFunctionArgs) {
 				status,
 				budget,
 				revenue,
+				lastUpdatedByUserId: userId,
 			},
 		})
 
 		return film
 	})
-
-	log('Film', updatedFilm.id, submission.value, film ?? {}, userId)
 
 	return redirectWithToast(`/films/${updatedFilm.id}`, {
 		type: 'success',

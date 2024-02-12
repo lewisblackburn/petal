@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
+import { type Prisma } from '@prisma/client'
 import {
 	type LoaderFunctionArgs,
 	type MetaFunction,
@@ -8,6 +8,7 @@ import { Link, useLoaderData, useLocation } from '@remix-run/react'
 import { format } from 'date-fns'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { InfiniteScroll } from '#app/components/infinite-scroll.tsx'
+import { Avatar, AvatarFallback, AvatarImage } from '#app/components/ui/avatar'
 import {
 	Card,
 	CardContent,
@@ -21,36 +22,32 @@ import { DEFAULT_TAKE, getTableParams } from '#app/utils/request.helper.ts'
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { orderBy, skip, take } = getTableParams(request, DEFAULT_TAKE, {
-		orderBy: 'createdAt',
+		orderBy: 'versionTimestamp',
 		order: 'desc',
 	})
 
-	// const where = {
-	// 	columnId: params.filmdId,
-	// } satisfies Prisma.EditLogWhereInput
+	const where = {
+		versionFilmId: params.filmId,
+	} satisfies Prisma.FilmVersionWhereInput
 
-	const logs = await prisma.editLog.findMany({
+	const logs = await prisma.filmVersion.findMany({
 		orderBy,
 		skip,
 		take,
-		where: {
-			columnId: params.filmId,
-		},
+		where,
 		select: {
-			id: true,
+			versionId: true,
+			versionOperation: true,
+			versionTimestamp: true,
+			oldValues: true,
+			newValues: true,
 			user: true,
-			oldData: true,
-			newData: true,
-			columnId: true,
-			columnName: true,
-			tableName: true,
-			createdAt: true,
 		},
 	})
 
-	const count = await prisma.editLog.count({
+	const count = await prisma.filmVersion.count({
 		where: {
-			columnId: params.filmId,
+			versionFilmId: params.filmId,
 		},
 	})
 
@@ -64,7 +61,7 @@ export default function FilmEditLogsRoute() {
 
 	const groupedLogs: { [key: string]: any[] } = combined.reduce(
 		(groups, log) => {
-			const date = new Date(log.createdAt).toISOString().split('T')[0] // Get the date part of the timestamp
+			const date = new Date(log.versionTimestamp).toISOString().split('T')[0] // Get the date part of the timestamp
 			if (!groups[date]) {
 				groups[date] = []
 			}
@@ -73,6 +70,8 @@ export default function FilmEditLogsRoute() {
 		},
 		{} as { [key: string]: any[] },
 	)
+
+	console.log(combined)
 
 	return (
 		<div className="container py-6">
@@ -91,7 +90,7 @@ export default function FilmEditLogsRoute() {
 							</CardTitle>
 						</CardHeader>
 						{groupedLogs[date].map(log => (
-							<div key={log.id}>
+							<div key={log.versionId}>
 								<CardContent className="flex flex-col bg-muted p-0">
 									<div className="flex items-center gap-2 border border-border p-5">
 										<Avatar className="h-8 w-8">
@@ -106,19 +105,22 @@ export default function FilmEditLogsRoute() {
 										</Avatar>
 										<span>{log.user?.username}</span>
 									</div>
-									<div className="flex items-center gap-2 border border-secondary bg-accent px-5 py-3">
-										<span className="font-bold">{log.columnName}</span>
-									</div>
-									{log.newData && (
-										<div className="flex items-center gap-2  bg-green-500/10 p-5">
-											+ {log.newData}
-										</div>
-									)}
-									{log.oldData && (
-										<div className="flex items-center gap-2 bg-red-500/10 p-5">
-											- {log.oldData}
-										</div>
-									)}
+									{/* <div */}
+									{/* 	className="flex items-center gap-2 border border-secondary bg-accent px-5 py-3" */}
+									{/* > */}
+									{/* 	<span className="font-bold">{change}</span> */}
+									{/* </div> */}
+
+									{/* {log.title && ( */}
+									{/* 	<> */}
+									{/* 		<div className="flex items-center gap-2  bg-green-500/10 p-5"> */}
+									{/* 			+ {JSON.parse(log.title).new} */}
+									{/* 		</div> */}
+									{/* 		<div className="flex items-center gap-2 bg-red-500/10 p-5"> */}
+									{/* 			- {JSON.parse(log.title).old} */}
+									{/* 		</div> */}
+									{/* 	</> */}
+									{/* )} */}
 								</CardContent>
 							</div>
 						))}
