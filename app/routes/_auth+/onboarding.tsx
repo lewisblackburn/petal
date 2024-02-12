@@ -1,4 +1,4 @@
-import { getFormProps, useForm, getInputProps } from '@conform-to/react'
+import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { invariant } from '@epic-web/invariant'
 import {
@@ -96,9 +96,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	if (submission.status !== 'success' || !submission.value.session) {
 		return json(
 			{ result: submission.reply() },
-			{
-				status: submission.status === 'error' ? 400 : 200,
-			},
+			{ status: submission.status === 'error' ? 400 : 200 },
 		)
 	}
 
@@ -200,7 +198,7 @@ export default function SignupRoute() {
 					<Field
 						labelProps={{ htmlFor: fields.password.id, children: 'Password' }}
 						inputProps={{
-							...getInputProps(fields.name, { type: 'password' }),
+							...getInputProps(fields.password, { type: 'password' }),
 							autoComplete: 'new-password',
 						}}
 						errors={fields.password.errors}
@@ -212,7 +210,7 @@ export default function SignupRoute() {
 							children: 'Confirm Password',
 						}}
 						inputProps={{
-							...getInputProps(fields.name, { type: 'password' }),
+							...getInputProps(fields.confirmPassword, { type: 'password' }),
 							autoComplete: 'new-password',
 						}}
 						errors={fields.confirmPassword.errors}
@@ -245,7 +243,7 @@ export default function SignupRoute() {
 					<div className="flex items-center justify-between gap-6">
 						<StatusButton
 							className="w-full"
-							status={isPending ? 'pending' : form?.status ?? 'idle'}
+							status={isPending ? 'pending' : form.status ?? 'idle'}
 							type="submit"
 							disabled={isPending}
 						>
