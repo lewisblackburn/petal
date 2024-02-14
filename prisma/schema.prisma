@@ -548,7 +548,7 @@ model AuditLog {
   auditTimestamp DateTime @default(now())
 
   oldValues String?
-  newValues String
+  newValues String?
 
   user User? @relation(fields: [auditUserId], references: [id])
 }

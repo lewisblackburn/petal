@@ -3,6 +3,7 @@ import {
 	type TMDBFilm,
 	type TMDBExtendedMember,
 } from '#app/types/tmdb'
+import { PETAL_BOT_ID } from './constants'
 import { prisma } from './db.server'
 import { extractFileName, fetchAndUploadImage, fetchWithDelay } from './misc'
 import { s3UploadHandler } from './s3.server'
@@ -109,6 +110,7 @@ export const createOrUpdatePerson = async (
 				// @ts-expect-error this will exist
 				numerator: creditMember.order + 1,
 				denominator: 1,
+				lastUpdatedByUserId: PETAL_BOT_ID,
 			},
 		}
 	} else {

@@ -18,10 +18,12 @@ import {
 } from '#app/components/ui/card'
 import { prisma } from '#app/utils/db.server.ts'
 import { getUserImgSrc } from '#app/utils/misc'
-import { DEFAULT_TAKE, getTableParams } from '#app/utils/request.helper.ts'
+import { getTableParams } from '#app/utils/request.helper.ts'
+
+const TAKE = 20
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
-	const { orderBy, skip, take } = getTableParams(request, DEFAULT_TAKE, {
+	const { orderBy, skip, take } = getTableParams(request, TAKE, {
 		orderBy: 'auditTimestamp',
 		order: 'desc',
 	})
@@ -87,6 +89,11 @@ export default function FilmEditLogsRoute() {
 				</h2>
 				<p className="text-muted-foreground">Edits made to the film.</p>
 			</div>
+			<div className="flex flex-col space-y-24">
+				{combined.map(combine => (
+					<div key={combine.auditId}>{combine.auditId}</div>
+				))}
+			</div>
 			<main className="flex flex-col gap-5">
 				{Object.keys(groupedLogs).map(date => (
 					<Card key={date} className="bg-secondary">
@@ -96,15 +103,16 @@ export default function FilmEditLogsRoute() {
 							</CardTitle>
 						</CardHeader>
 						{groupedLogs[date].map((log: (typeof data.logs)[0]) => {
-							const newValues: any = JSON.parse(log.newValues)
+							const newValues: any =
+								log.newValues !== null ? JSON.parse(log.newValues) : {}
 							const oldValues: any =
 								log.oldValues !== null ? JSON.parse(log.oldValues) : {}
-							const keys = Object.keys(newValues)
+							const keys = Object.keys(newValues).concat(Object.keys(oldValues))
 
 							return (
 								<div key={log.auditId}>
-									<CardContent className="flex flex-col bg-muted p-0">
-										<div className="flex items-center gap-2 border border-border p-5">
+									<CardContent className="flex flex-col p-0">
+										<div className="flex items-center gap-2 p-5">
 											<Avatar className="h-8 w-8">
 												<Link to={`/users/${log.user?.username}`}>
 													<AvatarImage
@@ -118,22 +126,21 @@ export default function FilmEditLogsRoute() {
 											</Avatar>
 											<span>{log.user?.name}</span>
 										</div>
-										<div className="flex items-center gap-2 border border-secondary bg-accent px-5 py-3">
-											<span className="font-bold">{log.auditModelName}</span>
-										</div>
 										{keys.map(key => {
 											// HACK: This is a hack to get around the custom_migrations json_object() key problem.
-											if (newValues[key] == null || newValues[key] == '')
+											if (newValues[key] == null && oldValues[key] == null)
 												return null
 
 											return (
 												<div key={key}>
-													<div className="flex items-center gap-2 border border-secondary bg-accent px-5 py-3">
+													<div className="flex items-center gap-2 bg-popover/10 px-5 py-3">
 														<span className="font-bold">{key}</span>
 													</div>
-													<div className="flex items-center gap-2  bg-green-500/10 p-5">
-														+ {newValues[key]}
-													</div>
+													{log.newValues !== null && (
+														<div className="flex items-center gap-2  bg-green-500/10 p-5">
+															+ {newValues[key]}
+														</div>
+													)}
 													{log.oldValues !== null && (
 														<div className="flex items-center gap-2 bg-red-500/10 p-5">
 															- {oldValues[key]}
@@ -150,7 +157,7 @@ export default function FilmEditLogsRoute() {
 					</Card>
 				))}
 			</main>
-			<InfiniteScroll take={DEFAULT_TAKE} count={data.count} data={combined} />
+			<InfiniteScroll take={TAKE} count={data.count} data={combined} />
 		</div>
 	)
 }

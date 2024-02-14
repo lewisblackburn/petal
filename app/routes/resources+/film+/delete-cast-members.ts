@@ -28,15 +28,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const parsedIds = JSON.parse(castMemberIds) as string[]
 
-	await prisma.film.update({
-		where: { id: filmId },
-		data: {
-			cast: {
-				deleteMany: {
-					id: {
-						in: parsedIds,
-					},
-				},
+	await prisma.filmCastMember.deleteMany({
+		where: {
+			id: {
+				in: parsedIds,
 			},
 		},
 	})

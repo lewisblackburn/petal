@@ -818,15 +818,28 @@ VALUES (
     NEW.lastUpdatedByUserId,
     CURRENT_TIMESTAMP,
     NULL,
-    json_object(
-      'personId',
-      NEW.personId,
-      'character',
-      NEW.character,
-      "filmId",
-      NEW.filmId,
-      "id",
-      NEW.id
-    )
+    json_object('character', NEW.character)
+  );
+END;
+-- Film Cast Member Delete Audit Log Trigger
+CREATE TRIGGER IF NOT EXISTS after_delete_film_cast_member
+AFTER DELETE ON FilmCastMember FOR EACH ROW BEGIN
+INSERT INTO AuditLog (
+    auditOperation,
+    auditModelId,
+    auditModelName,
+    auditUserId,
+    auditTimestamp,
+    oldValues,
+    newValues
+  )
+VALUES (
+    'DELETE',
+    OLD.filmId,
+    'Film Cast Member',
+    OLD.lastUpdatedByUserId,
+    CURRENT_TIMESTAMP,
+    json_object('character', OLD.character),
+    NULL
   );
 END;
