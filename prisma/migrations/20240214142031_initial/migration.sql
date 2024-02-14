@@ -157,30 +157,6 @@ CREATE TABLE "Film" (
 );
 
 -- CreateTable
-CREATE TABLE "FilmVersion" (
-    "versionId" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "versionOperation" TEXT NOT NULL,
-    "versionFilmId" TEXT,
-    "versionUserId" TEXT,
-    "versionTimestamp" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "title" TEXT NOT NULL,
-    "overview" TEXT NOT NULL,
-    "releaseDate" TEXT NOT NULL,
-    "ageRating" TEXT NOT NULL,
-    "runtime" TEXT NOT NULL,
-    "language" TEXT NOT NULL,
-    "budget" TEXT NOT NULL,
-    "revenue" TEXT NOT NULL,
-    "status" TEXT NOT NULL,
-    "poster" TEXT NOT NULL,
-    "backdrop" TEXT NOT NULL,
-    "trailer" TEXT NOT NULL,
-    "tagline" TEXT NOT NULL,
-    CONSTRAINT "FilmVersion_versionFilmId_fkey" FOREIGN KEY ("versionFilmId") REFERENCES "Film" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT "FilmVersion_versionUserId_fkey" FOREIGN KEY ("versionUserId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
-);
-
--- CreateTable
 CREATE TABLE "FilmRecommendation" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "filmId" TEXT NOT NULL,
@@ -438,6 +414,18 @@ CREATE TABLE "Artist" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     CONSTRAINT "Artist_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "AuditLog" (
+    "auditId" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "auditOperation" TEXT NOT NULL,
+    "auditModelId" TEXT,
+    "auditUserId" TEXT,
+    "auditTimestamp" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "oldValues" TEXT,
+    "newValues" TEXT NOT NULL,
+    CONSTRAINT "AuditLog_auditUserId_fkey" FOREIGN KEY ("auditUserId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable

@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { promiseHash } from 'remix-utils/promise'
-import { GENRES } from '#app/utils/constants'
+import { GENRES, PETAL_BOT_ID } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server.ts'
 import {
 	cleanupDb,
@@ -145,11 +145,13 @@ async function seed() {
 	await prisma.user.create({
 		select: { id: true },
 		data: {
-			email: 'kody@kcd.dev',
-			username: 'kody',
-			name: 'Kody',
+			id: PETAL_BOT_ID,
+			email: 'bot@petal.dev',
+			username: 'petal_bot',
+			name: 'Petal Bot',
 			image: { create: kodyImages.kodyUser },
-			password: { create: createPassword('kodylovesyou') },
+			// TODO: Remove this later
+			password: { create: createPassword('removethislater') },
 			connections: {
 				create: { providerName: 'github', providerId: githubUser.profile.id },
 			},
@@ -283,6 +285,7 @@ async function seed() {
 				select: { id: true },
 				data: {
 					...filmData,
+					lastUpdatedByUserId: PETAL_BOT_ID,
 					genres: {
 						connect: {
 							name: GENRES[index % GENRES.length],

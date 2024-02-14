@@ -43,7 +43,7 @@ export function createFilm() {
 	const tagline = faker.lorem.sentence()
 	const overview = faker.lorem.paragraphs()
 	const runtime = faker.number.int({ min: 60, max: 180 })
-	const releaseDate = faker.date.past()
+	const releaseDate = new Date(faker.date.past())
 	const ageRating = AGE_RATINGS.sort(() => Math.random() - Math.random()).slice(
 		0,
 		1,

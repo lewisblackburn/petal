@@ -22,33 +22,39 @@ import { DEFAULT_TAKE, getTableParams } from '#app/utils/request.helper.ts'
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { orderBy, skip, take } = getTableParams(request, DEFAULT_TAKE, {
-		orderBy: 'versionTimestamp',
+		orderBy: 'auditTimestamp',
 		order: 'desc',
 	})
 
 	const where = {
-		versionFilmId: params.filmId,
-	} satisfies Prisma.FilmVersionWhereInput
+		auditModelId: params.filmId,
+	} satisfies Prisma.AuditLogWhereInput
 
-	const logs = await prisma.filmVersion.findMany({
+	const logs = await prisma.auditLog.findMany({
 		orderBy,
 		skip,
 		take,
 		where,
 		select: {
-			versionId: true,
-			versionOperation: true,
-			versionTimestamp: true,
+			auditId: true,
+			auditOperation: true,
+			auditTimestamp: true,
 			oldValues: true,
 			newValues: true,
-			user: true,
+			user: {
+				select: {
+					email: true,
+					image: true,
+					username: true,
+					name: true,
+					initials: true,
+				},
+			},
 		},
 	})
 
-	const count = await prisma.filmVersion.count({
-		where: {
-			versionFilmId: params.filmId,
-		},
+	const count = await prisma.auditLog.count({
+		where,
 	})
 
 	return json({ logs, count })
@@ -61,7 +67,7 @@ export default function FilmEditLogsRoute() {
 
 	const groupedLogs: { [key: string]: any[] } = combined.reduce(
 		(groups, log) => {
-			const date = new Date(log.versionTimestamp).toISOString().split('T')[0] // Get the date part of the timestamp
+			const date = new Date(log.auditTimestamp).toISOString().split('T')[0] // Get the date part of the timestamp
 			if (!groups[date]) {
 				groups[date] = []
 			}
@@ -70,8 +76,6 @@ export default function FilmEditLogsRoute() {
 		},
 		{} as { [key: string]: any[] },
 	)
-
-	console.log(combined)
 
 	return (
 		<div className="container py-6">
@@ -89,39 +93,55 @@ export default function FilmEditLogsRoute() {
 								{format(new Date(date), 'dd MMMM yyyy')}
 							</CardTitle>
 						</CardHeader>
-						{groupedLogs[date].map(log => (
-							<div key={log.versionId}>
-								<CardContent className="flex flex-col bg-muted p-0">
-									<div className="flex items-center gap-2 border border-border p-5">
-										<Avatar className="h-8 w-8">
-											<Link to={`/users/${log.user?.username}`}>
-												<AvatarImage
-													className="object-cover"
-													src={getUserImgSrc(log.user?.image?.id)}
-													alt={log.user?.name ?? log.user?.username}
-												/>
-											</Link>
-											<AvatarFallback>{log.user?.initials}</AvatarFallback>
-										</Avatar>
-										<span>{log.user?.username}</span>
-									</div>
-									<div className="flex items-center gap-2 border border-secondary bg-accent px-5 py-3">
-										<span className="font-bold">{change}</span>
-									</div>
+						{groupedLogs[date].map((log: (typeof data.logs)[0]) => {
+							const newValues: any = JSON.parse(log.newValues)
+							const oldValues: any =
+								log.oldValues !== null ? JSON.parse(log.oldValues) : {}
+							const keys = Object.keys(newValues)
 
-									{log.title && (
-										<>
-											<div className="flex items-center gap-2  bg-green-500/10 p-5">
-												+ {JSON.parse(log.title).new}
-											</div>
-											<div className="flex items-center gap-2 bg-red-500/10 p-5">
-												- {JSON.parse(log.title).old}
-											</div>
-										</>
-									)}
-								</CardContent>
-							</div>
-						))}
+							return (
+								<div key={log.auditId}>
+									<CardContent className="flex flex-col bg-muted p-0">
+										<div className="flex items-center gap-2 border border-border p-5">
+											<Avatar className="h-8 w-8">
+												<Link to={`/users/${log.user?.username}`}>
+													<AvatarImage
+														className="object-cover"
+														src={getUserImgSrc(log.user?.image?.id)}
+														alt={log.user?.name ?? log.user?.username}
+													/>
+												</Link>
+
+												<AvatarFallback>{log.user?.initials}</AvatarFallback>
+											</Avatar>
+											<span>{log.user?.name}</span>
+										</div>
+										{keys.map(key => {
+											// HACK: This is a hack to get around the custom_migrations json_object() key problem.
+											if (newValues[key] == null || newValues[key] == '')
+												return null
+											console.log(newValues[key])
+
+											return (
+												<div key={key}>
+													<div className="flex items-center gap-2 border border-secondary bg-accent px-5 py-3">
+														<span className="font-bold">{key}</span>
+													</div>
+													<div className="flex items-center gap-2  bg-green-500/10 p-5">
+														+ {newValues[key]}
+													</div>
+													{log.oldValues !== null && (
+														<div className="flex items-center gap-2 bg-red-500/10 p-5">
+															- {oldValues[key]}
+														</div>
+													)}
+												</div>
+											)
+										})}
+									</CardContent>
+								</div>
+							)
+						})}
 						<CardFooter />
 					</Card>
 				))}

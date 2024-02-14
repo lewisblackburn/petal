@@ -511,11 +511,11 @@ VALUES(
 CREATE TRIGGER IF NOT EXISTS after_insert_film
 AFTER
 INSERT ON Film FOR EACH ROW BEGIN -- Insert a new record into the FilmVersion model
-INSERT INTO FilmVersion (
-    versionOperation,
-    versionFilmId,
-    versionUserId,
-    versionTimestamp,
+INSERT INTO AuditLog (
+    auditOperation,
+    auditModelId,
+    auditUserId,
+    auditTimestamp,
     oldValues,
     newValues
   )
@@ -525,18 +525,61 @@ VALUES (
     NEW.lastUpdatedByUserId,
     CURRENT_TIMESTAMP,
     NULL,
-    json_object('title', NEW.title, 'overview', NEW.overview)
+    json_object(
+      'title',
+      NEW.title,
+      'overview',
+      NEW.overview,
+      'releaseDate',
+      NEW.releaseDate,
+      'ageRating',
+      NEW.ageRating,
+      'runtime',
+      NEW.runtime,
+      'language',
+      NEW.language,
+      'budget',
+      NEW.budget,
+      'revenue',
+      NEW.revenue,
+      'status',
+      NEW.status,
+      'website',
+      NEW.website,
+      'facebook',
+      NEW.facebook,
+      'instagram',
+      NEW.instagram,
+      'twitter',
+      NEW.twitter,
+      'imdbID',
+      NEW.imdbID,
+      'wikiDataID',
+      NEW.wikiDataID,
+      'tmdbID',
+      NEW.tmdbID,
+      'poster',
+      NEW.poster,
+      'backdrop',
+      NEW.backdrop,
+      'trailer',
+      NEW.trailer,
+      'tagline',
+      NEW.tagline
+    )
   );
 END;
 -- Film Update Audit Log Trigger
+-- TODO: It shouldn't include values if they are the same, at the moment they
+-- just return "" and I have to do checks on the frontent
 CREATE TRIGGER IF NOT EXISTS after_update_film
 AFTER
 UPDATE ON Film FOR EACH ROW BEGIN -- Insert a new record into the FilmVersion model
-INSERT INTO FilmVersion (
-    versionOperation,
-    versionFilmId,
-    versionUserId,
-    versionTimestamp,
+INSERT INTO AuditLog (
+    auditOperation,
+    auditModelId,
+    auditUserId,
+    auditTimestamp,
     oldValues,
     newValues
   )
@@ -555,6 +598,101 @@ VALUES (
       CASE
         WHEN NEW.overview != OLD.overview THEN OLD.overview
         ELSE ""
+      END,
+      'releaseDate',
+      CASE
+        WHEN NEW.releaseDate != OLD.releaseDate THEN OLD.releaseDate
+        ELSE ""
+      END,
+      'ageRating',
+      CASE
+        WHEN NEW.ageRating != OLD.ageRating THEN OLD.ageRating
+        ELSE ""
+      END,
+      'runtime',
+      CASE
+        WHEN NEW.runtime != OLD.runtime THEN OLD.runtime
+        ELSE ""
+      END,
+      'language',
+      CASE
+        WHEN NEW.language != OLD.language THEN OLD.language
+        ELSE ""
+      END,
+      'budget',
+      CASE
+        WHEN NEW.budget != OLD.budget THEN OLD.budget
+        ELSE ""
+      END,
+      'revenue',
+      CASE
+        WHEN NEW.revenue != OLD.revenue THEN OLD.revenue
+        ELSE ""
+      END,
+      'status',
+      CASE
+        WHEN NEW.status != OLD.status THEN OLD.status
+        ELSE ""
+      END,
+      'website',
+      CASE
+        WHEN NEW.website != OLD.website THEN OLD.website
+        ELSE ""
+      END,
+      'facebook',
+      CASE
+        WHEN NEW.facebook != OLD.facebook THEN OLD.facebook
+        ELSE ""
+      END,
+      'instagram',
+      CASE
+        WHEN NEW.instagram != OLD.instagram THEN OLD.instagram
+        ELSE ""
+      END,
+      'twitter',
+      CASE
+        WHEN NEW.twitter != OLD.twitter THEN OLD.twitter
+        ELSE ""
+      END,
+      'imbdID',
+      CASE
+        WHEN NEW.imdbID != OLD.imdbID THEN OLD.imdbID
+        ELSE ""
+      END,
+      'wikiDataID',
+      CASE
+        WHEN NEW.wikiDataID != OLD.wikiDataID THEN OLD.wikiDataID
+        ELSE ""
+      END,
+      'tmdbID',
+      CASE
+        WHEN NEW.tmdbID != OLD.tmdbID THEN OLD.tmdbID
+        ELSE ""
+      END,
+      'poster',
+      CASE
+        WHEN NEW.poster != OLD.poster THEN OLD.poster
+        ELSE ""
+      END,
+      'backdrop',
+      CASE
+        WHEN NEW.backdrop != OLD.backdrop THEN OLD.backdrop
+        ELSE ""
+      END,
+      'trailer',
+      CASE
+        WHEN NEW.trailer != OLD.trailer THEN OLD.trailer
+        ELSE ""
+      END,
+      'tagline',
+      CASE
+        WHEN NEW.tagline != OLD.tagline THEN OLD.tagline
+        ELSE ""
+      END,
+      'tagline',
+      CASE
+        WHEN NEW.tagline != OLD.tagline THEN OLD.tagline
+        ELSE ""
       END
     ),
     json_object(
@@ -566,6 +704,101 @@ VALUES (
       'overview',
       CASE
         WHEN NEW.overview != OLD.overview THEN NEW.overview
+        ELSE ""
+      END,
+      'releaseDate',
+      CASE
+        WHEN NEW.releaseDate != OLD.releaseDate THEN NEW.releaseDate
+        ELSE ""
+      END,
+      'ageRating',
+      CASE
+        WHEN NEW.ageRating != OLD.ageRating THEN NEW.ageRating
+        ELSE ""
+      END,
+      'runtime',
+      CASE
+        WHEN NEW.runtime != OLD.runtime THEN NEW.runtime
+        ELSE ""
+      END,
+      'language',
+      CASE
+        WHEN NEW.language != OLD.language THEN NEW.language
+        ELSE ""
+      END,
+      'budget',
+      CASE
+        WHEN NEW.budget != OLD.budget THEN NEW.budget
+        ELSE ""
+      END,
+      'revenue',
+      CASE
+        WHEN NEW.revenue != OLD.revenue THEN NEW.revenue
+        ELSE ""
+      END,
+      'status',
+      CASE
+        WHEN NEW.status != OLD.status THEN NEW.status
+        ELSE ""
+      END,
+      'website',
+      CASE
+        WHEN NEW.website != OLD.website THEN NEW.website
+        ELSE ""
+      END,
+      'facebook',
+      CASE
+        WHEN NEW.facebook != OLD.facebook THEN NEW.facebook
+        ELSE ""
+      END,
+      'instagram',
+      CASE
+        WHEN NEW.instagram != OLD.instagram THEN NEW.instagram
+        ELSE ""
+      END,
+      'twitter',
+      CASE
+        WHEN NEW.twitter != OLD.twitter THEN NEW.twitter
+        ELSE ""
+      END,
+      'imbdID',
+      CASE
+        WHEN NEW.imdbID != OLD.imdbID THEN NEW.imdbID
+        ELSE ""
+      END,
+      'wikiDataID',
+      CASE
+        WHEN NEW.wikiDataID != OLD.wikiDataID THEN NEW.wikiDataID
+        ELSE ""
+      END,
+      'tmdbID',
+      CASE
+        WHEN NEW.tmdbID != OLD.tmdbID THEN NEW.tmdbID
+        ELSE ""
+      END,
+      'poster',
+      CASE
+        WHEN NEW.poster != OLD.poster THEN NEW.poster
+        ELSE ""
+      END,
+      'backdrop',
+      CASE
+        WHEN NEW.backdrop != OLD.backdrop THEN NEW.backdrop
+        ELSE ""
+      END,
+      'trailer',
+      CASE
+        WHEN NEW.trailer != OLD.trailer THEN NEW.trailer
+        ELSE ""
+      END,
+      'tagline',
+      CASE
+        WHEN NEW.tagline != OLD.tagline THEN NEW.tagline
+        ELSE ""
+      END,
+      'tagline',
+      CASE
+        WHEN NEW.tagline != OLD.tagline THEN NEW.tagline
         ELSE ""
       END
     )

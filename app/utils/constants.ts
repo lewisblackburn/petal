@@ -3,6 +3,8 @@
 
 import { type Sort } from './request.helper'
 
+export const PETAL_BOT_ID = 'petal_bot_cjkhd7gxs0000rtxs3x2r0k7l'
+
 export const COUNTRIES = [
 	{
 		iso_3166_1: 'AD',

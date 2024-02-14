@@ -33,8 +33,7 @@ model User {
   roles       Role[]
   sessions    Session[]
   connections Connection[]
-
-  filmVersions FilmVersion[]
+  logs        AuditLog[]
 }
 
 model Note {
@@ -252,26 +251,10 @@ model Film {
   productionCompanies ProductionCompany[]
   productionCountries String?
 
-  versions            FilmVersion[]
   lastUpdatedByUserId String?
 
   recommendedBy   FilmRecommendation[] @relation("FilmRecommendations")
   recommendations FilmRecommendation[] @relation("FilmRecommendedBy")
-}
-
-model FilmVersion {
-  versionId        Int      @id @default(autoincrement())
-  versionOperation String
-  versionFilmId    String?
-  versionUserId    String?
-  versionTimestamp DateTime @default(now())
-
-  // Mirrored fields
-  oldValues String?
-  newValues String
-
-  film Film? @relation(fields: [versionFilmId], references: [id])
-  user User? @relation(fields: [versionUserId], references: [id])
 }
 
 model FilmRecommendation {
@@ -552,4 +535,17 @@ model Artist {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  auditId        Int      @id @default(autoincrement())
+  auditOperation String
+  auditModelId   String?
+  auditUserId    String?
+  auditTimestamp DateTime @default(now())
+
+  oldValues String?
+  newValues String
+
+  user User? @relation(fields: [auditUserId], references: [id])
 }
