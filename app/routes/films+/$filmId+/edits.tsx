@@ -105,22 +105,20 @@ export default function FilmEditLogsRoute() {
 										</Avatar>
 										<span>{log.user?.username}</span>
 									</div>
-									{/* <div */}
-									{/* 	className="flex items-center gap-2 border border-secondary bg-accent px-5 py-3" */}
-									{/* > */}
-									{/* 	<span className="font-bold">{change}</span> */}
-									{/* </div> */}
+									<div className="flex items-center gap-2 border border-secondary bg-accent px-5 py-3">
+										<span className="font-bold">{change}</span>
+									</div>
 
-									{/* {log.title && ( */}
-									{/* 	<> */}
-									{/* 		<div className="flex items-center gap-2  bg-green-500/10 p-5"> */}
-									{/* 			+ {JSON.parse(log.title).new} */}
-									{/* 		</div> */}
-									{/* 		<div className="flex items-center gap-2 bg-red-500/10 p-5"> */}
-									{/* 			- {JSON.parse(log.title).old} */}
-									{/* 		</div> */}
-									{/* 	</> */}
-									{/* )} */}
+									{log.title && (
+										<>
+											<div className="flex items-center gap-2  bg-green-500/10 p-5">
+												+ {JSON.parse(log.title).new}
+											</div>
+											<div className="flex items-center gap-2 bg-red-500/10 p-5">
+												- {JSON.parse(log.title).old}
+											</div>
+										</>
+									)}
 								</CardContent>
 							</div>
 						))}
