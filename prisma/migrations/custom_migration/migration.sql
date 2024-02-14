@@ -688,11 +688,6 @@ VALUES (
       CASE
         WHEN NEW.tagline != OLD.tagline THEN OLD.tagline
         ELSE ""
-      END,
-      'tagline',
-      CASE
-        WHEN NEW.tagline != OLD.tagline THEN OLD.tagline
-        ELSE ""
       END
     ),
     json_object(
@@ -789,11 +784,6 @@ VALUES (
       'trailer',
       CASE
         WHEN NEW.trailer != OLD.trailer THEN NEW.trailer
-        ELSE ""
-      END,
-      'tagline',
-      CASE
-        WHEN NEW.tagline != OLD.tagline THEN NEW.tagline
         ELSE ""
       END,
       'tagline',
