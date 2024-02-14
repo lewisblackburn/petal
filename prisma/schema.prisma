@@ -279,6 +279,8 @@ model FilmCastMember {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  lastUpdatedByUserId String?
+
   filmId   String
   personId String
 }
@@ -541,6 +543,7 @@ model AuditLog {
   auditId        Int      @id @default(autoincrement())
   auditOperation String
   auditModelId   String?
+  auditModelName String?
   auditUserId    String?
   auditTimestamp DateTime @default(now())
 

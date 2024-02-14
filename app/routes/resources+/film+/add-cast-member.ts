@@ -41,21 +41,21 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const newNumerator = maxNumerator + 1
 
-	await prisma.film.update({
-		where: { id: filmId },
+	await prisma.filmCastMember.create({
 		data: {
-			cast: {
-				create: {
-					person: {
-						connect: {
-							id: personId,
-						},
-					},
-					numerator: newNumerator,
-					denominator: 1,
-					character,
+			film: {
+				connect: {
+					id: filmId,
 				},
 			},
+			person: {
+				connect: {
+					id: personId,
+				},
+			},
+			numerator: newNumerator,
+			denominator: 1,
+			character,
 		},
 	})
 

@@ -514,6 +514,7 @@ INSERT ON Film FOR EACH ROW BEGIN -- Insert a new record into the FilmVersion mo
 INSERT INTO AuditLog (
     auditOperation,
     auditModelId,
+    auditModelName,
     auditUserId,
     auditTimestamp,
     oldValues,
@@ -522,6 +523,7 @@ INSERT INTO AuditLog (
 VALUES (
     'INSERT',
     NEW.id,
+    'Film',
     NEW.lastUpdatedByUserId,
     CURRENT_TIMESTAMP,
     NULL,
@@ -574,10 +576,11 @@ END;
 -- just return "" and I have to do checks on the frontent
 CREATE TRIGGER IF NOT EXISTS after_update_film
 AFTER
-UPDATE ON Film FOR EACH ROW BEGIN -- Insert a new record into the FilmVersion model
+UPDATE ON Film FOR EACH ROW BEGIN
 INSERT INTO AuditLog (
     auditOperation,
     auditModelId,
+    auditModelName,
     auditUserId,
     auditTimestamp,
     oldValues,
@@ -586,6 +589,7 @@ INSERT INTO AuditLog (
 VALUES (
     'UPDATE',
     NEW.id,
+    'Film',
     NEW.lastUpdatedByUserId,
     CURRENT_TIMESTAMP,
     json_object(
@@ -791,6 +795,38 @@ VALUES (
         WHEN NEW.tagline != OLD.tagline THEN NEW.tagline
         ELSE ""
       END
+    )
+  );
+END;
+-- Film Cast Member Update Audit Log Trigger
+CREATE TRIGGER IF NOT EXISTS after_update_film_cast_member
+AFTER
+INSERT ON FilmCastMember FOR EACH ROW BEGIN
+INSERT INTO AuditLog (
+    auditOperation,
+    auditModelId,
+    auditModelName,
+    auditUserId,
+    auditTimestamp,
+    oldValues,
+    newValues
+  )
+VALUES (
+    'INSERT',
+    NEW.filmId,
+    'Film Cast Member',
+    NEW.lastUpdatedByUserId,
+    CURRENT_TIMESTAMP,
+    NULL,
+    json_object(
+      'personId',
+      NEW.personId,
+      'character',
+      NEW.character,
+      "filmId",
+      NEW.filmId,
+      "id",
+      NEW.id
     )
   );
 END;

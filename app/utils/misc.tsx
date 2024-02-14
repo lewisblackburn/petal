@@ -606,3 +606,24 @@ export function extractFileName(url: string): string {
 
 	return fileNameFromURL || fileName
 }
+
+/**
+ * Removes empty values from an object recursively.
+ * @param obj - The object to remove empty values from.
+ * @returns A new object with empty values removed.
+ */
+export function removeEmptyValues(obj: any): any {
+	const newObj: any = {}
+
+	for (const key in obj) {
+		if (obj[key] !== null && obj[key] !== undefined && obj[key] !== '') {
+			if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+				newObj[key] = removeEmptyValues(obj[key])
+			} else {
+				newObj[key] = obj[key]
+			}
+		}
+	}
+
+	return newObj
+}
