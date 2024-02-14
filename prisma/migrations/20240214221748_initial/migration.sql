@@ -5,7 +5,8 @@ CREATE TABLE "User" (
     "username" TEXT NOT NULL,
     "name" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "updatedAt" DATETIME NOT NULL,
+    "totalEdits" INTEGER NOT NULL DEFAULT 0
 );
 
 -- CreateTable
@@ -157,6 +158,19 @@ CREATE TABLE "Film" (
 );
 
 -- CreateTable
+CREATE TABLE "FilmEdit" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "operation" TEXT NOT NULL,
+    "oldValues" TEXT,
+    "newValues" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userId" TEXT NOT NULL,
+    "filmId" TEXT NOT NULL,
+    CONSTRAINT "FilmEdit_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "FilmEdit_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "FilmRecommendation" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "filmId" TEXT NOT NULL,
@@ -176,6 +190,7 @@ CREATE TABLE "FilmCastMember" (
     "character" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
+    "lastUpdatedByUserId" TEXT,
     "filmId" TEXT NOT NULL,
     "personId" TEXT NOT NULL,
     CONSTRAINT "FilmCastMember_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -417,18 +432,6 @@ CREATE TABLE "Artist" (
 );
 
 -- CreateTable
-CREATE TABLE "AuditLog" (
-    "auditId" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "auditOperation" TEXT NOT NULL,
-    "auditModelId" TEXT,
-    "auditUserId" TEXT,
-    "auditTimestamp" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "oldValues" TEXT,
-    "newValues" TEXT NOT NULL,
-    CONSTRAINT "AuditLog_auditUserId_fkey" FOREIGN KEY ("auditUserId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
-);
-
--- CreateTable
 CREATE TABLE "_PermissionToRole" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
@@ -545,6 +548,9 @@ CREATE UNIQUE INDEX "Film_wikiDataID_key" ON "Film"("wikiDataID");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Film_tmdbID_key" ON "Film"("tmdbID");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "FilmEdit_id_key" ON "FilmEdit"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "FilmRecommendation_id_key" ON "FilmRecommendation"("id");

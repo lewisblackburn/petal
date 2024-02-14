@@ -4,7 +4,7 @@ import {
 	type MetaFunction,
 	json,
 } from '@remix-run/node'
-import { Link, useLoaderData, useLocation } from '@remix-run/react'
+import { Link, useLoaderData } from '@remix-run/react'
 import { format } from 'date-fns'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { PaginationBar } from '#app/components/pagination-bar'
@@ -20,31 +20,29 @@ import { prisma } from '#app/utils/db.server.ts'
 import { getUserImgSrc } from '#app/utils/misc'
 import { getTableParams } from '#app/utils/request.helper.ts'
 
-const TAKE = 4
+const TAKE = 20
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { orderBy, skip, take } = getTableParams(request, TAKE, {
-		orderBy: 'auditTimestamp',
+		orderBy: 'createdAt',
 		order: 'desc',
 	})
 
 	const where = {
-		auditModelId: params.filmId,
-	} satisfies Prisma.AuditLogWhereInput
+		filmId: params.filmId,
+	} satisfies Prisma.FilmEditWhereInput
 
-	const logs = await prisma.auditLog.findMany({
+	const edits = await prisma.filmEdit.findMany({
 		orderBy,
 		skip,
 		take,
 		where,
 		select: {
-			auditId: true,
-			auditModelId: true,
-			auditModelName: true,
-			auditOperation: true,
-			auditTimestamp: true,
+			id: true,
+			operation: true,
 			oldValues: true,
 			newValues: true,
+			createdAt: true,
 			user: {
 				select: {
 					email: true,
@@ -57,80 +55,90 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		},
 	})
 
-	const count = await prisma.auditLog.aggregate({
-		where,
+	const count = await prisma.filmEdit.count({ where })
 
-		_count: {
-			_all: true,
-		},
-	})
+	// const usersWithLogs = await prisma.user.findMany({
+	// 	where: {
+	// 		logs: {
+	// 			some: {
+	// 				auditModelId: params.filmId,
+	// 			},
+	// 		},
+	// 	},
+	// 	select: {
+	// 		id: true,
+	// 		username: true,
+	// 		_count: {
+	// 			select: {
+	// 				logs: {
+	// 					where,
+	// 				},
+	// 			},
+	// 		},
+	// 	},
+	// })
 
-	return json({ logs, count })
+	return json({ edits, count })
 }
 
 export default function FilmEditLogsRoute() {
 	const data = useLoaderData<typeof loader>()
-	const location = useLocation()
-	const combined = [...(location.state?.data ?? []), ...data.logs]
 
-	const groupedLogs: { [key: string]: any[] } = combined.reduce(
-		(groups, log) => {
-			const date = new Date(log.auditTimestamp).toISOString().split('T')[0] // Get the date part of the timestamp
+	const groupedEdits: { [key: string]: any[] } = data.edits.reduce(
+		(groups, edit) => {
+			const date = new Date(edit.createdAt).toISOString().split('T')[0] // Get the date part of the timestamp
 			if (!groups[date]) {
 				groups[date] = []
 			}
-			groups[date].push(log)
+			groups[date].push(edit)
 			return groups
 		},
 		{} as { [key: string]: any[] },
 	)
 
-	// TODO: User cound to show who has done most logs
-	// console.log(data.count._count.auditUserId)
-
 	return (
 		<div className="container py-6">
 			<div className="mb-5">
 				<h2 className="text-2xl font-bold tracking-tight">
-					{data.count._count._all} Edits
+					{data.count} Edits
 				</h2>
 				<p className="text-muted-foreground">Edits made to the film.</p>
 			</div>
 			<main className="flex flex-col gap-5">
-				{Object.keys(groupedLogs).map(date => (
+				{Object.keys(groupedEdits).map(date => (
 					<Card key={date} className="bg-secondary">
 						<CardHeader>
 							<CardTitle className="text-md">
 								{format(new Date(date), 'dd MMMM yyyy')}
 							</CardTitle>
 						</CardHeader>
-						{groupedLogs[date].map((log: (typeof data.logs)[0]) => {
+						{groupedEdits[date].map((edit: (typeof data.edits)[0]) => {
 							const newValues: any =
-								log.newValues !== null ? JSON.parse(log.newValues) : {}
+								edit.newValues !== null ? JSON.parse(edit.newValues) : {}
 							const oldValues: any =
-								log.oldValues !== null ? JSON.parse(log.oldValues) : {}
-							const keys = Object.keys(newValues).concat(Object.keys(oldValues))
+								edit.oldValues !== null ? JSON.parse(edit.oldValues) : {}
+							const keys = Object.keys(newValues)
 
 							return (
-								<div key={log.auditId}>
+								<div key={edit.id}>
 									<CardContent className="flex flex-col p-0">
 										<div className="flex items-center gap-2 p-5">
 											<Avatar className="h-8 w-8">
-												<Link to={`/users/${log.user?.username}`}>
+												<Link to={`/users/${edit.user?.username}`}>
 													<AvatarImage
 														className="object-cover"
-														src={getUserImgSrc(log.user?.image?.id)}
-														alt={log.user?.name ?? log.user?.username}
+														src={getUserImgSrc(edit.user?.image?.id)}
+														alt={edit.user?.name ?? edit.user?.username}
 													/>
 												</Link>
 
-												<AvatarFallback>{log.user?.initials}</AvatarFallback>
+												<AvatarFallback>{edit.user?.initials}</AvatarFallback>
 											</Avatar>
-											<span>{log.user?.name}</span>
+											<span>{edit.user?.name}</span>
 										</div>
 										{keys.map(key => {
 											// HACK: This is a hack to get around the custom_migrations json_object() key problem.
-											if (newValues[key] == null && oldValues[key] == null)
+											if (newValues[key] == null || newValues[key] == '')
 												return null
 
 											return (
@@ -138,12 +146,12 @@ export default function FilmEditLogsRoute() {
 													<div className="flex items-center gap-2 bg-popover/10 px-5 py-3">
 														<span className="font-bold">{key}</span>
 													</div>
-													{log.newValues !== null && (
+													{edit.newValues !== null && (
 														<div className="flex items-center gap-2  bg-green-500/10 p-5">
 															+ {newValues[key]}
 														</div>
 													)}
-													{log.oldValues !== null && (
+													{edit.oldValues !== null && (
 														<div className="flex items-center gap-2 bg-red-500/10 p-5">
 															- {oldValues[key]}
 														</div>
@@ -159,7 +167,7 @@ export default function FilmEditLogsRoute() {
 					</Card>
 				))}
 			</main>
-			<PaginationBar take={TAKE} count={data.count._count._all} />
+			<PaginationBar take={TAKE} count={data.count} />
 		</div>
 	)
 }

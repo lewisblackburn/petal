@@ -511,21 +511,17 @@ VALUES(
 CREATE TRIGGER IF NOT EXISTS after_insert_film
 AFTER
 INSERT ON Film FOR EACH ROW BEGIN -- Insert a new record into the FilmVersion model
-INSERT INTO AuditLog (
-    auditOperation,
-    auditModelId,
-    auditModelName,
-    auditUserId,
-    auditTimestamp,
+INSERT INTO FilmEdit (
+    operation,
+    userId,
+    filmId,
     oldValues,
     newValues
   )
 VALUES (
     'INSERT',
-    NEW.id,
-    'Film',
     NEW.lastUpdatedByUserId,
-    CURRENT_TIMESTAMP,
+    NEW.id,
     NULL,
     json_object(
       'title',
@@ -572,26 +568,20 @@ VALUES (
   );
 END;
 -- Film Update Audit Log Trigger
--- TODO: It shouldn't include values if they are the same, at the moment they
--- just return "" and I have to do checks on the frontent
 CREATE TRIGGER IF NOT EXISTS after_update_film
 AFTER
 UPDATE ON Film FOR EACH ROW BEGIN
-INSERT INTO AuditLog (
-    auditOperation,
-    auditModelId,
-    auditModelName,
-    auditUserId,
-    auditTimestamp,
+INSERT INTO FilmEdit (
+    operation,
+    userId,
+    filmId,
     oldValues,
     newValues
   )
 VALUES (
     'UPDATE',
-    NEW.id,
-    'Film',
     NEW.lastUpdatedByUserId,
-    CURRENT_TIMESTAMP,
+    NEW.id,
     json_object(
       'title',
       CASE
@@ -802,21 +792,17 @@ END;
 CREATE TRIGGER IF NOT EXISTS after_update_film_cast_member
 AFTER
 INSERT ON FilmCastMember FOR EACH ROW BEGIN
-INSERT INTO AuditLog (
-    auditOperation,
-    auditModelId,
-    auditModelName,
-    auditUserId,
-    auditTimestamp,
+INSERT INTO FilmCastMemberEdit (
+    operation,
+    userId,
+    filmId,
     oldValues,
     newValues
   )
 VALUES (
     'INSERT',
-    NEW.filmId,
-    'Film Cast Member',
     NEW.lastUpdatedByUserId,
-    CURRENT_TIMESTAMP,
+    NEW.filmId,
     NULL,
     json_object('character', NEW.character)
   );
@@ -824,22 +810,34 @@ END;
 -- Film Cast Member Delete Audit Log Trigger
 CREATE TRIGGER IF NOT EXISTS after_delete_film_cast_member
 AFTER DELETE ON FilmCastMember FOR EACH ROW BEGIN
-INSERT INTO AuditLog (
-    auditOperation,
-    auditModelId,
-    auditModelName,
-    auditUserId,
-    auditTimestamp,
+INSERT INTO FilmCastMemberEdit (
+    operation,
+    userId,
+    filmId,
     oldValues,
     newValues
   )
 VALUES (
     'DELETE',
-    OLD.filmId,
-    'Film Cast Member',
     OLD.lastUpdatedByUserId,
-    CURRENT_TIMESTAMP,
+    OLD.filmId,
     json_object('character', OLD.character),
     NULL
   );
+END;
+-- FilmEdit User Edit Update Count Trigger
+CREATE TRIGGER IF NOT EXISTS after_update_film_edit
+AFTER
+INSERT ON FilmEdit FOR EACH ROW BEGIN
+UPDATE User
+SET totalEdits = totalEdits + 1
+WHERE id = NEW.userId;
+END;
+-- FilmCastMemberEdit User Edit Update Count Trigger
+CREATE TRIGGER IF NOT EXISTS after_update_film_cast_member_edit
+AFTER
+INSERT ON FilmCastMemberEdit FOR EACH ROW BEGIN
+UPDATE User
+SET totalEdits = totalEdits + 1
+WHERE id = NEW.userId;
 END;

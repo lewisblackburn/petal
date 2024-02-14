@@ -30,10 +30,13 @@ model User {
   songReviews     SongReview[]
   favouritedSongs SongFavourite[]
 
-  roles       Role[]
-  sessions    Session[]
-  connections Connection[]
-  logs        AuditLog[]
+  roles               Role[]
+  sessions            Session[]
+  connections         Connection[]
+  filmEdits           FilmEdit[]
+  filmCastMemberEdits FilmCastMemberEdit[]
+
+  totalEdits Int @default(0)
 }
 
 model Note {
@@ -249,6 +252,8 @@ model Film {
   alternativeTitles   FilmAlternateTitle[]
   releaseInformation  FilmReleaseInformation[]
   productionCompanies ProductionCompany[]
+  primaryEdits        FilmEdit[]
+  filmCastMemberEdits FilmCastMemberEdit[]
   productionCountries String?
 
   lastUpdatedByUserId String?
@@ -539,16 +544,30 @@ model Artist {
   updatedAt DateTime @updatedAt
 }
 
-model AuditLog {
-  auditId        Int      @id @default(autoincrement())
-  auditOperation String
-  auditModelId   String?
-  auditModelName String?
-  auditUserId    String?
-  auditTimestamp DateTime @default(now())
-
+model FilmEdit {
+  id        Int      @id @default(autoincrement())
+  operation String
   oldValues String?
   newValues String?
+  user      User     @relation(fields: [userId], references: [id])
+  film      Film     @relation(fields: [filmId], references: [id])
+  createdAt DateTime @default(now())
 
-  user User? @relation(fields: [auditUserId], references: [id])
+  userId String
+  filmId String
+}
+
+model FilmCastMemberEdit {
+  id        Int      @id @default(autoincrement())
+  operation String
+  oldValues String?
+  newValues String?
+  user      User     @relation(fields: [userId], references: [id])
+  film      Film     @relation(fields: [filmId], references: [id])
+  createdAt DateTime @default(now())
+
+  userId String
+  filmId String
+
+  @@index([filmId])
 }
