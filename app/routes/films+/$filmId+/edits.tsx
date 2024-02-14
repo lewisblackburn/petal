@@ -7,7 +7,7 @@ import {
 import { Link, useLoaderData, useLocation } from '@remix-run/react'
 import { format } from 'date-fns'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { InfiniteScroll } from '#app/components/infinite-scroll.tsx'
+import { PaginationBar } from '#app/components/pagination-bar'
 import { Avatar, AvatarFallback, AvatarImage } from '#app/components/ui/avatar'
 import {
 	Card,
@@ -20,7 +20,7 @@ import { prisma } from '#app/utils/db.server.ts'
 import { getUserImgSrc } from '#app/utils/misc'
 import { getTableParams } from '#app/utils/request.helper.ts'
 
-const TAKE = 20
+const TAKE = 4
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { orderBy, skip, take } = getTableParams(request, TAKE, {
@@ -57,8 +57,12 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		},
 	})
 
-	const count = await prisma.auditLog.count({
+	const count = await prisma.auditLog.aggregate({
 		where,
+
+		_count: {
+			_all: true,
+		},
 	})
 
 	return json({ logs, count })
@@ -81,18 +85,16 @@ export default function FilmEditLogsRoute() {
 		{} as { [key: string]: any[] },
 	)
 
+	// TODO: User cound to show who has done most logs
+	// console.log(data.count._count.auditUserId)
+
 	return (
 		<div className="container py-6">
 			<div className="mb-5">
 				<h2 className="text-2xl font-bold tracking-tight">
-					{data.count} Edits
+					{data.count._count._all} Edits
 				</h2>
 				<p className="text-muted-foreground">Edits made to the film.</p>
-			</div>
-			<div className="flex flex-col space-y-24">
-				{combined.map(combine => (
-					<div key={combine.auditId}>{combine.auditId}</div>
-				))}
 			</div>
 			<main className="flex flex-col gap-5">
 				{Object.keys(groupedLogs).map(date => (
@@ -157,7 +159,7 @@ export default function FilmEditLogsRoute() {
 					</Card>
 				))}
 			</main>
-			<InfiniteScroll take={TAKE} count={data.count} data={combined} />
+			<PaginationBar take={TAKE} count={data.count._count._all} />
 		</div>
 	)
 }
