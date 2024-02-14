@@ -13,7 +13,7 @@ export const AddFilmCastMemberSchema = z.object({
 })
 
 export async function action({ request }: ActionFunctionArgs) {
-	await requireUserId(request)
+	const userId = await requireUserId(request)
 	const formData = await request.formData()
 
 	const submission = parseWithZod(formData, {
@@ -56,6 +56,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			numerator: newNumerator,
 			denominator: 1,
 			character,
+			lastUpdatedByUserId: userId,
 		},
 	})
 

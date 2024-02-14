@@ -17,7 +17,7 @@ import {
 	CardTitle,
 } from '#app/components/ui/card'
 import { prisma } from '#app/utils/db.server.ts'
-import { getUserImgSrc, removeEmptyValues } from '#app/utils/misc'
+import { getUserImgSrc } from '#app/utils/misc'
 import { DEFAULT_TAKE, getTableParams } from '#app/utils/request.helper.ts'
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -96,20 +96,10 @@ export default function FilmEditLogsRoute() {
 							</CardTitle>
 						</CardHeader>
 						{groupedLogs[date].map((log: (typeof data.logs)[0]) => {
-							// TODO: This should be remove when custom_migration file is fixed.
-							const newValues = JSON.stringify(
-								removeEmptyValues(JSON.parse(log.newValues)),
-								null,
-								2,
-							)
+							const newValues: any = JSON.parse(log.newValues)
 							const oldValues: any =
-								log.oldValues !== null
-									? JSON.stringify(
-											removeEmptyValues(JSON.parse(log.oldValues)),
-											null,
-											2,
-										)
-									: {}
+								log.oldValues !== null ? JSON.parse(log.oldValues) : {}
+							const keys = Object.keys(newValues)
 
 							return (
 								<div key={log.auditId}>
@@ -131,14 +121,27 @@ export default function FilmEditLogsRoute() {
 										<div className="flex items-center gap-2 border border-secondary bg-accent px-5 py-3">
 											<span className="font-bold">{log.auditModelName}</span>
 										</div>
-										<div className="flex items-center gap-2  bg-green-500/10 p-5">
-											+ {newValues}
-										</div>
-										{log.auditOperation !== 'INSERT' && (
-											<div className="flex items-center gap-2 bg-red-500/10 p-5">
-												- {oldValues}
-											</div>
-										)}
+										{keys.map(key => {
+											// HACK: This is a hack to get around the custom_migrations json_object() key problem.
+											if (newValues[key] == null || newValues[key] == '')
+												return null
+
+											return (
+												<div key={key}>
+													<div className="flex items-center gap-2 border border-secondary bg-accent px-5 py-3">
+														<span className="font-bold">{key}</span>
+													</div>
+													<div className="flex items-center gap-2  bg-green-500/10 p-5">
+														+ {newValues[key]}
+													</div>
+													{log.oldValues !== null && (
+														<div className="flex items-center gap-2 bg-red-500/10 p-5">
+															- {oldValues[key]}
+														</div>
+													)}
+												</div>
+											)
+										})}
 									</CardContent>
 								</div>
 							)
