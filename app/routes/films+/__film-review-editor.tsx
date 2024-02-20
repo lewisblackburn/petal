@@ -11,7 +11,6 @@ import { Button } from '#app/components/ui/button.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { updateFilmVoteAverageAndCount } from '#app/utils/film'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 
 const FilmReviewEditorSchema = z.object({
@@ -84,8 +83,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 				content,
 			},
 		})
-
-		await updateFilmVoteAverageAndCount($prisma, params.filmId!)
 
 		return review
 	})
