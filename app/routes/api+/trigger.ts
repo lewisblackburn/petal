@@ -1,8 +1,10 @@
-import { createRemixRoute } from '@trigger.dev/remix'
-import { client } from '#app/utils/trigger.server'
-
+// NOTE: This is to prevent the build error:
+// [commonjs--resolver] Server-only module referenced by client
+// '#app/jobs/recommendations.server' imported by route 'app/routes/api+/trigger.ts'
+import { serverOnly$ } from 'vite-env-only'
 // Remix will automatically strip files with side effects
 // So you need to *export* your Job definitions like this:
-export * from '#app/jobs/recommendations.server'
+import { job } from '#app/jobs/recommendations.server'
+export const jobServerOnly = serverOnly$(job)
 
-export const { action } = createRemixRoute(client)
+export { action } from '#app/utils/trigger.server'

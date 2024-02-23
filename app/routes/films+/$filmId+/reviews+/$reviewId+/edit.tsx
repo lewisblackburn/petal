@@ -1,14 +1,11 @@
 import { invariantResponse } from '@epic-web/invariant'
 import { type LoaderFunctionArgs, json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import {
-	FilmReviewEditor,
-	action,
-} from '#app/routes/films+/__film-review-editor.tsx'
+import { FilmReviewEditor } from '#app/routes/films+/__film-review-editor.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 
-export { action }
+export { action } from '../../../__film-review-editor.server'
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	await requireUserId(request)

@@ -1,6 +1,7 @@
 import { vitePlugin as remix } from '@remix-run/dev'
 import { flatRoutes } from 'remix-flat-routes'
 import { defineConfig } from 'vite'
+import envOnly from 'vite-env-only'
 
 const MODE = process.env.NODE_ENV
 
@@ -12,6 +13,7 @@ export default defineConfig({
 		},
 	},
 	plugins: [
+		envOnly(),
 		remix({
 			ignoredRouteFiles: ['**/*'],
 			serverModuleFormat: 'esm',

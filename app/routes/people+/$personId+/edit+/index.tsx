@@ -3,9 +3,9 @@ import { type LoaderFunctionArgs, json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { PersonEditor, action } from '../../__person-editor.tsx'
+import { PersonEditor } from '../../__person-editor.tsx'
 
-export { action }
+export { action } from '../../__person-editor.server'
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	await requireUserId(request)

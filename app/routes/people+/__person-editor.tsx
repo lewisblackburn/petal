@@ -2,11 +2,7 @@ import { getInputProps, getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type Person } from '@prisma/client'
 import { Form, useFetcher } from '@remix-run/react'
-import {
-	type ActionFunctionArgs,
-	json,
-	type SerializeFrom,
-} from '@remix-run/server-runtime'
+import { type SerializeFrom } from '@remix-run/server-runtime'
 import { format } from 'date-fns'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
@@ -19,12 +15,10 @@ import {
 } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { requireUserId } from '#app/utils/auth.server.ts'
 import { GENDERS, ROLES } from '#app/utils/constants.ts'
-import { prisma } from '#app/utils/db.server.ts'
-import { redirectWithToast } from '#app/utils/toast.server.ts'
+import { type action } from './__person-editor.server'
 
-const PersonEditorSchema = z.object({
+export const PersonEditorSchema = z.object({
 	id: z.string().optional(),
 	name: z.string().min(1).max(50),
 	knownForDepartment: z.string().optional(),
@@ -35,86 +29,6 @@ const PersonEditorSchema = z.object({
 	placeOfBirth: z.string().optional(),
 	homepage: z.string().optional(),
 })
-
-export async function action({ request }: ActionFunctionArgs) {
-	await requireUserId(request)
-
-	const formData = await request.formData()
-
-	const submission = await parseWithZod(formData, {
-		schema: PersonEditorSchema.superRefine(async (data, ctx) => {
-			if (!data.id) return
-
-			const person = await prisma.person.findUnique({
-				select: { id: true },
-				where: { id: data.id },
-			})
-			if (!person) {
-				ctx.addIssue({
-					code: 'custom',
-					message: 'Person not found',
-				})
-			}
-		}),
-		async: true,
-	})
-
-	if (submission.status !== 'success') {
-		return json(
-			{ result: submission.reply() },
-			{
-				status: submission.status === 'error' ? 400 : 200,
-			},
-		)
-	}
-
-	const {
-		id: personId,
-		name,
-		knownForDepartment,
-		biography,
-		birthdate,
-		dayOfDeath,
-		gender,
-		placeOfBirth,
-		homepage,
-	} = submission.value
-
-	const updatedPerson = await prisma.$transaction(async $prisma => {
-		const person = await $prisma.person.upsert({
-			select: { id: true },
-			where: { id: personId ?? '__new_pesron__' },
-			create: {
-				name,
-				knownForDepartment,
-				biography,
-				birthdate,
-				dayOfDeath,
-				gender,
-				placeOfBirth,
-				homepage,
-			},
-			update: {
-				name,
-				knownForDepartment,
-				biography,
-				birthdate,
-				dayOfDeath,
-				gender,
-				placeOfBirth,
-				homepage,
-			},
-		})
-
-		return person
-	})
-
-	return redirectWithToast(`/people/${updatedPerson.id}`, {
-		type: 'success',
-		title: 'Success',
-		description: 'The person has been updated.',
-	})
-}
 
 export function PersonEditor({
 	person,

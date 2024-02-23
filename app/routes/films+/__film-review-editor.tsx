@@ -10,8 +10,6 @@ import { Button } from '#app/components/ui/button.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { action } from './__film-review-editor.server'
 
-export { action }
-
 export const FilmReviewEditorSchema = z.object({
 	id: z.string().optional(),
 	title: z.string().min(1).max(50),
