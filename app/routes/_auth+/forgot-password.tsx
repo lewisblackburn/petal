@@ -1,4 +1,4 @@
-import { getFormProps, useForm, getInputProps } from '@conform-to/react'
+import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import * as E from '@react-email/components'
 import {
@@ -17,7 +17,7 @@ import { prisma } from '#app/utils/db.server.ts'
 import { sendEmail } from '#app/utils/email.server.ts'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { EmailSchema, UsernameSchema } from '#app/utils/user-validation.ts'
-import { prepareVerification } from './verify.tsx'
+import { prepareVerification } from './verify.server.ts'
 
 const ForgotPasswordSchema = z.object({
 	usernameOrEmail: z.union([EmailSchema, UsernameSchema]),
@@ -48,16 +48,12 @@ export async function action({ request }: ActionFunctionArgs) {
 		}),
 		async: true,
 	})
-
 	if (submission.status !== 'success') {
 		return json(
 			{ result: submission.reply() },
-			{
-				status: submission.status === 'error' ? 400 : 200,
-			},
+			{ status: submission.status === 'error' ? 400 : 200 },
 		)
 	}
-
 	const { usernameOrEmail } = submission.value
 
 	const user = await prisma.user.findFirstOrThrow({
@@ -84,12 +80,8 @@ export async function action({ request }: ActionFunctionArgs) {
 		return redirect(redirectTo.toString())
 	} else {
 		return json(
-			{
-				result: submission.reply({ formErrors: [response.error.message] }),
-			},
-			{
-				status: 500,
-			},
+			{ result: submission.reply({ formErrors: [response.error.message] }) },
+			{ status: 500 },
 		)
 	}
 }

@@ -20,7 +20,7 @@ import {
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
-	type AddFilmCrewMemberAction,
+	type action as AddFilmCrewMemberAction,
 	AddFilmCrewMemberSchema,
 } from '#app/routes/resources+/film+/add-crew-member'
 import { PersonSearch } from '#app/routes/resources+/people.tsx'

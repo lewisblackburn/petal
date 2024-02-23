@@ -156,5 +156,3 @@ export const FilmRatingDropdown = ({
 		</Popover>
 	)
 }
-
-export { action as RateFilmAction }

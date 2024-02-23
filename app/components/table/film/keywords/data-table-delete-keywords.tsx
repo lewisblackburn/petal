@@ -14,7 +14,7 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
-import { type DeleteFilmKeywordsAction } from '#app/routes/resources+/film+/delete-keywords.ts'
+import { type action as DeleteFilmKeywordsAction } from '#app/routes/resources+/film+/delete-keywords.ts'
 
 interface DataTableDeleteKeywords<TData> {
 	table: Table<TData>

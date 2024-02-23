@@ -104,5 +104,3 @@ export const ToggleFavouriteFilm = ({
 		</Button>
 	)
 }
-
-export { action as FavouriteFilmAction }

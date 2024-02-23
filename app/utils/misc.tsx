@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto'
 import { useFormAction, useNavigation } from '@remix-run/react'
 import { clsx, type ClassValue } from 'clsx'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -559,7 +558,7 @@ export async function fetchAndUploadImage(path: string, s3UploadHandler: any) {
 		contentType: imageData.contentType,
 		data: imageData.data,
 		name: imageData.type,
-		filename: `${randomUUID()}.${fileExtension}`,
+		filename: `${uuidv4()}.${fileExtension}`,
 	})
 
 	return uploadedImage
@@ -626,4 +625,20 @@ export function removeEmptyValues(obj: any): any {
 	}
 
 	return newObj
+}
+
+/**
+ * Generates a version 4 UUID (Universally Unique Identifier).
+ *
+ * @returns A string representing a version 4 UUID.
+ */
+export function uuidv4(): string {
+	// Generate a random hexadecimal digit or a random digit from the set [8, 9, A, or B]
+	const randomDigit = (c: string): string => {
+		const r = (Math.random() * 16) | 0
+		return c === 'x' ? r.toString(16) : ((r & 0x3) | 0x8).toString(16)
+	}
+
+	// Replace each placeholder in the UUID template with a randomly generated digit
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, randomDigit)
 }

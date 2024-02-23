@@ -3,9 +3,9 @@ import { json, type LoaderFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { FilmEditor, action } from '../../__film-editor.tsx'
+import { FilmEditor } from '../../__film-editor.tsx'
 
-export { action }
+export { action } from '../../__film-editor.server.tsx'
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	await requireUserId(request)

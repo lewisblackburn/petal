@@ -55,4 +55,3 @@ export async function action({ request }: ActionFunctionArgs) {
 		description: 'Cast Member Reordered',
 	})
 }
-export { action as ReorderFilmCastMembersAction }

@@ -16,7 +16,7 @@ import {
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
-	type AddFilmVideoAction,
+	type action as AddFilmVideoAction,
 	AddFilmVideoSchema,
 } from '#app/routes/resources+/film+/add-video.ts'
 import { VIDEO_TYPES, QUALITY, SITES } from '#app/utils/constants.ts'

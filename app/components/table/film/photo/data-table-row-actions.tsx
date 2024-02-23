@@ -22,7 +22,7 @@ import {
 import { Icon } from '#app/components/ui/icon'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
-	type EditFilmPhotoAction,
+	type action as EditFilmPhotoAction,
 	EditFilmPhotoSchema,
 } from '#app/routes/resources+/film+/edit-photo'
 import { LANGUAGES, PHOTO_TYPES } from '#app/utils/constants'

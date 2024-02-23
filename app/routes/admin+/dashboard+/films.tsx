@@ -17,7 +17,7 @@ import {
 import { Icon } from '#app/components/ui/icon'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
-	type ImportFilmFromTMDBAction,
+	type action as ImportFilmFromTMDBAction,
 	ImportFilmSchema,
 } from '#app/routes/resources+/film+/import'
 

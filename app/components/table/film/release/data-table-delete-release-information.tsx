@@ -14,7 +14,7 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
-import { type DeleteFilmReleaseInformationAction } from '#app/routes/resources+/film+/delete-release-information.ts'
+import { type action as DeleteFilmReleaseInformationAction } from '#app/routes/resources+/film+/delete-release-information.ts'
 
 interface DataTableDeleteReleaseInformation<TData> {
 	table: Table<TData>

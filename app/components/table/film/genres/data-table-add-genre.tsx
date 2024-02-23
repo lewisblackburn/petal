@@ -16,7 +16,7 @@ import {
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
-	type AddFilmGenreAction,
+	type action as AddFilmGenreAction,
 	AddFilmGenreSchema,
 } from '#app/routes/resources+/film+/add-genre.ts'
 import { GenreSearch } from '#app/routes/resources+/genres.tsx'

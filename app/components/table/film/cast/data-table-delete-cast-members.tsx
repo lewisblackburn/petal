@@ -14,7 +14,7 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
-import { type DeleteFilmCastMembersAction } from '#app/routes/resources+/film+/delete-cast-members.ts'
+import { type action as DeleteFilmCastMembersAction } from '#app/routes/resources+/film+/delete-cast-members.ts'
 
 interface DataTableDeleteCastMembers<TData> {
 	table: Table<TData>

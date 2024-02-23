@@ -17,7 +17,7 @@ import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
 	AddPersonImageSchema,
-	type AddPersonPhotoAction,
+	type action as AddPersonPhotoAction,
 } from '#app/routes/resources+/person+/add-photo.ts'
 
 export function DataTableAddPhoto() {

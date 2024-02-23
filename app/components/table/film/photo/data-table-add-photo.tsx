@@ -22,7 +22,7 @@ import {
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
-	type AddFilmPhotoAction,
+	type action as AddFilmPhotoAction,
 	AddFilmPhotoSchema,
 } from '#app/routes/resources+/film+/add-photo.ts'
 import { LANGUAGES, PHOTO_TYPES } from '#app/utils/constants.ts'

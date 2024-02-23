@@ -1,9 +1,8 @@
 import { getInputProps, getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type Film } from '@prisma/client'
-import { type ActionFunctionArgs } from '@remix-run/node'
 import { Form, useFetcher } from '@remix-run/react'
-import { json, type SerializeFrom } from '@remix-run/server-runtime'
+import { type SerializeFrom } from '@remix-run/server-runtime'
 import { format } from 'date-fns'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
@@ -16,12 +15,10 @@ import {
 } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { requireUserId } from '#app/utils/auth.server'
 import { AGE_RATINGS, LANGUAGES, STATUSES } from '#app/utils/constants.ts'
-import { prisma } from '#app/utils/db.server.ts'
-import { redirectWithToast } from '#app/utils/toast.server.ts'
+import { type action } from './__film-editor.server'
 
-const FilmEditorSchema = z.object({
+export const FilmEditorSchema = z.object({
 	id: z.string().optional(),
 	title: z.string().min(1).max(50),
 	tagline: z.string().max(100).optional(),
@@ -40,94 +37,6 @@ const FilmEditorSchema = z.object({
 	budget: z.number().positive().optional(),
 	revenue: z.number().positive().optional(),
 })
-
-export async function action({ request }: ActionFunctionArgs) {
-	const userId = await requireUserId(request)
-	let film: any = null
-
-	const formData = await request.formData()
-
-	const submission = await parseWithZod(formData, {
-		schema: FilmEditorSchema.superRefine(async (data, ctx) => {
-			if (!data.id) return
-
-			film = await prisma.film.findUnique({
-				where: { id: data.id },
-			})
-			if (!film) {
-				ctx.addIssue({
-					code: 'custom',
-					message: 'Film not found',
-				})
-			}
-		}),
-		async: true,
-	})
-
-	if (submission.status !== 'success') {
-		return json(
-			{ result: submission.reply() },
-			{
-				status: submission.status === 'error' ? 400 : 200,
-			},
-		)
-	}
-
-	const {
-		id: filmId,
-		title,
-		tagline,
-		overview,
-		runtime,
-		releaseDate,
-		language,
-		ageRating,
-		status,
-		budget,
-		revenue,
-	} = submission.value
-
-	const updatedFilm = await prisma.$transaction(async $prisma => {
-		const film = await $prisma.film.upsert({
-			select: { id: true },
-			where: { id: filmId ?? '__new_film__' },
-			create: {
-				title,
-				tagline,
-				overview,
-				runtime,
-				releaseDate,
-				language,
-				ageRating,
-				status,
-				budget,
-				revenue,
-				lastUpdatedByUserId: userId,
-			},
-			update: {
-				title,
-				tagline,
-				overview,
-				runtime,
-				releaseDate,
-				language,
-				ageRating,
-				status,
-				budget,
-				revenue,
-				lastUpdatedByUserId: userId,
-			},
-		})
-
-		return film
-	})
-
-	return redirectWithToast(`/films/${updatedFilm.id}`, {
-		type: 'success',
-		title: 'Success',
-		description: 'The film has been updated.',
-	})
-}
 
 export function FilmEditor({
 	film,

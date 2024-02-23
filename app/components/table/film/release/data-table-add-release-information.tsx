@@ -16,7 +16,7 @@ import {
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
-	type AddFilmReleaseInformationAction,
+	type action as AddFilmReleaseInformationAction,
 	AddFilmReleaseInformationSchema,
 } from '#app/routes/resources+/film+/add-release-information.ts'
 import {

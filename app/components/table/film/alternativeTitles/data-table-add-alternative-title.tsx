@@ -16,7 +16,7 @@ import {
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
-	type AddFilmAlternativeTitleAction,
+	type action as AddFilmAlternativeTitleAction,
 	AddFilmAlternativeTitleSchema,
 } from '#app/routes/resources+/film+/add-alternative-title'
 import { COUNTRIES } from '#app/utils/constants'

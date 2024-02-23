@@ -1,7 +1,7 @@
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Row } from '@tanstack/react-table'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { type SetPrimaryFilmVideoAction } from '#app/routes/resources+/film+/set-primary-video'
+import { type action as SetPrimaryFilmVideoAction } from '#app/routes/resources+/film+/set-primary-video'
 
 interface DataTableRowActionsProps<TData> {
 	row: Row<TData>

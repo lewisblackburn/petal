@@ -16,7 +16,7 @@ import {
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
-	type AddFilmTaglineAction,
+	type action as AddFilmTaglineAction,
 	AddFilmTaglineSchema,
 } from '#app/routes/resources+/film+/add-tagline.ts'
 

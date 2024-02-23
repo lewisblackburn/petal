@@ -14,7 +14,7 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
-import { type DeleteFilmTaglinesAction } from '#app/routes/resources+/film+/delete-taglines.ts'
+import { type action as DeleteFilmTaglinesAction } from '#app/routes/resources+/film+/delete-taglines.ts'
 
 interface DataTableDeleteTaglines<TData> {
 	table: Table<TData>

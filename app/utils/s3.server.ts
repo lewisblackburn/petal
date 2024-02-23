@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto'
 import path from 'path'
 import { PassThrough } from 'stream'
 import { S3 } from '@aws-sdk/client-s3'
@@ -8,6 +7,7 @@ import {
 	writeAsyncIterableToWritable,
 } from '@remix-run/node'
 import type AWS from 'aws-sdk'
+import { uuidv4 } from './misc'
 
 const { STORAGE_ACCESS_KEY, STORAGE_SECRET, STORAGE_REGION, STORAGE_BUCKET } =
 	process.env
@@ -55,7 +55,7 @@ export const s3UploadHandler: UploadHandler = async ({
 	}
 
 	const fileType = path.extname(filename!).toLowerCase() // Extract file type
-	const newFilename = randomUUID() + fileType
+	const newFilename = uuidv4() + fileType
 
 	const uploadedFileLocation = await uploadStreamToS3(data, newFilename)
 	return uploadedFileLocation

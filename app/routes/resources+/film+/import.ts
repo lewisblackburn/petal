@@ -136,7 +136,7 @@ export async function action({ request }: ActionFunctionArgs) {
 					},
 				})),
 			},
-			lastUpdatedByUserId: PETAL_BOT_ID
+			lastUpdatedByUserId: PETAL_BOT_ID,
 		},
 	})
 
@@ -158,5 +158,3 @@ export async function action({ request }: ActionFunctionArgs) {
 		},
 	)
 }
-
-export { action as ImportFilmFromTMDBAction }

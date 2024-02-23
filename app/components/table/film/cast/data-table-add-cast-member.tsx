@@ -16,7 +16,7 @@ import {
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
-	type AddFilmCastMemberAction,
+	type action as AddFilmCastMemberAction,
 	AddFilmCastMemberSchema,
 } from '#app/routes/resources+/film+/add-cast-member.ts'
 import { PersonSearch } from '#app/routes/resources+/people.tsx'

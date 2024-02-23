@@ -16,7 +16,7 @@ import {
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
-	type AddFilmProductionCompanyAction,
+	type action as AddFilmProductionCompanyAction,
 	AddFilmProductionCompanySchema,
 } from '#app/routes/resources+/film+/add-production-company.ts'
 import { ProductionCompanySearch } from '#app/routes/resources+/productionCompanies.tsx'

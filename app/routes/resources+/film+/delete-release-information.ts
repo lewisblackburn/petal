@@ -50,5 +50,3 @@ export async function action({ request }: ActionFunctionArgs) {
 		}),
 	})
 }
-
-export { action as DeleteFilmReleaseInformationAction }
