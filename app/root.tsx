@@ -1,7 +1,6 @@
 import { useForm, getFormProps } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
-import { cssBundleHref } from '@remix-run/css-bundle'
 import {
 	json,
 	type LoaderFunctionArgs,
@@ -12,6 +11,7 @@ import {
 } from '@remix-run/node'
 import {
 	Links,
+	LiveReload,
 	Meta,
 	Scripts,
 	ScrollRestoration,
@@ -28,7 +28,7 @@ import { EpicProgress } from './components/progress-bar.tsx'
 import { useToast } from './components/toaster.tsx'
 import { Icon, href as iconsHref } from './components/ui/icon.tsx'
 import { EpicToaster } from './components/ui/sonner.tsx'
-import tailwindStyleSheetUrl from './styles/tailwind.css?url'
+import tailwindStyleSheetUrl from './styles/tailwind.css'
 import { getUserId, logout } from './utils/auth.server.ts'
 import { ClientHintCheck, getHints, useHints } from './utils/client-hints.tsx'
 import { prisma } from './utils/db.server.ts'
@@ -47,7 +47,6 @@ export const links: LinksFunction = () => {
 		{ rel: 'preload', href: iconsHref, as: 'image' },
 		// Preload CSS as a resource to avoid render blocking
 		{ rel: 'preload', href: tailwindStyleSheetUrl, as: 'style' },
-		cssBundleHref ? { rel: 'preload', href: cssBundleHref, as: 'style' } : null,
 		{ rel: 'mask-icon', href: '/favicons/mask-icon.svg' },
 		{
 			rel: 'alternate icon',
@@ -63,7 +62,6 @@ export const links: LinksFunction = () => {
 		//These should match the css preloads above to avoid css as render blocking resource
 		{ rel: 'icon', type: 'image/svg+xml', href: '/favicons/favicon.svg' },
 		{ rel: 'stylesheet', href: tailwindStyleSheetUrl },
-		cssBundleHref ? { rel: 'stylesheet', href: cssBundleHref } : null,
 	].filter(Boolean)
 }
 
@@ -198,6 +196,7 @@ function Document({
 				/>
 				<ScrollRestoration nonce={nonce} />
 				<Scripts nonce={nonce} />
+				<LiveReload nonce={nonce} />
 			</body>
 		</html>
 	)
