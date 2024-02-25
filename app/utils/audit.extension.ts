@@ -23,7 +23,6 @@ const operationsToAudit: Prisma.PrismaAction[] =
 	uniqueOperations.concat(manyOperations)
 const fieldsToIgnore: string[] = ['updatedAt'] // Add fields to always ignore in difference function
 
-// TODO: Prisma.Extension['query']
 const getOldValue = async (client: any, params: any) => {
 	const { model, operation, args } = params
 
@@ -48,8 +47,7 @@ export const auditLog = Prisma.defineExtension(client => {
 	return client.$extends({
 		query: {
 			async $allOperations(props) {
-				// These exludes all raw execution e.g. queryRaw, executeRaw, etc
-				// This may also exlcude $transaction queries which might be helpful actually!
+				// Exclude operations that can't be audited
 				if (props.operation.includes('$')) return await props.query(props.args)
 
 				const { userId, modelId, ...args } = props.args as any
@@ -66,31 +64,31 @@ export const auditLog = Prisma.defineExtension(client => {
 
 				if (!userId) return await props.query({ ...args })
 
-				let oldValues =
-					operation === 'create' ? {} : await getOldValue(client, props)
-				let newValues = {}
-
-				let before = {}
-				before = oldValues
-
 				// Remove select from args, so we can compare the before and after
 				const removeSelectFromArgs = { ...args }
 				delete removeSelectFromArgs.select
-
 				// Perform the actual db operation
 				const result = await props.query({ ...removeSelectFromArgs })
 
-				const isDeleteOperation =
-					operation === 'delete' || operation === 'deleteMany'
+				let oldValues = {}
+				let newValues = {}
 
+				const before =
+					operation === 'create' ? {} : await getOldValue(client, props)
 				const after = result
 
 				// If the old and new values are the same, then we don't need to create an audit log (e.g. no changes were made)
 				if (equal(before, after, fieldsToIgnore)) return result
+
+				const isDeleteOperation =
+					operation === 'delete' || operation === 'deleteMany'
+
 				oldValues = isDeleteOperation
 					? before
 					: difference(before, after, fieldsToIgnore).oldValues
-				newValues = difference(before, after, fieldsToIgnore).newValues
+				newValues = isDeleteOperation
+					? {}
+					: difference(before, after, fieldsToIgnore).newValues
 
 				try {
 					await client.$transaction(async $prisma => {
