@@ -19,9 +19,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	const where = {
 		OR: search ? [{ name: { contains: search } }] : undefined,
-	} satisfies Prisma.GenreWhereInput
+	} satisfies Prisma.FilmGenreWhereInput
 
-	const genres = await prisma.genre.findMany({
+	const genres = await prisma.filmGenre.findMany({
 		take,
 		where,
 	})

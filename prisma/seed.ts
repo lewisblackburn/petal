@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker'
 import { promiseHash } from 'remix-utils/promise'
 import { GENRES, PETAL_BOT_ID } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server.ts'
+import { withQueryContext } from '#app/utils/misc.js'
 import {
 	cleanupDb,
 	createFilm,
@@ -13,7 +14,6 @@ import {
 	img,
 } from '#tests/db-utils.ts'
 import { insertGitHubUser } from '#tests/mocks/github.ts'
-import { withQueryContext } from '#app/utils/misc.js'
 
 async function seed() {
 	console.log('🌱 Seeding...')

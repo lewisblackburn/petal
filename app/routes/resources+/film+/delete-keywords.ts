@@ -9,7 +9,7 @@ import { createToastHeaders } from '#app/utils/toast.server.ts'
 export const DeleteFilmKeywordsSchema = z.object({
 	intent: z.literal('delete-film-keywords'),
 	filmId: z.string(),
-	names: z.string(),
+	keywords: z.string(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -21,19 +21,19 @@ export async function action({ request }: ActionFunctionArgs) {
 	)
 
 	const filmId = formData.get('filmId') as string
-	const names = formData.get('names') as string
+	const keywords = formData.get('keywords') as string
 
 	invariantResponse(filmId, 'Invalid filmId')
-	invariantResponse(names, 'Invalid names')
+	invariantResponse(keywords, 'Invalid keywords')
 
-	const parsedNames = JSON.parse(names) as string[]
+	const parsedKeywords = JSON.parse(keywords) as string[]
 
 	await prisma.film.update({
 		where: { id: filmId },
 		data: {
 			keywords: {
 				// NOTE: In this we case we want to disconnect no deleteMany
-				disconnect: parsedNames.map(name => ({ name })),
+				disconnect: parsedKeywords.map(name => ({ name: name })),
 			},
 		},
 	})

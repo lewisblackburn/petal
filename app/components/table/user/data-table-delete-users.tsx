@@ -1,4 +1,4 @@
-import { type Genre } from '@prisma/client'
+import { type FilmGenre } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
@@ -27,7 +27,7 @@ export function DataTableDeleteGenres<TData>({
 	const { filmId } = useParams()
 	const genresSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as Genre).id)
+		.rows.map(row => (row.original as FilmGenre).id)
 	const fetcher = useFetcher<typeof DeleteFilmGenresAction>()
 	const [open, setOpen] = useState(false)
 

@@ -1,4 +1,4 @@
-import { type Film, type Genre, type Keyword } from '@prisma/client'
+import { type Film, FilmGenre, FilmKeyword } from '@prisma/client'
 import { intervalTrigger } from '@trigger.dev/sdk'
 import { oneWeekAgo } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server'
@@ -33,8 +33,8 @@ export const job = client.defineJob({
 })
 
 type FilmRecommendation = Partial<Film> & {
-	genres: Pick<Genre, 'name'>[]
-	keywords: Pick<Keyword, 'name'>[]
+	genres: Pick<FilmGenre, 'name'>[]
+	keywords: Pick<FilmKeyword, 'name'>[]
 	cast: {
 		person: {
 			name: string

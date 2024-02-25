@@ -137,14 +137,22 @@ export default function FilmEditLogsRoute() {
 										{edit.newValues !== '{}' && (
 											<div className="flex items-center gap-2  bg-green-500/10 p-5">
 												<pre className="whitespace-pre-wrap">
-													{JSON.stringify(JSON.parse(edit.newValues), null, 2)}
+													{JSON.stringify(
+														JSON.parse(edit.newValues || ''),
+														null,
+														2,
+													)}
 												</pre>
 											</div>
 										)}
 										{edit.oldValues !== '{}' && (
 											<div className="flex items-center gap-2 bg-red-500/10 p-5">
 												<pre className="whitespace-pre-wrap">
-													{JSON.stringify(JSON.parse(edit.oldValues), null, 2)}
+													{JSON.stringify(
+														JSON.parse(edit.oldValues || ''),
+														null,
+														2,
+													)}
 												</pre>
 											</div>
 										)}

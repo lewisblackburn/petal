@@ -1,4 +1,4 @@
-import { type Keyword } from '@prisma/client'
+import { type FilmKeyword } from '@prisma/client'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
@@ -26,7 +26,7 @@ export function DataTableDeleteKeywords<TData>({
 	const { filmId } = useParams()
 	const keywordsSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as Keyword).name)
+		.rows.map(row => (row.original as FilmKeyword).name)
 	const fetcher = useFetcher<typeof DeleteFilmKeywordsAction>()
 	const [open, setOpen] = useState(false)
 
@@ -67,7 +67,7 @@ export function DataTableDeleteKeywords<TData>({
 					</DialogHeader>
 					<div className="grid py-4">
 						<input
-							name="names"
+							name="keywords"
 							type="hidden"
 							value={JSON.stringify(keywordsSelected)}
 						/>

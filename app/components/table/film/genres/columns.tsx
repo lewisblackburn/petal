@@ -1,9 +1,9 @@
-import { type Genre } from '@prisma/client'
+import { type FilmGenre } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 
-export const columns: ColumnDef<Partial<Genre>>[] = [
+export const columns: ColumnDef<Partial<FilmGenre>>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (

@@ -69,7 +69,19 @@ export const auditLog = Prisma.defineExtension(client => {
 					return await props.query({ ...args })
 				}
 
+				// TODO: Figure out how to do logs for genre and keywords via film.update query
+				// isntead of filmGenre.updateMany etc.
+				// IDEA: Maybe I can exclude FilmGenre and FilmKeyword form the modelsToInclude
+				// and write custom audit log extensions for those models?
+				console.log(props.args, props.operation, props.model)
+
 				if (!userId) return await props.query({ ...args })
+
+				let oldValues = {}
+				let newValues = {}
+
+				const before =
+					operation === 'create' ? {} : await getOldValue(client, props)
 
 				// Remove select from args, so we can compare the before and after
 				const removeSelectFromArgs = { ...args }
@@ -77,11 +89,6 @@ export const auditLog = Prisma.defineExtension(client => {
 				// Perform the actual db operation
 				const result = await props.query({ ...removeSelectFromArgs })
 
-				let oldValues = {}
-				let newValues = {}
-
-				const before =
-					operation === 'create' ? {} : await getOldValue(client, props)
 				const after = result
 
 				// If the old and new values are the same, then we don't need to create an audit log (e.g. no changes were made)
@@ -104,6 +111,7 @@ export const auditLog = Prisma.defineExtension(client => {
 								model: model || 'Unknown',
 								operation,
 								userId,
+								// @ts-expect-error id and filmId are not always defined
 								filmId: modelId ?? newValues?.id ?? newValues?.filmId,
 								oldValues: JSON.stringify(oldValues),
 								newValues: JSON.stringify(newValues),

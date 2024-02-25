@@ -1,4 +1,5 @@
 import { parseWithZod } from '@conform-to/zod'
+import { type Prisma } from '@prisma/client'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
@@ -34,7 +35,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	let { filmId, personId, department, job, featured } = submission.value
 
 	await prisma.filmCrewMember.create(
-		withQueryContext(
+		withQueryContext<Prisma.FilmCrewMemberCreateArgs>(
 			{
 				data: {
 					film: {
