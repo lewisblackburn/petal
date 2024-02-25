@@ -81,7 +81,7 @@ export async function action({ request }: ActionFunctionArgs) {
 					revenue,
 				},
 			},
-			{ userId, modelId: filmId },
+			{ userId, modelId: filmId ?? null },
 		),
 	)
 

@@ -421,7 +421,7 @@ export default function FilmRoute() {
 							</div>
 
 							<div className="flex w-full items-center justify-between gap-5">
-								<Link to="edits" className="w-full" preventScrollReset>
+								<Link to="edits" className="w-full">
 									<Button variant="secondary" size="sm" className="w-full">
 										<Icon name="file-text" className="mr-1" />
 										Edit Logs

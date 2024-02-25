@@ -13,6 +13,7 @@ import {
 	img,
 } from '#tests/db-utils.ts'
 import { insertGitHubUser } from '#tests/mocks/github.ts'
+import { withQueryContext } from '#app/utils/misc.js'
 
 async function seed() {
 	console.log('🌱 Seeding...')
@@ -281,27 +282,32 @@ async function seed() {
 		const filmData = createFilm()
 		const keywords = new Array(10).fill(null).map(() => faker.word.noun())
 		await prisma.film
-			.create({
-				select: { id: true },
-				data: {
-					...filmData,
-					genres: {
-						connect: {
-							name: GENRES[index % GENRES.length],
+			.create(
+				withQueryContext(
+					{
+						select: { id: true },
+						data: {
+							...filmData,
+							genres: {
+								connect: {
+									name: GENRES[index % GENRES.length],
+								},
+							},
+							keywords: {
+								connectOrCreate: keywords.map(keyword => ({
+									where: {
+										name: keyword,
+									},
+									create: {
+										name: keyword,
+									},
+								})),
+							},
 						},
 					},
-					keywords: {
-						connectOrCreate: keywords.map(keyword => ({
-							where: {
-								name: keyword,
-							},
-							create: {
-								name: keyword,
-							},
-						})),
-					},
-				},
-			})
+					{ userId: PETAL_BOT_ID, modelId: null },
+				),
+			)
 			.catch(e => {
 				console.error('Error creating a film:', e)
 				return null
