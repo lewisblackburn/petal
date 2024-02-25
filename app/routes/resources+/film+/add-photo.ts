@@ -6,7 +6,7 @@ import {
 } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
-import { MAX_SIZE, PETAL_BOT_ID } from '#app/utils/constants.ts'
+import { MAX_SIZE } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { extractFileName, withQueryContext } from '#app/utils/misc'
 import { s3UploadHandler } from '#app/utils/s3.server.ts'

@@ -68,7 +68,6 @@ export const auditLog = Prisma.defineExtension(client => {
 
 				let oldValues = {}
 				let newValues = {}
-				let modelIds: string[] = []
 
 				const isCreateOperation = operation === 'create'
 
@@ -81,10 +80,6 @@ export const auditLog = Prisma.defineExtension(client => {
 				}
 
 				if (before === null) before = {}
-
-				if (manyOperations.includes(operation)) {
-					modelIds = before.map((item: any) => item.id)
-				}
 
 				// Remove select from args, so we can compare the before and after
 				const removeSelectFromArgs = { ...args }

@@ -1,7 +1,6 @@
 import { parseWithZod } from '@conform-to/zod'
 import { type ActionFunctionArgs, json } from '@remix-run/server-runtime'
 import { z } from 'zod'
-import { PETAL_BOT_ID } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server'
 import { extractFileName, fetchAndUploadImages } from '#app/utils/misc'
 import { requireUserWithRole } from '#app/utils/permissions.server'

@@ -3,7 +3,6 @@ import {
 	type TMDBFilm,
 	type TMDBExtendedMember,
 } from '#app/types/tmdb'
-import { PETAL_BOT_ID } from './constants'
 import { prisma } from './db.server'
 import { extractFileName, fetchAndUploadImage, fetchWithDelay } from './misc'
 import { s3UploadHandler } from './s3.server'

@@ -1,7 +1,7 @@
 import * as React from 'react'
 
+import { type ButtonProps, buttonVariants } from '#app/components/ui/button'
 import { cn } from '#app/utils/misc.tsx'
-import { ButtonProps, buttonVariants } from '#app/components/ui/button'
 import { Icon } from './icon'
 
 const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
@@ -45,6 +45,7 @@ const PaginationLink = ({
 	size = 'icon',
 	...props
 }: PaginationLinkProps) => (
+	// eslint-disable-next-line jsx-a11y/anchor-has-content
 	<a
 		aria-current={isActive ? 'page' : undefined}
 		className={cn(

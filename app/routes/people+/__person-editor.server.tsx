@@ -1,9 +1,9 @@
-import { requireUserId } from '#app/utils/auth.server'
 import { parseWithZod } from '@conform-to/zod'
-import { ActionFunctionArgs, json } from '@remix-run/server-runtime'
-import { PersonEditorSchema } from './__person-editor'
+import { type ActionFunctionArgs, json } from '@remix-run/server-runtime'
+import { requireUserId } from '#app/utils/auth.server'
 import { prisma } from '#app/utils/db.server'
 import { redirectWithToast } from '#app/utils/toast.server'
+import { PersonEditorSchema } from './__person-editor'
 
 export async function action({ request }: ActionFunctionArgs) {
 	await requireUserId(request)
