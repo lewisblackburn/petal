@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
+import { withQueryContext } from '#app/utils/misc.js'
 
 // TODO: Write tests for adding 10 people, ordering 10 people and then deleteing 10 people
 
@@ -17,7 +18,7 @@ export const ReorderFilmCastSchema = z.object({
 })
 
 export async function action({ request }: ActionFunctionArgs) {
-	await requireUserId(request)
+	const userId = await requireUserId(request)
 	const formData = await request.formData()
 	const submission = parseWithZod(formData, {
 		schema: ReorderFilmCastSchema,
@@ -46,10 +47,15 @@ export async function action({ request }: ActionFunctionArgs) {
 		(castMemberAfterParsed?.denominator ?? 0)
 
 	// TODO: At some point the values will need to be reindexed to prevent duplicate order values
-	await prisma.filmCastMember.update({
-		where: { id: castMemberId },
-		data: { numerator: numerator, denominator: denominator },
-	})
+	await prisma.filmCastMember.update(
+		withQueryContext(
+			{
+				where: { id: castMemberId },
+				data: { numerator: numerator, denominator: denominator },
+			},
+			{ userId, modelId: filmId },
+		),
+	)
 
 	return redirectWithToast(`/films/${filmId}/edit/cast`, {
 		description: 'Cast Member Reordered',

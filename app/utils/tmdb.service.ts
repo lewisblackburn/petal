@@ -110,7 +110,6 @@ export const createOrUpdatePerson = async (
 				// @ts-expect-error this will exist
 				numerator: creditMember.order + 1,
 				denominator: 1,
-				lastUpdatedByUserId: PETAL_BOT_ID,
 			},
 		}
 	} else {

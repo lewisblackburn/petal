@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
+import { withQueryContext } from '#app/utils/misc.js'
 
 export const DeleteFilmCrewMembersSchema = z.object({
 	intent: z.literal('delete-film-crew-members'),
@@ -13,7 +14,7 @@ export const DeleteFilmCrewMembersSchema = z.object({
 })
 
 export async function action({ request }: ActionFunctionArgs) {
-	await requireUserId(request)
+	const userId = await requireUserId(request)
 	const formData = await request.formData()
 
 	invariantResponse(
@@ -29,18 +30,18 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const parsedIds = JSON.parse(crewMemberIds) as string[]
 
-	await prisma.film.update({
-		where: { id: filmId },
-		data: {
-			crew: {
-				deleteMany: {
+	await prisma.filmCrewMember.deleteMany(
+		withQueryContext(
+			{
+				where: {
 					id: {
 						in: parsedIds,
 					},
 				},
 			},
-		},
-	})
+			{ userId, modelId: filmId },
+		),
+	)
 
 	return json({ status: 'success' } as const, {
 		headers: await createToastHeaders({

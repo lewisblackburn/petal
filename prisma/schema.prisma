@@ -30,11 +30,10 @@ model User {
   songReviews     SongReview[]
   favouritedSongs SongFavourite[]
 
-  roles               Role[]
-  sessions            Session[]
-  connections         Connection[]
-  filmEdits           FilmEdit[]
-  filmCastMemberEdits FilmCastMemberEdit[]
+  roles       Role[]
+  sessions    Session[]
+  connections Connection[]
+  filmEdits   FilmEdit[]
 
   totalEdits Int @default(0)
 }
@@ -203,6 +202,17 @@ model Person {
   photos PersonImage[]
 }
 
+model PersonImage {
+  id        String   @id @unique @default(cuid())
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  personId  String
+  filename  String
+  url       String
+  primary   Boolean? @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Film {
   id           String    @id @unique @default(cuid())
   title        String
@@ -244,19 +254,16 @@ model Film {
   photos              FilmPhoto[]
   videos              FilmVideo[]
   taglines            FilmTagline[]
-  genres              Genre[]                  @relation("FilmToGenre")
-  keywords            Keyword[]                @relation("FilmToKeyword")
+  genres              FilmGenre[]
+  keywords            FilmKeyword[]
   ratings             FilmRating[]
   reviews             FilmReview[]
   favourited          FilmFavourite[]
   alternativeTitles   FilmAlternateTitle[]
   releaseInformation  FilmReleaseInformation[]
   productionCompanies ProductionCompany[]
-  primaryEdits        FilmEdit[]
-  filmCastMemberEdits FilmCastMemberEdit[]
+  edits               FilmEdit[]
   productionCountries String?
-
-  lastUpdatedByUserId String?
 
   recommendedBy   FilmRecommendation[] @relation("FilmRecommendations")
   recommendations FilmRecommendation[] @relation("FilmRecommendedBy")
@@ -284,8 +291,6 @@ model FilmCastMember {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  lastUpdatedByUserId String?
-
   filmId   String
   personId String
 }
@@ -305,38 +310,61 @@ model FilmCrewMember {
 }
 
 model FilmPhoto {
-  id        String   @id @unique @default(cuid())
-  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  filmId    String
-  type      String
-  filename  String
-  url       String
-  language  String?  @default("English")
-  primary   Boolean? @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+  id       String   @id @unique @default(cuid())
+  film     Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId   String
+  type     String
+  filename String
+  url      String
+  language String?  @default("English")
+  primary  Boolean? @default(false)
 
-model PersonImage {
-  id        String   @id @unique @default(cuid())
-  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  personId  String
-  filename  String
-  url       String
-  primary   Boolean? @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model FilmVideo {
-  id        String   @id @unique @default(cuid())
-  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  filmId    String
-  site      String
-  type      String
-  quality   String
-  name      String
-  url       String
+  id       String   @id @unique @default(cuid())
+  film     Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId   String
+  type     String
+  site     String
+  quality  String
+  name     String
+  url      String
+  language String?  @default("English")
+  primary  Boolean? @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilmTagline {
+  id      String @id @unique @default(cuid())
+  film    Film   @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId  String
+  tagline String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilmGenre {
+  id   String @id @unique @default(cuid())
+  name String @unique
+
+  films Film[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilmKeyword {
+  id   String @id @unique @default(cuid())
+  name String @unique
+
+  films Film[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -382,15 +410,6 @@ model FilmAlternateTitle {
   updatedAt DateTime @updatedAt
 }
 
-model FilmTagline {
-  id        String   @id @unique @default(cuid())
-  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  filmId    String
-  tagline   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model FilmReleaseInformation {
   id             String   @id @unique @default(cuid())
   film           Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -417,23 +436,6 @@ model ProductionCompany {
   logo      String?  @default("/img/300x450.png")
   homepage  String?
   films     Film[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Genre {
-  id        String   @id @unique @default(cuid())
-  name      String   @unique
-  films     Film[]   @relation("FilmToGenre")
-  songs     Song[]   @relation("SongToGenre")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Keyword {
-  name      String   @id @unique
-  films     Film[]   @relation("FilmToKeyword")
-  songs     Song[]   @relation("SongToKeyword")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -476,8 +478,6 @@ model Song {
   duration Int
   locked   Boolean? @default(false)
 
-  genres     Genre[]         @relation("SongToGenre")
-  keywords   Keyword[]       @relation("SongToKeyword")
   favourited SongFavourite[]
   ratings    SongRating[]
   reviews    SongReview[]
@@ -546,6 +546,7 @@ model Artist {
 
 model FilmEdit {
   id        Int      @id @default(autoincrement())
+  model     String
   operation String
   oldValues String?
   newValues String?
@@ -555,19 +556,4 @@ model FilmEdit {
 
   userId String
   filmId String
-}
-
-model FilmCastMemberEdit {
-  id        Int      @id @default(autoincrement())
-  operation String
-  oldValues String?
-  newValues String?
-  user      User     @relation(fields: [userId], references: [id])
-  film      Film     @relation(fields: [filmId], references: [id])
-  createdAt DateTime @default(now())
-
-  userId String
-  filmId String
-
-  @@index([filmId])
 }

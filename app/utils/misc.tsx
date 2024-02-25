@@ -346,41 +346,6 @@ export function minutesToWatchTime(minutes: number): string {
 }
 
 /**
- * Calculates the difference between two objects.
- * @param oldData - The old object.
- * @param newData - The new object.
- * @returns An object containing the keys that have different values between the old and new objects.
- */
-export const difference = (oldData: Object, newData: Object) => {
-	const result: { [key: string]: { oldValue: any; newValue: any } } = {}
-
-	const keys = new Set([...Object.keys(oldData), ...Object.keys(newData)])
-
-	for (let key of keys) {
-		// Make sure to only compare strings so dates can be compared
-		let oldValue: any = String(oldData[key as keyof typeof oldData])
-		let newValue: any = String(newData[key as keyof typeof newData])
-
-		// Skip if one value is undefined and the other is null
-		if (
-			(oldValue === 'undefined' && newValue === 'null') ||
-			(oldValue === 'null' && newValue === 'undefined')
-		) {
-			continue
-		}
-
-		if (key in oldData && key in newData && oldValue !== newValue) {
-			console.log(oldValue, newValue)
-
-			// For some reason these have to be flipped
-			result[key] = { newValue: oldValue, oldValue: newValue }
-		}
-	}
-
-	return result
-}
-
-/**
  * Calculates the cosine similarity between two texts.
  * @param text1 The first text.
  * @param text2 The second text.
@@ -641,4 +606,84 @@ export function uuidv4(): string {
 
 	// Replace each placeholder in the UUID template with a randomly generated digit
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, randomDigit)
+}
+
+type DifferenceObject<T> = {
+	oldValues: Partial<T>
+	newValues: Partial<T>
+}
+
+/**
+ * Calculates the difference between two objects of type T, excluding specified fields.
+ * @template T - The type of the objects being compared.
+ * @param oldObj - The old object to compare.
+ * @param newObj - The new object to compare.
+ * @param fieldsToIgnore - An array of field names to ignore during the comparison.
+ * @returns An object containing the old and new values for the differing fields.
+ */
+export function difference<T>(
+	oldObj: T,
+	newObj: T,
+	fieldsToIgnore: string[],
+): DifferenceObject<T> {
+	const differences: DifferenceObject<T> = {
+		oldValues: {},
+		newValues: {},
+	}
+
+	for (const key in newObj) {
+		if (
+			Object.prototype.hasOwnProperty.call(newObj, key) &&
+			!fieldsToIgnore.includes(key)
+		) {
+			const oldValue = oldObj[key]
+			const newValue = newObj[key]
+
+			const valuesAreDifferent = () => oldValue !== newValue
+			const valuesAreDates = () =>
+				oldValue instanceof Date && newValue instanceof Date
+			const dateValuesDiffer = () =>
+				valuesAreDates() &&
+				(oldValue as Date).getTime() !== (newValue as Date).getTime()
+
+			if (valuesAreDifferent() && (!valuesAreDates() || dateValuesDiffer())) {
+				differences.oldValues[key] = oldValue
+				differences.newValues[key] = newValue
+			}
+		}
+	}
+
+	return differences
+}
+
+/**
+ * Checks if two objects are equal, ignoring specified fields.
+ * @param obj1 The first object to compare.
+ * @param obj2 The second object to compare.
+ * @param fieldsToIgnore An optional array of field names to ignore during comparison.
+ * @returns True if the objects are equal, false otherwise.
+ */
+export function equal<T>(
+	obj1: T,
+	obj2: T,
+	fieldsToIgnore: string[] = [],
+): boolean {
+	const differences = difference(obj1, obj2, fieldsToIgnore)
+	return Object.keys(differences.oldValues).length === 0
+}
+
+/**
+ * Adds query context to the arguments.
+ * @param args - The arguments to add query context to.
+ * @param userId - The user ID.
+ * @param modelId - The model ID.
+ * @returns The arguments with query context added.
+ */
+export function withQueryContext<T>(
+	args: T,
+	{ userId, modelId }: { userId: string; modelId: string | null },
+) {
+	;(args as any).userId = userId
+	;(args as any).modelId = modelId
+	return args
 }

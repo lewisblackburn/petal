@@ -150,7 +150,7 @@ async function seed() {
 			username: 'petal_bot',
 			name: 'Petal Bot',
 			image: { create: kodyImages.kodyUser },
-			// TODO: Remove this later
+			// TODO: change to .env variable
 			password: { create: createPassword('removethislater') },
 			connections: {
 				create: { providerName: 'github', providerId: githubUser.profile.id },
@@ -261,7 +261,7 @@ async function seed() {
 
 	console.time(`🎶 Created ${GENRES.length} genres...`)
 	for (let index = 0; index < GENRES.length; index++) {
-		await prisma.genre
+		await prisma.filmGenre
 			.create({
 				select: { id: true },
 				data: {
@@ -285,7 +285,6 @@ async function seed() {
 				select: { id: true },
 				data: {
 					...filmData,
-					lastUpdatedByUserId: PETAL_BOT_ID,
 					genres: {
 						connect: {
 							name: GENRES[index % GENRES.length],

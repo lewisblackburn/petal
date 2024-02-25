@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
+import { withQueryContext } from '#app/utils/misc.js'
 
 export const AddFilmCrewMemberSchema = z.object({
 	filmId: z.string(),
@@ -15,7 +16,7 @@ export const AddFilmCrewMemberSchema = z.object({
 })
 
 export async function action({ request }: ActionFunctionArgs) {
-	await requireUserId(request)
+	const userId = await requireUserId(request)
 	const formData = await request.formData()
 
 	const submission = parseWithZod(formData, {
@@ -32,11 +33,15 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	let { filmId, personId, department, job, featured } = submission.value
 
-	await prisma.film.update({
-		where: { id: filmId },
-		data: {
-			crew: {
-				create: {
+	await prisma.filmCrewMember.create(
+		withQueryContext(
+			{
+				data: {
+					film: {
+						connect: {
+							id: filmId,
+						},
+					},
 					person: {
 						connect: {
 							id: personId,
@@ -44,11 +49,12 @@ export async function action({ request }: ActionFunctionArgs) {
 					},
 					department,
 					job,
-					featured: featured,
+					featured,
 				},
 			},
-		},
-	})
+			{ userId, modelId: filmId },
+		),
+	)
 
 	return json(
 		{ result: submission.reply() },

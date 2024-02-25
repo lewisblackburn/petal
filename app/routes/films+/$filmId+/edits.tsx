@@ -20,7 +20,7 @@ import { prisma } from '#app/utils/db.server.ts'
 import { getUserImgSrc } from '#app/utils/misc'
 import { getTableParams } from '#app/utils/request.helper.ts'
 
-const TAKE = 20
+const TAKE = 5
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { orderBy, skip, take } = getTableParams(request, TAKE, {
@@ -39,6 +39,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		where,
 		select: {
 			id: true,
+			model: true,
 			operation: true,
 			oldValues: true,
 			newValues: true,
@@ -113,12 +114,6 @@ export default function FilmEditLogsRoute() {
 							</CardTitle>
 						</CardHeader>
 						{groupedEdits[date].map((edit: (typeof data.edits)[0]) => {
-							const newValues: any =
-								edit.newValues !== null ? JSON.parse(edit.newValues) : {}
-							const oldValues: any =
-								edit.oldValues !== null ? JSON.parse(edit.oldValues) : {}
-							const keys = Object.keys(newValues)
-
 							return (
 								<div key={edit.id}>
 									<CardContent className="flex flex-col p-0">
@@ -136,29 +131,23 @@ export default function FilmEditLogsRoute() {
 											</Avatar>
 											<span>{edit.user?.name}</span>
 										</div>
-										{keys.map(key => {
-											// HACK: This is a hack to get around the custom_migrations json_object() key problem.
-											if (newValues[key] == null || newValues[key] == '')
-												return null
-
-											return (
-												<div key={key}>
-													<div className="flex items-center gap-2 bg-popover/10 px-5 py-3">
-														<span className="font-bold">{key}</span>
-													</div>
-													{edit.newValues !== null && (
-														<div className="flex items-center gap-2  bg-green-500/10 p-5">
-															+ {newValues[key]}
-														</div>
-													)}
-													{edit.oldValues !== null && (
-														<div className="flex items-center gap-2 bg-red-500/10 p-5">
-															- {oldValues[key]}
-														</div>
-													)}
-												</div>
-											)
-										})}
+										<div className="flex items-center gap-2 bg-popover/10 px-5 py-3">
+											<span className="font-bold">{edit.model}</span>
+										</div>
+										{edit.newValues !== '{}' && (
+											<div className="flex items-center gap-2  bg-green-500/10 p-5">
+												<pre className="whitespace-pre-wrap">
+													{JSON.stringify(JSON.parse(edit.newValues), null, 2)}
+												</pre>
+											</div>
+										)}
+										{edit.oldValues !== '{}' && (
+											<div className="flex items-center gap-2 bg-red-500/10 p-5">
+												<pre className="whitespace-pre-wrap">
+													{JSON.stringify(JSON.parse(edit.oldValues), null, 2)}
+												</pre>
+											</div>
+										)}
 									</CardContent>
 								</div>
 							)

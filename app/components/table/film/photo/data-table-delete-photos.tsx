@@ -1,5 +1,5 @@
 import { type FilmPhoto } from '@prisma/client'
-import { useFetcher } from '@remix-run/react'
+import { useFetcher, useParams } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import { Button } from '#app/components/ui/button.tsx'
@@ -23,6 +23,7 @@ interface DataTableDeletePhotos<TData> {
 export function DataTableDeletePhotos<TData>({
 	table,
 }: DataTableDeletePhotos<TData>) {
+	const { filmId } = useParams()
 	const photosSelected = table
 		.getSelectedRowModel()
 		.rows.map(row => (row.original as FilmPhoto).id)
@@ -59,6 +60,7 @@ export function DataTableDeletePhotos<TData>({
 						</DialogDescription>
 					</DialogHeader>
 					<div className="grid py-4">
+						<input name="filmId" type="hidden" value={filmId} />
 						<input
 							name="photoIds"
 							type="hidden"

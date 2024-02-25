@@ -55,8 +55,11 @@ export function DataTableRowActions<TData>({
 		},
 	})
 
-	useEffect(() => {
-		form.status === 'success' && setOpen(false)
+		useEffect(() => {
+		if (form.status === 'success') {
+			setOpen(false)
+			form.reset()
+		}
 	}, [form])
 
 	return (

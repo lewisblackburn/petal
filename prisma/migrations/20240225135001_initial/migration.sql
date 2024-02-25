@@ -124,6 +124,18 @@ CREATE TABLE "Person" (
 );
 
 -- CreateTable
+CREATE TABLE "PersonImage" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "personId" TEXT NOT NULL,
+    "filename" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+    "primary" BOOLEAN DEFAULT false,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "PersonImage_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "Film" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "title" TEXT NOT NULL,
@@ -153,21 +165,7 @@ CREATE TABLE "Film" (
     "backdrop" TEXT DEFAULT '/img/1920x1080.png',
     "trailer" TEXT DEFAULT 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     "tagline" TEXT,
-    "productionCountries" TEXT,
-    "lastUpdatedByUserId" TEXT
-);
-
--- CreateTable
-CREATE TABLE "FilmEdit" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "operation" TEXT NOT NULL,
-    "oldValues" TEXT,
-    "newValues" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "userId" TEXT NOT NULL,
-    "filmId" TEXT NOT NULL,
-    CONSTRAINT "FilmEdit_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "FilmEdit_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "productionCountries" TEXT
 );
 
 -- CreateTable
@@ -190,7 +188,6 @@ CREATE TABLE "FilmCastMember" (
     "character" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "lastUpdatedByUserId" TEXT,
     "filmId" TEXT NOT NULL,
     "personId" TEXT NOT NULL,
     CONSTRAINT "FilmCastMember_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -226,29 +223,45 @@ CREATE TABLE "FilmPhoto" (
 );
 
 -- CreateTable
-CREATE TABLE "PersonImage" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "personId" TEXT NOT NULL,
-    "filename" TEXT NOT NULL,
-    "url" TEXT NOT NULL,
-    "primary" BOOLEAN DEFAULT false,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "PersonImage_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- CreateTable
 CREATE TABLE "FilmVideo" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "filmId" TEXT NOT NULL,
-    "site" TEXT NOT NULL,
     "type" TEXT NOT NULL,
+    "site" TEXT NOT NULL,
     "quality" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "url" TEXT NOT NULL,
+    "language" TEXT DEFAULT 'English',
+    "primary" BOOLEAN DEFAULT false,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     CONSTRAINT "FilmVideo_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "FilmTagline" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "filmId" TEXT NOT NULL,
+    "tagline" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "FilmTagline_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "FilmGenre" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "FilmKeyword" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
 );
 
 -- CreateTable
@@ -289,16 +302,6 @@ CREATE TABLE "FilmAlternateTitle" (
 );
 
 -- CreateTable
-CREATE TABLE "FilmTagline" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "filmId" TEXT NOT NULL,
-    "tagline" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "FilmTagline_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- CreateTable
 CREATE TABLE "FilmReleaseInformation" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "filmId" TEXT NOT NULL,
@@ -322,21 +325,6 @@ CREATE TABLE "ProductionCompany" (
     "country" TEXT,
     "logo" TEXT DEFAULT '/img/300x450.png',
     "homepage" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "Genre" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "Keyword" (
-    "name" TEXT NOT NULL PRIMARY KEY,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
@@ -432,6 +420,19 @@ CREATE TABLE "Artist" (
 );
 
 -- CreateTable
+CREATE TABLE "FilmEdit" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "operation" TEXT NOT NULL,
+    "oldValues" TEXT,
+    "newValues" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userId" TEXT NOT NULL,
+    "filmId" TEXT NOT NULL,
+    CONSTRAINT "FilmEdit_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "FilmEdit_filmId_fkey" FOREIGN KEY ("filmId") REFERENCES "Film" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "_PermissionToRole" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
@@ -448,19 +449,19 @@ CREATE TABLE "_RoleToUser" (
 );
 
 -- CreateTable
-CREATE TABLE "_FilmToGenre" (
+CREATE TABLE "_FilmToFilmGenre" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
-    CONSTRAINT "_FilmToGenre_A_fkey" FOREIGN KEY ("A") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_FilmToGenre_B_fkey" FOREIGN KEY ("B") REFERENCES "Genre" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "_FilmToFilmGenre_A_fkey" FOREIGN KEY ("A") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_FilmToFilmGenre_B_fkey" FOREIGN KEY ("B") REFERENCES "FilmGenre" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
-CREATE TABLE "_FilmToKeyword" (
+CREATE TABLE "_FilmToFilmKeyword" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
-    CONSTRAINT "_FilmToKeyword_A_fkey" FOREIGN KEY ("A") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_FilmToKeyword_B_fkey" FOREIGN KEY ("B") REFERENCES "Keyword" ("name") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "_FilmToFilmKeyword_A_fkey" FOREIGN KEY ("A") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_FilmToFilmKeyword_B_fkey" FOREIGN KEY ("B") REFERENCES "FilmKeyword" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -469,22 +470,6 @@ CREATE TABLE "_FilmToProductionCompany" (
     "B" TEXT NOT NULL,
     CONSTRAINT "_FilmToProductionCompany_A_fkey" FOREIGN KEY ("A") REFERENCES "Film" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "_FilmToProductionCompany_B_fkey" FOREIGN KEY ("B") REFERENCES "ProductionCompany" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "_SongToGenre" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL,
-    CONSTRAINT "_SongToGenre_A_fkey" FOREIGN KEY ("A") REFERENCES "Genre" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_SongToGenre_B_fkey" FOREIGN KEY ("B") REFERENCES "Song" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "_SongToKeyword" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL,
-    CONSTRAINT "_SongToKeyword_A_fkey" FOREIGN KEY ("A") REFERENCES "Keyword" ("name") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_SongToKeyword_B_fkey" FOREIGN KEY ("B") REFERENCES "Song" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -538,6 +523,9 @@ CREATE UNIQUE INDEX "Person_id_key" ON "Person"("id");
 CREATE UNIQUE INDEX "Person_tmdbID_key" ON "Person"("tmdbID");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "PersonImage_id_key" ON "PersonImage"("id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Film_id_key" ON "Film"("id");
 
 -- CreateIndex
@@ -548,9 +536,6 @@ CREATE UNIQUE INDEX "Film_wikiDataID_key" ON "Film"("wikiDataID");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Film_tmdbID_key" ON "Film"("tmdbID");
-
--- CreateIndex
-CREATE UNIQUE INDEX "FilmEdit_id_key" ON "FilmEdit"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "FilmRecommendation_id_key" ON "FilmRecommendation"("id");
@@ -565,10 +550,22 @@ CREATE UNIQUE INDEX "FilmCrewMember_id_key" ON "FilmCrewMember"("id");
 CREATE UNIQUE INDEX "FilmPhoto_id_key" ON "FilmPhoto"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "PersonImage_id_key" ON "PersonImage"("id");
+CREATE UNIQUE INDEX "FilmVideo_id_key" ON "FilmVideo"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "FilmVideo_id_key" ON "FilmVideo"("id");
+CREATE UNIQUE INDEX "FilmTagline_id_key" ON "FilmTagline"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "FilmGenre_id_key" ON "FilmGenre"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "FilmGenre_name_key" ON "FilmGenre"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "FilmKeyword_id_key" ON "FilmKeyword"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "FilmKeyword_name_key" ON "FilmKeyword"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "FilmRating_filmId_userId_key" ON "FilmRating"("filmId", "userId");
@@ -583,9 +580,6 @@ CREATE UNIQUE INDEX "FilmReview_filmId_userId_key" ON "FilmReview"("filmId", "us
 CREATE UNIQUE INDEX "FilmAlternateTitle_id_key" ON "FilmAlternateTitle"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "FilmTagline_id_key" ON "FilmTagline"("id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "FilmReleaseInformation_id_key" ON "FilmReleaseInformation"("id");
 
 -- CreateIndex
@@ -593,15 +587,6 @@ CREATE UNIQUE INDEX "ProductionCompany_id_key" ON "ProductionCompany"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ProductionCompany_name_key" ON "ProductionCompany"("name");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Genre_id_key" ON "Genre"("id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Genre_name_key" ON "Genre"("name");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Keyword_name_key" ON "Keyword"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Location_id_key" ON "Location"("id");
@@ -652,34 +637,22 @@ CREATE UNIQUE INDEX "_RoleToUser_AB_unique" ON "_RoleToUser"("A", "B");
 CREATE INDEX "_RoleToUser_B_index" ON "_RoleToUser"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_FilmToGenre_AB_unique" ON "_FilmToGenre"("A", "B");
+CREATE UNIQUE INDEX "_FilmToFilmGenre_AB_unique" ON "_FilmToFilmGenre"("A", "B");
 
 -- CreateIndex
-CREATE INDEX "_FilmToGenre_B_index" ON "_FilmToGenre"("B");
+CREATE INDEX "_FilmToFilmGenre_B_index" ON "_FilmToFilmGenre"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_FilmToKeyword_AB_unique" ON "_FilmToKeyword"("A", "B");
+CREATE UNIQUE INDEX "_FilmToFilmKeyword_AB_unique" ON "_FilmToFilmKeyword"("A", "B");
 
 -- CreateIndex
-CREATE INDEX "_FilmToKeyword_B_index" ON "_FilmToKeyword"("B");
+CREATE INDEX "_FilmToFilmKeyword_B_index" ON "_FilmToFilmKeyword"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_FilmToProductionCompany_AB_unique" ON "_FilmToProductionCompany"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_FilmToProductionCompany_B_index" ON "_FilmToProductionCompany"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_SongToGenre_AB_unique" ON "_SongToGenre"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_SongToGenre_B_index" ON "_SongToGenre"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_SongToKeyword_AB_unique" ON "_SongToKeyword"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_SongToKeyword_B_index" ON "_SongToKeyword"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_AlbumToArtist_AB_unique" ON "_AlbumToArtist"("A", "B");

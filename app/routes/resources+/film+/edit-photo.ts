@@ -5,6 +5,8 @@ import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
+import { withQueryContext } from '#app/utils/misc.js'
+import { PETAL_BOT_ID } from '#app/utils/constants.js'
 
 export const EditFilmPhotoSchema = z.object({
 	id: z.string(),
@@ -16,7 +18,7 @@ export const EditFilmPhotoSchema = z.object({
 })
 
 export async function action({ request }: ActionFunctionArgs) {
-	await requireUserId(request)
+	const userId = await requireUserId(request)
 	const formData = await request.formData()
 
 	const submission = parseWithZod(formData, {
@@ -35,35 +37,53 @@ export async function action({ request }: ActionFunctionArgs) {
 	let { id, filmId, type, language, url, primary } = submission.value
 
 	if (primary) {
-		await prisma.$transaction(async $prisma => {
-			const existingPrimaryPhoto = await $prisma.filmPhoto.findFirst({
-				where: { filmId, primary: true, type },
-			})
-			if (existingPrimaryPhoto) {
-				await $prisma.filmPhoto.update({
-					where: { id: existingPrimaryPhoto.id },
-					data: { primary: false },
-				})
-			}
-			await $prisma.filmPhoto.update({
-				where: { id },
-				data: {
-					primary: true,
-					type,
-					language,
-					film: { update: { [type]: url } },
+		// FIXME: This should be a transaction to allow for rollbacks, however it timesout
+		// due to this issue: https://github.com/prisma/prisma/discussions/20016 and https://github.com/prisma/prisma/discussions/20016
+		// await prisma.$transaction(async $prisma => {
+		// await prisma.$transaction(async $prisma => {
+		const existingPrimaryPhoto = await prisma.filmPhoto.findFirst({
+			where: { filmId, primary: true, type },
+		})
+		if (existingPrimaryPhoto) {
+			await prisma.filmPhoto.update(
+				withQueryContext(
+					{
+						where: { id: existingPrimaryPhoto.id },
+						data: { primary: false },
+					},
+					{ userId: PETAL_BOT_ID, modelId: filmId },
+				),
+			)
+		}
+		await prisma.filmPhoto.update(
+			withQueryContext(
+				{
+					where: { id },
+					data: {
+						primary: true,
+						type,
+						language,
+						film: { update: { [type]: url } },
+					},
 				},
-			})
-		})
+				{ userId, modelId: filmId },
+			),
+		)
+		// })
 	} else {
-		await prisma.filmPhoto.update({
-			where: { id },
-			data: {
-				primary: false,
-				type,
-				language,
-			},
-		})
+		await prisma.filmPhoto.update(
+			withQueryContext(
+				{
+					where: { id },
+					data: {
+						primary: false,
+						type,
+						language,
+					},
+				},
+				{ userId, modelId: filmId },
+			),
+		)
 	}
 
 	return json(

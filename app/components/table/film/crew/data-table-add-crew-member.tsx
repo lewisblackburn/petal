@@ -41,7 +41,10 @@ export function DataTableAddCrewMember() {
 	})
 
 	useEffect(() => {
-		form.status === 'success' && setOpen(false)
+		if (form.status === 'success') {
+			setOpen(false)
+			form.reset()
+		}
 	}, [form])
 
 	return (

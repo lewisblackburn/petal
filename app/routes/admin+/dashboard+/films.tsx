@@ -35,8 +35,12 @@ export default function DashboardFilmsRoute() {
 	})
 
 	useEffect(() => {
-		form.status === 'success' && setOpen(false)
+		if (form.status === 'success') {
+			setOpen(false)
+			form.reset()
+		}
 	}, [form])
+
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>

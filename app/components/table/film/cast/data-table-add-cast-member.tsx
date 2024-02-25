@@ -35,8 +35,11 @@ export function DataTableAddCastMember() {
 		shouldRevalidate: 'onBlur',
 	})
 
-	useEffect(() => {
-		form.status === 'success' && setOpen(false)
+		useEffect(() => {
+		if (form.status === 'success') {
+			setOpen(false)
+			form.reset()
+		}
 	}, [form])
 
 	return (

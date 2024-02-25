@@ -2,8 +2,9 @@ import { parseWithZod } from '@conform-to/zod'
 import { type ActionFunctionArgs, json } from '@remix-run/server-runtime'
 import { requireUserId } from '#app/utils/auth.server'
 import { prisma } from '#app/utils/db.server'
-import { FilmEditorSchema } from './__film-editor'
 import { redirectWithToast } from '#app/utils/toast.server'
+import { FilmEditorSchema } from './__film-editor'
+import { withQueryContext } from '#app/utils/misc.js'
 
 export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
@@ -50,40 +51,39 @@ export async function action({ request }: ActionFunctionArgs) {
 		revenue,
 	} = submission.value
 
-	const updatedFilm = await prisma.$transaction(async $prisma => {
-		const film = await $prisma.film.upsert({
-			select: { id: true },
-			where: { id: filmId ?? '__new_film__' },
-			create: {
-				title,
-				tagline,
-				overview,
-				runtime,
-				releaseDate,
-				language,
-				ageRating,
-				status,
-				budget,
-				revenue,
-				lastUpdatedByUserId: userId,
+	const updatedFilm = await prisma.film.upsert(
+		withQueryContext(
+			{
+				select: { id: true },
+				where: { id: filmId ?? '__new_film__' },
+				create: {
+					title,
+					tagline,
+					overview,
+					runtime,
+					releaseDate,
+					language,
+					ageRating,
+					status,
+					budget,
+					revenue,
+				},
+				update: {
+					title,
+					tagline,
+					overview,
+					runtime,
+					releaseDate,
+					language,
+					ageRating,
+					status,
+					budget,
+					revenue,
+				},
 			},
-			update: {
-				title,
-				tagline,
-				overview,
-				runtime,
-				releaseDate,
-				language,
-				ageRating,
-				status,
-				budget,
-				revenue,
-				lastUpdatedByUserId: userId,
-			},
-		})
-
-		return film
-	})
+			{ userId, modelId: filmId },
+		),
+	)
 
 	return redirectWithToast(`/films/${updatedFilm.id}`, {
 		type: 'success',

@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
+import { withQueryContext } from '#app/utils/misc.js'
 
 export const AddFilmCastMemberSchema = z.object({
 	filmId: z.string(),
@@ -41,24 +42,28 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const newNumerator = maxNumerator + 1
 
-	await prisma.filmCastMember.create({
-		data: {
-			film: {
-				connect: {
-					id: filmId,
+	await prisma.filmCastMember.create(
+		withQueryContext(
+			{
+				data: {
+					film: {
+						connect: {
+							id: filmId,
+						},
+					},
+					person: {
+						connect: {
+							id: personId,
+						},
+					},
+					numerator: newNumerator,
+					denominator: 1,
+					character,
 				},
 			},
-			person: {
-				connect: {
-					id: personId,
-				},
-			},
-			numerator: newNumerator,
-			denominator: 1,
-			character,
-			lastUpdatedByUserId: userId,
-		},
-	})
+			{ userId, modelId: filmId },
+		),
+	)
 
 	return json(
 		{

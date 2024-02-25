@@ -3,7 +3,6 @@ import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import {
-	CheckboxField,
 	ErrorList,
 	Field,
 	FilterSelectField,
@@ -42,7 +41,10 @@ export function DataTableAddPhoto() {
 	})
 
 	useEffect(() => {
-		form.status === 'success' && setOpen(false)
+		if (form.status === 'success') {
+			setOpen(false)
+			form.reset()
+		}
 	}, [form])
 
 	return (
@@ -108,14 +110,6 @@ export function DataTableAddPhoto() {
 								value: language.name,
 							}))}
 							errors={fields.language.errors}
-						/>
-						<CheckboxField
-							labelProps={{
-								htmlFor: fields.primary.id,
-								children: 'Primary',
-							}}
-							buttonProps={getInputProps(fields.primary, { type: 'checkbox' })}
-							errors={fields.primary.errors}
 						/>
 						<ErrorList errors={form.errors} id={form.errorId} />
 					</div>

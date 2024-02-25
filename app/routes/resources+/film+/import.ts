@@ -136,7 +136,6 @@ export async function action({ request }: ActionFunctionArgs) {
 					},
 				})),
 			},
-			lastUpdatedByUserId: PETAL_BOT_ID,
 		},
 	})
 
