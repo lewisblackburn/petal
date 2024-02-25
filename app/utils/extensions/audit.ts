@@ -1,11 +1,18 @@
 import { Prisma } from '@prisma/client'
-import { difference, equal } from './misc'
+import { difference, equal } from '../misc'
 
 const modelsToInclude: Prisma.ModelName[] = [
+	// Film Models
 	Prisma.ModelName.Film,
+	Prisma.ModelName.FilmAlternateTitle,
 	Prisma.ModelName.FilmCastMember,
 	Prisma.ModelName.FilmCrewMember,
+	Prisma.ModelName.FilmGenre,
+	Prisma.ModelName.FilmKeyword,
 	Prisma.ModelName.FilmPhoto,
+	Prisma.ModelName.FilmReleaseInformation,
+	Prisma.ModelName.FilmTagline,
+	Prisma.ModelName.FilmVideo,
 ]
 
 const uniqueOperations: Prisma.PrismaAction[] = [
