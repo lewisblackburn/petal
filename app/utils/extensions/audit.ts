@@ -54,11 +54,11 @@ export const auditLog = Prisma.defineExtension(client => {
 	return client.$extends({
 		query: {
 			async $allOperations(props) {
-				// Exclude operations that can't be audited
-				if (props.operation.includes('$')) return await props.query(props.args)
-
 				const { userId, modelId, ...args } = props.args as any
 				const { operation, model } = props
+
+				// Exclude operations that can't be audited
+				if (props.operation.includes('$')) return await props.query({ ...args })
 
 				const shouldAudit =
 					operationsToAudit.includes(operation) &&
