@@ -3,6 +3,7 @@ import { useLoaderData } from '@remix-run/react'
 import { Carousel } from '#app/components/carousel.tsx'
 import { oneWeekAgo } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server.ts'
+import { TMDB } from '#app/utils/repository.service.js'
 
 export const meta: MetaFunction = () => [{ title: 'Petal' }]
 
@@ -49,6 +50,10 @@ export async function loader() {
 			},
 		},
 	})
+
+	// const tmdb = new TMDB()
+	// const film = await tmdb.importFilm('860867-the-accursed')
+	// console.log(film)
 
 	return json({ popularFilms, trendingFilms })
 }
