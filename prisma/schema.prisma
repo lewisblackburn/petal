@@ -36,6 +36,17 @@ model User {
   filmEdits   FilmEdit[]
 
   totalEdits Int @default(0)
+
+  apiKeys ApiKey[]
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Note {

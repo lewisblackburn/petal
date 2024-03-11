@@ -58,7 +58,7 @@ export const auditLog = Prisma.defineExtension(client => {
 				const { operation, model } = props
 
 				// Exclude operations that can't be audited
-				if (props.operation.includes('$')) return await props.query({ ...args })
+				if (props.operation.includes('$')) return await props.query(props.args)
 
 				const shouldAudit =
 					operationsToAudit.includes(operation) &&
@@ -73,7 +73,7 @@ export const auditLog = Prisma.defineExtension(client => {
 				// isntead of filmGenre.updateMany etc.
 				// IDEA: Maybe I can exclude FilmGenre and FilmKeyword form the modelsToInclude
 				// and write custom audit log extensions for those models?
-				console.log(props.args, props.operation, props.model)
+				// console.log(props.args, props.operation, props.model)
 
 				if (!userId) return await props.query({ ...args })
 

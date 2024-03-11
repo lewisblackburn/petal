@@ -2,7 +2,6 @@ import { faker } from '@faker-js/faker'
 import { promiseHash } from 'remix-utils/promise'
 import { GENRES, PETAL_BOT_ID } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server.ts'
-import { withQueryContext } from '#app/utils/misc.js'
 import {
 	cleanupDb,
 	createFilm,
@@ -20,7 +19,6 @@ async function seed() {
 	console.time(`🌱 Database has been seeded`)
 
 	console.time('🧹 Cleaned up the database...')
-	// @ts-expect-error middleware .$extends breaks the PrismaClient type
 	await cleanupDb(prisma)
 	console.timeEnd('🧹 Cleaned up the database...')
 
@@ -282,32 +280,27 @@ async function seed() {
 		const filmData = createFilm()
 		const keywords = new Array(10).fill(null).map(() => faker.word.noun())
 		await prisma.film
-			.create(
-				withQueryContext(
-					{
-						select: { id: true },
-						data: {
-							...filmData,
-							genres: {
-								connect: {
-									name: GENRES[index % GENRES.length],
-								},
-							},
-							keywords: {
-								connectOrCreate: keywords.map(keyword => ({
-									where: {
-										name: keyword,
-									},
-									create: {
-										name: keyword,
-									},
-								})),
-							},
+			.create({
+				select: { id: true },
+				data: {
+					...filmData,
+					genres: {
+						connect: {
+							name: GENRES[index % GENRES.length],
 						},
 					},
-					{ userId: PETAL_BOT_ID, modelId: null },
-				),
-			)
+					keywords: {
+						connectOrCreate: keywords.map(keyword => ({
+							where: {
+								name: keyword,
+							},
+							create: {
+								name: keyword,
+							},
+						})),
+					},
+				},
+			})
 			.catch(e => {
 				console.error('Error creating a film:', e)
 				return null
