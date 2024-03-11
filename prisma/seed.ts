@@ -13,12 +13,14 @@ import {
 	img,
 } from '#tests/db-utils.ts'
 import { insertGitHubUser } from '#tests/mocks/github.ts'
+import { generateApiKey } from '#app/utils/api.server.js'
 
 async function seed() {
 	console.log('🌱 Seeding...')
 	console.time(`🌱 Database has been seeded`)
 
 	console.time('🧹 Cleaned up the database...')
+	// @ts-expect-error middleware .$extends breaks the PrismaClient type
 	await cleanupDb(prisma)
 	console.timeEnd('🧹 Cleaned up the database...')
 
@@ -155,6 +157,11 @@ async function seed() {
 				create: { providerName: 'github', providerId: githubUser.profile.id },
 			},
 			roles: { connect: [{ name: 'admin' }, { name: 'user' }] },
+			apiKeys: {
+				create: {
+					key: await generateApiKey()
+				}
+			},
 			notes: {
 				create: [
 					{
