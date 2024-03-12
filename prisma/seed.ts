@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { promiseHash } from 'remix-utils/promise'
+import { generateApiKey } from '#app/utils/api.server.js'
 import { GENRES, PETAL_BOT_ID } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server.ts'
 import {
@@ -13,7 +14,6 @@ import {
 	img,
 } from '#tests/db-utils.ts'
 import { insertGitHubUser } from '#tests/mocks/github.ts'
-import { generateApiKey } from '#app/utils/api.server.js'
 
 async function seed() {
 	console.log('🌱 Seeding...')
@@ -159,8 +159,8 @@ async function seed() {
 			roles: { connect: [{ name: 'admin' }, { name: 'user' }] },
 			apiKeys: {
 				create: {
-					key: await generateApiKey()
-				}
+					key: await generateApiKey(),
+				},
 			},
 			notes: {
 				create: [

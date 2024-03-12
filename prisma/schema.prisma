@@ -564,8 +564,8 @@ model FilmEdit {
   operation String
   oldValues String?
   newValues String?
-  user      User     @relation(fields: [userId], references: [id])
-  film      Film     @relation(fields: [filmId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt DateTime @default(now())
 
   userId String

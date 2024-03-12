@@ -26,6 +26,7 @@ const manyOperations: Prisma.PrismaAction[] = [
 	'updateMany',
 	'deleteMany',
 ]
+
 const operationsToAudit: Prisma.PrismaAction[] =
 	uniqueOperations.concat(manyOperations)
 const fieldsToIgnore: string[] = ['updatedAt'] // Add fields to always ignore in difference function
@@ -54,11 +55,11 @@ export const auditLog = Prisma.defineExtension(client => {
 	return client.$extends({
 		query: {
 			async $allOperations(props) {
-				const { userId, modelId, ...args } = props.args as any
-				const { operation, model } = props
-
 				// Exclude operations that can't be audited
 				if (props.operation.includes('$')) return await props.query(props.args)
+
+				const { userId, modelId, ...args } = props.args as any
+				const { operation, model } = props
 
 				const shouldAudit =
 					operationsToAudit.includes(operation) &&
@@ -69,11 +70,9 @@ export const auditLog = Prisma.defineExtension(client => {
 					return await props.query({ ...args })
 				}
 
-				// TODO: Figure out how to do logs for genre and keywords via film.update query
-				// isntead of filmGenre.updateMany etc.
-				// IDEA: Maybe I can exclude FilmGenre and FilmKeyword form the modelsToInclude
-				// and write custom audit log extensions for those models?
-				// console.log(props.args, props.operation, props.model)
+				if (props.args.data.keywords) {
+					console.log('handle keywords')
+				}
 
 				if (!userId) return await props.query({ ...args })
 

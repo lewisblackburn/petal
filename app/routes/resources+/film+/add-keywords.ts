@@ -28,7 +28,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	let { filmId, keywords } = submission.value
 
-	const keywordList = keywords.split(',')
+	const keywordList = keywords.split(',').map(keyword => keyword.trim())
 
 	await prisma.film.update({
 		where: { id: filmId },

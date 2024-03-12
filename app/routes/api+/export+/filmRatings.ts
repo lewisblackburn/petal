@@ -8,10 +8,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	if (!apiKey) throw json({ message: 'Unauthorized' }, { status: 403 })
 
 	const petal = new Petal()
-	const films = await petal.exportFilms({
+	const films = await petal.exportFilmRatings({
 		select: {
-			id: true,
-			title: true,
+			filmId: true,
+			userId: true,
+			value: true,
 		},
 	})
 

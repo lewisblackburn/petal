@@ -1,19 +1,14 @@
-import { type Film } from '@prisma/client'
+import { type Prisma, type Film, type FilmRating } from '@prisma/client'
 import { prisma } from './db.server'
 
-interface Export {
-	exportAllFilms(): Promise<Film[]>
-}
+export class Petal {
+	public async exportFilms(args: Prisma.FilmFindManyArgs): Promise<Film[]> {
+		return prisma.film.findMany(args)
+	}
 
-export class Petal implements Export {
-	async exportAllFilms(): Promise<Film[]> {
-		return prisma.film.findMany({
-			include: {
-				cast: true,
-				crew: true,
-				genres: true,
-				keywords: true,
-			},
-		})
+	public async exportFilmRatings(
+		args: Prisma.FilmRatingFindManyArgs,
+	): Promise<FilmRating[]> {
+		return prisma.filmRating.findMany(args)
 	}
 }
