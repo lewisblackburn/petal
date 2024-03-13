@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
+import { withQueryContext } from '#app/utils/misc.js'
 
 export const AddFilmKeywordsSchema = z.object({
 	filmId: z.string(),
@@ -12,7 +13,7 @@ export const AddFilmKeywordsSchema = z.object({
 })
 
 export async function action({ request }: ActionFunctionArgs) {
-	await requireUserId(request)
+	const userId = await requireUserId(request)
 	const formData = await request.formData()
 	const submission = parseWithZod(formData, {
 		schema: AddFilmKeywordsSchema,
@@ -30,17 +31,22 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const keywordList = keywords.split(',').map(keyword => keyword.trim())
 
-	await prisma.film.update({
-		where: { id: filmId },
-		data: {
-			keywords: {
-				connectOrCreate: keywordList.map(keyword => ({
-					where: { name: keyword },
-					create: { name: keyword },
-				})),
+	await prisma.film.update(
+		withQueryContext(
+			{
+				where: { id: filmId },
+				data: {
+					keywords: {
+						connectOrCreate: keywordList.map(keyword => ({
+							where: { name: keyword },
+							create: { name: keyword },
+						})),
+					},
+				},
 			},
-		},
-	})
+			{ modelId: filmId, userId },
+		),
+	)
 
 	return json(
 		{ result: submission.reply() },

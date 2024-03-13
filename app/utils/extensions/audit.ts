@@ -21,10 +21,20 @@ const uniqueOperations: Prisma.PrismaAction[] = [
 	'delete',
 	'upsert',
 ]
+
+// TODO: I still need to implement this
 const manyOperations: Prisma.PrismaAction[] = [
 	'createMany',
 	'updateMany',
 	'deleteMany',
+]
+
+const nestedOperationsToInclude: string[] = ['genres', 'keywords']
+
+const nestedCreateOperations: string[] = [
+	'connect',
+	'connectOrCreate',
+	'connectMany',
 ]
 
 const operationsToAudit: Prisma.PrismaAction[] =
@@ -70,10 +80,6 @@ export const auditLog = Prisma.defineExtension(client => {
 					return await props.query({ ...args })
 				}
 
-				if (props.args.data.keywords) {
-					console.log('handle keywords')
-				}
-
 				if (!userId) return await props.query({ ...args })
 
 				let oldValues = {}
@@ -90,8 +96,13 @@ export const auditLog = Prisma.defineExtension(client => {
 
 				const after = result
 
+				const hasNestedFields = Object.keys(args).some(
+					key => typeof args[key] === 'object',
+				)
+
 				// If the old and new values are the same, then we don't need to create an audit log (e.g. no changes were made)
-				if (equal(before, after, fieldsToIgnore)) return result
+				if (equal(before, after, fieldsToIgnore) && !hasNestedFields)
+					return result
 
 				const isDeleteOperation =
 					operation === 'delete' || operation === 'deleteMany'
@@ -102,6 +113,22 @@ export const auditLog = Prisma.defineExtension(client => {
 				newValues = isDeleteOperation
 					? {}
 					: difference(before, after, fieldsToIgnore).newValues
+
+				if (hasNestedFields) {
+					for (const key in args.data) {
+						if (nestedOperationsToInclude.includes(key)) {
+							if (
+								nestedCreateOperations.some(operation =>
+									args.data[key].hasOwnProperty(operation),
+								)
+							) {
+								newValues = { ...newValues, ...args.data }
+							} else {
+								oldValues = { ...oldValues, ...args.data }
+							}
+						}
+					}
+				}
 
 				try {
 					await client.$transaction(async $prisma => {

@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
+import { withQueryContext } from '#app/utils/misc.js'
 
 export const AddFilmGenreSchema = z.object({
 	filmId: z.string(),
@@ -12,7 +13,7 @@ export const AddFilmGenreSchema = z.object({
 })
 
 export async function action({ request }: ActionFunctionArgs) {
-	await requireUserId(request)
+	const userId = await requireUserId(request)
 	const formData = await request.formData()
 	const submission = parseWithZod(formData, {
 		schema: AddFilmGenreSchema,
@@ -31,16 +32,21 @@ export async function action({ request }: ActionFunctionArgs) {
 	// NOTE: Here it won't return an error if the genre is already connected to the film,
 	// but it will return any other error. I think this is fine as it won't cause any
 	// confusion, but it's worth noting.
-	await prisma.film.update({
-		where: { id: filmId },
-		data: {
-			genres: {
-				connect: {
-					id: genreId,
+	await prisma.film.update(
+		withQueryContext(
+			{
+				where: { id: filmId },
+				data: {
+					genres: {
+						connect: {
+							id: genreId,
+						},
+					},
 				},
 			},
-		},
-	})
+			{ modelId: filmId, userId },
+		),
+	)
 
 	return json(
 		{ result: submission.reply() },

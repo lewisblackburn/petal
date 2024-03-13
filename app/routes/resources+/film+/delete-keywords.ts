@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
+import { withQueryContext } from '#app/utils/misc.js'
 
 export const DeleteFilmKeywordsSchema = z.object({
 	intent: z.literal('delete-film-keywords'),
@@ -13,7 +14,7 @@ export const DeleteFilmKeywordsSchema = z.object({
 })
 
 export async function action({ request }: ActionFunctionArgs) {
-	await requireUserId(request)
+	const userId = await requireUserId(request)
 	const formData = await request.formData()
 	invariantResponse(
 		formData.get('intent') === 'delete-film-keywords',
@@ -28,15 +29,20 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const parsedKeywords = JSON.parse(keywords) as string[]
 
-	await prisma.film.update({
-		where: { id: filmId },
-		data: {
-			keywords: {
-				// NOTE: In this we case we want to disconnect no deleteMany
-				disconnect: parsedKeywords.map(name => ({ name: name })),
+	await prisma.film.update(
+		withQueryContext(
+			{
+				where: { id: filmId },
+				data: {
+					keywords: {
+						// NOTE: In this we case we want to disconnect no deleteMany
+						disconnect: parsedKeywords.map(name => ({ name: name })),
+					},
+				},
 			},
-		},
-	})
+			{ modelId: filmId, userId },
+		),
+	)
 
 	return json({ status: 'success' } as const, {
 		headers: await createToastHeaders({

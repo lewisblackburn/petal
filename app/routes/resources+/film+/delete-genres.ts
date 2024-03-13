@@ -4,6 +4,7 @@ import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
+import { withQueryContext } from '#app/utils/misc.js'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const DeleteFilmGenresSchema = z.object({
@@ -13,7 +14,7 @@ export const DeleteFilmGenresSchema = z.object({
 })
 
 export async function action({ request }: ActionFunctionArgs) {
-	await requireUserId(request)
+	const userId = await requireUserId(request)
 	const formData = await request.formData()
 	invariantResponse(
 		formData.get('intent') === 'delete-film-genres',
@@ -28,15 +29,20 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const parsedIds = JSON.parse(genreIds) as string[]
 
-	await prisma.film.update({
-		where: { id: filmId },
-		data: {
-			genres: {
-				// NOTE: In this we case we want to disconnect no deleteMany
-				disconnect: parsedIds.map(id => ({ id })),
+	await prisma.film.update(
+		withQueryContext(
+			{
+				where: { id: filmId },
+				data: {
+					genres: {
+						// NOTE: In this we case we want to disconnect no deleteMany
+						disconnect: parsedIds.map(id => ({ id })),
+					},
+				},
 			},
-		},
-	})
+			{ modelId: filmId, userId },
+		),
+	)
 
 	return json({ status: 'success' } as const, {
 		headers: await createToastHeaders({
