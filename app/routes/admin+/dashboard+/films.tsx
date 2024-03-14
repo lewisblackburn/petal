@@ -1,6 +1,6 @@
 import { getInputProps, getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
-import { useFetcher, type MetaFunction } from '@remix-run/react'
+import { json, useFetcher, type MetaFunction } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
 import { ErrorList, Field } from '#app/components/forms'
@@ -20,6 +20,13 @@ import {
 	type action as ImportFilmFromTMDBAction,
 	ImportFilmSchema,
 } from '#app/routes/resources+/film+/import'
+import { requireUserWithRole } from '#app/utils/permissions.server.js'
+import { LoaderFunctionArgs } from '@remix-run/node'
+
+export async function loader({ request }: LoaderFunctionArgs) {
+	await requireUserWithRole(request, 'admin')
+	return json({})
+}
 
 export default function DashboardFilmsRoute() {
 	const fetcher = useFetcher<typeof ImportFilmFromTMDBAction>()
@@ -40,7 +47,6 @@ export default function DashboardFilmsRoute() {
 			form.reset()
 		}
 	}, [form])
-
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>

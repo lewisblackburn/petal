@@ -89,9 +89,6 @@ export default function NavigationBar({
 						</NavLink>
 					))}
 				</div>
-				{/* <div className={cn('block md:!hidden')}> */}
-				{/* 	<MobileSidebar /> */}
-				{/* </div> */}
 
 				<div className="flex items-center gap-5">
 					{user ? (
