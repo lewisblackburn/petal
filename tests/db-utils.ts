@@ -56,7 +56,6 @@ export function createFilm() {
 		0,
 		1,
 	)[0].name
-	const popularity = faker.number.float({ min: 0, max: 100, multipleOf: 0.1 })
 	const contentScore = faker.number.float({ min: 0, max: 100, multipleOf: 0.1 })
 	const budget = faker.number.int({ min: 0, max: 1000000000 })
 	const revenue = faker.number.int({ min: 0, max: 1000000000 })
@@ -70,7 +69,6 @@ export function createFilm() {
 		ageRating,
 		language,
 		status,
-		popularity,
 		contentScore,
 		budget,
 		revenue,

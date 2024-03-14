@@ -81,7 +81,7 @@ export default function VerifyRoute() {
 	})
 
 	return (
-		<main className="container flex flex-col justify-center pb-32 pt-20">
+		<main className="flex flex-col justify-center pb-32 pt-20">
 			<div className="text-center">
 				{type ? headings[type] : 'Invalid Verification Type'}
 			</div>

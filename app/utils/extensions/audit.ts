@@ -39,7 +39,7 @@ const nestedCreateOperations: string[] = [
 
 const operationsToAudit: Prisma.PrismaAction[] =
 	uniqueOperations.concat(manyOperations)
-const fieldsToIgnore: string[] = ['updatedAt'] // Add fields to always ignore in difference function
+const fieldsToIgnore: string[] = ['updatedAt']
 
 const getOldValue = async (client: any, params: any) => {
 	const { model, operation, args } = params

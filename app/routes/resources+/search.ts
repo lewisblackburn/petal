@@ -34,8 +34,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		_count: {
 			id: true,
 		},
-		_sum: {
-			voteCount: true,
+		_max: {
+			viewCount: true,
 		},
 	})
 	// const TVShowCount here I would compare voteCounts
@@ -44,21 +44,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		_count: {
 			id: true,
 		},
+		_max: {
+			viewCount: true,
+		},
 	})
 
 	let redirectTo = '/films'
 
-	// TODO: This will be based on the amount of total votes for the search content
-	// e.g. film votes and show votes if lucifer has more votes in shows then go to shows
-	// for people I could just implement a views column or just have it as the last else
-	// in the if else block. I think that would be the best idea. Maybe if total votes each are
-	// below a certain threshold then just go to people.
-	// OR I CAN JUST DO POPULARITY SCORES I THINK THAT'S HOW TMDB DOES IT
-	if (films._count?.id && films._sum?.voteCount) {
-		redirectTo = '/films'
-	} else if (people._count?.id) {
-		redirectTo = '/people'
-	}
+	const highestValue = Math.max(
+		films._max.viewCount ?? 0,
+		people._max.viewCount ?? 0,
+	)
+
+	if (highestValue === films._max.viewCount) redirectTo = '/films'
+	else if (highestValue === people._max.viewCount) redirectTo = '/people'
+	// else if (highestValue === 0) redirectTo = '/tv-shows'
+	else redirectTo = '/films'
 
 	redirectTo = `${redirectTo}?search=${search ?? ''}`
 

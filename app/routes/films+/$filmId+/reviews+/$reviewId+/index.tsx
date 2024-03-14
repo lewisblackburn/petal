@@ -110,7 +110,7 @@ export default function FilmReviewRoute() {
 	)
 
 	return (
-		<div className="container flex flex-col gap-10 py-6">
+		<div className="flex flex-col gap-10">
 			{data.filmReview.film.ratings.length > 0 &&
 				data.filmReview.film.ratings[0].value}
 			<h1>{data.filmReview.title}</h1>

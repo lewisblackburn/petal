@@ -33,7 +33,7 @@ export default function FilmEditRoute() {
 	const data = useLoaderData<typeof loader>()
 
 	return (
-		<div className="container py-6">
+		<div>
 			<FilmReviewEditor
 				review={data.filmReview}
 				rating={data.filmReview.rating?.value}

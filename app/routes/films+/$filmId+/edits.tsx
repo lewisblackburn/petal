@@ -98,7 +98,7 @@ export default function FilmEditLogsRoute() {
 	)
 
 	return (
-		<div className="container py-6">
+		<div>
 			<div className="mb-5">
 				<h2 className="text-2xl font-bold tracking-tight">
 					{data.count} Edits

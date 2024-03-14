@@ -63,7 +63,7 @@ export default function FilmsRoute() {
 	const combined = [...(location.state?.data ?? []), ...data.filmReviews]
 
 	return (
-		<main className="container py-6">
+		<main>
 			<div className="flex gap-10">
 				<Link to="new">
 					<Button variant="default" className="w-[200px]">

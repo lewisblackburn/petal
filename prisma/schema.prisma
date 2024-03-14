@@ -203,6 +203,7 @@ model Person {
   gender             String?
   placeOfBirth       String?
   homepage           String?
+  viewCount          Int       @default(0)
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
@@ -240,8 +241,8 @@ model Film {
   status       String?
   voteAverage  Float     @default(0)
   voteCount    Int?      @default(0)
+  viewCount    Int?      @default(0)
   contentScore Float?
-  popularity   Float     @default(0)
   website      String?
 
   // external ids

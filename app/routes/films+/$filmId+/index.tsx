@@ -41,9 +41,14 @@ import { type loader as filmsLoader } from './index.tsx'
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
 	const userId = await getUserId(request)
-	const film = await prisma.film.findUnique({
+	const film = await prisma.film.update({
 		where: {
 			id: params.filmId,
+		},
+		data: {
+			viewCount: {
+				increment: 1,
+			},
 		},
 		select: {
 			id: true,
@@ -54,11 +59,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 			formattedReleaseDate: true,
 			ageRating: true,
 			voteAverage: true,
+			viewCount: true,
 			language: true,
 			status: true,
 			genres: true,
 			keywords: true,
-			popularity: true,
 			contentScore: true,
 			budget: true,
 			revenue: true,
@@ -209,11 +214,11 @@ export default function FilmRoute() {
 	const canDelete = userHasPermission(user, 'delete:film:any')
 
 	return (
-		<div className="container flex flex-col gap-10 py-6">
+		<div className="flex flex-col gap-10">
 			<div className="flex items-center justify-between">
 				<h2 className="text-h2 font-black">{data.film.title}</h2>
 				<div className="flex items-center gap-5">
-					{/* FIX: Fix nested button error  */}
+					{/* TODO: Fix nested button error  */}
 					<FilmRatingDropdown
 						filmId={data.film.id}
 						defaultRating={data.film.ratings[0]?.value}
@@ -363,8 +368,8 @@ export default function FilmRoute() {
 						</a>
 						<Separator />
 						<div className="grid grid-cols-2 gap-5">
-							<Status title="Popularity" icon="bar-chart">
-								{data.film.popularity ?? 'N/A'} %
+							<Status title="Views" icon="bar-chart">
+								{data.film.viewCount}
 							</Status>
 							<Status title="Content Score" icon="folder">
 								{data.film.contentScore ?? 'N/A'} %

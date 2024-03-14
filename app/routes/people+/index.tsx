@@ -14,6 +14,7 @@ import { WhereToWatchCard } from '#app/components/where-to-watch-card'
 import { PEOPLE_SORT_OPTIONS } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server.ts'
 import { getTableParams } from '#app/utils/request.helper.ts'
+import { SearchCard } from '#app/components/search-card.js'
 
 const TAKE = 20
 
@@ -51,8 +52,9 @@ export default function PeopleRoute() {
 	const combined = [...(location.state?.data ?? []), ...data.people]
 
 	return (
-		<main className="container flex gap-10 py-6">
+		<main className="flex gap-10">
 			<div className="flex flex-col gap-2">
+				<SearchCard />
 				<SortCard sortOptions={PEOPLE_SORT_OPTIONS} />
 				<WhereToWatchCard />
 				<FiltersCard />

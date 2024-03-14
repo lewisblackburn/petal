@@ -8,7 +8,7 @@ import {
 import { Icon } from './ui/icon'
 
 export function FiltersCard() {
-	const [isOpen, setIsOpen] = React.useState(true)
+	const [isOpen, setIsOpen] = React.useState(false)
 
 	return (
 		<Collapsible

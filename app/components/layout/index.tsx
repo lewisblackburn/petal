@@ -36,7 +36,7 @@ export const Layout = () => {
 			<div className="flex h-screen flex-col justify-between">
 				<NavigationBar isOnDashboardPage={isOnDashboardPage} />
 
-				<div className="flex-1">
+				<div className="container flex-1 py-6">
 					<Outlet />
 				</div>
 

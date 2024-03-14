@@ -10,10 +10,4 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	return json({})
 }
 
-export default function NewFilmRoute() {
-	return (
-		<main className="container py-6">
-			<PersonEditor />
-		</main>
-	)
-}
+export default PersonEditor

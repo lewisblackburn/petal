@@ -10,7 +10,7 @@ const NavigationLinks: { name: string; path: string }[] = [
 
 export default function PersonEditLayout() {
 	return (
-		<div className="container py-6">
+		<div>
 			<div className="mb-5">
 				<h2 className="text-2xl font-bold tracking-tight">Edit Person</h2>
 				<p className="text-muted-foreground">

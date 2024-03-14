@@ -10,9 +10,14 @@ import { GENDERS } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
 
 export async function loader({ params }: LoaderFunctionArgs) {
-	const person = await prisma.person.findUnique({
+	const person = await prisma.person.update({
 		where: {
 			id: params.personId,
+		},
+		data: {
+			viewCount: {
+				increment: 1,
+			},
 		},
 		select: {
 			id: true,
@@ -85,7 +90,7 @@ export default function PersonRoute() {
 	const knownForItems = [...data.person.casts, ...data.person.crews]
 
 	return (
-		<div className="container grid grid-cols-4 gap-10 py-6">
+		<div className="grid grid-cols-4 gap-10">
 			<div className="col-span-1 flex flex-col gap-5">
 				<Image
 					src={data.person.image ?? ''}

@@ -24,9 +24,5 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export default function FilmEditRoute() {
 	const data = useLoaderData<typeof loader>()
 
-	return (
-		<div className="container py-6">
-			<FilmReviewEditor rating={data.filmRating?.value} />
-		</div>
-	)
+	return <FilmReviewEditor rating={data.filmRating?.value} />
 }

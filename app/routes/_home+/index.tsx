@@ -57,7 +57,7 @@ export default function Index() {
 	const { popularFilms, trendingFilms } = useLoaderData<typeof loader>()
 
 	return (
-		<div className="container flex flex-col gap-20 py-6">
+		<div className="flex flex-col gap-20 py-6">
 			{popularFilms.length > 0 && (
 				<Carousel
 					title="Popular Films"
