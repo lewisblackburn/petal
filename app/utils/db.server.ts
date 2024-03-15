@@ -35,7 +35,7 @@ export const prisma = remember('prisma', () => {
 	client.$connect()
 	return client
 })
-	.$extends(auditLog)
+	// .$extends(auditLog)
 	.$extends(filmRecommendation)
 	.$extends(user)
 	.$extends(person)
