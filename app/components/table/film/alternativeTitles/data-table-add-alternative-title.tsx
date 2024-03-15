@@ -35,7 +35,7 @@ export function DataTableAddAlternativeTitle() {
 		shouldRevalidate: 'onBlur',
 	})
 
-		useEffect(() => {
+	useEffect(() => {
 		if (form.status === 'success') {
 			setOpen(false)
 			form.reset()

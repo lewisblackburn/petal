@@ -1,4 +1,4 @@
-import { type Film, FilmGenre, FilmKeyword } from '@prisma/client'
+import { type Film, type FilmGenre, type FilmKeyword } from '@prisma/client'
 import { intervalTrigger } from '@trigger.dev/sdk'
 import { oneWeekAgo } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server'

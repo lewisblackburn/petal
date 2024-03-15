@@ -514,7 +514,10 @@ export async function getImageData(url: string): Promise<ImageData> {
 	}
 }
 
-export async function fetchAndUploadImage(path: string, s3UploadHandler: any): Promise<string> {
+export async function fetchAndUploadImage(
+	path: string,
+	s3UploadHandler: any,
+): Promise<string> {
 	const imageData = await getImageData(path)
 
 	const fileExtension = path.split('.').pop() // Extract file extension from the path

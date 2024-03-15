@@ -9,12 +9,12 @@ import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { FiltersCard } from '#app/components/filters-card'
 import { Image } from '#app/components/image'
 import { InfiniteScroll } from '#app/components/infinite-scroll.tsx'
+import { SearchCard } from '#app/components/search-card.js'
 import { SortCard } from '#app/components/sort-card'
 import { WhereToWatchCard } from '#app/components/where-to-watch-card'
 import { PEOPLE_SORT_OPTIONS } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server.ts'
 import { getTableParams } from '#app/utils/request.helper.ts'
-import { SearchCard } from '#app/components/search-card.js'
 
 const TAKE = 20
 

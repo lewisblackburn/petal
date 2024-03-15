@@ -366,19 +366,19 @@ export class TMDB extends Importer {
 
 	public async addKeywordToFilm(film: Film, keyword: TMDBKeyword) {
 		const updatedFilm = await prisma.film.update({
-			where: {id: film.id},
+			where: { id: film.id },
 			data: {
 				keywords: {
 					connectOrCreate: {
 						where: {
-							name: keyword.name
+							name: keyword.name,
 						},
 						create: {
 							name: keyword.name,
 						},
 					},
-				}
-			}
+				},
+			},
 		})
 
 		if (!updatedFilm) return false
@@ -395,14 +395,14 @@ export class TMDB extends Importer {
 		if (!importedFilmGenre) return false
 
 		const updatedFilm = await prisma.film.update({
-			where: {id: film.id},
+			where: { id: film.id },
 			data: {
 				genres: {
 					connect: {
 						id: importedFilmGenre.id,
 					},
-				}
-			}
+				},
+			},
 		})
 
 		if (!updatedFilm) return false

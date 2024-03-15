@@ -2,9 +2,9 @@ import { type Table } from '@tanstack/react-table'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Input } from '#app/components/ui/input.tsx'
+import { DataTableFacetedFilter } from '../data-table-faceted-filter.tsx'
 import { DataTableViewOptions } from '../data-table-view-options.tsx'
 import { DataTableDeleteUsers } from './data-table-delete-users.tsx'
-import { DataTableFacetedFilter } from '../data-table-faceted-filter.tsx'
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>

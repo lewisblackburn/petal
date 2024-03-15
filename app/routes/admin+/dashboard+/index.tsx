@@ -1,3 +1,4 @@
+import { type LoaderFunctionArgs } from '@remix-run/node'
 import { json, type MetaFunction } from '@remix-run/react'
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
@@ -15,7 +16,6 @@ import {
 	TabsTrigger,
 	TabsContent,
 } from '#app/components/ui/tabs'
-import { LoaderFunctionArgs } from '@remix-run/node'
 import { requireUserWithRole } from '#app/utils/permissions.server.js'
 
 export async function loader({ request }: LoaderFunctionArgs) {

@@ -65,10 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		})
 	}
 
-
-	return json(
-		{ result: { ...submission.reply(), rating } },
-	)
+	return json({ result: { ...submission.reply(), rating } })
 }
 
 export const FilmRatingDropdown = ({

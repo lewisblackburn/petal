@@ -30,15 +30,15 @@ export async function action({ request }: ActionFunctionArgs) {
 	const importedFilm = await tmdb.importFilm(tmdbID)
 
 	if (!importedFilm) {
-	return json(
-		{ result: submission.reply() },
-		{
-			headers: await createToastHeaders({
-				description: 'Failed to import film.',
-				type: 'error',
-			}),
-		},
-	)
+		return json(
+			{ result: submission.reply() },
+			{
+				headers: await createToastHeaders({
+					description: 'Failed to import film.',
+					type: 'error',
+				}),
+			},
+		)
 	}
 
 	return json(

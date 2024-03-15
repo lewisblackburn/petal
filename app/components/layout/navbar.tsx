@@ -118,7 +118,7 @@ const links: {
 				title: 'Manage Users',
 				href: '/admin/dashboard/users',
 				description: 'Manage the users in the database.',
-			}
+			},
 		],
 	},
 	{
