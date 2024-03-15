@@ -52,4 +52,11 @@ export const columns: ColumnDef<Partial<User>>[] = [
 		),
 		cell: ({ row }) => <div>{row.getValue('username')}</div>,
 	},
+	{
+		accessorKey: 'role',
+		header: ({ column }) => (
+			<DataTableColumnHeader column={column} title="Role" />
+		),
+		cell: ({ row }) => <div>{row.getValue('role')}</div>,
+	},
 ]

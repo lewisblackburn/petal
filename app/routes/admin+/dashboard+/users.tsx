@@ -15,17 +15,21 @@ import { prisma } from '#app/utils/db.server'
 import { requireUserWithRole } from '#app/utils/permissions.server'
 import { DEFAULT_TAKE, getTableParams } from '#app/utils/request.helper'
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserWithRole(request, 'admin')
+
+	const url = new URL(request.url)
+	const pageSize = url.searchParams.get('pageSize')
 
 	const { orderBy, search, skip, take } = getTableParams(
 		request,
-		DEFAULT_TAKE,
+		parseInt(pageSize ?? DEFAULT_TAKE.toString(), 10),
 		{
 			orderBy: 'createdAt',
 			order: 'desc',
 		},
 	)
+
 	const where = {
 		OR: search
 			? [
@@ -41,37 +45,52 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 		skip,
 		take,
 		where,
+		select: {
+			email: true,
+			name: true,
+			username: true,
+			roles: true,
+		},
 	})
 
 	const count = await prisma.user.count({
 		where,
 	})
 
+	const totalPages = Math.ceil(count / take)
+
 	const formattedUsers = users.map(user => ({
 		email: user.email,
 		name: user.name,
 		username: user.username,
+		role: 'user',
 	}))
 
-	return json({ users: formattedUsers, count })
+	return json({ users: formattedUsers, totalPages })
 }
 
 export default function DashboardUsersRoute() {
-	const { users, count } = useLoaderData<typeof loader>()
+	const { users, totalPages } = useLoaderData<typeof loader>()
 	const [params, setParams] = useSearchParams()
 	const currentPage = parseInt(params.get('page') || '1') as number
-	const totalPages = Math.ceil(count / DEFAULT_TAKE)
+	const currentPageSize = parseInt(
+		params.get('take') || DEFAULT_TAKE.toString(),
+	) as number
 
 	const [{ pageIndex, pageSize }, setPagination] =
 		React.useState<PaginationState>({
 			pageIndex: currentPage - 1,
-			pageSize: DEFAULT_TAKE,
+			pageSize: currentPageSize,
 		})
 
 	React.useEffect(() => {
 		const existingParams = queryString.parse(params.toString())
 		setParams(
-			queryString.stringify({ ...existingParams, page: pageIndex + 1 }),
+			queryString.stringify({
+				...existingParams,
+				page: pageIndex + 1,
+				pageSize,
+			}),
 			{
 				state: { data: users },
 				preventScrollReset: true,
@@ -79,7 +98,7 @@ export default function DashboardUsersRoute() {
 		)
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pageIndex])
+	}, [pageIndex, pageSize])
 
 	return (
 		<UserTable

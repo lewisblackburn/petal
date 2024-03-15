@@ -21,7 +21,7 @@ interface DataTableDeleteGenres<TData> {
 	table: Table<TData>
 }
 
-export function DataTableDeleteGenres<TData>({
+export function DataTableDeleteUsers<TData>({
 	table,
 }: DataTableDeleteGenres<TData>) {
 	const { filmId } = useParams()

@@ -3,7 +3,8 @@ import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Input } from '#app/components/ui/input.tsx'
 import { DataTableViewOptions } from '../data-table-view-options.tsx'
-import { DataTableDeleteGenres } from './data-table-delete-users.tsx'
+import { DataTableDeleteUsers } from './data-table-delete-users.tsx'
+import { DataTableFacetedFilter } from '../data-table-faceted-filter.tsx'
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>
@@ -23,6 +24,16 @@ export function DataTableToolbar<TData>({
 					onChange={event => table.setGlobalFilter(event.target.value)}
 					className="h-8 w-[150px] lg:w-[250px]"
 				/>
+				{table.getColumn('role') && (
+					<DataTableFacetedFilter
+						column={table.getColumn('role')}
+						title="Role"
+						options={['admin', 'user'].map(role => ({
+							label: role,
+							value: role,
+						}))}
+					/>
+				)}
 				{isFiltered && (
 					<Button
 						variant="ghost"
@@ -36,7 +47,7 @@ export function DataTableToolbar<TData>({
 			</div>
 			<div className="flex flex-1 items-center space-x-2">
 				<DataTableViewOptions table={table} />
-				<DataTableDeleteGenres table={table} />
+				<DataTableDeleteUsers table={table} />
 			</div>
 		</div>
 	)

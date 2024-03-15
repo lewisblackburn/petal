@@ -114,6 +114,11 @@ const links: {
 				href: '/admin/dashboard/films',
 				description: 'Manage the movies in the database.',
 			},
+			{
+				title: 'Manage Users',
+				href: '/admin/dashboard/users',
+				description: 'Manage the users in the database.',
+			}
 		],
 	},
 	{
