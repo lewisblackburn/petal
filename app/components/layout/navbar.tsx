@@ -31,7 +31,7 @@ export default function Navbar() {
 	const pathname = useLocation().pathname
 
 	return (
-		<nav className="bg-white">
+		<nav className="bg-background">
 			<div className="border-b py-6">
 				<div className="container flex items-center justify-between">
 					<Link to="/">
