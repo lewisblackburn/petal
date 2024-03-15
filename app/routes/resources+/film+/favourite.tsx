@@ -10,7 +10,6 @@ import { Icon } from '#app/components/ui/icon.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { cn } from '#app/utils/misc.tsx'
-import { createToastHeaders } from '#app/utils/toast.server.ts'
 import { useOptionalUser } from '#app/utils/user.ts'
 
 export const FavouriteFilmSchema = z.object({
@@ -59,12 +58,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	return json(
 		{ result: { ...submission.reply(), favourited: !isFavourited } },
-		{
-			headers: await createToastHeaders({
-				description: isFavourited ? 'Film Unfavourited' : 'Film Favourited',
-				type: 'success',
-			}),
-		},
 	)
 }
 

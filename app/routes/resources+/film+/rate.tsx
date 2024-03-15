@@ -15,7 +15,6 @@ import {
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { cn } from '#app/utils/misc.tsx'
-import { createToastHeaders } from '#app/utils/toast.server.ts'
 import { useOptionalUser } from '#app/utils/user.ts'
 
 export const RateFilmSchema = z.object({
@@ -66,14 +65,9 @@ export async function action({ request }: ActionFunctionArgs) {
 		})
 	}
 
+
 	return json(
 		{ result: { ...submission.reply(), rating } },
-		{
-			headers: await createToastHeaders({
-				description: 'Film Rated',
-				type: 'success',
-			}),
-		},
 	)
 }
 
