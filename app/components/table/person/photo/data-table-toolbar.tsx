@@ -14,7 +14,8 @@ interface DataTableToolbarProps<TData> {
 export function DataTableToolbar<TData>({
 	table,
 }: DataTableToolbarProps<TData>) {
-	const isFiltered = table.getState().columnFilters.length > 0
+	const isFiltered =
+		table.getState().columnFilters.length > 0 || table.getState().globalFilter
 
 	return (
 		<div className="flex items-center justify-between">
@@ -28,7 +29,10 @@ export function DataTableToolbar<TData>({
 				{isFiltered && (
 					<Button
 						variant="ghost"
-						onClick={() => table.resetColumnFilters()}
+						onClick={() => {
+							table.resetColumnFilters()
+							table.resetGlobalFilter()
+						}}
 						className="h-8 px-2 lg:px-3"
 					>
 						Reset

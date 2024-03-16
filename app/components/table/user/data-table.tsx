@@ -12,6 +12,7 @@ import {
 	getSortedRowModel,
 	type PaginationState,
 	type OnChangeFn,
+	FiltersTableState,
 } from '@tanstack/react-table'
 import React from 'react'
 
@@ -29,17 +30,21 @@ import { DataTableToolbar } from './data-table-toolbar.tsx'
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
 	data: TData[]
-	pageCount: number
 	pagination: PaginationState
 	setPagination: OnChangeFn<PaginationState> | undefined
+	globalFilter: FiltersTableState['globalFilter']
+	setGlobalFilter: OnChangeFn<FiltersTableState['globalFilter']> | undefined
+	rowCount: number
 }
 
 export function UserTable<TData, TValue>({
 	columns,
 	data,
-	pageCount,
 	pagination,
 	setPagination,
+	globalFilter,
+	setGlobalFilter,
+	rowCount,
 }: DataTableProps<TData, TValue>) {
 	const [rowSelection, setRowSelection] = React.useState({})
 	const [columnVisibility, setColumnVisibility] =
@@ -48,12 +53,11 @@ export function UserTable<TData, TValue>({
 		[],
 	)
 	const [sorting, setSorting] = React.useState<SortingState>([])
-	const [globalFilter, setGlobalFilter] = React.useState('')
 
 	const table = useReactTable({
 		data,
 		columns,
-		pageCount,
+		rowCount: rowCount,
 		state: {
 			sorting,
 			columnVisibility,
@@ -70,9 +74,9 @@ export function UserTable<TData, TValue>({
 		getCoreRowModel: getCoreRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onGlobalFilterChange: setGlobalFilter,
-		// getPaginationRowModel: getPaginationRowModel(),
 		onPaginationChange: setPagination,
 		manualPagination: true,
+		manualFiltering: true,
 		getSortedRowModel: getSortedRowModel(),
 		getFacetedRowModel: getFacetedRowModel(),
 		getFacetedUniqueValues: getFacetedUniqueValues(),

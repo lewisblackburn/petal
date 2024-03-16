@@ -1,7 +1,8 @@
-import { type User } from '@prisma/client'
+import { Role, type User } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../data-table-column-header'
+import { Badge } from '#app/components/ui/badge.js'
 
 export const columns: ColumnDef<Partial<User>>[] = [
 	{
@@ -53,10 +54,18 @@ export const columns: ColumnDef<Partial<User>>[] = [
 		cell: ({ row }) => <div>{row.getValue('username')}</div>,
 	},
 	{
-		accessorKey: 'role',
+		accessorKey: 'roles',
 		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Role" />
+			<DataTableColumnHeader column={column} title="Roles" />
 		),
-		cell: ({ row }) => <div>{row.getValue('role')}</div>,
+		cell: ({ row }) => (
+			<div className="flex items-center space-x-2">
+				{(row.getValue('roles') as Role[]).map(role => (
+					<Badge key={role.name} variant="outline">
+						{role.name}
+					</Badge>
+				))}
+			</div>
+		),
 	},
 ]

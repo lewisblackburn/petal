@@ -2,7 +2,6 @@ import { type Table } from '@tanstack/react-table'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Input } from '#app/components/ui/input.tsx'
-import { DataTableFacetedFilter } from '../data-table-faceted-filter.tsx'
 import { DataTableViewOptions } from '../data-table-view-options.tsx'
 import { DataTableDeleteUsers } from './data-table-delete-users.tsx'
 
@@ -13,7 +12,8 @@ interface DataTableToolbarProps<TData> {
 export function DataTableToolbar<TData>({
 	table,
 }: DataTableToolbarProps<TData>) {
-	const isFiltered = table.getState().columnFilters.length > 0
+	const isFiltered =
+		table.getState().columnFilters.length > 0 || table.getState().globalFilter
 
 	return (
 		<div className="flex items-center justify-between">
@@ -24,20 +24,13 @@ export function DataTableToolbar<TData>({
 					onChange={event => table.setGlobalFilter(event.target.value)}
 					className="h-8 w-[150px] lg:w-[250px]"
 				/>
-				{table.getColumn('role') && (
-					<DataTableFacetedFilter
-						column={table.getColumn('role')}
-						title="Role"
-						options={['admin', 'user'].map(role => ({
-							label: role,
-							value: role,
-						}))}
-					/>
-				)}
 				{isFiltered && (
 					<Button
 						variant="ghost"
-						onClick={() => table.resetColumnFilters()}
+						onClick={() => {
+							table.resetColumnFilters()
+							table.resetGlobalFilter()
+						}}
 						className="h-8 px-2 lg:px-3"
 					>
 						Reset

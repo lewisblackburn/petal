@@ -6,29 +6,25 @@ import {
 	useSearchParams,
 } from '@remix-run/react'
 import { type LoaderFunctionArgs, json } from '@remix-run/server-runtime'
-import { type PaginationState } from '@tanstack/react-table'
+import {
+	type FiltersTableState,
+	type PaginationState,
+} from '@tanstack/react-table'
 import React from 'react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
 import { columns } from '#app/components/table/user/columns'
 import { UserTable } from '#app/components/table/user/data-table'
 import { prisma } from '#app/utils/db.server'
 import { requireUserWithRole } from '#app/utils/permissions.server'
-import { DEFAULT_TAKE, getTableParams } from '#app/utils/request.helper'
+import { DEFAULT_TAKE, getSearchParams } from '#app/utils/request.helper'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserWithRole(request, 'admin')
 
 	const url = new URL(request.url)
-	const pageSize = url.searchParams.get('pageSize')
-
-	const { orderBy, search, skip, take } = getTableParams(
-		request,
-		parseInt(pageSize ?? DEFAULT_TAKE.toString(), 10),
-		{
-			orderBy: 'createdAt',
-			order: 'desc',
-		},
-	)
+	const pageIndex = Number(url.searchParams.get('page')) || 0
+	const pageSize = Number(url.searchParams.get('pageSize')) || DEFAULT_TAKE
+	const search = getSearchParams(request)
 
 	const where = {
 		OR: search
@@ -36,16 +32,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
 					{ email: { contains: search } },
 					{ name: { contains: search } },
 					{ username: { contains: search } },
+					{ roles: { some: { name: { contains: search } } } },
 				]
 			: undefined,
 	} satisfies Prisma.UserWhereInput
 
 	const users = await prisma.user.findMany({
-		orderBy,
-		skip,
-		take,
+		skip: pageIndex * pageSize,
+		take: pageSize,
 		where,
 		select: {
+			id: true,
 			email: true,
 			name: true,
 			username: true,
@@ -57,56 +54,56 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		where,
 	})
 
-	const totalPages = Math.ceil(count / take)
-
 	const formattedUsers = users.map(user => ({
+		id: user.id,
 		email: user.email,
 		name: user.name,
 		username: user.username,
-		role: 'user',
+		roles: user.roles,
 	}))
 
-	return json({ users: formattedUsers, totalPages })
+	return json({ users: formattedUsers, count })
 }
 
 export default function DashboardUsersRoute() {
-	const { users, totalPages } = useLoaderData<typeof loader>()
+	const { users, count } = useLoaderData<typeof loader>()
 	const [params, setParams] = useSearchParams()
-	const currentPage = parseInt(params.get('page') || '1') as number
-	const currentPageSize = parseInt(
-		params.get('take') || DEFAULT_TAKE.toString(),
-	) as number
+	const search = params.get('search') || ''
 
-	const [{ pageIndex, pageSize }, setPagination] =
-		React.useState<PaginationState>({
-			pageIndex: currentPage - 1,
-			pageSize: currentPageSize,
-		})
+	const [globalFilter, setGlobalFilter] =
+		React.useState<FiltersTableState['globalFilter']>(search)
+
+	const [pagination, setPagination] = React.useState<PaginationState>({
+		pageIndex: 0,
+		pageSize: DEFAULT_TAKE,
+	})
 
 	React.useEffect(() => {
 		const existingParams = queryString.parse(params.toString())
 		setParams(
 			queryString.stringify({
 				...existingParams,
-				page: pageIndex + 1,
-				pageSize,
+				search: globalFilter,
+				page: pagination.pageIndex,
+				pageSize: pagination.pageSize,
 			}),
 			{
-				state: { data: users },
 				preventScrollReset: true,
 			},
 		)
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pageIndex, pageSize])
+	}, [pagination, globalFilter])
 
 	return (
 		<UserTable
 			data={users}
 			columns={columns}
-			pageCount={totalPages}
-			pagination={{ pageSize, pageIndex }}
+			pagination={pagination}
 			setPagination={setPagination}
+			globalFilter={globalFilter}
+			setGlobalFilter={setGlobalFilter}
+			rowCount={count}
 		/>
 	)
 }
