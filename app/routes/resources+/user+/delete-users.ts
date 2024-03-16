@@ -10,30 +10,27 @@ export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
 
 	invariantResponse(
-		formData.get('intent') === 'delete-film-production-companies',
+		formData.get('intent') === 'delete-users',
 		'Invalid intent',
 	)
 
-	const filmId = formData.get('filmId') as string
-	const productionCompanyIds = formData.get('productionCompanyIds') as string
+	const userIds = formData.get('userIds') as string
 
-	invariantResponse(filmId, 'Invalid filmId')
-	invariantResponse(productionCompanyIds, 'Invalid productionCompanyIds')
+	invariantResponse(userIds, 'Invalid userIds')
 
-	const parsedIds = JSON.parse(productionCompanyIds) as string[]
+	const parsedIds = JSON.parse(userIds) as string[]
 
-	await prisma.film.update({
-		where: { id: filmId },
-		data: {
-			productionCompanies: {
-				disconnect: parsedIds.map(id => ({ id })),
-			},
-		},
+	await prisma.user.deleteMany({
+		where: {
+			id: {
+				in: parsedIds
+			}
+		}
 	})
 
 	return json({ status: 'success' } as const, {
 		headers: await createToastHeaders({
-			description: 'Prodution Companies Deleted',
+			description: 'User Deleted',
 			type: 'success',
 		}),
 	})

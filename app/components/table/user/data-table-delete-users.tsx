@@ -1,5 +1,5 @@
-import { type FilmGenre } from '@prisma/client'
-import { useFetcher, useParams } from '@remix-run/react'
+import { type User } from '@prisma/client'
+import { useFetcher } from '@remix-run/react'
 import { type Table } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import { Button } from '#app/components/ui/button.tsx'
@@ -14,21 +14,19 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
-// TODO: This is the wrong action type
-import { type action as DeleteFilmGenresAction } from '#app/routes/resources+/film+/delete-genres.js'
+import { type action as DeleteUsersAction } from '#app/routes/resources+/user+/delete-users'
 
-interface DataTableDeleteGenres<TData> {
+interface DataTableDeleteUsers<TData> {
 	table: Table<TData>
 }
 
 export function DataTableDeleteUsers<TData>({
 	table,
-}: DataTableDeleteGenres<TData>) {
-	const { filmId } = useParams()
-	const genresSelected = table
+}: DataTableDeleteUsers<TData>) {
+	const usersSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as FilmGenre).id)
-	const fetcher = useFetcher<typeof DeleteFilmGenresAction>()
+		.rows.map(row => (row.original as User).id)
+	const fetcher = useFetcher<typeof DeleteUsersAction>()
 	const [open, setOpen] = useState(false)
 
 	useEffect(() => {
@@ -41,7 +39,7 @@ export function DataTableDeleteUsers<TData>({
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				{genresSelected.length > 0 && (
+				{usersSelected.length > 0 && (
 					<Button
 						variant="destructive"
 						size="sm"
@@ -55,30 +53,29 @@ export function DataTableDeleteUsers<TData>({
 			<DialogContent className="sm:max-w-[425px]">
 				<fetcher.Form
 					method="POST"
-					action="/resources/film/delete-genres"
+					action="/resources/user/delete-users"
 					onSubmit={() => {
 						setOpen(false)
 					}}
 				>
 					<DialogHeader>
-						<DialogTitle>Delete Genres</DialogTitle>
+						<DialogTitle>Delete Users</DialogTitle>
 						<DialogDescription>
-							Delete genres from the genres table.
+							Delete users from the user table.
 						</DialogDescription>
 					</DialogHeader>
 					<div className="grid py-4">
 						<input
 							name="userIds"
 							type="hidden"
-							value={JSON.stringify(genresSelected)}
+							value={JSON.stringify(usersSelected)}
 						/>
-						<input name="filmId" type="hidden" value={filmId} />
 					</div>
 					<DialogFooter>
 						<StatusButton
 							type="submit"
 							name="intent"
-							value="delete-film-users"
+							value="delete-users"
 							variant="outline"
 							status={
 								fetcher.state !== 'idle'
@@ -89,7 +86,7 @@ export function DataTableDeleteUsers<TData>({
 							className="w-full max-md:aspect-square max-md:px-0"
 						>
 							<Icon name="trash" className="scale-125 max-md:scale-150">
-								<span className="max-md:hidden">Delete Genres</span>
+								<span className="max-md:hidden">Delete Users</span>
 							</Icon>
 						</StatusButton>
 					</DialogFooter>
