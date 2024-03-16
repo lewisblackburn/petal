@@ -12,7 +12,7 @@ import {
 	getSortedRowModel,
 	type PaginationState,
 	type OnChangeFn,
-	FiltersTableState,
+	type FiltersTableState,
 } from '@tanstack/react-table'
 import React from 'react'
 

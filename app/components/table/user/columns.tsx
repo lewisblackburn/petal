@@ -1,8 +1,8 @@
-import { Role, type User } from '@prisma/client'
+import { type Role, type User } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
+import { Badge } from '#app/components/ui/badge.js'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../data-table-column-header'
-import { Badge } from '#app/components/ui/badge.js'
 
 export const columns: ColumnDef<Partial<User>>[] = [
 	{

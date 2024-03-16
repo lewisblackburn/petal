@@ -9,10 +9,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
 
-	invariantResponse(
-		formData.get('intent') === 'delete-users',
-		'Invalid intent',
-	)
+	invariantResponse(formData.get('intent') === 'delete-users', 'Invalid intent')
 
 	const userIds = formData.get('userIds') as string
 
@@ -23,9 +20,9 @@ export async function action({ request }: ActionFunctionArgs) {
 	await prisma.user.deleteMany({
 		where: {
 			id: {
-				in: parsedIds
-			}
-		}
+				in: parsedIds,
+			},
+		},
 	})
 
 	return json({ status: 'success' } as const, {
