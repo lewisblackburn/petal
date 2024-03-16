@@ -9,15 +9,15 @@ export async function action({ request }: ActionFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
 
-	invariantResponse(formData.get('intent') === 'delete-users', 'Invalid intent')
+	invariantResponse(formData.get('intent') === 'delete-films', 'Invalid intent')
 
-	const userIds = formData.get('userIds') as string
+	const filmIds = formData.get('filmIds') as string
 
-	invariantResponse(userIds, 'Invalid userIds')
+	invariantResponse(filmIds, 'Invalid filmIds')
 
-	const parsedIds = JSON.parse(userIds) as string[]
+	const parsedIds = JSON.parse(filmIds) as string[]
 
-	await prisma.user.deleteMany({
+	await prisma.film.deleteMany({
 		where: {
 			id: {
 				in: parsedIds,
@@ -27,7 +27,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	return json({ status: 'success' } as const, {
 		headers: await createToastHeaders({
-			description: 'Users Deleted',
+			description: 'Films Deleted',
 			type: 'success',
 		}),
 	})

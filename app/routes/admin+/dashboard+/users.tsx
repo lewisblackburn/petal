@@ -12,11 +12,11 @@ import {
 } from '@tanstack/react-table'
 import React from 'react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
-import { columns } from '#app/components/table/user/columns'
 import { UserTable } from '#app/components/table/user/data-table'
 import { prisma } from '#app/utils/db.server'
 import { requireUserWithRole } from '#app/utils/permissions.server'
 import { DEFAULT_TAKE, getSearchParams } from '#app/utils/request.helper'
+import { columns } from '#app/components/table/user/columns'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserWithRole(request, 'admin')
