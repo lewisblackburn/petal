@@ -1,8 +1,8 @@
 import { type LoaderFunctionArgs } from '@remix-run/node'
 import { Outlet, json, type MetaFunction } from '@remix-run/react'
+import ButtonGroup, { type ButtonGroupProps } from '#app/components/button-group'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
 import { requireUserWithRole } from '#app/utils/permissions.server.js'
-import ButtonGroup, { ButtonGroupProps } from '#app/components/button-group'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserWithRole(request, 'admin')

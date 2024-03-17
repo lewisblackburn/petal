@@ -1,8 +1,8 @@
 import { type Film } from '@prisma/client'
+import { Link } from '@remix-run/react'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../../data-table-column-header'
-import { Link } from '@remix-run/react'
 
 export const columns: ColumnDef<Partial<Film>>[] = [
 	{
