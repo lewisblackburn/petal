@@ -1,14 +1,14 @@
 import { type MetaFunction } from '@remix-run/node'
 import { Outlet } from '@remix-run/react'
-import ButtonGroup from '#app/components/button-group'
+import ButtonGroup, { ButtonGroupProps } from '#app/components/button-group'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 
-const NavigationLinks: { name: string; path: string }[] = [
+const NavigationLinks: ButtonGroupProps['pages'] = [
 	{ name: 'Primary Facts', path: '' },
 	{ name: 'Alternative Titles', path: 'alternative' },
 	{ name: 'Cast', path: 'cast' },
 	{ name: 'Crew', path: 'crew' },
-	{ name: 'Soundtrack', path: 'soundtrack' },
+	{ name: 'Soundtrack', path: 'soundtrack', disabled: true },
 	{ name: 'External IDs', path: 'external' },
 	{ name: 'Genres', path: 'genres' },
 	{ name: 'Keywords', path: 'keywords' },

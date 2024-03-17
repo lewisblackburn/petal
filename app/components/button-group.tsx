@@ -1,11 +1,11 @@
 import { Link, useMatches } from '@remix-run/react'
 import { Button } from './ui/button'
 
-export default function ButtonGroup({
-	pages,
-}: {
-	pages: { name: string; path: string }[]
-}) {
+export type ButtonGroupProps = {
+	pages: { name: string; path: string; disabled?: boolean }[]
+}
+
+export default function ButtonGroup({ pages }: ButtonGroupProps) {
 	const matches = useMatches()
 
 	return (
@@ -39,8 +39,16 @@ export default function ButtonGroup({
 				if (active) className += ' bg-accent'
 
 				return (
-					<Link key={index} to={page.path}>
-						<Button variant="outline" className={className}>
+					<Link
+						key={index}
+						to={page.path}
+						className={page.disabled ? 'pointer-events-none' : undefined}
+					>
+						<Button
+							variant="outline"
+							className={className}
+							disabled={page.disabled}
+						>
 							{page.name}
 						</Button>
 					</Link>
