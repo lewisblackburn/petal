@@ -18,6 +18,7 @@ import React, { useEffect, useState } from 'react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
 import { ErrorList, Field } from '#app/components/forms'
 import { columns } from '#app/components/table/film/index/columns.js'
+import { FilmTable } from '#app/components/table/film/index/data-table.js'
 import { Button } from '#app/components/ui/button'
 import {
 	Dialog,
@@ -37,7 +38,6 @@ import {
 import { prisma } from '#app/utils/db.server'
 import { requireUserWithRole } from '#app/utils/permissions.server.js'
 import { DEFAULT_TAKE, getSearchParams } from '#app/utils/request.helper.js'
-import { FilmTable } from '#app/components/table/film/index/data-table.js'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserWithRole(request, 'admin')
