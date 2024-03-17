@@ -12,11 +12,11 @@ import {
 } from '@tanstack/react-table'
 import React from 'react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
+import { columns } from '#app/components/table/user/columns'
 import { UserTable } from '#app/components/table/user/data-table'
 import { prisma } from '#app/utils/db.server'
 import { requireUserWithRole } from '#app/utils/permissions.server'
 import { DEFAULT_TAKE, getSearchParams } from '#app/utils/request.helper'
-import { columns } from '#app/components/table/user/columns'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserWithRole(request, 'admin')
@@ -80,6 +80,11 @@ export default function DashboardUsersRoute() {
 
 	React.useEffect(() => {
 		const existingParams = queryString.parse(params.toString())
+		const isSearching = search.length > 0
+
+		if (isSearching && pagination.pageIndex != 0)
+			setPagination({ ...pagination, pageIndex: 0 })
+
 		setParams(
 			queryString.stringify({
 				...existingParams,
@@ -91,9 +96,7 @@ export default function DashboardUsersRoute() {
 				preventScrollReset: true,
 			},
 		)
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pagination, globalFilter])
+	}, [globalFilter, search, params, pagination, setParams])
 
 	return (
 		<UserTable

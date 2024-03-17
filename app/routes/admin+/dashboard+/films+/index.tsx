@@ -72,6 +72,11 @@ export default function DashboardFilmsRoute() {
 
 	React.useEffect(() => {
 		const existingParams = queryString.parse(params.toString())
+		const isSearching = search.length > 0
+
+		if (isSearching && pagination.pageIndex != 0)
+			setPagination({ ...pagination, pageIndex: 0 })
+
 		setParams(
 			queryString.stringify({
 				...existingParams,
@@ -83,9 +88,7 @@ export default function DashboardFilmsRoute() {
 				preventScrollReset: true,
 			},
 		)
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pagination, globalFilter])
+	}, [globalFilter, search, params, pagination, setParams])
 
 	return (
 		<FilmTable

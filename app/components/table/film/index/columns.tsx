@@ -2,6 +2,7 @@ import { type Film } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../../data-table-column-header'
+import { Link } from '@remix-run/react'
 
 export const columns: ColumnDef<Partial<Film>>[] = [
 	{
@@ -36,7 +37,9 @@ export const columns: ColumnDef<Partial<Film>>[] = [
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Title" />
 		),
-		cell: ({ row }) => <div>{row.getValue('title')}</div>,
+		cell: ({ row }) => (
+			<Link to={`/films/${row.original.id}`}>{row.getValue('title')}</Link>
+		),
 	},
 	{
 		accessorKey: 'tagline',
