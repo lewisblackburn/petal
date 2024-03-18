@@ -109,4 +109,11 @@ export interface TMDBPerson {
 	profile_path: string
 }
 
+export interface TMDBSearchResult<T> {
+	page: number
+	results: T[]
+	total_pages: number
+	total_results: number
+}
+
 export type TMDBExtendedMember = TMDBCastMember | TMDBCrewMember

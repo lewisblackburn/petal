@@ -11,29 +11,13 @@ import {
 
 interface DataTablePaginationProps<TData> {
 	table: Table<TData>
+	rowsPerPageOptions?: number[]
 }
 
 export function DataTablePagination<TData>({
 	table,
+	rowsPerPageOptions = [10, 20, 30, 40, 50],
 }: DataTablePaginationProps<TData>) {
-	/*
-	Create a dropdown list with page size options that increment by 10.
-	The number of page size options is determined by dividing the total number of rows by 10 and
-	rounding up to the nearest integer (Math.ceil(totalRows / 10)).
-	Each page size represents a multiple of 10.
-	For example, if there are 11 rows, the dropdown will show "10" and "20" as selectable options.
-	If there are 25 rows, it will show "10", "20", and "30".
-*/
-	const totalRows = table.getFilteredRowModel().rows.length
-	// If the table is empty, set the number of full pages to 1 to default to a page size of 10.
-	const numFullPages = Math.ceil(totalRows / 10)
-	// Calculate the number of full pages required to display all rows with a maximum of 10 rows per page.
-	// Math.ceil(totalRows / 10) rounds up to the nearest integer to ensure all rows are covered.
-	const pageSizeOptions = Array.from(
-		{ length: totalRows === 0 ? 1 : numFullPages },
-		(_, index) => (index + 1) * 10,
-	)
-
 	return (
 		<div className="flex items-center justify-between px-2">
 			<div className="flex-1 text-sm text-muted-foreground">
@@ -53,7 +37,7 @@ export function DataTablePagination<TData>({
 							<SelectValue placeholder={table.getState().pagination.pageSize} />
 						</SelectTrigger>
 						<SelectContent side="top">
-							{pageSizeOptions.map(pageSize => (
+							{rowsPerPageOptions.map(pageSize => (
 								<SelectItem key={pageSize} value={`${pageSize}`}>
 									{pageSize}
 								</SelectItem>

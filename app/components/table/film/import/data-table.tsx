@@ -1,7 +1,6 @@
 import {
 	type ColumnDef,
 	type ColumnFiltersState,
-	type SortingState,
 	type VisibilityState,
 	flexRender,
 	getCoreRowModel,
@@ -24,8 +23,8 @@ import {
 	TableHeader,
 	TableRow,
 } from '#app/components/ui/table.tsx'
-import { DataTablePagination } from '../../data-table-pagination.tsx'
 import { DataTableToolbar } from './data-table-toolbar.tsx'
+import { DataTablePagination } from '../../data-table-pagination.tsx'
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
@@ -34,20 +33,16 @@ interface DataTableProps<TData, TValue> {
 	setPagination: OnChangeFn<PaginationState> | undefined
 	globalFilter: FiltersTableState['globalFilter']
 	setGlobalFilter: OnChangeFn<FiltersTableState['globalFilter']> | undefined
-	sorting: SortingState
-	setSorting: OnChangeFn<SortingState> | undefined
 	rowCount: number
 }
 
-export function FilmTable<TData, TValue>({
+export function ImportFilmTable<TData, TValue>({
 	columns,
 	data,
 	pagination,
 	setPagination,
 	globalFilter,
 	setGlobalFilter,
-	sorting,
-	setSorting,
 	rowCount,
 }: DataTableProps<TData, TValue>) {
 	const [rowSelection, setRowSelection] = React.useState({})
@@ -62,7 +57,6 @@ export function FilmTable<TData, TValue>({
 		columns,
 		rowCount: rowCount,
 		state: {
-			sorting,
 			columnVisibility,
 			rowSelection,
 			columnFilters,
@@ -71,7 +65,6 @@ export function FilmTable<TData, TValue>({
 		},
 		enableRowSelection: true,
 		onRowSelectionChange: setRowSelection,
-		onSortingChange: setSorting,
 		onColumnFiltersChange: setColumnFilters,
 		onColumnVisibilityChange: setColumnVisibility,
 		getCoreRowModel: getCoreRowModel(),
@@ -80,7 +73,6 @@ export function FilmTable<TData, TValue>({
 		onPaginationChange: setPagination,
 		manualPagination: true,
 		manualFiltering: true,
-		manualSorting: true,
 		getSortedRowModel: getSortedRowModel(),
 		getFacetedRowModel: getFacetedRowModel(),
 		getFacetedUniqueValues: getFacetedUniqueValues(),
@@ -139,7 +131,7 @@ export function FilmTable<TData, TValue>({
 					</TableBody>
 				</Table>
 			</div>
-			<DataTablePagination table={table} />
+			<DataTablePagination table={table} rowsPerPageOptions={[20]} />
 		</div>
 	)
 }

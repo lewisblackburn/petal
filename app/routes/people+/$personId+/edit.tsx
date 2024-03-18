@@ -1,5 +1,7 @@
 import { Outlet } from '@remix-run/react'
-import ButtonGroup, { type ButtonGroupProps } from '#app/components/button-group'
+import ButtonGroup, {
+	type ButtonGroupProps,
+} from '#app/components/button-group'
 
 const NavigationLinks: ButtonGroupProps['pages'] = [
 	{ name: 'Primary Facts', path: '' },

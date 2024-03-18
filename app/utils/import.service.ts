@@ -12,6 +12,7 @@ import {
 	type TMDBCrewMember,
 	type TMDBGenre,
 	type TMDBKeyword,
+	type TMDBSearchResult,
 } from '#app/types/tmdb'
 import { prisma } from './db.server'
 import { extractFileName, fetchAndUploadImage, fetchWithDelay } from './misc'
@@ -115,6 +116,7 @@ export abstract class Importer {
 		return updatedPerson
 	}
 
+	searchFilms?(filmTitle: string): any
 	importFilm?(filmId: string | number): Promise<Film | false>
 	importTVShow?(tvShowId: any): any
 	importPerson?(personId: any): any
@@ -134,21 +136,24 @@ export class TMDB extends Importer {
 
 	#TMDB_API_KEY = process.env.TMDB_API_KEY
 	private TMDB_URL_V3 = 'https://api.themoviedb.org/3'
-	// private TMDB_URL_V4 = 'https://api.themoviedb.org/4'
 	private TMDB_POSTER_URL = 'https://image.tmdb.org/t/p/w600_and_h900_bestv2'
 	private TMDB_BACKDROP_URL =
 		'https://media.themoviedb.org/t/p/w533_and_h300_bestv2'
 	private TMDB_PROFILE_URL =
 		'https://media.themoviedb.org/t/p/w300_and_h450_bestv2'
-
 	private TMDB_FILM_URL = (filmId: string, appendToResponse?: string) =>
 		`${this.TMDB_URL_V3}/movie/${filmId}?append_to_response=${appendToResponse}&language=${this.language}`
-
 	private TMDB_PERSON_URL = (personId: string, appendToResponse?: string) =>
 		`${this.TMDB_URL_V3}/person/${personId}?append_to_response=${appendToResponse}&language=${this.language}`
-
 	private TMDB_FILM_GENRE_URL = (genreId: string) =>
 		`${this.TMDB_URL_V3}/genre/movie/${genreId}/movies?language=${this.language}`
+	private TMDB_SEARCH_URL = (
+		query: string,
+		pageIndex: number,
+		type: string,
+	) => {
+		return `${this.TMDB_URL_V3}/search/${type}?query=${query}}&language=${this.language}&page=${pageIndex}`
+	}
 
 	private async fetchFilm(filmId: string): Promise<TMDBFilm | false> {
 		const result = await fetchWithDelay<TMDBFilm>(
@@ -467,6 +472,23 @@ export class TMDB extends Importer {
 
 		return importedFilm
 	}
+
+	async searchFilms(
+		filmTitle: string,
+		pageIndex: number = 1,
+	): Promise<TMDBSearchResult<TMDBFilm>> {
+		return fetchWithDelay<any>(
+			this.TMDB_SEARCH_URL(filmTitle, pageIndex, 'movie'),
+			{
+				method: 'GET',
+				headers: {
+					accept: 'application/json',
+					Authorization: `Bearer ${this.#TMDB_API_KEY}`,
+				},
+			},
+			0,
+		).then(response => response.data)
+	}
 }
 
 export class IMDB extends Importer {
@@ -478,3 +500,5 @@ export class IMDB extends Importer {
 		this.apiKey = apiKey
 	}
 }
+
+export const tmdb = new TMDB()

@@ -24,8 +24,8 @@ import {
 	TableHeader,
 	TableRow,
 } from '#app/components/ui/table.tsx'
-import { DataTablePaginationWithData } from '../data-table-pagination-with-data.tsx'
 import { DataTableToolbar } from './data-table-toolbar.tsx'
+import { DataTablePagination } from '../data-table-pagination.tsx'
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
@@ -138,7 +138,7 @@ export function UserTable<TData, TValue>({
 					</TableBody>
 				</Table>
 			</div>
-			<DataTablePaginationWithData table={table} />
+			<DataTablePagination table={table} />
 		</div>
 	)
 }

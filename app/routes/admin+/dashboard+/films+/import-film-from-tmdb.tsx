@@ -1,104 +1,134 @@
-import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import queryString from 'querystring'
 import { parseWithZod } from '@conform-to/zod'
-import { type LoaderFunctionArgs } from '@remix-run/node'
-import { json, useFetcher, type MetaFunction } from '@remix-run/react'
-import { useEffect, useState } from 'react'
+import {
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
+import {
+	json,
+	useLoaderData,
+	useSearchParams,
+	type MetaFunction,
+} from '@remix-run/react'
+import {
+	type FiltersTableState,
+	type PaginationState,
+} from '@tanstack/react-table'
+import React from 'react'
+import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
-import { ErrorList, Field } from '#app/components/forms'
-import { Button } from '#app/components/ui/button'
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from '#app/components/ui/dialog'
-import { Icon } from '#app/components/ui/icon'
-import { StatusButton } from '#app/components/ui/status-button'
-import {
-	type action as ImportFilmFromTMDBAction,
-	ImportFilmSchema,
-} from '#app/routes/resources+/film+/import'
+import { columns } from '#app/components/table/film/import/columns.js'
+import { ImportFilmTable } from '#app/components/table/film/import/data-table.js'
+import { tmdb } from '#app/utils/import.service.js'
 import { requireUserWithRole } from '#app/utils/permissions.server.js'
+import { getSearchParams } from '#app/utils/request.helper.js'
+import { createToastHeaders } from '#app/utils/toast.server.js'
+
+export const ImportFilmSchema = z.object({
+	tmdbID: z.string(),
+})
+
+export async function action({ request }: ActionFunctionArgs) {
+	await requireUserWithRole(request, 'admin')
+	const formData = await request.formData()
+	const submission = parseWithZod(formData, {
+		schema: ImportFilmSchema,
+	})
+	if (submission.status !== 'success') {
+		return json(
+			{ result: submission.reply() },
+			{
+				status: submission.status === 'error' ? 400 : 200,
+			},
+		)
+	}
+
+	let { tmdbID } = submission.value
+
+	const importedFilm = await tmdb.importFilm(tmdbID)
+
+	if (!importedFilm) {
+		return json(
+			{ result: submission.reply() },
+			{
+				headers: await createToastHeaders({
+					description: 'Failed to import film.',
+					type: 'error',
+				}),
+			},
+		)
+	}
+
+	return json(
+		{ result: submission.reply() },
+		{
+			headers: await createToastHeaders({
+				description: 'Imported film.',
+				type: 'success',
+			}),
+		},
+	)
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserWithRole(request, 'admin')
-	return json({})
+
+	const url = new URL(request.url)
+	const pageIndex = Number(url.searchParams.get('page')) || 1
+	const search = getSearchParams(request)
+
+	const tmdbFilms = await tmdb.searchFilms(search || '', pageIndex)
+
+	return json({ films: tmdbFilms.results, count: tmdbFilms.total_results })
 }
 
 export default function DashboardImportFilmFromTMDBRoute() {
-	const fetcher = useFetcher<typeof ImportFilmFromTMDBAction>()
-	const [open, setOpen] = useState(false)
+	const { films, count } = useLoaderData<typeof loader>()
 
-	const [form, fields] = useForm({
-		id: 'import-film-form',
-		lastResult: fetcher.data?.result,
-		onValidate({ formData }) {
-			return parseWithZod(formData, { schema: ImportFilmSchema })
-		},
-		shouldRevalidate: 'onBlur',
+	const [params, setParams] = useSearchParams()
+	const search = params.get('search') || ''
+
+	const [globalFilter, setGlobalFilter] =
+		React.useState<FiltersTableState['globalFilter']>(search)
+
+	const [pagination, setPagination] = React.useState<PaginationState>({
+		pageIndex: 0,
+		pageSize: 20,
 	})
 
-	useEffect(() => {
-		if (form.status === 'success') {
-			setOpen(false)
-			form.reset()
-		}
-	}, [form])
+	React.useEffect(() => {
+		if (globalFilter?.length > 0 && pagination.pageIndex != 0)
+			setPagination({ ...pagination, pageIndex: 0 })
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [globalFilter, setGlobalFilter])
+
+	React.useEffect(() => {
+		const existingParams = queryString.parse(params.toString())
+
+		setParams(
+			queryString.stringify({
+				...existingParams,
+				search: globalFilter,
+				page: pagination.pageIndex + 1,
+				pageSize: pagination.pageSize,
+			}),
+			{
+				preventScrollReset: true,
+			},
+		)
+	}, [globalFilter, search, params, pagination, setParams])
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<Button variant="outline" size="sm" className="h-8 w-36">
-					<Icon name="plus" className="mr-2 h-4 w-4" />
-					Import Film
-				</Button>
-			</DialogTrigger>
-			<DialogContent className="sm:max-w-[425px]">
-				<fetcher.Form
-					method="POST"
-					action="/resources/film/import"
-					name="import-film-form"
-					{...getFormProps(form)}
-				>
-					<DialogHeader>
-						<DialogTitle>Import Film</DialogTitle>
-						<DialogDescription>Import a new film from TMDB.</DialogDescription>
-					</DialogHeader>
-					<div className="grid py-4">
-						<Field
-							labelProps={{
-								htmlFor: fields.tmdbID.id,
-								children: 'TMDB ID',
-							}}
-							inputProps={{
-								...getInputProps(fields.tmdbID, { type: 'text' }),
-								autoComplete: 'off',
-							}}
-							errors={fields.tmdbID.errors}
-						/>
-						<ErrorList errors={form.errors} id={form.errorId} />
-					</div>
-					<DialogFooter>
-						<StatusButton
-							type="submit"
-							variant="outline"
-							status={
-								fetcher.state !== 'idle' ? 'pending' : form.status ?? 'idle'
-							}
-							disabled={fetcher.state !== 'idle'}
-							className="w-full max-md:aspect-square max-md:px-0"
-						>
-							<Icon name="plus" className="scale-125 max-md:scale-150">
-								<span className="max-md:hidden">Import Film</span>
-							</Icon>
-						</StatusButton>
-					</DialogFooter>
-				</fetcher.Form>
-			</DialogContent>
-		</Dialog>
+		<ImportFilmTable
+			data={films}
+			columns={columns}
+			pagination={pagination}
+			setPagination={setPagination}
+			globalFilter={globalFilter}
+			setGlobalFilter={setGlobalFilter}
+			rowCount={count}
+		/>
 	)
 }
 
