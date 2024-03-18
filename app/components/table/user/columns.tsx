@@ -55,6 +55,7 @@ export const columns: ColumnDef<Partial<User>>[] = [
 	},
 	{
 		accessorKey: 'roles',
+		enableSorting: false,
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Roles" />
 		),

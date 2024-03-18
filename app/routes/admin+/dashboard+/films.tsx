@@ -1,6 +1,8 @@
 import { type LoaderFunctionArgs } from '@remix-run/node'
 import { Outlet, json, type MetaFunction } from '@remix-run/react'
-import ButtonGroup, { type ButtonGroupProps } from '#app/components/button-group'
+import ButtonGroup, {
+	type ButtonGroupProps,
+} from '#app/components/button-group'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
 import { requireUserWithRole } from '#app/utils/permissions.server.js'
 
@@ -25,7 +27,7 @@ const NavigationLinks: ButtonGroupProps['pages'] = [
 export default function DashboardFilmsRoute() {
 	return (
 		<div>
-			<div className="mb-16">
+			<div className="mb-8">
 				<ButtonGroup pages={NavigationLinks} />
 			</div>
 			<main>

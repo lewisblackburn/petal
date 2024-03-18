@@ -34,6 +34,8 @@ interface DataTableProps<TData, TValue> {
 	setPagination: OnChangeFn<PaginationState> | undefined
 	globalFilter: FiltersTableState['globalFilter']
 	setGlobalFilter: OnChangeFn<FiltersTableState['globalFilter']> | undefined
+	sorting: SortingState
+	setSorting: OnChangeFn<SortingState> | undefined
 	rowCount: number
 }
 
@@ -44,6 +46,8 @@ export function UserTable<TData, TValue>({
 	setPagination,
 	globalFilter,
 	setGlobalFilter,
+	sorting,
+	setSorting,
 	rowCount,
 }: DataTableProps<TData, TValue>) {
 	const [rowSelection, setRowSelection] = React.useState({})
@@ -52,8 +56,6 @@ export function UserTable<TData, TValue>({
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[],
 	)
-	const [sorting, setSorting] = React.useState<SortingState>([])
-
 	const table = useReactTable({
 		data,
 		columns,
@@ -77,6 +79,7 @@ export function UserTable<TData, TValue>({
 		onPaginationChange: setPagination,
 		manualPagination: true,
 		manualFiltering: true,
+		manualSorting: true,
 		getSortedRowModel: getSortedRowModel(),
 		getFacetedRowModel: getFacetedRowModel(),
 		getFacetedUniqueValues: getFacetedUniqueValues(),

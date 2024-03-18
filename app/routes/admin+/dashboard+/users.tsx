@@ -7,6 +7,7 @@ import {
 } from '@remix-run/react'
 import { type LoaderFunctionArgs, json } from '@remix-run/server-runtime'
 import {
+	type SortingState,
 	type FiltersTableState,
 	type PaginationState,
 } from '@tanstack/react-table'
@@ -16,7 +17,12 @@ import { columns } from '#app/components/table/user/columns'
 import { UserTable } from '#app/components/table/user/data-table'
 import { prisma } from '#app/utils/db.server'
 import { requireUserWithRole } from '#app/utils/permissions.server'
-import { DEFAULT_TAKE, getSearchParams } from '#app/utils/request.helper'
+import {
+	DEFAULT_TAKE,
+	type Sort,
+	getOrderByParams,
+	getSearchParams,
+} from '#app/utils/request.helper'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserWithRole(request, 'admin')
@@ -25,6 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const pageIndex = Number(url.searchParams.get('page')) || 0
 	const pageSize = Number(url.searchParams.get('pageSize')) || DEFAULT_TAKE
 	const search = getSearchParams(request)
+	const orderBy = getOrderByParams(request, { order: 'asc', orderBy: 'name' })
 
 	const where = {
 		OR: search
@@ -38,6 +45,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	} satisfies Prisma.UserWhereInput
 
 	const users = await prisma.user.findMany({
+		orderBy,
 		skip: pageIndex * pageSize,
 		take: pageSize,
 		where,
@@ -70,6 +78,13 @@ export default function DashboardUsersRoute() {
 	const [params, setParams] = useSearchParams()
 	const search = params.get('search') || ''
 
+	const [sorting, setSorting] = React.useState<SortingState>([
+		{
+			id: 'name',
+			desc: false,
+		},
+	])
+
 	const [globalFilter, setGlobalFilter] =
 		React.useState<FiltersTableState['globalFilter']>(search)
 
@@ -79,11 +94,19 @@ export default function DashboardUsersRoute() {
 	})
 
 	React.useEffect(() => {
-		const existingParams = queryString.parse(params.toString())
-		const isSearching = search.length > 0
-
-		if (isSearching && pagination.pageIndex != 0)
+		if (globalFilter?.length > 0 && pagination.pageIndex != 0)
 			setPagination({ ...pagination, pageIndex: 0 })
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [globalFilter, setGlobalFilter])
+
+	React.useEffect(() => {
+		const existingParams = queryString.parse(params.toString())
+
+		const order: Sort = {
+			order: sorting[0].desc ? 'desc' : 'asc',
+			orderBy: sorting[0].id,
+		}
 
 		setParams(
 			queryString.stringify({
@@ -91,12 +114,13 @@ export default function DashboardUsersRoute() {
 				search: globalFilter,
 				page: pagination.pageIndex,
 				pageSize: pagination.pageSize,
+				...order,
 			}),
 			{
 				preventScrollReset: true,
 			},
 		)
-	}, [globalFilter, search, params, pagination, setParams])
+	}, [globalFilter, search, params, pagination, setParams, sorting])
 
 	return (
 		<UserTable
@@ -106,6 +130,8 @@ export default function DashboardUsersRoute() {
 			setPagination={setPagination}
 			globalFilter={globalFilter}
 			setGlobalFilter={setGlobalFilter}
+			sorting={sorting}
+			setSorting={setSorting}
 			rowCount={count}
 		/>
 	)

@@ -8,6 +8,7 @@ import {
 	type MetaFunction,
 } from '@remix-run/react'
 import {
+	type SortingState,
 	type FiltersTableState,
 	type PaginationState,
 } from '@tanstack/react-table'
@@ -17,7 +18,12 @@ import { columns } from '#app/components/table/film/index/columns.js'
 import { FilmTable } from '#app/components/table/film/index/data-table.js'
 import { prisma } from '#app/utils/db.server'
 import { requireUserWithRole } from '#app/utils/permissions.server.js'
-import { DEFAULT_TAKE, getSearchParams } from '#app/utils/request.helper.js'
+import {
+	DEFAULT_TAKE,
+	type Sort,
+	getSearchParams,
+	getOrderByParams,
+} from '#app/utils/request.helper.js'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserWithRole(request, 'admin')
@@ -26,6 +32,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const pageIndex = Number(url.searchParams.get('page')) || 0
 	const pageSize = Number(url.searchParams.get('pageSize')) || DEFAULT_TAKE
 	const search = getSearchParams(request)
+	const orderBy = getOrderByParams(request, { order: 'asc', orderBy: 'title' })
 
 	const where = {
 		OR: search
@@ -34,6 +41,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	} satisfies Prisma.FilmWhereInput
 
 	const films = await prisma.film.findMany({
+		orderBy,
 		skip: pageIndex * pageSize,
 		take: pageSize,
 		where,
@@ -62,6 +70,13 @@ export default function DashboardFilmsRoute() {
 	const [params, setParams] = useSearchParams()
 	const search = params.get('search') || ''
 
+	const [sorting, setSorting] = React.useState<SortingState>([
+		{
+			id: 'title',
+			desc: false,
+		},
+	])
+
 	const [globalFilter, setGlobalFilter] =
 		React.useState<FiltersTableState['globalFilter']>(search)
 
@@ -71,11 +86,19 @@ export default function DashboardFilmsRoute() {
 	})
 
 	React.useEffect(() => {
-		const existingParams = queryString.parse(params.toString())
-		const isSearching = search.length > 0
-
-		if (isSearching && pagination.pageIndex != 0)
+		if (globalFilter?.length > 0 && pagination.pageIndex != 0)
 			setPagination({ ...pagination, pageIndex: 0 })
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [globalFilter, setGlobalFilter])
+
+	React.useEffect(() => {
+		const existingParams = queryString.parse(params.toString())
+
+		const order: Sort = {
+			order: sorting[0].desc ? 'desc' : 'asc',
+			orderBy: sorting[0].id,
+		}
 
 		setParams(
 			queryString.stringify({
@@ -83,12 +106,13 @@ export default function DashboardFilmsRoute() {
 				search: globalFilter,
 				page: pagination.pageIndex,
 				pageSize: pagination.pageSize,
+				...order,
 			}),
 			{
 				preventScrollReset: true,
 			},
 		)
-	}, [globalFilter, search, params, pagination, setParams])
+	}, [globalFilter, search, params, pagination, setParams, sorting])
 
 	return (
 		<FilmTable
@@ -98,6 +122,8 @@ export default function DashboardFilmsRoute() {
 			setPagination={setPagination}
 			globalFilter={globalFilter}
 			setGlobalFilter={setGlobalFilter}
+			sorting={sorting}
+			setSorting={setSorting}
 			rowCount={count}
 		/>
 	)
