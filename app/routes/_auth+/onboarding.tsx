@@ -16,11 +16,7 @@ import {
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { safeRedirect } from 'remix-utils/safe-redirect'
 import { z } from 'zod'
-import { CheckboxConform } from '#app/components/form/conform/Checkbox.js'
-import { InputConform } from '#app/components/form/conform/Input.js'
-import { Field, FieldError } from '#app/components/form/Field.js'
 import { Spacer } from '#app/components/spacer.tsx'
-import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireAnonymous, sessionKey, signup } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
@@ -34,6 +30,11 @@ import {
 	UsernameSchema,
 } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
+import { ErrorList } from '#app/components/form/ErrorList.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
+import { Label } from '#app/components/ui/label.js'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { CheckboxConform } from '#app/components/form/conform/Checkbox.js'
 
 export const onboardingEmailSessionKey = 'onboardingEmail'
 
@@ -198,11 +199,16 @@ export default function SignupRoute() {
 					</Field>
 					<Field>
 						<Label htmlFor={fields.confirmPassword.id}>Confirm Password</Label>
-						<InputConform meta={fields.confirmPassword} type="password" />
+						<InputConform
+							meta={fields.confirmPassword}
+							type="password"
+							autoComplete="new-password"
+						/>
 						{fields.confirmPassword.errors && (
 							<FieldError>{fields.confirmPassword.errors}</FieldError>
 						)}
 					</Field>
+
 					<Field>
 						<div className="flex items-center gap-2">
 							<CheckboxConform
@@ -227,7 +233,9 @@ export default function SignupRoute() {
 							<FieldError>{fields.remember.errors}</FieldError>
 						)}
 					</Field>
+
 					<input {...getInputProps(fields.redirectTo, { type: 'hidden' })} />
+					<ErrorList errors={form.errors} id={form.errorId} />
 
 					<div className="flex items-center justify-between gap-6">
 						<StatusButton

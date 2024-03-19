@@ -17,6 +17,7 @@ import { requireAnonymous, resetUserPassword } from '#app/utils/auth.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { PasswordAndConfirmPasswordSchema } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
+import { ErrorList } from '#app/components/form/ErrorList.js'
 
 export const resetPasswordUsernameSessionKey = 'resetPasswordUsername'
 
@@ -117,6 +118,8 @@ export default function ResetPasswordPage() {
 							<FieldError>{fields.confirmPassword.errors}</FieldError>
 						)}
 					</Field>
+
+					<ErrorList errors={form.errors} id={form.errorId} />
 
 					<StatusButton
 						className="w-full"

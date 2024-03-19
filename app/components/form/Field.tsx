@@ -13,5 +13,5 @@ export const Field = ({
 }
 
 export const FieldError = ({ children }: { children: React.ReactNode }) => {
-	return <div className="text-sm text-red-600 ">{children}</div>
+	return <li className="text-[10px] text-foreground-destructive">{children}</li>
 }
