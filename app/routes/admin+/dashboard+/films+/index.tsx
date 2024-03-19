@@ -112,7 +112,9 @@ export default function DashboardFilmsRoute() {
 				preventScrollReset: true,
 			},
 		)
-	}, [globalFilter, search, params, pagination, setParams, sorting])
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [pagination, globalFilter, sorting])
 
 	return (
 		<FilmTable

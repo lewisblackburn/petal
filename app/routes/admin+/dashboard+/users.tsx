@@ -120,7 +120,9 @@ export default function DashboardUsersRoute() {
 				preventScrollReset: true,
 			},
 		)
-	}, [globalFilter, search, params, pagination, setParams, sorting])
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [pagination, globalFilter, sorting])
 
 	return (
 		<UserTable

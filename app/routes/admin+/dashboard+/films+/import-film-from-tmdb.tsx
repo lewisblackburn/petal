@@ -117,7 +117,9 @@ export default function DashboardImportFilmFromTMDBRoute() {
 				preventScrollReset: true,
 			},
 		)
-	}, [globalFilter, search, params, pagination, setParams])
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [pagination, globalFilter])
 
 	return (
 		<ImportFilmTable

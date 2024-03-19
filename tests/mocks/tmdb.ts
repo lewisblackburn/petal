@@ -17,4 +17,9 @@ export const handlers: Array<HttpHandler> = [
 
 		return HttpResponse.json(null, { status: 404 })
 	}),
+	http.get(`https://api.themoviedb.org/3/search/movie`, async () => {
+		if (await isConnectedToTheInternet()) return passthrough()
+
+		return HttpResponse.json(null, { status: 404 })
+	}),
 ]
