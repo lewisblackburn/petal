@@ -1,22 +1,23 @@
-import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type Film } from '@prisma/client'
 import { Form, useFetcher } from '@remix-run/react'
 import { type SerializeFrom } from '@remix-run/server-runtime'
 import { format } from 'date-fns'
 import { z } from 'zod'
+import { DatePickerConform } from '#app/components/conform/DatePicker.js'
+import { InputConform } from '#app/components/conform/Input.js'
+import { LanguagePickerConform } from '#app/components/conform/LanguagePicker.js'
+import { SelectConform } from '#app/components/conform/Select.js'
+import { TextareaConform } from '#app/components/conform/Textarea.js'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import {
-	ErrorList,
-	Field,
-	FilterSelectField,
-	SelectField,
-	TextareaField,
-} from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { AGE_RATINGS, LANGUAGES, STATUSES } from '#app/utils/constants.ts'
 import { type action } from './__film-editor.server'
+import { Field, FieldError } from '#app/components/conform/Field.js'
+import { ErrorList } from '#app/components/forms.js'
 
 export const FilmEditorSchema = z.object({
 	id: z.string().optional(),
@@ -92,116 +93,93 @@ export function FilmEditor({
 		>
 			{film ? <input type="hidden" name="id" value={film.id} /> : null}
 			<div className="flex flex-col gap-1">
-				<Field
-					labelProps={{ children: 'Title' }}
-					inputProps={{
-						autoFocus: true,
-						...getInputProps(fields.title, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					errors={fields.title.errors}
-				/>
-				<Field
-					labelProps={{ children: 'Tagline' }}
-					inputProps={{
-						...getInputProps(fields.tagline, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					errors={fields.tagline.errors}
-				/>
-				<TextareaField
-					labelProps={{ children: 'Overview' }}
-					textareaProps={{
-						...getInputProps(fields.overview, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					errors={fields.overview.errors}
-				/>
-				<Field
-					labelProps={{ children: 'Runtime' }}
-					inputProps={{
-						...getInputProps(fields.runtime, {
-							ariaAttributes: true,
-							type: 'number',
-						}),
-					}}
-					errors={fields.runtime.errors}
-				/>
-				<Field
-					labelProps={{ children: 'Release Date' }}
-					inputProps={{
-						...getInputProps(fields.releaseDate, {
-							ariaAttributes: true,
-							type: 'date',
-						}),
-					}}
-					errors={fields.releaseDate.errors}
-				/>
-				<FilterSelectField
-					labelProps={{
-						htmlFor: fields.language.id,
-						children: 'Language',
-					}}
-					buttonProps={{
-						...getInputProps(fields.language, { type: 'text' }),
-					}}
-					options={LANGUAGES.map(language => ({
-						label: language.name,
-						value: language.name,
-					}))}
-					errors={fields.language.errors}
-				/>
-				<SelectField
-					labelProps={{ children: 'Age Rating' }}
-					buttonProps={{
-						...getInputProps(fields.ageRating, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					options={AGE_RATINGS}
-					errors={fields.ageRating.errors}
-				/>
-				<SelectField
-					labelProps={{ children: 'Status' }}
-					buttonProps={{
-						...getInputProps(fields.status, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					options={STATUSES.map(status => ({
-						label: status.name,
-						value: status.name,
-					}))}
-					errors={fields.status.errors}
-				/>
-				<Field
-					labelProps={{ children: 'Budget' }}
-					inputProps={{
-						...getInputProps(fields.budget, {
-							ariaAttributes: true,
-							type: 'number',
-						}),
-					}}
-					errors={fields.budget.errors}
-				/>
-				<Field
-					labelProps={{ children: 'Revenue' }}
-					inputProps={{
-						...getInputProps(fields.revenue, {
-							ariaAttributes: true,
-							type: 'number',
-						}),
-					}}
-					errors={fields.revenue.errors}
-				/>
+				<Field>
+					<Label htmlFor={fields.title.id}>Title</Label>
+					<InputConform meta={fields.title} type="text" autoFocus />
+					{fields.title.errors && (
+						<FieldError>{fields.title.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.tagline.id}>Tagline</Label>
+					<InputConform meta={fields.tagline} type="text" />
+					{fields.tagline.errors && (
+						<FieldError>{fields.tagline.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.overview.id}>Overview</Label>
+					<TextareaConform meta={fields.overview} />
+					{fields.overview.errors && (
+						<FieldError>{fields.overview.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.runtime.id}>Runtime</Label>
+					{/* @ts-expect-error runtime is a number */}
+					<InputConform meta={fields.runtime} type="number" />
+					{fields.runtime.errors && (
+						<FieldError>{fields.runtime.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.releaseDate.id}>Release date</Label>
+					<DatePickerConform meta={fields.releaseDate} />
+					{fields.releaseDate.errors && (
+						<FieldError>{fields.releaseDate.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.language.id}>Language</Label>
+					<LanguagePickerConform meta={fields.language} />
+					{fields.language.errors && (
+						<FieldError>{fields.language.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.ageRating.id}>Age rating</Label>
+					<SelectConform
+						placeholder="Select an age rating"
+						meta={fields.ageRating}
+						items={AGE_RATINGS.map(ageRating => ({
+							name: ageRating.label,
+							value: ageRating.value,
+						}))}
+					/>
+					{fields.ageRating.errors && (
+						<FieldError>{fields.ageRating.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.status.id}>Status</Label>
+					<SelectConform
+						placeholder="Select a status"
+						meta={fields.status}
+						items={STATUSES.map(status => ({
+							name: status.name,
+							value: status.name,
+						}))}
+					/>
+					{fields.status.errors && (
+						<FieldError>{fields.status.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.budget.id}>Budget</Label>
+					{/* @ts-expect-error budget is a number */}
+					<InputConform meta={fields.budget} type="number" />
+					{fields.budget.errors && (
+						<FieldError>{fields.budget.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.revenue.id}>Revenue</Label>
+					{/* @ts-expect-error revenue is a number */}
+					<InputConform meta={fields.revenue} type="number" />
+					{fields.revenue.errors && (
+						<FieldError>{fields.revenue.errors}</FieldError>
+					)}
+				</Field>
 			</div>
 			<ErrorList id={form.errorId} errors={form.errors} />
 			<div className="flex justify-end gap-2">

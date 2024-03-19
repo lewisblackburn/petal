@@ -2086,11 +2086,6 @@ export const LANGUAGES = [
 		nativeName: '',
 	},
 	{
-		iso_639_1: 'nr',
-		name: 'Ndebele',
-		nativeName: '',
-	},
-	{
 		iso_639_1: 'or',
 		name: 'Oriya',
 		nativeName: '',

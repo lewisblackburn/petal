@@ -1,7 +1,16 @@
-import { useInputControl } from '@conform-to/react'
+import {
+	type FieldMetadata,
+	useInputControl,
+	unstable_useControl as useControl,
+} from '@conform-to/react'
 import type * as PopoverPrimitive from '@radix-ui/react-popover'
 import type * as SelectPrimitive from '@radix-ui/react-select'
-import React, { useId, useRef } from 'react'
+import React, {
+	type ComponentProps,
+	type ElementRef,
+	useId,
+	useRef,
+} from 'react'
 import { cn } from '#app/utils/misc.tsx'
 import { Image } from './image.tsx'
 import { Spinner } from './spinner.tsx'
@@ -262,6 +271,77 @@ export function SelectField({
 				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
 			</div>
 		</div>
+	)
+}
+
+export const FieldConform = ({ children }: { children: React.ReactNode }) => {
+	return <div className="flex flex-col gap-2">{children}</div>
+}
+
+export const FieldErrorConform = ({
+	children,
+}: {
+	children: React.ReactNode
+}) => {
+	return <div className="text-sm text-red-600">{children}</div>
+}
+
+export const SelectConform = ({
+	meta,
+	items,
+	placeholder,
+	...props
+}: {
+	meta: FieldMetadata<string>
+	items: Array<{ name: string; value: string }>
+	placeholder: string
+} & ComponentProps<typeof Select>) => {
+	const selectRef = useRef<ElementRef<typeof SelectTrigger>>(null)
+	const control = useControl(meta)
+
+	return (
+		<>
+			<select
+				name={meta.name}
+				defaultValue={meta.initialValue ?? ''}
+				className="sr-only"
+				ref={control.register}
+				aria-hidden
+				tabIndex={-1}
+				onFocus={() => {
+					selectRef.current?.focus()
+				}}
+			>
+				<option value="" />
+				{items.map(option => (
+					<option key={option.value} value={option.value} />
+				))}
+			</select>
+
+			<Select
+				{...props}
+				value={control.value ?? ''}
+				onValueChange={control.change}
+				onOpenChange={open => {
+					if (!open) {
+						control.blur()
+					}
+				}}
+			>
+				<SelectTrigger>
+					<SelectValue placeholder={placeholder} />
+				</SelectTrigger>
+				<SelectContent>
+					{items.map(item => {
+						return (
+							<SelectItem key={item.value} value={item.value}>
+								{item.name}
+							</SelectItem>
+						)
+					})}
+				</SelectContent>
+			</Select>
+		</>
 	)
 }
 
