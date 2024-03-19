@@ -2,10 +2,9 @@ import {
 	type FieldMetadata,
 	unstable_useControl as useControl,
 } from '@conform-to/react'
-import React from 'react'
-import { LANGUAGES } from '#app/utils/constants.js'
+import React, { type FormEventHandler } from 'react'
 import { cn } from '#app/utils/misc.js'
-import { Button } from '../ui/button'
+import { Button } from '../../ui/button'
 import {
 	Command,
 	CommandInput,
@@ -13,22 +12,30 @@ import {
 	CommandGroup,
 	CommandItem,
 	CommandList,
-} from '../ui/command'
-import { Icon } from '../ui/icon'
-import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover'
+} from '../../ui/command'
+import { Icon } from '../../ui/icon'
+import { Popover, PopoverTrigger, PopoverContent } from '../../ui/popover'
 
-const langauges = LANGUAGES.map(language => ({
-	label: language.name,
-	value: language.name,
-}))
-
-export function LanguagePickerConform({
+export function SearchSelectConform({
 	meta,
+	items,
+	onInput,
 }: {
 	meta: FieldMetadata<string>
+	items: { label: string; value: string }[]
+	onInput: FormEventHandler<HTMLInputElement>
 }) {
+	const [selectedItem, setSelectedItem] = React.useState<{
+		label: string
+		value: string
+	}>()
 	const triggerRef = React.useRef<HTMLButtonElement>(null)
 	const control = useControl(meta)
+
+	// if selectedItem and is not already in items, add it
+	if (selectedItem && !items.find(item => item.value === selectedItem.value)) {
+		items.push(selectedItem)
+	}
 
 	return (
 		<div>
@@ -56,9 +63,8 @@ export function LanguagePickerConform({
 						)}
 					>
 						{control.value
-							? langauges.find(language => language.value === control.value)
-									?.label
-							: 'Select language'}
+							? items.find(item => item.value === control.value)?.label
+							: 'Select item'}
 						<Icon
 							name="caret-sort"
 							className="ml-2 h-4 w-4 shrink-0 opacity-50"
@@ -67,28 +73,33 @@ export function LanguagePickerConform({
 				</PopoverTrigger>
 				<PopoverContent className="w-[200px] p-0">
 					<Command>
-						<CommandInput placeholder="Search language..." />
+						<CommandInput
+							placeholder="Search item..."
+							onInput={onInput}
+							onFocus={onInput}
+						/>
 						<CommandList>
-							<CommandEmpty>No language found.</CommandEmpty>
+							<CommandEmpty>No item found.</CommandEmpty>
 							<CommandGroup>
-								{langauges.map(language => (
+								{items.map(item => (
 									<CommandItem
-										value={language.label}
-										key={language.value}
+										value={item.label}
+										key={item.value}
 										onSelect={() => {
-											control.change(language.value)
+											control.change(item.value)
+											setSelectedItem(item)
 										}}
 									>
 										<Icon
 											name="check"
 											className={cn(
 												'mr-2 h-4 w-4',
-												language.value === control.value
+												item.value === control.value
 													? 'opacity-100'
 													: 'opacity-0',
 											)}
 										/>
-										{language.label}
+										{item.label}
 									</CommandItem>
 								))}
 							</CommandGroup>

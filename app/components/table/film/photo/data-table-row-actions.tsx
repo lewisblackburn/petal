@@ -1,14 +1,12 @@
-import { getFormProps, useForm, getInputProps } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { type Row } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
-import {
-	CheckboxField,
-	ErrorList,
-	FilterSelectField,
-	SelectField,
-} from '#app/components/forms'
+import { CheckboxConform } from '#app/components/form/conform/Checkbox.js'
+import { LanguagePickerConform } from '#app/components/form/conform/LanguagePicker.js'
+import { SelectConform } from '#app/components/form/conform/Select.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button'
 import {
 	Dialog,
@@ -20,12 +18,13 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog'
 import { Icon } from '#app/components/ui/icon'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type action as EditFilmPhotoAction,
 	EditFilmPhotoSchema,
 } from '#app/routes/resources+/film+/edit-photo'
-import { LANGUAGES, PHOTO_TYPES } from '#app/utils/constants'
+import { PHOTO_TYPES } from '#app/utils/constants'
 
 interface DataTableRowActionsProps<TData> {
 	row: Row<TData>
@@ -85,40 +84,36 @@ export function DataTableRowActions<TData>({
 						<input name="id" type="hidden" value={photo.id} />
 						<input name="filmId" type="hidden" value={filmId} />
 						<input name="url" type="hidden" value={photo.url} />
-						<SelectField
-							labelProps={{
-								htmlFor: fields.type.id,
-								children: 'Type',
-							}}
-							buttonProps={{
-								...getInputProps(fields.type, { type: 'text' }),
-							}}
-							options={PHOTO_TYPES}
-							errors={fields.type.errors}
-						/>
-						<FilterSelectField
-							labelProps={{
-								htmlFor: fields.language.id,
-								children: 'Language',
-							}}
-							buttonProps={{
-								...getInputProps(fields.language, { type: 'text' }),
-							}}
-							options={LANGUAGES.map(language => ({
-								label: language.name,
-								value: language.name,
-							}))}
-							errors={fields.language.errors}
-						/>
-						<CheckboxField
-							labelProps={{
-								htmlFor: fields.primary.id,
-								children: 'Primary',
-							}}
-							buttonProps={getInputProps(fields.primary, { type: 'checkbox' })}
-							errors={fields.primary.errors}
-						/>
-						<ErrorList errors={form.errors} id={form.errorId} />
+						<Field>
+							<Label htmlFor={fields.type.id}>Type</Label>
+							<SelectConform
+								placeholder="Select a type"
+								meta={fields.type}
+								items={PHOTO_TYPES.map(type => ({
+									name: type.label,
+									value: type.value,
+								}))}
+							/>
+							{fields.type.errors && (
+								<FieldError>{fields.type.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.language.id}>Language</Label>
+							<LanguagePickerConform meta={fields.language} />
+							{fields.language.errors && (
+								<FieldError>{fields.language.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<div className="flex items-center gap-2">
+								<CheckboxConform meta={fields.primary} />
+								<Label htmlFor={fields.primary.id}>Primary</Label>
+							</div>
+							{fields.primary.errors && (
+								<FieldError>{fields.primary.errors}</FieldError>
+							)}
+						</Field>
 					</div>
 					<DialogFooter>
 						<StatusButton

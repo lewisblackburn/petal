@@ -3,7 +3,7 @@ import {
 	unstable_useControl as useControl,
 } from '@conform-to/react'
 import { useRef, type ElementRef } from 'react'
-import { Checkbox } from '../ui/checkbox'
+import { Checkbox } from '../../ui/checkbox'
 
 export function CheckboxConform({
 	meta,

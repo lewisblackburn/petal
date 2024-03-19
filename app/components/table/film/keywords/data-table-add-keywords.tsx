@@ -1,8 +1,9 @@
-import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -14,6 +15,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type action as AddFilmKeywordsAction,
@@ -68,16 +70,13 @@ export function DataTableAddKeywords() {
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<Field
-							labelProps={{
-								htmlFor: fields.keywords.id,
-							}}
-							inputProps={{
-								...getInputProps(fields.keywords, { type: 'text' }),
-							}}
-							errors={fields.keywords.errors}
-						/>
-						<ErrorList errors={form.errors} id={form.errorId} />
+						<Field>
+							<Label htmlFor={fields.keywords.id}>Keywords</Label>
+							<InputConform meta={fields.keywords} type="text" />
+							{fields.keywords.errors && (
+								<FieldError>{fields.keywords.errors}</FieldError>
+							)}
+						</Field>
 					</div>
 					<DialogFooter>
 						<StatusButton

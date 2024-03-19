@@ -1,12 +1,15 @@
-import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type FilmReview } from '@prisma/client'
 import { Form, useFetcher } from '@remix-run/react'
 import { type SerializeFrom } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { ErrorList, Field, TextareaField } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { TextareaConform } from '#app/components/form/conform/Textarea.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { type action } from './__film-review-editor.server'
 
@@ -49,38 +52,29 @@ export function FilmReviewEditor({
 		>
 			{review ? <input type="hidden" name="id" value={review.id} /> : null}
 			<div className="flex flex-col gap-1">
-				<Field
-					labelProps={{ children: 'Rating' }}
-					inputProps={{
-						...getInputProps(fields.rating, {
-							ariaAttributes: true,
-							type: 'number',
-						}),
-					}}
-					errors={fields.rating.errors}
-				/>
-				<Field
-					labelProps={{ children: 'Title' }}
-					inputProps={{
-						...getInputProps(fields.title, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					errors={fields.title.errors}
-				/>
-				<TextareaField
-					labelProps={{ children: 'Content' }}
-					textareaProps={{
-						...getInputProps(fields.content, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					errors={fields.content.errors}
-				/>
+				<Field>
+					<Label htmlFor={fields.rating.id}>Rating</Label>
+					{/* @ts-expect-error fix type later */}
+					<InputConform meta={fields.rating} type="number" />
+					{fields.rating.errors && (
+						<FieldError>{fields.rating.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.title.id}>Title</Label>
+					<InputConform meta={fields.title} type="text" />
+					{fields.title.errors && (
+						<FieldError>{fields.title.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.content.id}>Content</Label>
+					<TextareaConform meta={fields.content} />
+					{fields.content.errors && (
+						<FieldError>{fields.content.errors}</FieldError>
+					)}
+				</Field>
 			</div>
-			<ErrorList id={form.errorId} errors={form.errors} />
 			<div className="flex justify-end gap-2">
 				<Button form={form.id} variant="destructive" type="reset">
 					Reset

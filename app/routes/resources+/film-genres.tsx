@@ -13,9 +13,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	const where = {
 		OR: search ? [{ name: { contains: search } }] : undefined,
-	} satisfies Prisma.ProductionCompanyWhereInput
+	} satisfies Prisma.FilmGenreWhereInput
 
-	const productionCompanies = await prisma.productionCompany.findMany({
+	const filmGenres = await prisma.filmGenre.findMany({
 		take,
 		where,
 		select: {
@@ -24,16 +24,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		},
 	})
 
-	return json({ productionCompanies })
+	return json({ filmGenres })
 }
 
-export const ProductionCompanySearchConform = ({ fields }: { fields: any }) => {
+export const FilmGenreSearchConform = ({ fields }: { fields: any }) => {
 	const fetcher = useFetcher<typeof loader>()
 
 	const items =
-		fetcher.data?.productionCompanies.map(productionCompany => ({
-			value: productionCompany.id,
-			label: productionCompany.name,
+		fetcher.data?.filmGenres.map(genre => ({
+			value: genre.id,
+			label: genre.name,
 		})) || []
 
 	const handleSearch = (e: any) => {
@@ -41,7 +41,7 @@ export const ProductionCompanySearchConform = ({ fields }: { fields: any }) => {
 
 		fetcher.submit(
 			{ search: searchValue },
-			{ method: 'GET', action: '/resources/productionCompanies' },
+			{ method: 'GET', action: '/resources/film-genres' },
 		)
 	}
 

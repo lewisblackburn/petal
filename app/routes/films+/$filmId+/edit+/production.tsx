@@ -8,7 +8,7 @@ import {
 import { Form, useFetcher, useLoaderData } from '@remix-run/react'
 import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
-import { ErrorList, MultiSelectField } from '#app/components/forms.tsx'
+import { MultiSelectField } from '#app/components/form/MultiSelectField.js'
 import { columns } from '#app/components/table/film/productionCompanies/columns.tsx'
 import { ProductionCompaniesTable } from '#app/components/table/film/productionCompanies/data-table.tsx'
 import { Button } from '#app/components/ui/button.tsx'
@@ -164,7 +164,6 @@ export default function FilmEditProductionInformationRoute() {
 						errors={fields.productionCountries.errors}
 					/>
 				</div>
-				<ErrorList id={form.errorId} errors={form.errors} />
 				<div className="flex justify-end gap-2">
 					<Button form={form.id} variant="destructive" type="reset">
 						Reset

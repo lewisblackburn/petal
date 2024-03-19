@@ -1,13 +1,10 @@
-import { getFormProps, getInputProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import {
-	ErrorList,
-	Field,
-	FilterSelectField,
-	SelectField,
-} from '#app/components/forms.tsx'
+import { LanguagePickerConform } from '#app/components/form/conform/LanguagePicker.js'
+import { SelectConform } from '#app/components/form/conform/Select.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -19,12 +16,14 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type action as AddFilmPhotoAction,
 	AddFilmPhotoSchema,
 } from '#app/routes/resources+/film+/add-photo.ts'
-import { LANGUAGES, PHOTO_TYPES } from '#app/utils/constants.ts'
+import { PHOTO_TYPES } from '#app/utils/constants.ts'
+import { InputConform } from '../../../form/conform/Input'
 
 export function DataTableAddPhoto() {
 	const { filmId } = useParams()
@@ -75,43 +74,35 @@ export function DataTableAddPhoto() {
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<Field
-							labelProps={{
-								htmlFor: fields.image.id,
-								children: 'Image',
-							}}
-							inputProps={{
-								...getInputProps(fields.image, { type: 'file' }),
-								accept: 'image/*',
-							}}
-							errors={fields.image.errors}
-						/>
-						<SelectField
-							labelProps={{
-								htmlFor: fields.type.id,
-								children: 'Type',
-							}}
-							buttonProps={{
-								...getInputProps(fields.type, { type: 'text' }),
-							}}
-							options={PHOTO_TYPES}
-							errors={fields.type.errors}
-						/>
-						<FilterSelectField
-							labelProps={{
-								htmlFor: fields.language.id,
-								children: 'Language',
-							}}
-							buttonProps={{
-								...getInputProps(fields.language, { type: 'text' }),
-							}}
-							options={LANGUAGES.map(language => ({
-								label: language.name,
-								value: language.name,
-							}))}
-							errors={fields.language.errors}
-						/>
-						<ErrorList errors={form.errors} id={form.errorId} />
+						<Field>
+							<Label htmlFor={fields.image.id}>Image</Label>
+							{/* @ts-expect-error image is not a valid prop for InputConform */}
+							<InputConform meta={fields.image} type="file" accept="image/*" />
+							{fields.image.errors && (
+								<FieldError>{fields.image.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.type.id}>Type</Label>
+							<SelectConform
+								placeholder="Select a photo type"
+								meta={fields.type}
+								items={PHOTO_TYPES.map(photoType => ({
+									name: photoType.label,
+									value: photoType.value,
+								}))}
+							/>
+							{fields.type.errors && (
+								<FieldError>{fields.type.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.language.id}>Language</Label>
+							<LanguagePickerConform meta={fields.language} />
+							{fields.language.errors && (
+								<FieldError>{fields.language.errors}</FieldError>
+							)}
+						</Field>
 					</div>
 					<DialogFooter>
 						<StatusButton

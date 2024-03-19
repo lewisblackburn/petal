@@ -1,4 +1,4 @@
-import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type Person } from '@prisma/client'
 import { Form, useFetcher } from '@remix-run/react'
@@ -6,16 +6,17 @@ import { type SerializeFrom } from '@remix-run/server-runtime'
 import { format } from 'date-fns'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import {
-	ErrorList,
-	Field,
-	FilterSelectField,
-	SelectField,
-	TextareaField,
-} from '#app/components/forms.tsx'
+
+import { DatePickerConform } from '#app/components/form/conform/DatePicker.js'
+import { DepartmentPickerConform } from '#app/components/form/conform/DepartmentPicker.js'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { SelectConform } from '#app/components/form/conform/Select.js'
+import { TextareaConform } from '#app/components/form/conform/Textarea.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { GENDERS, ROLES } from '#app/utils/constants.ts'
+import { GENDERS } from '#app/utils/constants.ts'
 import { type action } from './__person-editor.server'
 
 export const PersonEditorSchema = z.object({
@@ -78,74 +79,56 @@ export function PersonEditor({
 		>
 			{person ? <input type="hidden" name="id" value={person.id} /> : null}
 			<div className="flex flex-col gap-1">
-				<FilterSelectField
-					labelProps={{
-						htmlFor: fields.knownForDepartment.id,
-						children: 'Known For',
-					}}
-					buttonProps={{
-						...getInputProps(fields.knownForDepartment, { type: 'text' }),
-					}}
-					options={ROLES.map(role => ({
-						label: role.department,
-						value: role.department,
-					}))}
-					errors={fields.knownForDepartment.errors}
-				/>
-				<Field
-					labelProps={{ children: 'Name' }}
-					inputProps={{
-						autoFocus: true,
-						...getInputProps(fields.name, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					errors={fields.name.errors}
-				/>
-				<TextareaField
-					labelProps={{ htmlFor: fields.biography.id, children: 'Biography' }}
-					textareaProps={{
-						...getInputProps(fields.biography, { type: 'text' }),
-						autoComplete: 'biography',
-					}}
-					className="w-full"
-					errors={fields.biography.errors}
-				/>
-				<Field
-					labelProps={{ htmlFor: fields.birthdate.id, children: 'Birthdate' }}
-					inputProps={{
-						...getInputProps(fields.birthdate, { type: 'text' }),
-						autoComplete: 'birthdate',
-						type: 'date',
-					}}
-					className="w-full"
-					errors={fields.birthdate.errors}
-				/>
-				<Field
-					labelProps={{
-						htmlFor: fields.dayOfDeath.id,
-						children: 'Day of Death',
-					}}
-					inputProps={{
-						...getInputProps(fields.dayOfDeath, { type: 'text' }),
-						autoComplete: 'dayOfDeath',
-						type: 'date',
-					}}
-					className="w-full"
-					errors={fields.dayOfDeath.errors}
-				/>
-				<SelectField
-					labelProps={{ htmlFor: fields.gender.id, children: 'Gender' }}
-					buttonProps={{
-						...getInputProps(fields.gender, { type: 'text' }),
-					}}
-					options={GENDERS}
-					className="w-full"
-					errors={fields.gender.errors}
-				/>
+				<Field>
+					<Label htmlFor={fields.knownForDepartment.id}>
+						Known for department
+					</Label>
+					<DepartmentPickerConform meta={fields.knownForDepartment} />
+					{fields.knownForDepartment.errors && (
+						<FieldError>{fields.knownForDepartment.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.name.id}>Name</Label>
+					<InputConform meta={fields.name} type="text" />
+					{fields.name.errors && <FieldError>{fields.name.errors}</FieldError>}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.biography.id}>Biography</Label>
+					<TextareaConform meta={fields.biography} />
+					{fields.biography.errors && (
+						<FieldError>{fields.biography.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.birthdate.id}>Birth date</Label>
+					<DatePickerConform meta={fields.birthdate} />
+					{fields.birthdate.errors && (
+						<FieldError>{fields.birthdate.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.dayOfDeath.id}>Day of death</Label>
+					<DatePickerConform meta={fields.dayOfDeath} />
+					{fields.dayOfDeath.errors && (
+						<FieldError>{fields.dayOfDeath.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.gender.id}>Gender</Label>
+					<SelectConform
+						placeholder="Select a gender"
+						meta={fields.gender}
+						items={GENDERS.map(gender => ({
+							name: gender.label,
+							value: gender.value,
+						}))}
+					/>
+					{fields.gender.errors && (
+						<FieldError>{fields.gender.errors}</FieldError>
+					)}
+				</Field>
 			</div>
-			<ErrorList id={form.errorId} errors={form.errors} />
 			<div className="flex justify-end gap-2">
 				<Button form={form.id} variant="destructive" type="reset">
 					Reset

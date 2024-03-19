@@ -1,8 +1,8 @@
-import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { ErrorList } from '#app/components/forms.tsx'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -14,12 +14,13 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type action as AddFilmProductionCompanyAction,
 	AddFilmProductionCompanySchema,
 } from '#app/routes/resources+/film+/add-production-company.ts'
-import { ProductionCompanySearch } from '#app/routes/resources+/productionCompanies.tsx'
+import { ProductionCompanySearchConform } from '#app/routes/resources+/productionCompanies.js'
 
 export function DataTableAddProductionCompany() {
 	const { filmId } = useParams()
@@ -69,18 +70,13 @@ export function DataTableAddProductionCompany() {
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<ProductionCompanySearch
-							labelProps={{
-								htmlFor: fields.companyId.id,
-								children: 'Company',
-								autoFocus: true,
-							}}
-							buttonProps={{
-								...getInputProps(fields.companyId, { type: 'text' }),
-							}}
-							errors={fields.companyId.errors}
-						/>
-						<ErrorList errors={form.errors} id={form.errorId} />
+						<Field>
+							<Label htmlFor={fields.companyId.id}>Company</Label>
+							<ProductionCompanySearchConform fields={fields.companyId} />
+							{fields.companyId.errors && (
+								<FieldError>{fields.companyId.errors}</FieldError>
+							)}
+						</Field>
 					</div>
 					<DialogFooter>
 						<StatusButton

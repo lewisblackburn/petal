@@ -1,8 +1,8 @@
-import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { ErrorList } from '#app/components/forms.tsx'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -14,12 +14,13 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type action as AddFilmGenreAction,
 	AddFilmGenreSchema,
 } from '#app/routes/resources+/film+/add-genre.ts'
-import { GenreSearch } from '#app/routes/resources+/genres.tsx'
+import { FilmGenreSearchConform } from '#app/routes/resources+/film-genres.js'
 
 export function DataTableAddGenre() {
 	const { filmId } = useParams()
@@ -69,17 +70,13 @@ export function DataTableAddGenre() {
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<GenreSearch
-							labelProps={{
-								htmlFor: fields.genreId.id,
-								children: 'Genre',
-							}}
-							buttonProps={{
-								...getInputProps(fields.genreId, { type: 'text' }),
-							}}
-							errors={fields.genreId.errors}
-						/>
-						<ErrorList errors={form.errors} id={form.errorId} />
+						<Field>
+							<Label htmlFor={fields.genreId.id}>Genre</Label>
+							<FilmGenreSearchConform fields={fields.genreId} />
+							{fields.genreId.errors && (
+								<FieldError>{fields.genreId.errors}</FieldError>
+							)}
+						</Field>
 					</div>
 					<DialogFooter>
 						<StatusButton

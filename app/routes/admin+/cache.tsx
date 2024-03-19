@@ -15,7 +15,7 @@ import {
 	useSubmit,
 } from '@remix-run/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
-import { Field } from '#app/components/forms.tsx'
+import { RegularField } from '#app/components/form/RegularFIeld.js'
 import { Spacer } from '#app/components/spacer.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import {
@@ -119,7 +119,7 @@ export default function CacheAdminRoute() {
 						>
 							🔎
 						</button>
-						<Field
+						<RegularField
 							className="flex-1"
 							labelProps={{ children: 'Search' }}
 							inputProps={{
@@ -136,7 +136,7 @@ export default function CacheAdminRoute() {
 					</div>
 				</div>
 				<div className="flex flex-wrap items-center gap-4">
-					<Field
+					<RegularField
 						labelProps={{
 							children: 'Limit',
 						}}

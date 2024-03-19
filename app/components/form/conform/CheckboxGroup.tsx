@@ -2,7 +2,7 @@ import {
 	unstable_Control as Control,
 	type FieldMetadata,
 } from '@conform-to/react'
-import { Checkbox } from '../ui/checkbox'
+import { Checkbox } from '../../ui/checkbox'
 
 export function CheckboxGroupConform({
 	meta,

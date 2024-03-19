@@ -10,8 +10,11 @@ import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
+import { CheckboxConform } from '#app/components/form/conform/Checkbox.js'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Spacer } from '#app/components/spacer.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { login, requireAnonymous } from '#app/utils/auth.server.ts'
 import {
@@ -107,39 +110,41 @@ export default function LoginPage() {
 					<div className="mx-auto w-full max-w-md px-8">
 						<Form method="POST" {...getFormProps(form)}>
 							<HoneypotInputs />
-							<Field
-								labelProps={{ children: 'Username' }}
-								inputProps={{
-									...getInputProps(fields.username, { type: 'text' }),
-									autoFocus: true,
-									className: 'lowercase',
-									autoComplete: 'username',
-								}}
-								errors={fields.username.errors}
-							/>
-
-							<Field
-								labelProps={{ children: 'Password' }}
-								inputProps={{
-									...getInputProps(fields.password, {
-										type: 'password',
-									}),
-									autoComplete: 'current-password',
-								}}
-								errors={fields.password.errors}
-							/>
+							<Field>
+								<Label htmlFor={fields.username.id}>Username</Label>
+								<InputConform
+									meta={fields.username}
+									type="text"
+									className="lowercase"
+									autoComplete="username"
+									autoFocus
+								/>
+								{fields.username.errors && (
+									<FieldError>{fields.username.errors}</FieldError>
+								)}
+							</Field>
+							<Field>
+								<Label htmlFor={fields.password.id}>Password</Label>
+								<InputConform
+									meta={fields.password}
+									type="text"
+									autoComplete="current-password"
+								/>
+								{fields.password.errors && (
+									<FieldError>{fields.password.errors}</FieldError>
+								)}
+							</Field>
 
 							<div className="flex justify-between">
-								<CheckboxField
-									labelProps={{
-										htmlFor: fields.remember.id,
-										children: 'Remember me',
-									}}
-									buttonProps={getInputProps(fields.remember, {
-										type: 'checkbox',
-									})}
-									errors={fields.remember.errors}
-								/>
+								<Field>
+									<div className="flex items-center gap-2">
+										<CheckboxConform meta={fields.remember} />
+										<Label htmlFor={fields.remember.id}>Remember me</Label>
+									</div>
+									{fields.remember.errors && (
+										<FieldError>{fields.remember.errors}</FieldError>
+									)}
+								</Field>
 								<div>
 									<Link
 										to="/forgot-password"
@@ -153,7 +158,6 @@ export default function LoginPage() {
 							<input
 								{...getInputProps(fields.redirectTo, { type: 'hidden' })}
 							/>
-							<ErrorList errors={form.errors} id={form.errorId} />
 
 							<div className="flex items-center justify-between gap-6 pt-3">
 								<StatusButton

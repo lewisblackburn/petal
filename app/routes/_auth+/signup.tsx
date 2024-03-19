@@ -1,4 +1,4 @@
-import { getFormProps, getInputProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import * as E from '@react-email/components'
 import {
@@ -11,7 +11,9 @@ import { Form, useActionData, useSearchParams } from '@remix-run/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	ProviderConnectionForm,
@@ -143,19 +145,20 @@ export default function SignupRoute() {
 			<div className="mx-auto mt-16 min-w-full max-w-sm sm:min-w-[368px]">
 				<Form method="POST" {...getFormProps(form)}>
 					<HoneypotInputs />
-					<Field
-						labelProps={{
-							htmlFor: fields.email.id,
-							children: 'Email',
-						}}
-						inputProps={{
-							...getInputProps(fields.email, { type: 'email' }),
-							autoFocus: true,
-							autoComplete: 'email',
-						}}
-						errors={fields.email.errors}
-					/>
-					<ErrorList errors={form.errors} id={form.errorId} />
+
+					<Field>
+						<Label htmlFor={fields.email.id}>Email</Label>
+						<InputConform
+							meta={fields.email}
+							type="text"
+							autoComplete="email"
+							autoFocus
+						/>
+						{fields.email.errors && (
+							<FieldError>{fields.email.errors}</FieldError>
+						)}
+					</Field>
+
 					<StatusButton
 						className="w-full"
 						status={isPending ? 'pending' : form.status ?? 'idle'}

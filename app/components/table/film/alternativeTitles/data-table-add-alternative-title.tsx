@@ -1,8 +1,10 @@
-import { getFormProps, useForm, getInputProps } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { ErrorList, Field, FilterSelectField } from '#app/components/forms.tsx'
+import { CountryPickerConform } from '#app/components/form/conform/CountryPicker.js'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -14,12 +16,12 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type action as AddFilmAlternativeTitleAction,
 	AddFilmAlternativeTitleSchema,
 } from '#app/routes/resources+/film+/add-alternative-title'
-import { COUNTRIES } from '#app/utils/constants'
 
 export function DataTableAddAlternativeTitle() {
 	const { filmId } = useParams()
@@ -69,30 +71,22 @@ export function DataTableAddAlternativeTitle() {
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<Field
-							labelProps={{
-								htmlFor: fields.alternativeTitle.id,
-							}}
-							inputProps={{
-								...getInputProps(fields.alternativeTitle, { type: 'text' }),
-							}}
-							errors={fields.alternativeTitle.errors}
-						/>
-						<FilterSelectField
-							labelProps={{
-								htmlFor: fields.country.id,
-								children: 'Country',
-							}}
-							buttonProps={{
-								...getInputProps(fields.country, { type: 'text' }),
-							}}
-							options={COUNTRIES.map(country => ({
-								label: country.name,
-								value: country.name,
-							}))}
-							errors={fields.country.errors}
-						/>
-						<ErrorList errors={form.errors} id={form.errorId} />
+						<Field>
+							<Label htmlFor={fields.alternativeTitle.id}>
+								Alternative Title
+							</Label>
+							<InputConform meta={fields.alternativeTitle} type="text" />
+							{fields.alternativeTitle.errors && (
+								<FieldError>{fields.alternativeTitle.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.country.id}>Country</Label>
+							<CountryPickerConform meta={fields.country} />
+							{fields.country.errors && (
+								<FieldError>{fields.country.errors}</FieldError>
+							)}
+						</Field>
 					</div>
 					<DialogFooter>
 						<StatusButton

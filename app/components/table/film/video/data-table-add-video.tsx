@@ -1,8 +1,10 @@
-import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { ErrorList, Field, FilterSelectField } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { SelectConform } from '#app/components/form/conform/Select.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -14,6 +16,7 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type action as AddFilmVideoAction,
@@ -69,62 +72,62 @@ export function DataTableAddVideo() {
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<Field
-							labelProps={{
-								htmlFor: fields.url.id,
-								children: 'URL',
-							}}
-							inputProps={{
-								...getInputProps(fields.url, { type: 'text' }),
-								autoComplete: 'off',
-							}}
-							errors={fields.url.errors}
-						/>
-						<Field
-							labelProps={{
-								htmlFor: fields.name.id,
-								children: 'Name',
-							}}
-							inputProps={{
-								...getInputProps(fields.name, { type: 'text' }),
-								autoComplete: 'off',
-							}}
-							errors={fields.name.errors}
-						/>
-						<FilterSelectField
-							labelProps={{
-								htmlFor: fields.site.id,
-								children: 'Site',
-							}}
-							buttonProps={{
-								...getInputProps(fields.site, { type: 'text' }),
-							}}
-							options={SITES}
-							errors={fields.site.errors}
-						/>
-						<FilterSelectField
-							labelProps={{
-								htmlFor: fields.type.id,
-								children: 'Type',
-							}}
-							buttonProps={{
-								...getInputProps(fields.type, { type: 'text' }),
-							}}
-							options={VIDEO_TYPES}
-							errors={fields.type.errors}
-						/>
-						<FilterSelectField
-							labelProps={{
-								htmlFor: fields.quality.id,
-								children: 'Quality',
-							}}
-							buttonProps={{
-								...getInputProps(fields.quality, { type: 'text' }),
-							}}
-							options={QUALITY}
-							errors={fields.quality.errors}
-						/>
-						<ErrorList errors={form.errors} id={form.errorId} />
+						<Field>
+							<Label htmlFor={fields.url.id}>URL</Label>
+							<InputConform meta={fields.url} type="text" />
+							{fields.url.errors && (
+								<FieldError>{fields.url.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.name.id}>Name</Label>
+							<InputConform meta={fields.name} type="text" />
+							{fields.name.errors && (
+								<FieldError>{fields.name.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.site.id}>Site</Label>
+							<SelectConform
+								placeholder="Select a site"
+								meta={fields.site}
+								items={SITES.map(site => ({
+									name: site.label,
+									value: site.value,
+								}))}
+							/>
+							{fields.site.errors && (
+								<FieldError>{fields.site.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.type.id}>Type</Label>
+							<SelectConform
+								placeholder="Select a type"
+								meta={fields.type}
+								items={VIDEO_TYPES.map(type => ({
+									name: type.label,
+									value: type.value,
+								}))}
+							/>
+							{fields.type.errors && (
+								<FieldError>{fields.type.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.quality.id}>Quality</Label>
+							<SelectConform
+								placeholder="Select quality"
+								meta={fields.quality}
+								items={QUALITY.map(quality => ({
+									name: quality.label,
+									value: quality.value,
+								}))}
+							/>
+							{fields.quality.errors && (
+								<FieldError>{fields.quality.errors}</FieldError>
+							)}
+						</Field>
 					</div>
 					<DialogFooter>
 						<StatusButton

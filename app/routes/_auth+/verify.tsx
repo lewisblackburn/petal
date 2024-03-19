@@ -5,8 +5,10 @@ import { Form, useActionData, useSearchParams } from '@remix-run/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Spacer } from '#app/components/spacer.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
@@ -89,23 +91,21 @@ export default function VerifyRoute() {
 			<Spacer size="xs" />
 
 			<div className="mx-auto flex w-72 max-w-full flex-col justify-center gap-1">
-				<div>
-					<ErrorList errors={form.errors} id={form.errorId} />
-				</div>
 				<div className="flex w-full gap-2">
 					<Form method="POST" {...getFormProps(form)} className="flex-1">
 						<HoneypotInputs />
-						<Field
-							labelProps={{
-								htmlFor: fields[codeQueryParam].id,
-								children: 'Code',
-							}}
-							inputProps={{
-								...getInputProps(fields[codeQueryParam], { type: 'text' }),
-								autoComplete: 'one-time-code',
-							}}
-							errors={fields[codeQueryParam].errors}
-						/>
+						<Field>
+							<Label htmlFor={fields[codeQueryParam].id}>Code</Label>
+							<InputConform
+								meta={fields[codeQueryParam]}
+								type="text"
+								autoComplete="one-time-code"
+							/>
+							{fields[codeQueryParam].errors && (
+								<FieldError>{fields[codeQueryParam].errors}</FieldError>
+							)}
+						</Field>
+
 						<input
 							{...getInputProps(fields[typeQueryParam], { type: 'hidden' })}
 						/>

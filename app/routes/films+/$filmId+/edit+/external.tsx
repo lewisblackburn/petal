@@ -1,4 +1,4 @@
-import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
 import {
@@ -8,8 +8,10 @@ import {
 import { Form, useFetcher, useLoaderData } from '@remix-run/react'
 import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
@@ -130,69 +132,49 @@ export default function FilmEditExternalRoute() {
 				<input type="hidden" name="id" value={data.film.id} />
 			) : null}
 			<div className="flex flex-col gap-1">
-				<Field
-					labelProps={{ children: 'Facebook' }}
-					inputProps={{
-						autoFocus: true,
-						...getInputProps(fields.facebook, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					errors={fields.facebook.errors}
-				/>
-				<Field
-					labelProps={{ children: 'Instagram' }}
-					inputProps={{
-						...getInputProps(fields.instagram, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					errors={fields.instagram.errors}
-				/>
-				<Field
-					labelProps={{ children: 'Twitter' }}
-					inputProps={{
-						...getInputProps(fields.twitter, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					errors={fields.twitter.errors}
-				/>
-				<Field
-					labelProps={{ children: 'IMDB ID' }}
-					inputProps={{
-						...getInputProps(fields.imdbID, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					errors={fields.imdbID.errors}
-				/>
-				<Field
-					labelProps={{ children: 'Wikidata ID' }}
-					inputProps={{
-						...getInputProps(fields.wikiDataID, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					errors={fields.wikiDataID.errors}
-				/>
-				<Field
-					labelProps={{ children: 'TMDB ID' }}
-					inputProps={{
-						...getInputProps(fields.tmdbID, {
-							ariaAttributes: true,
-							type: 'text',
-						}),
-					}}
-					errors={fields.tmdbID.errors}
-				/>
+				<Field>
+					<Label htmlFor={fields.facebook.id}>Facebook</Label>
+					<InputConform meta={fields.facebook} type="text" />
+					{fields.facebook.errors && (
+						<FieldError>{fields.facebook.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.instagram.id}>Instagram</Label>
+					<InputConform meta={fields.instagram} type="text" />
+					{fields.instagram.errors && (
+						<FieldError>{fields.instagram.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.twitter.id}>Twitter</Label>
+					<InputConform meta={fields.twitter} type="text" />
+					{fields.twitter.errors && (
+						<FieldError>{fields.twitter.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.imdbID.id}>IMDB ID</Label>
+					<InputConform meta={fields.imdbID} type="text" />
+					{fields.imdbID.errors && (
+						<FieldError>{fields.imdbID.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.wikiDataID.id}>WikiData ID</Label>
+					<InputConform meta={fields.wikiDataID} type="text" />
+					{fields.wikiDataID.errors && (
+						<FieldError>{fields.wikiDataID.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.tmdbID.id}>TMDB ID</Label>
+					<InputConform meta={fields.tmdbID} type="text" />
+					{fields.tmdbID.errors && (
+						<FieldError>{fields.tmdbID.errors}</FieldError>
+					)}
+				</Field>
 			</div>
-			<ErrorList id={form.errorId} errors={form.errors} />
 			<div className="flex justify-end gap-2">
 				<Button form={form.id} variant="destructive" type="reset">
 					Reset

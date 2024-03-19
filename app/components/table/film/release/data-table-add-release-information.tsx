@@ -1,8 +1,13 @@
-import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { ErrorList, Field, FilterSelectField } from '#app/components/forms.tsx'
+import { CountryPickerConform } from '#app/components/form/conform/CountryPicker.js'
+import { DatePickerConform } from '#app/components/form/conform/DatePicker.js'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { LanguagePickerConform } from '#app/components/form/conform/LanguagePicker.js'
+import { SelectConform } from '#app/components/form/conform/Select.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -14,16 +19,13 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type action as AddFilmReleaseInformationAction,
 	AddFilmReleaseInformationSchema,
 } from '#app/routes/resources+/film+/add-release-information.ts'
-import {
-	COUNTRIES,
-	FILM_RELEASE_TYPES,
-	LANGUAGES,
-} from '#app/utils/constants.ts'
+import { FILM_RELEASE_TYPES } from '#app/utils/constants.ts'
 
 export function DataTableAddReleaseInformation() {
 	const { filmId } = useParams()
@@ -71,76 +73,55 @@ export function DataTableAddReleaseInformation() {
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<FilterSelectField
-							labelProps={{
-								htmlFor: fields.country.id,
-								children: 'Country',
-							}}
-							buttonProps={{
-								...getInputProps(fields.country, { type: 'text' }),
-							}}
-							options={COUNTRIES.map(country => ({
-								label: country.name,
-								value: country.name,
-							}))}
-							errors={fields.country.errors}
-						/>
-						<FilterSelectField
-							labelProps={{
-								htmlFor: fields.language.id,
-								children: 'Language',
-							}}
-							buttonProps={{
-								...getInputProps(fields.language, { type: 'text' }),
-							}}
-							options={LANGUAGES.map(language => ({
-								label: language.name,
-								value: language.name,
-							}))}
-							errors={fields.language.errors}
-						/>
-						<Field
-							labelProps={{ children: 'Date' }}
-							inputProps={{
-								...getInputProps(fields.date, {
-									ariaAttributes: true,
-									type: 'text',
-								}),
-							}}
-							errors={fields.date.errors}
-						/>
-						<Field
-							labelProps={{
-								htmlFor: fields.classification.id,
-								children: 'Classification',
-							}}
-							inputProps={{
-								...getInputProps(fields.classification, { type: 'text' }),
-							}}
-							errors={fields.classification.errors}
-						/>
-						<FilterSelectField
-							labelProps={{
-								htmlFor: fields.type.id,
-								children: 'Type',
-							}}
-							buttonProps={{
-								...getInputProps(fields.type, { type: 'text' }),
-							}}
-							options={FILM_RELEASE_TYPES}
-							errors={fields.type.errors}
-						/>
-						<Field
-							labelProps={{
-								htmlFor: fields.note.id,
-								children: 'Note',
-							}}
-							inputProps={{
-								...getInputProps(fields.note, { type: 'text' }),
-							}}
-							errors={fields.note.errors}
-						/>
-						<ErrorList errors={form.errors} id={form.errorId} />
+						<Field>
+							<Label htmlFor={fields.country.id}>Country</Label>
+							<CountryPickerConform meta={fields.country} />
+							{fields.country.errors && (
+								<FieldError>{fields.country.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.language.id}>Language</Label>
+							<LanguagePickerConform meta={fields.language} />
+							{fields.language.errors && (
+								<FieldError>{fields.language.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.date.id}>Date</Label>
+							<DatePickerConform meta={fields.date} />
+							{fields.date.errors && (
+								<FieldError>{fields.date.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.classification.id}>Classification</Label>
+							<InputConform meta={fields.classification} type="text" />
+							{fields.classification.errors && (
+								<FieldError>{fields.classification.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.type.id}>Type</Label>
+							<SelectConform
+								placeholder="Select a type"
+								meta={fields.type}
+								items={FILM_RELEASE_TYPES.map(releaseType => ({
+									name: releaseType.label,
+									value: releaseType.value,
+								}))}
+							/>
+							{fields.type.errors && (
+								<FieldError>{fields.type.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.note.id}>Note</Label>
+							<InputConform meta={fields.note} type="text" />
+							{fields.note.errors && (
+								<FieldError>{fields.note.errors}</FieldError>
+							)}
+						</Field>
 					</div>
 					<DialogFooter>
 						<StatusButton

@@ -1,8 +1,9 @@
-import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
 import { useEffect, useState } from 'react'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -14,12 +15,13 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type action as AddFilmCastMemberAction,
 	AddFilmCastMemberSchema,
 } from '#app/routes/resources+/film+/add-cast-member.ts'
-import { PersonSearch } from '#app/routes/resources+/people.tsx'
+import { PersonSearchConform } from '#app/routes/resources+/people.js'
 
 export function DataTableAddCastMember() {
 	const { filmId } = useParams()
@@ -69,29 +71,20 @@ export function DataTableAddCastMember() {
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<PersonSearch
-							labelProps={{
-								htmlFor: fields.personId.id,
-								children: 'Person',
-								autoFocus: true,
-							}}
-							buttonProps={{
-								...getInputProps(fields.personId, { type: 'text' }),
-							}}
-							errors={fields.personId.errors}
-						/>
-						<Field
-							labelProps={{
-								htmlFor: fields.character.id,
-								children: 'Character',
-							}}
-							inputProps={{
-								...getInputProps(fields.character, { type: 'text' }),
-								autoComplete: 'off',
-							}}
-							errors={fields.character.errors}
-						/>
-						<ErrorList errors={form.errors} id={form.errorId} />
+						<Field>
+							<Label htmlFor={fields.personId.id}>Person</Label>
+							<PersonSearchConform fields={fields.personId} />
+							{fields.personId.errors && (
+								<FieldError>{fields.personId.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.character.id}>Character</Label>
+							<InputConform meta={fields.character} type="text" />
+							{fields.character.errors && (
+								<FieldError>{fields.character.errors}</FieldError>
+							)}
+						</Field>
 					</div>
 					<DialogFooter>
 						<StatusButton

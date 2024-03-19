@@ -3,7 +3,7 @@ import {
 	type FieldMetadata,
 } from '@conform-to/react'
 import { useRef, type ElementRef } from 'react'
-import { Switch } from '../ui/switch'
+import { Switch } from '../../ui/switch'
 
 export function SwitchConform({ meta }: { meta: FieldMetadata<boolean> }) {
 	const switchRef = useRef<ElementRef<typeof Switch>>(null)

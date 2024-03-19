@@ -3,7 +3,7 @@ import {
 	unstable_useControl as useControl,
 } from '@conform-to/react'
 import { type ComponentProps, type ElementRef, useRef } from 'react'
-import { Slider } from '../ui/slider'
+import { Slider } from '../../ui/slider'
 
 export function SliderConform({
 	meta,

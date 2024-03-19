@@ -1,12 +1,11 @@
-import { getInputProps, getFormProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { useFetcher, useParams } from '@remix-run/react'
-import { useEffect, useState } from 'react'
-import {
-	CheckboxField,
-	ErrorList,
-	FilterSelectField,
-} from '#app/components/forms.tsx'
+import { useState, useEffect } from 'react'
+import { CheckboxConform } from '#app/components/form/conform/Checkbox.js'
+import { DepartmentPickerConform } from '#app/components/form/conform/DepartmentPicker.js'
+import { JobPickerConform } from '#app/components/form/conform/JobPicker.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
@@ -18,13 +17,13 @@ import {
 	DialogTrigger,
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button'
 import {
 	type action as AddFilmCrewMemberAction,
 	AddFilmCrewMemberSchema,
 } from '#app/routes/resources+/film+/add-crew-member'
-import { PersonSearch } from '#app/routes/resources+/people.tsx'
-import { ROLES, getAllJobs } from '#app/utils/constants'
+import { PersonSearchConform } from '#app/routes/resources+/people.tsx'
 
 export function DataTableAddCrewMember() {
 	const { filmId } = useParams()
@@ -74,52 +73,36 @@ export function DataTableAddCrewMember() {
 					</DialogHeader>
 					<div className="grid py-4">
 						<input name="filmId" type="hidden" value={filmId} />
-						<PersonSearch
-							labelProps={{
-								htmlFor: fields.personId.id,
-								children: 'Person',
-							}}
-							buttonProps={{
-								...getInputProps(fields.personId, { type: 'text' }),
-							}}
-							errors={fields.personId.errors}
-						/>
-						<FilterSelectField
-							labelProps={{
-								htmlFor: fields.department.id,
-								children: 'Department',
-							}}
-							buttonProps={{
-								...getInputProps(fields.department, { type: 'text' }),
-							}}
-							options={ROLES.map(role => ({
-								label: role.department,
-								value: role.department,
-							}))}
-							errors={fields.department.errors}
-						/>
-						<FilterSelectField
-							labelProps={{
-								htmlFor: fields.job.id,
-								children: 'Job',
-							}}
-							buttonProps={{
-								...getInputProps(fields.job, { type: 'text' }),
-							}}
-							options={getAllJobs().map(job => ({ label: job, value: job }))}
-							errors={fields.job.errors}
-						/>
-						<CheckboxField
-							labelProps={{
-								htmlFor: fields.featured.id,
-								children: 'Featured',
-							}}
-							buttonProps={{
-								...getInputProps(fields.featured, { type: 'checkbox' }),
-							}}
-							errors={fields.featured.errors}
-						/>
-						<ErrorList errors={form.errors} id={form.errorId} />
+						<Field>
+							<Label htmlFor={fields.personId.id}>Person</Label>
+							<PersonSearchConform fields={fields.personId} />
+							{fields.personId.errors && (
+								<FieldError>{fields.personId.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.department.id}>Department</Label>
+							<DepartmentPickerConform meta={fields.department} />
+							{fields.department.errors && (
+								<FieldError>{fields.department.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.job.id}>Job</Label>
+							<JobPickerConform meta={fields.job} />
+							{fields.job.errors && (
+								<FieldError>{fields.job.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<div className="flex items-center gap-2">
+								<CheckboxConform meta={fields.featured} />
+								<Label htmlFor={fields.featured.id}>Featured</Label>
+							</div>
+							{fields.featured.errors && (
+								<FieldError>{fields.featured.errors}</FieldError>
+							)}
+						</Field>
 					</div>
 					<DialogFooter>
 						<StatusButton

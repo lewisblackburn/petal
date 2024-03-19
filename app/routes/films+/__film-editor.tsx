@@ -5,19 +5,18 @@ import { Form, useFetcher } from '@remix-run/react'
 import { type SerializeFrom } from '@remix-run/server-runtime'
 import { format } from 'date-fns'
 import { z } from 'zod'
-import { DatePickerConform } from '#app/components/conform/DatePicker.js'
-import { InputConform } from '#app/components/conform/Input.js'
-import { LanguagePickerConform } from '#app/components/conform/LanguagePicker.js'
-import { SelectConform } from '#app/components/conform/Select.js'
-import { TextareaConform } from '#app/components/conform/Textarea.js'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { DatePickerConform } from '#app/components/form/conform/DatePicker.js'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { LanguagePickerConform } from '#app/components/form/conform/LanguagePicker.js'
+import { SelectConform } from '#app/components/form/conform/Select.js'
+import { TextareaConform } from '#app/components/form/conform/Textarea.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { AGE_RATINGS, LANGUAGES, STATUSES } from '#app/utils/constants.ts'
 import { type action } from './__film-editor.server'
-import { Field, FieldError } from '#app/components/conform/Field.js'
-import { ErrorList } from '#app/components/forms.js'
 
 export const FilmEditorSchema = z.object({
 	id: z.string().optional(),
@@ -181,7 +180,6 @@ export function FilmEditor({
 					)}
 				</Field>
 			</div>
-			<ErrorList id={form.errorId} errors={form.errors} />
 			<div className="flex justify-end gap-2">
 				<Button form={form.id} variant="destructive" type="reset">
 					Reset
