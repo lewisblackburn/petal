@@ -18,7 +18,6 @@ import { floatingToolbarClassName } from '#app/components/floating-toolbar.tsx'
 import { InputConform } from '#app/components/form/conform/Input.js'
 import { TextareaConform } from '#app/components/form/conform/Textarea.js'
 import { Field, FieldError } from '#app/components/form/Field.js'
-import { ErrorList } from '#app/components/form/RegularFIeld.js'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Label } from '#app/components/ui/label.tsx'
@@ -26,6 +25,7 @@ import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { Textarea } from '#app/components/ui/textarea.tsx'
 import { cn, getNoteImgSrc, useIsPending } from '#app/utils/misc.tsx'
 import { type action } from './__note-editor.server'
+import { ErrorList } from '#app/components/form/ErrorList.js'
 
 const titleMinLength = 1
 const titleMaxLength = 100

@@ -25,6 +25,7 @@ import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts'
 import { handleNewSession } from './login.server.ts'
+import { ErrorList } from '#app/components/form/ErrorList.js'
 
 const LoginFormSchema = z.object({
 	username: UsernameSchema,
@@ -158,6 +159,7 @@ export default function LoginPage() {
 							<input
 								{...getInputProps(fields.redirectTo, { type: 'hidden' })}
 							/>
+							<ErrorList errors={form.errors} id={form.errorId} />
 
 							<div className="flex items-center justify-between gap-6 pt-3">
 								<StatusButton
