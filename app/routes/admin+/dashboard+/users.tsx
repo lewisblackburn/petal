@@ -8,8 +8,8 @@ import {
 import { type LoaderFunctionArgs, json } from '@remix-run/server-runtime'
 import {
 	type SortingState,
-	type FiltersTableState,
 	type PaginationState,
+	type GlobalFilterTableState,
 } from '@tanstack/react-table'
 import React from 'react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
@@ -86,7 +86,7 @@ export default function DashboardUsersRoute() {
 	])
 
 	const [globalFilter, setGlobalFilter] =
-		React.useState<FiltersTableState['globalFilter']>(search)
+		React.useState<GlobalFilterTableState['globalFilter']>(search)
 
 	const [pagination, setPagination] = React.useState<PaginationState>({
 		pageIndex: 0,

@@ -1,7 +1,7 @@
 import { useId } from 'react'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import { ErrorList, ListOfErrors } from './ErrorList'
+import { ErrorList, type ListOfErrors } from './ErrorList'
 
 export function RegularField({
 	labelProps,

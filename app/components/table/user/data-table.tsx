@@ -12,7 +12,7 @@ import {
 	getSortedRowModel,
 	type PaginationState,
 	type OnChangeFn,
-	type FiltersTableState,
+	type GlobalFilterTableState,
 } from '@tanstack/react-table'
 import React from 'react'
 
@@ -32,8 +32,8 @@ interface DataTableProps<TData, TValue> {
 	data: TData[]
 	pagination: PaginationState
 	setPagination: OnChangeFn<PaginationState> | undefined
-	globalFilter: FiltersTableState['globalFilter']
-	setGlobalFilter: OnChangeFn<FiltersTableState['globalFilter']> | undefined
+	globalFilter: GlobalFilterTableState
+	setGlobalFilter: OnChangeFn<GlobalFilterTableState> | undefined
 	sorting: SortingState
 	setSorting: OnChangeFn<SortingState> | undefined
 	rowCount: number

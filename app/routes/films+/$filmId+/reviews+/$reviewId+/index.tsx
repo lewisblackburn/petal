@@ -11,6 +11,7 @@ import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 
+import { ErrorList } from '#app/components/form/ErrorList.js'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
@@ -21,7 +22,6 @@ import { requireUserWithPermission } from '#app/utils/permissions.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { useOptionalUser, userHasPermission } from '#app/utils/user.ts'
 import { type loader as filmsLoader } from './index.tsx'
-import { ErrorList } from '#app/components/form/ErrorList.js'
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const userId = await requireUserId(request)

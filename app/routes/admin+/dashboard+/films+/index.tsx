@@ -9,8 +9,8 @@ import {
 } from '@remix-run/react'
 import {
 	type SortingState,
-	type FiltersTableState,
 	type PaginationState,
+	type GlobalFilterTableState,
 } from '@tanstack/react-table'
 import React from 'react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary'
@@ -78,7 +78,7 @@ export default function DashboardFilmsRoute() {
 	])
 
 	const [globalFilter, setGlobalFilter] =
-		React.useState<FiltersTableState['globalFilter']>(search)
+		React.useState<GlobalFilterTableState['globalFilter']>(search)
 
 	const [pagination, setPagination] = React.useState<PaginationState>({
 		pageIndex: 0,

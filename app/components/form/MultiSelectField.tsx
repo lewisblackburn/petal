@@ -15,7 +15,7 @@ import { Button } from '../ui/button'
 import { Icon } from '../ui/icon'
 import { Label } from '../ui/label'
 import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover'
-import { ErrorList, ListOfErrors } from './ErrorList'
+import { ErrorList, type ListOfErrors } from './ErrorList'
 
 export type OptionType = {
 	label: string

@@ -10,6 +10,7 @@ import {
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { InputConform } from '#app/components/form/conform/Input.js'
+import { ErrorList } from '#app/components/form/ErrorList.js'
 import { Field, FieldError } from '#app/components/form/Field.js'
 import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
@@ -17,7 +18,6 @@ import { requireAnonymous, resetUserPassword } from '#app/utils/auth.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { PasswordAndConfirmPasswordSchema } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
-import { ErrorList } from '#app/components/form/ErrorList.js'
 
 export const resetPasswordUsernameSessionKey = 'resetPasswordUsername'
 

@@ -11,7 +11,7 @@ import {
 	type MetaFunction,
 } from '@remix-run/react'
 import {
-	type FiltersTableState,
+	type GlobalFilterTableState,
 	type PaginationState,
 } from '@tanstack/react-table'
 import React from 'react'
@@ -90,7 +90,7 @@ export default function DashboardImportFilmFromTMDBRoute() {
 	const search = params.get('search') || ''
 
 	const [globalFilter, setGlobalFilter] =
-		React.useState<FiltersTableState['globalFilter']>(search)
+		React.useState<GlobalFilterTableState['globalFilter']>(search)
 
 	const [pagination, setPagination] = React.useState<PaginationState>({
 		pageIndex: 0,
