@@ -20,6 +20,7 @@ import { GeneralErrorBoundary } from '#app/components/error-boundary'
 import { columns } from '#app/components/table/film/import/columns.js'
 import { ImportFilmTable } from '#app/components/table/film/import/data-table.js'
 import { tmdb } from '#app/utils/import.service.js'
+import { useDebounce } from '#app/utils/misc.js'
 import { requireUserWithRole } from '#app/utils/permissions.server.js'
 import { getSearchParams } from '#app/utils/request.helper.js'
 import { createToastHeaders } from '#app/utils/toast.server.js'
@@ -103,7 +104,7 @@ export default function DashboardImportFilmFromTMDBRoute() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [globalFilter, setGlobalFilter])
 
-	React.useEffect(() => {
+	const handleSearch = () => {
 		const existingParams = queryString.parse(params.toString())
 
 		setParams(
@@ -117,9 +118,12 @@ export default function DashboardImportFilmFromTMDBRoute() {
 				preventScrollReset: true,
 			},
 		)
+	}
 
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pagination, globalFilter])
+	const debouncedSearch = useDebounce(handleSearch, 500)
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	React.useEffect(debouncedSearch, [pagination, globalFilter])
 
 	return (
 		<ImportFilmTable
