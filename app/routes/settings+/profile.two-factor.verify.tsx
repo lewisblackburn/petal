@@ -15,7 +15,6 @@ import {
 } from '@remix-run/react'
 import * as QRCode from 'qrcode'
 import { z } from 'zod'
-import { InputConform } from '#app/components/form/conform/Input.js'
 import { ErrorList } from '#app/components/form/ErrorList.js'
 import { Field, FieldError } from '#app/components/form/Field.js'
 import { Icon } from '#app/components/ui/icon.tsx'
@@ -29,6 +28,7 @@ import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { getTOTPAuthUri } from '#app/utils/totp.server.ts'
 import { type BreadcrumbHandle } from './profile.tsx'
 import { twoFAVerificationType } from './profile.two-factor.tsx'
+import { InputOTPConform } from '#app/components/form/conform/InputOTP.js'
 
 export const handle: BreadcrumbHandle & SEOHandle = {
 	breadcrumb: <Icon name="check">Verify</Icon>,
@@ -38,7 +38,7 @@ export const handle: BreadcrumbHandle & SEOHandle = {
 const CancelSchema = z.object({ intent: z.literal('cancel') })
 const VerifySchema = z.object({
 	intent: z.literal('verify'),
-	code: z.string().min(6).max(6),
+	code: z.string().length(6),
 })
 
 const ActionSchema = z.discriminatedUnion('intent', [
@@ -180,11 +180,12 @@ export default function TwoFactorRoute() {
 					<Form method="POST" {...getFormProps(form)} className="flex-1">
 						<Field>
 							<Label htmlFor={fields.code.id}>Code</Label>
-							<InputConform
+							<InputOTPConform
 								meta={fields.code}
-								type="text"
+								length={6}
 								autoFocus
 								autoComplete="one-time-code"
+								autoCapitalise
 							/>
 							{fields.code.errors && (
 								<FieldError>{fields.code.errors}</FieldError>

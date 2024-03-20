@@ -96,7 +96,13 @@ export default function VerifyRoute() {
 						<HoneypotInputs />
 						<Field>
 							<Label htmlFor={fields[codeQueryParam].id}>Code</Label>
-							<InputOTPConform meta={fields[codeQueryParam]} length={6} />
+							<InputOTPConform
+								meta={fields[codeQueryParam]}
+								length={6}
+								autoFocus
+								autoComplete="one-time-code"
+								autoCapitalise
+							/>
 							{fields[codeQueryParam].errors && (
 								<FieldError>{fields[codeQueryParam].errors}</FieldError>
 							)}
