@@ -165,7 +165,6 @@ export function FilmEditor({
 				</Field>
 				<Field>
 					<Label htmlFor={fields.budget.id}>Budget</Label>
-					{/* @ts-expect-error budget is a number */}
 					<InputConform meta={fields.budget} type="number" />
 					{fields.budget.errors && (
 						<FieldError>{fields.budget.errors}</FieldError>
@@ -173,7 +172,6 @@ export function FilmEditor({
 				</Field>
 				<Field>
 					<Label htmlFor={fields.revenue.id}>Revenue</Label>
-					{/* @ts-expect-error revenue is a number */}
 					<InputConform meta={fields.revenue} type="number" />
 					{fields.revenue.errors && (
 						<FieldError>{fields.revenue.errors}</FieldError>
