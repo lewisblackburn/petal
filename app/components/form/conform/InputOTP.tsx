@@ -55,7 +55,7 @@ export function InputOTPConform({
 				pattern={pattern}
 				render={undefined}
 			>
-				<InputOTPGroup >
+				<InputOTPGroup>
 					{new Array(length).fill(0).map((_, index) => (
 						<InputOTPSlot key={index} index={index} />
 					))}

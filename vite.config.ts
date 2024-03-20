@@ -3,7 +3,7 @@ import { sentryVitePlugin } from '@sentry/vite-plugin'
 import { glob } from 'glob'
 import { flatRoutes } from 'remix-flat-routes'
 import { defineConfig } from 'vite'
-import envOnly from 'vite-env-only';
+import envOnly from 'vite-env-only'
 
 const MODE = process.env.NODE_ENV
 
@@ -59,6 +59,6 @@ export default defineConfig({
 					},
 				})
 			: null,
-			envOnly()
+		envOnly(),
 	],
 })

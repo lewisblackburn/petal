@@ -23,7 +23,7 @@ export function SearchSelectConform({
 	onInput,
 }: {
 	meta: FieldMetadata<string>
-	items: { label: string; value: string; image?: string }[]
+	items: { label: string; value: string; image?: string | null }[]
 	onInput: FormEventHandler<HTMLInputElement>
 }) {
 	const [selectedItem, setSelectedItem] = React.useState<{

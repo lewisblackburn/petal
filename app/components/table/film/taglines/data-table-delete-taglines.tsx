@@ -34,7 +34,7 @@ export function DataTableDeleteTaglines<TData>({
 		if (fetcher.state === 'idle') {
 			table.setRowSelection({})
 		}
-		fetcher.data?.status === 'success' && setOpen(false)
+		fetcher.data?.result.status === 'success' && setOpen(false)
 	}, [fetcher, table])
 
 	return (
@@ -52,13 +52,7 @@ export function DataTableDeleteTaglines<TData>({
 				)}
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
-				<fetcher.Form
-					method="POST"
-					action="/resources/film/delete-taglines"
-					onSubmit={() => {
-						setOpen(false)
-					}}
-				>
+				<fetcher.Form method="POST" action="/resources/film/delete-taglines">
 					<DialogHeader>
 						<DialogTitle>Delete Taglines</DialogTitle>
 						<DialogDescription>
@@ -82,7 +76,7 @@ export function DataTableDeleteTaglines<TData>({
 							status={
 								fetcher.state !== 'idle'
 									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+									: fetcher.data?.result.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"

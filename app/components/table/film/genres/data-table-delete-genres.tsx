@@ -35,7 +35,7 @@ export function DataTableDeleteGenres<TData>({
 		if (fetcher.state === 'idle') {
 			table.setRowSelection({})
 		}
-		fetcher.data?.status === 'success' && setOpen(false)
+		fetcher.data?.result.status === 'success' && setOpen(false)
 	}, [fetcher, table])
 
 	return (
@@ -53,13 +53,7 @@ export function DataTableDeleteGenres<TData>({
 				)}
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
-				<fetcher.Form
-					method="POST"
-					action="/resources/film/delete-genres"
-					onSubmit={() => {
-						setOpen(false)
-					}}
-				>
+				<fetcher.Form method="POST" action="/resources/film/delete-genres">
 					<DialogHeader>
 						<DialogTitle>Delete Genres</DialogTitle>
 						<DialogDescription>
@@ -83,7 +77,7 @@ export function DataTableDeleteGenres<TData>({
 							status={
 								fetcher.state !== 'idle'
 									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+									: fetcher.data?.result.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"

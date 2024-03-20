@@ -14,7 +14,7 @@ import {
 } from '#app/components/ui/dialog.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button'
-import { type action as DeleteFilmReleaseInformationAction } from '#app/routes/resources+/film+/delete-release-information.ts'
+import { type action as DeleteFilmReleaseInformationAction } from '#app/routes/resources+/film+/delete-release-information'
 
 interface DataTableDeleteReleaseInformation<TData> {
 	table: Table<TData>
@@ -34,7 +34,7 @@ export function DataTableDeleteReleaseInformation<TData>({
 		if (fetcher.state === 'idle') {
 			table.setRowSelection({})
 		}
-		fetcher.data?.status === 'success' && setOpen(false)
+		fetcher.data?.result.status === 'success' && setOpen(false)
 	}, [fetcher, table])
 
 	return (
@@ -55,9 +55,6 @@ export function DataTableDeleteReleaseInformation<TData>({
 				<fetcher.Form
 					method="POST"
 					action="/resources/film/delete-release-information"
-					onSubmit={() => {
-						setOpen(false)
-					}}
 				>
 					<DialogHeader>
 						<DialogTitle>Delete Release Information</DialogTitle>
@@ -82,7 +79,7 @@ export function DataTableDeleteReleaseInformation<TData>({
 							status={
 								fetcher.state !== 'idle'
 									? 'pending'
-									: fetcher.data?.status ?? 'idle'
+									: fetcher.data?.result.status ?? 'idle'
 							}
 							disabled={fetcher.state !== 'idle'}
 							className="w-full max-md:aspect-square max-md:px-0"

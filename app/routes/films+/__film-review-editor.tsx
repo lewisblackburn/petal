@@ -54,7 +54,6 @@ export function FilmReviewEditor({
 			<div className="flex flex-col gap-1">
 				<Field>
 					<Label htmlFor={fields.rating.id}>Rating</Label>
-					{/* @ts-expect-error fix type later */}
 					<InputConform meta={fields.rating} type="number" />
 					{fields.rating.errors && (
 						<FieldError>{fields.rating.errors}</FieldError>

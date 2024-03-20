@@ -43,7 +43,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			},
 		)
 	}
-	
+
 	let { tmdbIds } = submission.value
 
 	const parsedIds = JSON.parse(tmdbIds) as string[]
@@ -63,9 +63,6 @@ export async function action({ request }: ActionFunctionArgs) {
 			)
 		}
 	}
-
-
-
 
 	return json(
 		{ result: submission.reply() },
