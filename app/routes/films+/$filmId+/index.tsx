@@ -410,20 +410,22 @@ export default function FilmRoute() {
 						</div>
 						<Separator />
 						<div className="flex flex-col items-center justify-between gap-5">
-							<div className="flex w-full items-center justify-between gap-5">
-								<Link to="." className="w-full" preventScrollReset>
-									<Button variant="secondary" size="sm" className="w-full">
-										<Icon name="exclamation-triangle" className="mr-1" />
-										Report Issue
-									</Button>
-								</Link>
-								<Link to="edit" className="w-full">
-									<Button size="sm" className="w-full">
-										<Icon name="pencil-2" className="mr-2" />
-										Edit Page
-									</Button>
-								</Link>
-							</div>
+							{user && (
+								<div className="flex w-full items-center justify-between gap-5">
+									<Link to="." className="w-full" preventScrollReset>
+										<Button variant="secondary" size="sm" className="w-full">
+											<Icon name="exclamation-triangle" className="mr-1" />
+											Report Issue
+										</Button>
+									</Link>
+									<Link to="edit" className="w-full">
+										<Button size="sm" className="w-full">
+											<Icon name="pencil-2" className="mr-2" />
+											Edit Page
+										</Button>
+									</Link>
+								</div>
+							)}
 
 							<div className="flex w-full items-center justify-between gap-5">
 								<Link to="edits" className="w-full">
