@@ -121,48 +121,50 @@ export function FilmEditor({
 						<FieldError>{fields.runtime.errors}</FieldError>
 					)}
 				</Field>
-				<Field>
-					<Label htmlFor={fields.releaseDate.id}>Release date</Label>
-					<DatePickerConform meta={fields.releaseDate} />
-					{fields.releaseDate.errors && (
-						<FieldError>{fields.releaseDate.errors}</FieldError>
-					)}
-				</Field>
-				<Field>
-					<Label htmlFor={fields.language.id}>Language</Label>
-					<LanguagePickerConform meta={fields.language} />
-					{fields.language.errors && (
-						<FieldError>{fields.language.errors}</FieldError>
-					)}
-				</Field>
-				<Field>
-					<Label htmlFor={fields.ageRating.id}>Age rating</Label>
-					<SelectConform
-						placeholder="Select an age rating"
-						meta={fields.ageRating}
-						items={AGE_RATINGS.map(ageRating => ({
-							name: ageRating.label,
-							value: ageRating.value,
-						}))}
-					/>
-					{fields.ageRating.errors && (
-						<FieldError>{fields.ageRating.errors}</FieldError>
-					)}
-				</Field>
-				<Field>
-					<Label htmlFor={fields.status.id}>Status</Label>
-					<SelectConform
-						placeholder="Select a status"
-						meta={fields.status}
-						items={STATUSES.map(status => ({
-							name: status.name,
-							value: status.name,
-						}))}
-					/>
-					{fields.status.errors && (
-						<FieldError>{fields.status.errors}</FieldError>
-					)}
-				</Field>
+				<div className="grid grid-cols-4 justify-between">
+					<Field>
+						<Label htmlFor={fields.releaseDate.id}>Release date</Label>
+						<DatePickerConform meta={fields.releaseDate} />
+						{fields.releaseDate.errors && (
+							<FieldError>{fields.releaseDate.errors}</FieldError>
+						)}
+					</Field>
+					<Field>
+						<Label htmlFor={fields.language.id}>Language</Label>
+						<LanguagePickerConform meta={fields.language} />
+						{fields.language.errors && (
+							<FieldError>{fields.language.errors}</FieldError>
+						)}
+					</Field>
+					<Field>
+						<Label htmlFor={fields.ageRating.id}>Age rating</Label>
+						<SelectConform
+							placeholder="Select an age rating"
+							meta={fields.ageRating}
+							items={AGE_RATINGS.map(ageRating => ({
+								name: ageRating.label,
+								value: ageRating.value,
+							}))}
+						/>
+						{fields.ageRating.errors && (
+							<FieldError>{fields.ageRating.errors}</FieldError>
+						)}
+					</Field>
+					<Field>
+						<Label htmlFor={fields.status.id}>Status</Label>
+						<SelectConform
+							placeholder="Select a status"
+							meta={fields.status}
+							items={STATUSES.map(status => ({
+								name: status.name,
+								value: status.name,
+							}))}
+						/>
+						{fields.status.errors && (
+							<FieldError>{fields.status.errors}</FieldError>
+						)}
+					</Field>
+				</div>
 				<Field>
 					<Label htmlFor={fields.budget.id}>Budget</Label>
 					<InputConform meta={fields.budget} type="number" />
