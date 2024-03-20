@@ -111,7 +111,10 @@ export function DataTableFacetedFilter<TData, TValue>({
 										{option.icon && (
 											<option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
 										)}
-										<span className="truncate">{option.label}</span>
+										<span className="truncate">
+											{/* NOTE: I replace " with '' to get around the cmdk item selector bug */}
+											{option.label.replace(/"/g, "''")}
+										</span>
 										{facets?.get(option.value) && (
 											<span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
 												{facets.get(option.value)}
