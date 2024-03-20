@@ -5,7 +5,7 @@ import { Form, useActionData, useSearchParams } from '@remix-run/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { InputConform } from '#app/components/form/conform/Input.js'
+import { InputOTPConform } from '#app/components/form/conform/InputOTP.js'
 import { Field, FieldError } from '#app/components/form/Field.js'
 import { Spacer } from '#app/components/spacer.tsx'
 import { Label } from '#app/components/ui/label.js'
@@ -23,7 +23,7 @@ const VerificationTypeSchema = z.enum(types)
 export type VerificationTypes = z.infer<typeof VerificationTypeSchema>
 
 export const VerifySchema = z.object({
-	[codeQueryParam]: z.string().min(6).max(6),
+	[codeQueryParam]: z.string().length(6),
 	[typeQueryParam]: VerificationTypeSchema,
 	[targetQueryParam]: z.string(),
 	[redirectToQueryParam]: z.string().optional(),
@@ -96,11 +96,7 @@ export default function VerifyRoute() {
 						<HoneypotInputs />
 						<Field>
 							<Label htmlFor={fields[codeQueryParam].id}>Code</Label>
-							<InputConform
-								meta={fields[codeQueryParam]}
-								type="text"
-								autoComplete="one-time-code"
-							/>
+							<InputOTPConform meta={fields[codeQueryParam]} length={6} />
 							{fields[codeQueryParam].errors && (
 								<FieldError>{fields[codeQueryParam].errors}</FieldError>
 							)}
