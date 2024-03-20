@@ -20,7 +20,7 @@ const TAKE = 20
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { orderBy, search, skip, take } = getTableParams(request, TAKE, {
-		orderBy: 'createdAt',
+		orderBy: 'viewCount',
 		order: 'desc',
 	})
 	const where = {

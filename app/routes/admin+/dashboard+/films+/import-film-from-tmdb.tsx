@@ -26,7 +26,7 @@ import { getSearchParams } from '#app/utils/request.helper.js'
 import { createToastHeaders } from '#app/utils/toast.server.js'
 
 export const ImportFilmSchema = z.object({
-	tmdbID: z.string(),
+	tmdbIds: z.string(),
 })
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -43,28 +43,35 @@ export async function action({ request }: ActionFunctionArgs) {
 			},
 		)
 	}
+	
+	let { tmdbIds } = submission.value
 
-	let { tmdbID } = submission.value
+	const parsedIds = JSON.parse(tmdbIds) as string[]
 
-	const importedFilm = await tmdb.importFilm(tmdbID)
+	for (const id of parsedIds) {
+		const importedFilm = await tmdb.importFilm(id.toString())
 
-	if (!importedFilm) {
-		return json(
-			{ result: submission.reply() },
-			{
-				headers: await createToastHeaders({
-					description: 'Failed to import film.',
-					type: 'error',
-				}),
-			},
-		)
+		if (!importedFilm) {
+			return json(
+				{ result: submission.reply() },
+				{
+					headers: await createToastHeaders({
+						description: `Failed to import ${id}.`,
+						type: 'error',
+					}),
+				},
+			)
+		}
 	}
+
+
+
 
 	return json(
 		{ result: submission.reply() },
 		{
 			headers: await createToastHeaders({
-				description: 'Imported film.',
+				description: 'Imported films.',
 				type: 'success',
 			}),
 		},

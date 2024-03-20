@@ -3,6 +3,7 @@ import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Input } from '#app/components/ui/input.tsx'
 import { DataTableViewOptions } from '../../data-table-view-options.tsx'
+import { DataTableImportTMDBFilms } from './data-table-import-films-from-tmdb.tsx'
 
 interface DataTableToolbarProps<TData> {
 	table: Table<TData>
@@ -39,6 +40,7 @@ export function DataTableToolbar<TData>({
 			</div>
 			<div className="flex flex-1 items-center space-x-2">
 				<DataTableViewOptions table={table} />
+				<DataTableImportTMDBFilms table={table} />
 			</div>
 		</div>
 	)

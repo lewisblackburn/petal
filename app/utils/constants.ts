@@ -3644,6 +3644,8 @@ export const FILM_SORT_OPTIONS: Array<{ label: string; value: Sort }> = [
 export const PEOPLE_SORT_OPTIONS: Array<{ label: string; value: Sort }> = [
 	{ label: 'Name (A-Z)', value: { orderBy: 'name', order: 'asc' } },
 	{ label: 'Name (Z-A)', value: { orderBy: 'name', order: 'desc' } },
+	{ label: 'View Count (Ascending)', value: { orderBy: 'viewCount', order: 'asc' } },
+	{ label: 'View Count (Descending)', value: { orderBy: 'viewCount', order: 'desc' } },
 	// {
 	// 	label: 'Popularity Ascending',
 	// 	value: { orderBy: 'popularity', order: 'asc' },
