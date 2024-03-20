@@ -43,6 +43,7 @@ export function InputOTPConform({
 			/>
 			<InputOTP
 				{...props}
+				name={`${meta.name}-inner`}
 				ref={inputOTPRef}
 				value={control.value ?? ''}
 				onChange={(newValue: string) => {
