@@ -80,15 +80,6 @@ export function PersonEditor({
 			{person ? <input type="hidden" name="id" value={person.id} /> : null}
 			<div className="flex flex-col gap-1">
 				<Field>
-					<Label htmlFor={fields.knownForDepartment.id}>
-						Known for department
-					</Label>
-					<DepartmentPickerConform meta={fields.knownForDepartment} />
-					{fields.knownForDepartment.errors && (
-						<FieldError>{fields.knownForDepartment.errors}</FieldError>
-					)}
-				</Field>
-				<Field>
 					<Label htmlFor={fields.name.id}>Name</Label>
 					<InputConform meta={fields.name} type="text" />
 					{fields.name.errors && <FieldError>{fields.name.errors}</FieldError>}
@@ -100,34 +91,45 @@ export function PersonEditor({
 						<FieldError>{fields.biography.errors}</FieldError>
 					)}
 				</Field>
-				<Field>
-					<Label htmlFor={fields.birthdate.id}>Birth date</Label>
-					<DatePickerConform meta={fields.birthdate} />
-					{fields.birthdate.errors && (
-						<FieldError>{fields.birthdate.errors}</FieldError>
-					)}
-				</Field>
-				<Field>
-					<Label htmlFor={fields.dayOfDeath.id}>Day of death</Label>
-					<DatePickerConform meta={fields.dayOfDeath} />
-					{fields.dayOfDeath.errors && (
-						<FieldError>{fields.dayOfDeath.errors}</FieldError>
-					)}
-				</Field>
-				<Field>
-					<Label htmlFor={fields.gender.id}>Gender</Label>
-					<SelectConform
-						placeholder="Select a gender"
-						meta={fields.gender}
-						items={GENDERS.map(gender => ({
-							name: gender.label,
-							value: gender.value,
-						}))}
-					/>
-					{fields.gender.errors && (
-						<FieldError>{fields.gender.errors}</FieldError>
-					)}
-				</Field>
+				<div className="flex items-center justify-between">
+					<Field>
+						<Label htmlFor={fields.knownForDepartment.id}>
+							Known for department
+						</Label>
+						<DepartmentPickerConform meta={fields.knownForDepartment} />
+						{fields.knownForDepartment.errors && (
+							<FieldError>{fields.knownForDepartment.errors}</FieldError>
+						)}
+					</Field>
+					<Field>
+						<Label htmlFor={fields.birthdate.id}>Birth date</Label>
+						<DatePickerConform meta={fields.birthdate} />
+						{fields.birthdate.errors && (
+							<FieldError>{fields.birthdate.errors}</FieldError>
+						)}
+					</Field>
+					<Field>
+						<Label htmlFor={fields.dayOfDeath.id}>Day of death</Label>
+						<DatePickerConform meta={fields.dayOfDeath} />
+						{fields.dayOfDeath.errors && (
+							<FieldError>{fields.dayOfDeath.errors}</FieldError>
+						)}
+					</Field>
+					<Field>
+						<Label htmlFor={fields.gender.id}>Gender</Label>
+						<SelectConform
+							placeholder="Select a gender"
+							meta={fields.gender}
+							items={GENDERS.map(gender => ({
+								name: gender.label,
+								value: gender.value,
+							}))}
+						/>
+						{fields.gender.errors && (
+							<FieldError>{fields.gender.errors}</FieldError>
+						)}
+					</Field>
+				</div>
 			</div>
 			<div className="flex justify-end gap-2">
 				<Button form={form.id} variant="destructive" type="reset">

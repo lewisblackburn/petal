@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client'
-import { formatDistanceToNowStrict } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns'
 
 export const person = Prisma.defineExtension(client => {
 	return client.$extends({
@@ -14,7 +14,7 @@ export const person = Prisma.defineExtension(client => {
 
 						const birthdate = new Date(person.birthdate)
 
-						return formatDistanceToNowStrict(birthdate)
+						return formatDistanceToNow(birthdate)
 					},
 				},
 			},

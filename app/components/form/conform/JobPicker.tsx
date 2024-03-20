@@ -46,21 +46,21 @@ export function JobPickerConform({ meta }: { meta: FieldMetadata<string> }) {
 						variant="outline"
 						role="combobox"
 						className={cn(
-							'w-[200px] justify-between',
+							'w-[250px] justify-between',
 							!control.value && 'text-muted-foreground',
 							'focus:ring-2 focus:ring-stone-950 focus:ring-offset-2',
 						)}
 					>
 						{control.value
 							? jobs.find(job => job.value === control.value)?.label
-							: 'Select language'}
+							: 'Select a job'}
 						<Icon
 							name="caret-sort"
 							className="ml-2 h-4 w-4 shrink-0 opacity-50"
 						/>
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className="w-[200px] p-0">
+				<PopoverContent className="w-[250px] p-0">
 					<Command>
 						<CommandInput placeholder="Search job..." />
 						<CommandList>

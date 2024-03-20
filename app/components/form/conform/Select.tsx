@@ -53,7 +53,7 @@ export const SelectConform = ({
 					}
 				}}
 			>
-				<SelectTrigger>
+				<SelectTrigger className="w-[250px]">
 					<SelectValue placeholder={placeholder} />
 				</SelectTrigger>
 				<SelectContent>

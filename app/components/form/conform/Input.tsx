@@ -7,7 +7,7 @@ export const InputConform = ({
 	type,
 	...props
 }: {
-	meta: FieldMetadata<string | number>
+	meta: FieldMetadata<string | number | null>
 	type: Parameters<typeof getInputProps>[1]['type']
 } & ComponentProps<typeof Input>) => {
 	return (

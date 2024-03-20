@@ -35,7 +35,7 @@ export function DatePickerConform({ meta }: { meta: FieldMetadata<Date> }) {
 						ref={triggerRef}
 						variant={'outline'}
 						className={cn(
-							'w-64 justify-start text-left font-normal focus:ring-2 focus:ring-stone-950 focus:ring-offset-2',
+							'w-[250px] justify-start text-left font-normal focus:ring-2 focus:ring-stone-950 focus:ring-offset-2',
 							!control.value && 'text-muted-foreground',
 						)}
 					>

@@ -115,13 +115,12 @@ export function FilmEditor({
 				</Field>
 				<Field>
 					<Label htmlFor={fields.runtime.id}>Runtime</Label>
-					{/* @ts-expect-error runtime is a number */}
 					<InputConform meta={fields.runtime} type="number" />
 					{fields.runtime.errors && (
 						<FieldError>{fields.runtime.errors}</FieldError>
 					)}
 				</Field>
-				<div className="grid grid-cols-4 justify-between">
+				<div className="flex items-center justify-between">
 					<Field>
 						<Label htmlFor={fields.releaseDate.id}>Release date</Label>
 						<DatePickerConform meta={fields.releaseDate} />

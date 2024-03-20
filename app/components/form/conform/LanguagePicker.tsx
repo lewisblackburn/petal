@@ -50,7 +50,7 @@ export function LanguagePickerConform({
 						variant="outline"
 						role="combobox"
 						className={cn(
-							'w-[200px] justify-between',
+							'w-[250px] justify-between',
 							!control.value && 'text-muted-foreground',
 							'focus:ring-2 focus:ring-stone-950 focus:ring-offset-2',
 						)}
@@ -65,7 +65,7 @@ export function LanguagePickerConform({
 						/>
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className="w-[200px] p-0">
+				<PopoverContent className="w-[250px] p-0">
 					<Command>
 						<CommandInput placeholder="Search language..." />
 						<CommandList>
