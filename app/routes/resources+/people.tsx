@@ -35,6 +35,7 @@ export const PersonSearchConform = ({ fields }: { fields: any }) => {
 		fetcher.data?.people.map(person => ({
 			value: person.id,
 			label: person.name,
+			image: person.image,
 		})) || []
 
 	const handleSearch = (e: any) => {

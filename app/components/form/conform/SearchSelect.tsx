@@ -3,6 +3,7 @@ import {
 	unstable_useControl as useControl,
 } from '@conform-to/react'
 import React, { type FormEventHandler } from 'react'
+import { Image } from '#app/components/image.js'
 import { cn } from '#app/utils/misc.js'
 import { Button } from '../../ui/button'
 import {
@@ -22,7 +23,7 @@ export function SearchSelectConform({
 	onInput,
 }: {
 	meta: FieldMetadata<string>
-	items: { label: string; value: string }[]
+	items: { label: string; value: string; image?: string }[]
 	onInput: FormEventHandler<HTMLInputElement>
 }) {
 	const [selectedItem, setSelectedItem] = React.useState<{
@@ -57,7 +58,7 @@ export function SearchSelectConform({
 						variant="outline"
 						role="combobox"
 						className={cn(
-							'w-[200px] justify-between',
+							'w-[300px] justify-between',
 							!control.value && 'text-muted-foreground',
 							'focus:ring-2 focus:ring-stone-950 focus:ring-offset-2',
 						)}
@@ -71,7 +72,7 @@ export function SearchSelectConform({
 						/>
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className="w-[200px] p-0">
+				<PopoverContent className="w-[300px] p-0">
 					<Command>
 						<CommandInput
 							placeholder="Search item..."
@@ -90,15 +91,23 @@ export function SearchSelectConform({
 											setSelectedItem(item)
 										}}
 									>
-										<Icon
-											name="check"
-											className={cn(
-												'mr-2 h-4 w-4',
-												item.value === control.value
-													? 'opacity-100'
-													: 'opacity-0',
-											)}
-										/>
+										{item.image ? (
+											<Image
+												src={item.image ?? ''}
+												alt={item.value}
+												className="mr-3 aspect-square h-12 w-12 rounded-md"
+											/>
+										) : (
+											<Icon
+												name="check"
+												className={cn(
+													'mr-2 h-4 w-4',
+													item.value === control.value
+														? 'opacity-100'
+														: 'opacity-0',
+												)}
+											/>
+										)}
 										{item.label}
 									</CommandItem>
 								))}

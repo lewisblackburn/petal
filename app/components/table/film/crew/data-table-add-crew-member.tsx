@@ -115,7 +115,7 @@ export function DataTableAddCrewMember() {
 							className="w-full max-md:aspect-square max-md:px-0"
 						>
 							<Icon name="plus" className="scale-125 max-md:scale-150">
-								<span className="max-md:hidden">Add Photo</span>
+								<span className="max-md:hidden">Add Person</span>
 							</Icon>
 						</StatusButton>
 					</DialogFooter>
