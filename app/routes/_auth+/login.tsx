@@ -128,7 +128,7 @@ export default function LoginPage() {
 								<Label htmlFor={fields.password.id}>Password</Label>
 								<InputConform
 									meta={fields.password}
-									type="text"
+									type="password"
 									autoComplete="current-password"
 								/>
 								{fields.password.errors && (
