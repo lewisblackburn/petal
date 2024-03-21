@@ -4,17 +4,21 @@ import { useFetcher } from '@remix-run/react'
 import { json } from '@remix-run/server-runtime'
 import { useState } from 'react'
 import { z } from 'zod'
-import { Spinner } from '#app/components/spinner.tsx'
+import { RatingSlider } from '#app/components/RatingSlider.js'
 import { Button } from '#app/components/ui/button.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
 import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from '#app/components/ui/popover.tsx'
+	Dialog,
+	DialogTrigger,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogDescription,
+	DialogFooter,
+} from '#app/components/ui/dialog.js'
+import { Icon } from '#app/components/ui/icon.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { cn } from '#app/utils/misc.tsx'
+import { cn, useDebounce } from '#app/utils/misc.tsx'
 import { useOptionalUser } from '#app/utils/user.ts'
 
 export const RateFilmSchema = z.object({
@@ -77,73 +81,55 @@ export const FilmRatingDropdown = ({
 }) => {
 	const user = useOptionalUser()
 	const ratingFetcher = useFetcher<typeof action>()
-	// @ts-expect-error this should also exist
-	const rating = ratingFetcher.data?.rating ?? defaultRating ?? 0
-	const isRated = rating !== 0
-	const [open, setOpen] = useState(false)
-	const [hoveredRating, setHoveredRating] = useState(rating)
+	const fetchedRating = ratingFetcher.data?.result.rating ?? defaultRating ?? 0
+	const [rating, setRating] = useState(fetchedRating)
+	const isRated = rating > 0
+	const [value, setValue] = useState<number[]>([rating])
+	const [open, setOpen] = useState<boolean>(false)
 
-	const handleStarHover = (starRating: number) => {
-		setHoveredRating(starRating)
-	}
-
-	const handleStarClick = (starRating: number) => {
+	const handleSetRating = (value: number) => {
+		setRating(value)
 		ratingFetcher.submit(
-			{ filmId, rating: starRating === rating ? 0 : starRating },
+			{ filmId, rating: value },
 			{ method: 'POST', action: '/resources/film/rate' },
 		)
-		setOpen(false)
-		setHoveredRating(0)
 	}
 
-	const busy = ratingFetcher.state !== 'idle'
-
-	// Create an array of 5 stars
-	const stars = Array.from({ length: 5 }, (_, index) => {
-		const starRating = index + 1
-		const isFilled =
-			starRating <= (hoveredRating !== null ? hoveredRating : rating)
-
-		return (
-			<Icon
-				key={starRating}
-				name={isFilled ? 'star-filled' : 'star'}
-				className={`cursor-pointer ${
-					isFilled ? 'text-yellow-500' : 'text-gray-500'
-				}`}
-				onMouseEnter={() => handleStarHover(starRating)}
-				onClick={() => handleStarClick(starRating)}
-			/>
-		)
-	})
+	const debouncedHandleSetRating = useDebounce(handleSetRating, 500)
 
 	return (
-		<Popover open={open} onOpenChange={setOpen}>
-			<PopoverTrigger disabled={!user?.id}>
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger disabled={!user?.id}>
 				<Button variant="secondary" type="button" disabled={!user?.id}>
-					{busy ? (
-						<Spinner showSpinner />
-					) : (
-						<Icon
-							name="star-filled"
-							className={cn('mr-2', isRated ? 'text-yellow-500' : '')}
-						/>
-					)}
+					<Icon
+						name="star-filled"
+						className={cn('mr-2', isRated ? 'text-yellow-500' : '')}
+					/>
 					<span>Rate{isRated ? 'd' : ''}</span>
 				</Button>
-			</PopoverTrigger>
-			<PopoverContent className="w-full">
-				<div
-					className="flex items-center gap-2"
-					onMouseLeave={() => {
-						if (!busy) {
-							handleStarHover(rating)
-						}
+			</DialogTrigger>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Rating</DialogTitle>
+					<DialogDescription>
+						How did you feel about {'film'}?
+					</DialogDescription>
+				</DialogHeader>
+				<RatingSlider
+					step={1}
+					max={10}
+					value={value}
+					onValueChange={(value: number[]) => {
+						setValue(value)
+						debouncedHandleSetRating(value[0])
 					}}
-				>
-					{stars}
-				</div>
-			</PopoverContent>
-		</Popover>
+				/>
+				<DialogFooter>
+					<Button type="submit" onClick={() => setOpen(false)}>
+						I'm Done
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 	)
 }
