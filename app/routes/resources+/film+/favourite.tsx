@@ -85,7 +85,7 @@ export const ToggleFavouriteFilm = ({
 					name="heart-filled"
 					className={cn('mr-2', favourited ? 'text-red-500' : '')}
 				/>
-			Favourite{favourited ? 'd' : ''}
+			<span>Favourite{favourited ? 'd' : ''}</span>
 		</Button>
 	)
 }
