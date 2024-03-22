@@ -4,7 +4,7 @@ import { useFetcher } from '@remix-run/react'
 import { json } from '@remix-run/server-runtime'
 import { useState } from 'react'
 import { z } from 'zod'
-import { RatingSlider } from '#app/components/RatingSlider.js'
+import { RatingSlider } from '#app/components/rating-slider'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Dialog,
