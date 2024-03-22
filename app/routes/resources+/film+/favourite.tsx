@@ -2,8 +2,8 @@ import { parseWithZod } from '@conform-to/zod'
 import { type ActionFunctionArgs } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
 import { json } from '@remix-run/server-runtime'
+import { useState } from 'react'
 import { z } from 'zod'
-import { Spinner } from '#app/components/spinner.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 
@@ -68,11 +68,11 @@ export const ToggleFavouriteFilm = ({
 }) => {
 	const user = useOptionalUser()
 	const favouriteFetcher = useFetcher<typeof action>()
-	// @ts-expect-error this does exist?
-	const favourited = favouriteFetcher.data?.favourited ?? defaultValue ?? false
-	const busy = favouriteFetcher.state !== 'idle'
+	const fetchedfavourited = favouriteFetcher.data?.result?.favourited ?? defaultValue ?? false
+	const [favourited, setFavourited] = useState(fetchedfavourited)
 
 	const handleClick = () => {
+		setFavourited(!favourited)
 		favouriteFetcher.submit(
 			{ filmId },
 			{ method: 'POST', action: '/resources/film/favourite' },
@@ -81,16 +81,10 @@ export const ToggleFavouriteFilm = ({
 
 	return (
 		<Button variant="secondary" onClick={handleClick} disabled={!user?.id}>
-			{busy ? (
-				<div className="relative">
-					<Spinner showSpinner />
-				</div>
-			) : (
 				<Icon
 					name="heart-filled"
 					className={cn('mr-2', favourited ? 'text-red-500' : '')}
 				/>
-			)}
 			Favourite{favourited ? 'd' : ''}
 		</Button>
 	)
