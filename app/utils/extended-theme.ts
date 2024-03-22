@@ -1,6 +1,16 @@
 import { type Config } from 'tailwindcss'
 
 export const extendedTheme = {
+	keyframes: {
+		// animate-[btnpulse_2s_infinite]
+		btnpulse: {
+			'0%': { 'box-shadow': '0 0 0 0 theme("colors.secondary.DEFAULT")' },
+			'50%': { 'box-shadow': '0 0 0 0 theme("colors.secondary.DEFAULT/50")' },
+			'100%': {
+				'box-shadow': '0 0 0 12px theme("colors.secondary.DEFAULT/0")',
+			},
+		},
+	},
 	colors: {
 		border: 'hsl(var(--border))',
 		input: {
