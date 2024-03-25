@@ -3,7 +3,7 @@ import {
 	unstable_useControl as useControl,
 } from '@conform-to/react'
 import React, { type FormEventHandler } from 'react'
-import { Image } from '#app/components/image.js'
+import Image from '#app/components/image.js'
 import { cn } from '#app/utils/misc.js'
 import { Button } from '../../ui/button'
 import {

@@ -1,6 +1,6 @@
 import { type ProductionCompany } from '@prisma/client'
 import { type ColumnDef } from '@tanstack/react-table'
-import { Image } from '#app/components/image.tsx'
+import Image from '#app/components/image.tsx'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { DataTableColumnHeader } from '../../data-table-column-header.tsx'
 

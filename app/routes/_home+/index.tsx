@@ -1,9 +1,8 @@
 import { json, type MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { Carousel } from '#app/components/carousel.tsx'
+import { NewCarousel } from '#app/components/new-carousel.js'
 import { oneWeekAgo } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server.ts'
-import { NewCarousel } from '#app/components/new-carousel.js'
 
 export const meta: MetaFunction = () => [{ title: 'Petal' }]
 

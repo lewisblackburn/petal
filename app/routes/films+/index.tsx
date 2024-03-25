@@ -7,7 +7,7 @@ import {
 import { Link, useLoaderData, useLocation } from '@remix-run/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { FiltersCard } from '#app/components/filters-card'
-import { Image } from '#app/components/image'
+import Image from '#app/components/image'
 import { InfiniteScroll } from '#app/components/infinite-scroll.tsx'
 
 import { SearchCard } from '#app/components/search-card.js'

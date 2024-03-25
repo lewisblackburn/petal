@@ -66,7 +66,7 @@ async function seed() {
 	})
 	console.timeEnd('👑 Created roles...')
 
-	const totalUsers = 100
+	const totalUsers = 10
 	console.time(`👤 Created ${totalUsers} users...`)
 	const noteImages = await getNoteImages()
 	const userImages = await getUserImages()

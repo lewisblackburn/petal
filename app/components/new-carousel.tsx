@@ -1,13 +1,14 @@
+import { Link } from '@remix-run/react'
 import { useEffect, useState } from 'react'
+import Image from './image'
 import { Button } from './ui/button'
 import {
 	Carousel,
-	CarouselApi,
+	type CarouselApi,
 	CarouselContent,
 	CarouselItem,
 } from './ui/carousel'
 import { Icon } from './ui/icon'
-import { Link } from '@remix-run/react'
 
 interface NewCarouselProps {
 	title: string
@@ -21,8 +22,10 @@ interface NewCarouselProps {
 
 export function NewCarousel({ title, description, items }: NewCarouselProps) {
 	const [api, setApi] = useState<CarouselApi>()
-	const [count, setCount] = useState(0)
-	const [current, setCurrent] = useState(0)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [_count, setCount] = useState(0)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [_current, setCurrent] = useState(0)
 
 	const previous = () => {
 		api?.scrollPrev()
@@ -77,12 +80,9 @@ export function NewCarousel({ title, description, items }: NewCarouselProps) {
 							className="sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6"
 						>
 							<Link key={index} to={item.to} draggable={false}>
-								<img
+								<Image
 									src={item.image}
-									onError={({ currentTarget }) => {
-										currentTarget.onerror = null // prevents looping
-										currentTarget.src = '/img/300x450.png'
-									}}
+									fallbackSrc="/img/300x450.png"
 									alt="poster"
 									className="aspect-[2/3] rounded-lg object-cover"
 									draggable={false}

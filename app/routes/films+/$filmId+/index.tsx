@@ -12,7 +12,7 @@ import React from 'react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList } from '#app/components/form/ErrorList.js'
-import { Image } from '#app/components/image.tsx'
+import Image from '#app/components/image.tsx'
 import { ReviewCard } from '#app/components/review-card.tsx'
 import { Slider } from '#app/components/slider.tsx'
 import { Badge } from '#app/components/ui/badge.tsx'
@@ -236,15 +236,16 @@ export default function FilmRoute() {
 			<div className="flex items-center gap-5">
 				<Image
 					src={data.film.poster!}
-					fallbackSrc={'/img/300x450.png'}
 					alt={data.film.title}
 					className="h-[600px] w-[400px]"
+					fallbackSrc="/img/300x450.png"
 				/>
 				<div>
 					<Image
 						src={data.film.backdrop ?? ''}
 						alt={data.film.title}
-						className="h-[600px] w-full"
+						className="aspect-[13.7/9] h-[600px] w-full"
+						fallbackSrc="/img/1920x1080.png"
 					/>
 				</div>
 			</div>

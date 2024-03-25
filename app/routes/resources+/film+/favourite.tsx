@@ -68,7 +68,8 @@ export const ToggleFavouriteFilm = ({
 }) => {
 	const user = useOptionalUser()
 	const favouriteFetcher = useFetcher<typeof action>()
-	const fetchedfavourited = favouriteFetcher.data?.result?.favourited ?? defaultValue ?? false
+	const fetchedfavourited =
+		favouriteFetcher.data?.result?.favourited ?? defaultValue ?? false
 	const [favourited, setFavourited] = useState(fetchedfavourited)
 
 	const handleClick = () => {
@@ -81,10 +82,10 @@ export const ToggleFavouriteFilm = ({
 
 	return (
 		<Button variant="secondary" onClick={handleClick} disabled={!user?.id}>
-				<Icon
-					name="heart-filled"
-					className={cn('mr-2', favourited ? 'text-red-500' : '')}
-				/>
+			<Icon
+				name="heart-filled"
+				className={cn('mr-2', favourited ? 'text-red-500' : '')}
+			/>
 			<span>Favourite{favourited ? 'd' : ''}</span>
 		</Button>
 	)
