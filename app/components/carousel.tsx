@@ -1,8 +1,14 @@
 import { Link } from '@remix-run/react'
-import { motion } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
-import { Button } from './ui/button.js'
-import { Icon } from './ui/icon.js'
+import { useEffect, useState } from 'react'
+import Image from './image'
+import { Button } from './ui/button'
+import {
+	Carousel as CarouselComponent,
+	type CarouselApi,
+	CarouselContent,
+	CarouselItem,
+} from './ui/carousel'
+import { Icon } from './ui/icon'
 
 interface CarouselProps {
 	title: string
@@ -11,45 +17,36 @@ interface CarouselProps {
 		to: string
 		image: string
 		title?: string
-		subtitle?: string
 	}[]
 }
 
 export function Carousel({ title, description, items }: CarouselProps) {
-	const [currentImageIndex, setCurrentImageIndex] = useState(0)
-	const [translateX, setTranslateX] = useState(currentImageIndex)
-	const [animated, setAnimated] = useState(false)
-	const [isAnimating, setIsAnimating] = useState(false) // Track ongoing animations
-	// clone the first four images and append them to the end of the array and vice versa
-	const clonedItems = [...items, ...items, ...items]
+	const [api, setApi] = useState<CarouselApi>()
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [_count, setCount] = useState(0)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [_current, setCurrent] = useState(0)
 
-	const itemClassName =
-		'flex-[0_0_25%] max-w-[25%] md:flex-[0_0_15%] md:max-w-[15%] lg:flex-[0_0_12.5%] lg:max-w-[12.5%]'
-
-	const prevImage = () => {
-		if (!isAnimating) {
-			setIsAnimating(true)
-			setCurrentImageIndex(prevIndex => prevIndex - 1)
-		}
+	const previous = () => {
+		api?.scrollPrev()
 	}
 
-	const nextImage = () => {
-		if (!isAnimating) {
-			setIsAnimating(true)
-			setCurrentImageIndex(prevIndex => prevIndex + 1)
-		}
+	const next = () => {
+		api?.scrollNext()
 	}
-
-	// Create a ref to the container div
-	const imageRef = useRef(null)
 
 	useEffect(() => {
-		// + 20 to account for the margin between the images (gap-5 -> 1.25rem -> 20px)
-		setTranslateX(
-			// @ts-expect-error Property 'offsetWidth' does not exist on type 'never
-			-currentImageIndex * (imageRef.current?.offsetWidth + 20 || 0),
-		)
-	}, [currentImageIndex])
+		if (!api) {
+			return
+		}
+
+		setCount(api.scrollSnapList().length)
+		setCurrent(api.selectedScrollSnap() + 1)
+
+		api.on('select', () => {
+			setCurrent(api.selectedScrollSnap() + 1)
+		})
+	}, [api])
 
 	return (
 		<div className="flex flex-col gap-5">
@@ -61,59 +58,40 @@ export function Carousel({ title, description, items }: CarouselProps) {
 					)}
 				</div>
 				<div>
-					<Button onClick={prevImage} size="icon" variant="ghost">
+					<Button onClick={previous} size="icon" variant="ghost">
 						<Icon name="chevron-left" />
 					</Button>
-					<Button onClick={nextImage} size="icon" variant="ghost">
+					<Button onClick={next} size="icon" variant="ghost">
 						<Icon name="chevron-right" />
 					</Button>
 				</div>
 			</div>
-			<div className="relative overflow-hidden">
-				<motion.div
-					className="flex gap-5"
-					animate={{
-						transform: `translateX(${translateX}px)`, // Translate the container div based on the currentImageIndex
-					}}
-					// when last slide is reached, it immediately jumps back to the first actual slide without animation (animation duration set to 0)
-					transition={{
-						duration: animated ? 0.3 : 0,
-					}}
-					onAnimationComplete={() => {
-						setIsAnimating(false)
-						if (currentImageIndex === items.length * 2) {
-							setAnimated(false)
-							setCurrentImageIndex(items.length)
-						} else if (currentImageIndex === 0) {
-							setAnimated(false)
-							setCurrentImageIndex(items.length)
-						} else {
-							setAnimated(true)
-						}
-					}}
-				>
-					{clonedItems.map((item, index) => (
-						<Link
+			<CarouselComponent
+				opts={{
+					align: 'start',
+				}}
+				setApi={setApi}
+				className="w-full"
+			>
+				<CarouselContent>
+					{items.map((item, index) => (
+						<CarouselItem
 							key={index}
-							to={item.to}
-							className={itemClassName}
-							draggable={false}
+							className="sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6"
 						>
-							<img
-								ref={imageRef}
-								src={item.image}
-								onError={({ currentTarget }) => {
-									currentTarget.onerror = null // prevents looping
-									currentTarget.src = '/img/300x450.png'
-								}}
-								alt="poster"
-								className="aspect-[2/3] rounded-lg object-cover"
-								draggable={false}
-							/>
-						</Link>
+							<Link key={index} to={item.to} draggable={false}>
+								<Image
+									src={item.image}
+									fallbackSrc="/img/300x450.png"
+									alt="poster"
+									className="aspect-[2/3] rounded-lg object-cover"
+									draggable={false}
+								/>
+							</Link>
+						</CarouselItem>
 					))}
-				</motion.div>
-			</div>
+				</CarouselContent>
+			</CarouselComponent>
 		</div>
 	)
 }

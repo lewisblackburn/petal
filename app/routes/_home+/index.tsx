@@ -1,6 +1,6 @@
 import { json, type MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { NewCarousel } from '#app/components/new-carousel.js'
+import { Carousel } from '#app/components/carousel.js'
 import { oneWeekAgo } from '#app/utils/constants'
 import { prisma } from '#app/utils/db.server.ts'
 
@@ -59,7 +59,7 @@ export default function Index() {
 	return (
 		<div className="flex flex-col gap-20 py-6">
 			{popularFilms.length > 0 && (
-				<NewCarousel
+				<Carousel
 					title="Popular Films"
 					items={popularFilms.map(film => {
 						return {
@@ -72,7 +72,7 @@ export default function Index() {
 				/>
 			)}
 			{trendingFilms.length > 0 && (
-				<NewCarousel
+				<Carousel
 					title="Trending Films"
 					items={trendingFilms.map(film => {
 						return {
