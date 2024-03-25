@@ -66,7 +66,7 @@ export default function PeopleRoute() {
 							<Link to={person.id}>
 								<Image
 									src={person.image}
-									fallbackSrc='/img/300x.450.png'
+									fallbackSrc='/img/300x450.png'
 									alt={person.name}
 									className="aspect-[2/3] h-full w-full rounded-lg bg-muted"
 								/>
