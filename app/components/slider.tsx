@@ -1,4 +1,5 @@
 import { Link } from '@remix-run/react'
+import Image from './image'
 
 interface SliderProps {
 	title?: string
@@ -19,8 +20,9 @@ export function Slider({ title, items }: SliderProps) {
 				{items.map((item, index) => (
 					<Link key={index} to={item.to} className="w-32">
 						<div>
-							<img
+							<Image
 								src={item.image}
+								fallbackSrc='/img/300x450.png'
 								alt={item.image}
 								className="aspect-[2/3] w-full rounded-lg object-cover"
 							/>
