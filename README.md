@@ -64,18 +64,6 @@ guidelines outlined in CONTRIBUTING.md.
 For any issues, bug reports, or feature requests, please open a new GitHub
 [issue](https://github.com/lewisblackburn/petal/issues).
 
-## Acknowledgments
-
-This project is built upon
-[The Epic Stack 🚀](https://www.epicweb.dev/epic-stack) boilerplate by Kent C.
-Dodds and contributors. Special thanks to their valuable work and contribution
-to the community.
-
 ## License
 
-This project is licensed under the [MIT License](LICENSE) which applies to "The
-Epic Stack 🚀" boilerplate as well.
-
-## Last Sync
-
-https://github.com/epicweb-dev/epic-stack/commits/05d92de7e0ebd580edbf4bdd6b43447b32ece5e7/
+This project is licensed under the [MIT License](LICENSE).
