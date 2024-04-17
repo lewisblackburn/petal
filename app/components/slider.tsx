@@ -22,7 +22,7 @@ export function Slider({ title, items }: SliderProps) {
 						<div>
 							<Image
 								src={item.image}
-								fallbackSrc='/img/300x450.png'
+								fallbackSrc="/img/300x450.png"
 								alt={item.image}
 								className="aspect-[2/3] w-full rounded-lg object-cover"
 							/>

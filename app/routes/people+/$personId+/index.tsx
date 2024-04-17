@@ -94,7 +94,7 @@ export default function PersonRoute() {
 			<div className="col-span-1 flex flex-col gap-5">
 				<Image
 					src={data.person.image ?? ''}
-					fallbackSrc='/img/300x.450.png'
+					fallbackSrc="/img/300x.450.png"
 					alt={data.person.name}
 					className="aspect-[2/3]"
 				/>
