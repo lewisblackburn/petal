@@ -167,11 +167,13 @@ function Document({
 	nonce,
 	theme = 'light',
 	env = {},
+	allowIndexing = true,
 }: {
 	children: React.ReactNode
 	nonce: string
 	theme?: Theme
 	env?: Record<string, string>
+	allowIndexing?: boolean
 }) {
 	return (
 		// <html lang="en" className={`${theme} h-full overflow-x-hidden`}>
@@ -181,6 +183,9 @@ function Document({
 				<Meta />
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width,initial-scale=1" />
+				{allowIndexing ? null : (
+					<meta name="robots" content="noindex, nofollow" />
+				)}
 				<Links />
 			</head>
 			<body className="bg-background text-foreground">
@@ -202,10 +207,16 @@ function App() {
 	const data = useLoaderData<typeof loader>()
 	const nonce = useNonce()
 	const theme = useTheme()
+	const allowIndexing = data.ENV.ALLOW_INDEXING !== 'false'
 	useToast(data.toast)
 
 	return (
-		<Document nonce={nonce} theme={theme} env={data.ENV}>
+		<Document
+			nonce={nonce}
+			theme={theme}
+			env={data.ENV}
+			allowIndexing={allowIndexing}
+		>
 			<Layout />
 			<EpicToaster closeButton position="top-center" theme={theme} />
 			<EpicProgress />
