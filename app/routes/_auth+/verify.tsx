@@ -5,14 +5,13 @@ import { Form, useActionData, useSearchParams } from '@remix-run/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { InputOTPConform } from '#app/components/form/conform/InputOTP.js'
-import { Field, FieldError } from '#app/components/form/Field.js'
 import { Spacer } from '#app/components/spacer.tsx'
-import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { validateRequest } from './verify.server.ts'
+import { ErrorList } from '#app/components/form/ErrorList.js'
+import { OTPField } from '#app/components/form/conform/InputOTP.js'
 
 export const codeQueryParam = 'code'
 export const targetQueryParam = 'target'
@@ -23,7 +22,7 @@ const VerificationTypeSchema = z.enum(types)
 export type VerificationTypes = z.infer<typeof VerificationTypeSchema>
 
 export const VerifySchema = z.object({
-	[codeQueryParam]: z.string().length(6),
+	[codeQueryParam]: z.string().min(6).max(6),
 	[typeQueryParam]: VerificationTypeSchema,
 	[targetQueryParam]: z.string(),
 	[redirectToQueryParam]: z.string().optional(),
@@ -83,7 +82,7 @@ export default function VerifyRoute() {
 	})
 
 	return (
-		<main className="flex flex-col justify-center pb-32 pt-20">
+		<main className="container flex flex-col justify-center pb-32 pt-20">
 			<div className="text-center">
 				{type ? headings[type] : 'Invalid Verification Type'}
 			</div>
@@ -91,23 +90,25 @@ export default function VerifyRoute() {
 			<Spacer size="xs" />
 
 			<div className="mx-auto flex w-72 max-w-full flex-col justify-center gap-1">
+				<div>
+					<ErrorList errors={form.errors} id={form.errorId} />
+				</div>
 				<div className="flex w-full gap-2">
 					<Form method="POST" {...getFormProps(form)} className="flex-1">
 						<HoneypotInputs />
-						<Field>
-							<Label htmlFor={fields[codeQueryParam].id}>Code</Label>
-							<InputOTPConform
-								meta={fields[codeQueryParam]}
-								length={6}
-								autoFocus
-								autoComplete="one-time-code"
-								autoCapitalise
+						<div className="flex items-center justify-center">
+							<OTPField
+								labelProps={{
+									htmlFor: fields[codeQueryParam].id,
+									children: 'Code',
+								}}
+								inputProps={{
+									...getInputProps(fields[codeQueryParam], { type: 'text' }),
+									autoComplete: 'one-time-code',
+								}}
+								errors={fields[codeQueryParam].errors}
 							/>
-							{fields[codeQueryParam].errors && (
-								<FieldError>{fields[codeQueryParam].errors}</FieldError>
-							)}
-						</Field>
-
+						</div>
 						<input
 							{...getInputProps(fields[typeQueryParam], { type: 'hidden' })}
 						/>

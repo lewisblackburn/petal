@@ -1,16 +1,6 @@
 import { type Config } from 'tailwindcss'
 
 export const extendedTheme = {
-	keyframes: {
-		// animate-[btnpulse_2s_infinite]
-		btnpulse: {
-			'0%': { 'box-shadow': '0 0 0 0 theme("colors.secondary.DEFAULT")' },
-			'50%': { 'box-shadow': '0 0 0 0 theme("colors.secondary.DEFAULT/50")' },
-			'100%': {
-				'box-shadow': '0 0 0 12px theme("colors.secondary.DEFAULT/0")',
-			},
-		},
-	},
 	colors: {
 		border: 'hsl(var(--border))',
 		input: {
@@ -99,5 +89,14 @@ export const extendedTheme = {
 		caption: ['1.125rem', { lineHeight: '1.5rem', fontWeight: '600' }],
 		/** 12px size / 16px high / bold */
 		button: ['0.75rem', { lineHeight: '1rem', fontWeight: '700' }],
+	},
+	keyframes: {
+		'caret-blink': {
+			'0%,70%,100%': { opacity: '1' },
+			'20%,50%': { opacity: '0' },
+		},
+	},
+	animation: {
+		'caret-blink': 'caret-blink 1.25s ease-out infinite',
 	},
 } satisfies Config['theme']
