@@ -8,6 +8,9 @@ import envOnly from 'vite-env-only'
 const MODE = process.env.NODE_ENV
 
 export default defineConfig({
+	resolve: {
+		extensions: ['.js', '.ts', '.tsx', '.json'],
+	},
 	build: {
 		cssMinify: MODE === 'production',
 
