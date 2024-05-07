@@ -1,54 +1,66 @@
-import { type OTPInputProps, REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
-import { useId } from 'react'
+import {
+	type FieldMetadata,
+	unstable_useControl as useControl,
+} from '@conform-to/react'
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
+import { type ElementRef, useRef, type ComponentProps } from 'react'
 import {
 	InputOTP,
 	InputOTPGroup,
-	InputOTPSeparator,
 	InputOTPSlot,
 } from '#app/components/ui/input-otp.js'
-import { Label } from '#app/components/ui/label.js'
-import { ErrorList, type ListOfErrors } from '../ErrorList'
 
-export function OTPField({
-	labelProps,
-	inputProps,
-	errors,
-	className,
+export function InputOTPConform({
+	meta,
+	length = 6,
+	pattern = REGEXP_ONLY_DIGITS_AND_CHARS,
+	autoCapitalise,
+	...props
 }: {
-	labelProps: React.LabelHTMLAttributes<HTMLLabelElement>
-	inputProps: Partial<OTPInputProps & { render: never }>
-	errors?: ListOfErrors
-	className?: string
-}) {
-	const fallbackId = useId()
-	const id = inputProps.id ?? fallbackId
-	const errorId = errors?.length ? `${id}-error` : undefined
+	meta: FieldMetadata<string>
+	length: number
+	pattern?: string
+	autoCapitalise?: boolean
+} & Partial<ComponentProps<typeof InputOTP>>) {
+	const inputOTPRef = useRef<ElementRef<typeof InputOTP>>(null)
+	const control = useControl(meta)
+
+	const capitaliseInput = (value: string) => {
+		return value.toUpperCase()
+	}
+
 	return (
-		<div className={className}>
-			<Label htmlFor={id} {...labelProps} />
+		<>
+			<input
+				ref={control.register}
+				name={meta.name}
+				defaultValue={meta.initialValue}
+				tabIndex={-1}
+				className="sr-only"
+				onFocus={() => {
+					inputOTPRef.current?.focus()
+				}}
+			/>
 			<InputOTP
-				pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+				{...props}
+				name={`${meta.name}-inner`}
+				ref={inputOTPRef}
+				value={control.value ?? ''}
+				onChange={(newValue: string) => {
+					if (!autoCapitalise) return control.change(newValue)
+					return control.change(capitaliseInput(newValue))
+				}}
+				onBlur={control.blur}
 				maxLength={6}
-				id={id}
-				aria-invalid={errorId ? true : undefined}
-				aria-describedby={errorId}
-				{...inputProps}
+				pattern={pattern}
+				render={undefined}
 			>
 				<InputOTPGroup>
-					<InputOTPSlot index={0} />
-					<InputOTPSlot index={1} />
-					<InputOTPSlot index={2} />
-				</InputOTPGroup>
-				<InputOTPSeparator />
-				<InputOTPGroup>
-					<InputOTPSlot index={3} />
-					<InputOTPSlot index={4} />
-					<InputOTPSlot index={5} />
+					{new Array(length).fill(0).map((_, index) => (
+						<InputOTPSlot key={index} index={index} />
+					))}
 				</InputOTPGroup>
 			</InputOTP>
-			<div className="min-h-[32px] px-4 pb-3 pt-1">
-				{errorId ? <ErrorList id={errorId} errors={errors} /> : null}
-			</div>
-		</div>
+		</>
 	)
 }
