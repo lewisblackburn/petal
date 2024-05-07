@@ -95,6 +95,13 @@ export const extendedTheme = {
 			'0%,70%,100%': { opacity: '1' },
 			'20%,50%': { opacity: '0' },
 		},
+		btnpulse: {
+			'0%': { 'box-shadow': '0 0 0 0 theme("colors.secondary.DEFAULT")' },
+			'50%': { 'box-shadow': '0 0 0 0 theme("colors.secondary.DEFAULT/50")' },
+			'100%': {
+				'box-shadow': '0 0 0 12px theme("colors.secondary.DEFAULT/0")',
+			},
+		},
 	},
 	animation: {
 		'caret-blink': 'caret-blink 1.25s ease-out infinite',
