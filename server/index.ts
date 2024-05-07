@@ -26,10 +26,10 @@ const createRequestHandler = IS_PROD
 const viteDevServer = IS_PROD
 	? undefined
 	: await import('vite').then(vite =>
-			vite.createServer({
-				server: { middlewareMode: true },
-			}),
-		)
+		vite.createServer({
+			server: { middlewareMode: true },
+		}),
+	)
 
 const app = express()
 
@@ -200,8 +200,8 @@ async function getBuild() {
 	const build = viteDevServer
 		? viteDevServer.ssrLoadModule('virtual:remix/server-build')
 		: // @ts-ignore this should exist before running the server
-			// but it may not exist just yet.
-			await import('#build/server/index.js')
+		// but it may not exist just yet.
+		await import('#build/server/index.js')
 	// not sure how to make this happy 🤷‍♂️
 	return build as unknown as ServerBuild
 }
@@ -216,9 +216,9 @@ if (!ALLOW_INDEXING) {
 app.all(
 	'*',
 	createRequestHandler({
-		getLoadContext: (_: any, res: any) => ({
+		getLoadContext: async (_: any, res: any) => ({
 			cspNonce: res.locals.cspNonce,
-			serverBuild: getBuild(),
+			serverBuild: await getBuild(),
 		}),
 		mode: MODE,
 		build: getBuild,
