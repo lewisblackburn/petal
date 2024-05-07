@@ -15,6 +15,8 @@ import {
 } from '@remix-run/react'
 import * as QRCode from 'qrcode'
 import { z } from 'zod'
+import { OTPField } from '#app/components/form/conform/InputOTP.js'
+import { ErrorList } from '#app/components/form/ErrorList.js'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { isCodeValid } from '#app/routes/_auth+/verify.server.ts'
@@ -25,8 +27,6 @@ import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { getTOTPAuthUri } from '#app/utils/totp.server.ts'
 import { type BreadcrumbHandle } from './profile.tsx'
 import { twoFAVerificationType } from './profile.two-factor.tsx'
-import { ErrorList } from '#app/components/form/ErrorList.js'
-import { OTPField } from '#app/components/form/conform/InputOTP.js'
 
 export const handle: BreadcrumbHandle & SEOHandle = {
 	breadcrumb: <Icon name="check">Verify</Icon>,

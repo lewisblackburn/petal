@@ -34,9 +34,7 @@ export function DataTableRowActions<TData>({
 	row,
 }: DataTableRowActionsProps<TData>) {
 	const { filmId } = useParams()
-	const photo = EditFilmPhotoSchema.omit({ image: true, filmId: true }).parse(
-		row.original,
-	)
+	const photo = EditFilmPhotoSchema.omit({ filmId: true }).parse(row.original)
 	const fetcher = useFetcher<typeof EditFilmPhotoAction>()
 	const [open, setOpen] = useState(false)
 

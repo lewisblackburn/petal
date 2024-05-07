@@ -1,17 +1,13 @@
-import {
-	type FieldMetadata,
-	unstable_useControl as useControl,
-} from '@conform-to/react'
-import { OTPInputProps, REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
-import { type ElementRef, useRef, type ComponentProps, useId } from 'react'
+import { type OTPInputProps, REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
+import { useId } from 'react'
 import {
 	InputOTP,
 	InputOTPGroup,
 	InputOTPSeparator,
 	InputOTPSlot,
 } from '#app/components/ui/input-otp.js'
-import { ErrorList, ListOfErrors } from '../ErrorList'
 import { Label } from '#app/components/ui/label.js'
+import { ErrorList, type ListOfErrors } from '../ErrorList'
 
 export function OTPField({
 	labelProps,
