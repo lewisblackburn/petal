@@ -3,7 +3,10 @@ primary_region = "lhr"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
-swap_size_mb = 512
+swap_size_mb = 1024
+
+[env]
+NODE_OPTIONS = '--max-old-space-size=4096'
 
 [experimental]
 allowed_public_ports = []
