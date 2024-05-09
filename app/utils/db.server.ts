@@ -1,7 +1,11 @@
 import { remember } from '@epic-web/remember'
 import { PrismaClient } from '@prisma/client'
 import chalk from 'chalk'
-import { auditLog, film, filmRecommendation, person, user } from './extensions'
+import { auditLog } from './extensions/audit'
+import { filmRecommendation } from './extensions/film-recommendation'
+import { user } from './extensions/user'
+import { person } from './extensions/person'
+import { film } from './extensions/film'
 
 export const prisma = remember('prisma', () => {
 	// NOTE: if you change anything in this function you'll need to restart
