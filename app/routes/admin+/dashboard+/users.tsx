@@ -1,11 +1,11 @@
 import queryString from 'querystring'
 import { type Prisma } from '@prisma/client'
+import { type LoaderFunctionArgs, json } from '@remix-run/node'
 import {
 	useLoaderData,
 	type MetaFunction,
 	useSearchParams,
 } from '@remix-run/react'
-import { type LoaderFunctionArgs, json } from '@remix-run/server-runtime'
 import {
 	type SortingState,
 	type PaginationState,

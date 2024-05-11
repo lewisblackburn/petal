@@ -1,5 +1,5 @@
 import { parseWithZod } from '@conform-to/zod'
-import { type ActionFunctionArgs, json } from '@remix-run/server-runtime'
+import { type ActionFunctionArgs, json } from '@remix-run/node'
 import { requireUserId } from '#app/utils/auth.server'
 import { prisma } from '#app/utils/db.server'
 import { withQueryContext } from '#app/utils/misc.js'

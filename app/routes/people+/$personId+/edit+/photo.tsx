@@ -1,6 +1,6 @@
 import { invariantResponse } from '@epic-web/invariant'
+import { type LoaderFunctionArgs, json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { type LoaderFunctionArgs, json } from '@remix-run/server-runtime'
 import { columns } from '#app/components/table/person/photo/columns.tsx'
 import { PhotoTable } from '#app/components/table/person/photo/data-table.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'

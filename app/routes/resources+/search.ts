@@ -1,5 +1,5 @@
 import { type Prisma } from '@prisma/client'
-import { type LoaderFunctionArgs, redirect } from '@remix-run/server-runtime'
+import { type LoaderFunctionArgs, redirect } from '@remix-run/node'
 import { prisma } from '#app/utils/db.server'
 import { getTableParams } from '#app/utils/request.helper'
 

@@ -1,5 +1,5 @@
+import { type LoaderFunctionArgs } from '@remix-run/node'
 import { json } from '@remix-run/router'
-import { type LoaderFunctionArgs } from '@remix-run/server-runtime'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { PersonEditor } from './__person-editor.tsx'
 

@@ -2,11 +2,11 @@ import { getInputProps, getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
 import {
+	json,
 	type ActionFunctionArgs,
 	type LoaderFunctionArgs,
 } from '@remix-run/node'
 import { Form, useFetcher, useLoaderData } from '@remix-run/react'
-import { json } from '@remix-run/server-runtime'
 import { z } from 'zod'
 import { MultiSelectField } from '#app/components/form/MultiSelectField.js'
 import { columns } from '#app/components/table/film/productionCompanies/columns.tsx'

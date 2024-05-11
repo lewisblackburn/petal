@@ -1,7 +1,6 @@
 import { invariantResponse } from '@epic-web/invariant'
-import { type LoaderFunctionArgs } from '@remix-run/node'
+import { type LoaderFunctionArgs , json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { json } from '@remix-run/server-runtime'
 import { columns } from '#app/components/table/film/genres/columns.tsx'
 import { GenreTable } from '#app/components/table/film/genres/data-table.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'

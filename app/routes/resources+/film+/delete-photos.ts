@@ -1,7 +1,6 @@
 import { parse as parseURL } from 'path'
 import { parseWithZod } from '@conform-to/zod'
-import { type ActionFunctionArgs } from '@remix-run/node'
-import { json } from '@remix-run/server-runtime'
+import { type ActionFunctionArgs , json } from '@remix-run/node'
 import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'

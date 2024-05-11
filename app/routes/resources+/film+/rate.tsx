@@ -1,7 +1,6 @@
 import { parseWithZod } from '@conform-to/zod'
-import { type ActionFunctionArgs } from '@remix-run/node'
+import { json, type ActionFunctionArgs } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
-import { json } from '@remix-run/server-runtime'
 import { useState } from 'react'
 import { z } from 'zod'
 import { RatingSlider } from '#app/components/rating-slider'
