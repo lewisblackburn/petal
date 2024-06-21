@@ -30,6 +30,7 @@ async function seed() {
 	const entities = ['user', 'note', 'film', 'review']
 	const actions = ['create', 'read', 'update', 'delete']
 	const accesses = ['own', 'any'] as const
+
 	const permissionToCreate = []
 	for (const entity of entities) {
 		for (const action of actions) {
