@@ -1,6 +1,7 @@
 import { invariant } from '@epic-web/invariant'
 import { Outlet, useRouteLoaderData } from '@remix-run/react'
-import { ThemeSwitch, type loader as rootLoader } from '#app/root'
+import { type loader as rootLoader } from '#app/root'
+import { ThemeSwitch } from '#app/routes/resources+/theme-switch.js'
 import { Logo } from '../logo'
 import Navbar from './navbar'
 
