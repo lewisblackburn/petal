@@ -8,14 +8,17 @@ import envOnly from 'vite-env-only'
 const MODE = process.env.NODE_ENV
 
 export default defineConfig({
-	resolve: {
-		extensions: ['.js', '.ts', '.tsx', '.json'],
-	},
 	build: {
 		cssMinify: MODE === 'production',
 
 		rollupOptions: {
 			external: [/node:.*/, 'stream', 'crypto', 'fsevents'],
+		},
+
+		assetsInlineLimit: (source: string) => {
+			if (source.endsWith('sprite.svg')) {
+				return false
+			}
 		},
 
 		sourcemap: true,
