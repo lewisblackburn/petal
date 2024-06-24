@@ -104,8 +104,8 @@ export default function DashboardUsersRoute() {
 		const existingParams = queryString.parse(params.toString())
 
 		const order: Sort = {
-			order: sorting[0].desc ? 'desc' : 'asc',
-			orderBy: sorting[0].id,
+			order: sorting[0]!.desc ? 'desc' : 'asc',
+			orderBy: sorting[0]!.id,
 		}
 
 		setParams(
