@@ -1,9 +1,12 @@
-// TODO: Move this file entirely to the prisma database
+// TODO: Move most of this file entirely to the prisma database
 // TODO: Setup a seed variable file that contains this data instead.
 
 import { type Sort } from './request.helper'
 
 export const PETAL_BOT_ID = 'petal_bot_cjkhd7gxs0000rtxs3x2r0k7l'
+
+export const MOCK_CODE_GITHUB = 'MOCK_CODE_GITHUB_KODY'
+export const MOCK_CODE_GITHUB_HEADER = 'x-mock-code-github'
 
 export const COUNTRIES = [
 	{
