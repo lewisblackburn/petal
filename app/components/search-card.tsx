@@ -23,7 +23,7 @@ export function SearchCard() {
 			onOpenChange={setIsOpen}
 			className="w-[300px] space-y-2"
 		>
-			<div className="flex items-center justify-between space-x-4 rounded-md border py-1  pl-4 pr-1 font-mono text-sm">
+			<div className="flex items-center justify-between space-x-4 rounded-md border py-1 pl-4 pr-1 font-mono text-sm">
 				<h4 className="text-sm font-semibold">Search Results</h4>
 				<CollapsibleTrigger asChild>
 					<Button variant="ghost" size="sm" className="w-9 p-0">

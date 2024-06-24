@@ -135,7 +135,7 @@ export default function FilmEditLogsRoute() {
 											<span className="font-bold">{edit.model}</span>
 										</div>
 										{edit.newValues !== '{}' && (
-											<div className="flex items-center gap-2  bg-green-500/10 p-5">
+											<div className="flex items-center gap-2 bg-green-500/10 p-5">
 												<pre className="whitespace-pre-wrap">
 													{JSON.stringify(
 														JSON.parse(edit.newValues || ''),

@@ -72,7 +72,7 @@ export default function FilmsRoute() {
 						</Icon>
 					</Button>
 				</Link>
-				<ul className="flex w-full flex-col gap-5 ">
+				<ul className="flex w-full flex-col gap-5">
 					{combined.map((filmReview) => (
 						<ReviewCard
 							filmId={filmReview.filmId}
