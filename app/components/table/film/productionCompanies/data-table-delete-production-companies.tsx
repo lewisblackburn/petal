@@ -26,7 +26,7 @@ export function DataTableDeleteProductionCompanies<TData>({
 	const { filmId } = useParams()
 	const productionCompaniesSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as FilmAlternateTitle).id)
+		.rows.map((row) => (row.original as FilmAlternateTitle).id)
 	const fetcher = useFetcher<typeof DeleteFilmProductionCompaniesAction>()
 	const [open, setOpen] = useState(false)
 

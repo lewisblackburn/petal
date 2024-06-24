@@ -64,7 +64,7 @@ export function MultiSelectField({
 	const errorId = errors?.length ? `${id}-error` : undefined
 
 	const handleUnselect = (item: string) => {
-		setSelected(selected.filter(i => i !== item))
+		setSelected(selected.filter((i) => i !== item))
 	}
 
 	return (
@@ -83,11 +83,11 @@ export function MultiSelectField({
 					id={id}
 					aria-invalid={errorId ? true : undefined}
 					aria-describedby={errorId}
-					onFocus={event => {
+					onFocus={(event) => {
 						input.focus()
 						buttonProps.onFocus?.(event)
 					}}
-					onBlur={event => {
+					onBlur={(event) => {
 						input.blur()
 						buttonProps.onBlur?.(event)
 					}}
@@ -103,25 +103,25 @@ export function MultiSelectField({
 						{selected.length < 1 &&
 							`Select ${labelProps.children?.toString().toLowerCase()}...`}
 						<div className="flex flex-wrap gap-1">
-							{selected.map(item => (
+							{selected.map((item) => (
 								<Badge
 									variant="secondary"
 									key={item}
 									className=""
 									onClick={() => handleUnselect(item)}
 								>
-									{options.find(option => option.value === item)?.label ??
+									{options.find((option) => option.value === item)?.label ??
 										`Select ${labelProps.children
 											?.toString()
 											.toLowerCase()}...`}
 									<button
 										className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-										onKeyDown={e => {
+										onKeyDown={(e) => {
 											if (e.key === 'Enter') {
 												handleUnselect(item)
 											}
 										}}
-										onMouseDown={e => {
+										onMouseDown={(e) => {
 											e.preventDefault()
 											e.stopPropagation()
 										}}
@@ -151,13 +151,13 @@ export function MultiSelectField({
 								No {labelProps.children?.toString().toLowerCase()} found.
 							</CommandEmpty>
 							<CommandGroup>
-								{options.map(option => (
+								{options.map((option) => (
 									<CommandItem
 										key={option.value}
 										onSelect={() => {
 											setSelected(
 												selected.includes(option.value)
-													? selected.filter(item => item !== option.value)
+													? selected.filter((item) => item !== option.value)
 													: [...selected, option.value],
 											)
 											setOpen(true)

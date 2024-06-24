@@ -29,7 +29,7 @@ const operationsToAudit: Prisma.PrismaAction[] =
  * @param client - The Prisma client instance.
  * @returns The extended Prisma client.
  */
-export const filmRecommendation = Prisma.defineExtension(client => {
+export const filmRecommendation = Prisma.defineExtension((client) => {
 	return client.$extends({
 		query: {
 			film: {

@@ -32,7 +32,7 @@ export const PersonSearchConform = ({ fields }: { fields: any }) => {
 	const fetcher = useFetcher<typeof loader>()
 
 	const items =
-		fetcher.data?.people.map(person => ({
+		fetcher.data?.people.map((person) => ({
 			value: person.id,
 			label: person.name,
 			image: person.image,

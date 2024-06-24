@@ -1,6 +1,6 @@
 import { parseWithZod } from '@conform-to/zod'
 import { type Prisma } from '@prisma/client'
-import { type ActionFunctionArgs , json } from '@remix-run/node'
+import { type ActionFunctionArgs, json } from '@remix-run/node'
 import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
@@ -38,7 +38,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			orderBy: { numerator: 'desc' },
 			select: { numerator: true },
 		})
-		.then(result => result?.numerator ?? 0)
+		.then((result) => result?.numerator ?? 0)
 
 	const newNumerator = maxNumerator + 1
 

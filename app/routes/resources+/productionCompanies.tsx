@@ -31,7 +31,7 @@ export const ProductionCompanySearchConform = ({ fields }: { fields: any }) => {
 	const fetcher = useFetcher<typeof loader>()
 
 	const items =
-		fetcher.data?.productionCompanies.map(productionCompany => ({
+		fetcher.data?.productionCompanies.map((productionCompany) => ({
 			value: productionCompany.id,
 			label: productionCompany.name,
 		})) || []

@@ -1,5 +1,5 @@
 import { invariantResponse } from '@epic-web/invariant'
-import { type LoaderFunctionArgs , json } from '@remix-run/node'
+import { type LoaderFunctionArgs, json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { columns } from '#app/components/table/film/genres/columns.tsx'
 import { GenreTable } from '#app/components/table/film/genres/data-table.tsx'
@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 	invariantResponse(film, 'Not found', { status: 404 })
 
-	const genres = film.genres.map(genre => ({
+	const genres = film.genres.map((genre) => ({
 		id: genre.id,
 		name: genre.name,
 		created: new Date(genre.createdAt),

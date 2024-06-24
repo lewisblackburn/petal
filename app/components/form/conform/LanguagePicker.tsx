@@ -17,7 +17,7 @@ import {
 import { Icon } from '../../ui/icon'
 import { Popover, PopoverTrigger, PopoverContent } from '../../ui/popover'
 
-const langauges = LANGUAGES.map(language => ({
+const langauges = LANGUAGES.map((language) => ({
 	label: language.name,
 	value: language.name,
 }))
@@ -56,7 +56,7 @@ export function LanguagePickerConform({
 						)}
 					>
 						{control.value
-							? langauges.find(language => language.value === control.value)
+							? langauges.find((language) => language.value === control.value)
 									?.label
 							: 'Select language'}
 						<Icon
@@ -71,7 +71,7 @@ export function LanguagePickerConform({
 						<CommandList>
 							<CommandEmpty>No language found.</CommandEmpty>
 							<CommandGroup>
-								{langauges.map(language => (
+								{langauges.map((language) => (
 									<CommandItem
 										value={language.label}
 										key={language.value}

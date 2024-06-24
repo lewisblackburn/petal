@@ -49,7 +49,7 @@ export function SortCard({ sortOptions }: SortCardProps) {
 			<CollapsibleContent className="space-y-2">
 				<div className="rounded-md border px-4 py-3 font-mono text-sm">
 					<Select
-						onValueChange={value => {
+						onValueChange={(value) => {
 							const parsedValue = JSON.parse(value) as Sort
 							handleSort({
 								orderBy: parsedValue.orderBy,
@@ -61,7 +61,7 @@ export function SortCard({ sortOptions }: SortCardProps) {
 							<SelectValue placeholder="Sort Results By" />
 						</SelectTrigger>
 						<SelectContent>
-							{sortOptions.map(option => (
+							{sortOptions.map((option) => (
 								<SelectItem
 									key={JSON.stringify(option.value)}
 									value={JSON.stringify(option.value)}

@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 	invariantResponse(film, 'Not found', { status: 404 })
 
-	const photos = film.photos.map(photo => ({
+	const photos = film.photos.map((photo) => ({
 		id: photo.id,
 		filename: photo.filename,
 		url: photo.url,

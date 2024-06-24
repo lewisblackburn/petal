@@ -34,7 +34,7 @@ export function RadioGroupConform({
 				onValueChange={control.change}
 				onBlur={control.blur}
 			>
-				{items.map(item => {
+				{items.map((item) => {
 					return (
 						<div className="flex items-center gap-2" key={item.value}>
 							<RadioGroupItem

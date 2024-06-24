@@ -18,19 +18,19 @@ export function CheckboxGroupConform({
 
 	return (
 		<>
-			{items.map(item => (
+			{items.map((item) => (
 				<Control
 					key={item.value}
 					meta={{
 						key: meta.key,
-						initialValue: initialValue.find(v => v == item.value)
+						initialValue: initialValue.find((v) => v == item.value)
 							? [item.value]
 							: '',
 					}}
-					render={control => (
+					render={(control) => (
 						<div
 							className="flex items-center gap-2"
-							ref={element => {
+							ref={(element) => {
 								control.register(element?.querySelector('input'))
 							}}
 						>
@@ -40,7 +40,7 @@ export function CheckboxGroupConform({
 								name={meta.name}
 								value={item.value}
 								checked={control.value == item.value}
-								onCheckedChange={value =>
+								onCheckedChange={(value) =>
 									control.change(value.valueOf() ? item.value : '')
 								}
 								onBlur={control.blur}

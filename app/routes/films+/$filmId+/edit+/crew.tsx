@@ -24,7 +24,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 	invariantResponse(film, 'Not found', { status: 404 })
 
-	const crew = film.crew.map(crew => ({
+	const crew = film.crew.map((crew) => ({
 		id: crew.id,
 		name: crew.person.name,
 		department: crew.department,

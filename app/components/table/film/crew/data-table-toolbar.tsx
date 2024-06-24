@@ -25,14 +25,14 @@ export function DataTableToolbar<TData>({
 				<Input
 					placeholder="Filter crew members..."
 					value={table.getState().globalFilter ?? ''}
-					onChange={event => table.setGlobalFilter(event.target.value)}
+					onChange={(event) => table.setGlobalFilter(event.target.value)}
 					className="h-8 w-[150px] lg:w-[250px]"
 				/>
 				{table.getColumn('department') && (
 					<DataTableFacetedFilter
 						column={table.getColumn('department')}
 						title="Department"
-						options={ROLES.map(role => ({
+						options={ROLES.map((role) => ({
 							label: role.department,
 							value: role.department,
 						}))}
@@ -42,7 +42,7 @@ export function DataTableToolbar<TData>({
 					<DataTableFacetedFilter
 						column={table.getColumn('job')}
 						title="Job"
-						options={getAllJobs().map(job => ({ label: job, value: job }))}
+						options={getAllJobs().map((job) => ({ label: job, value: job }))}
 					/>
 				)}
 				{isFiltered && (

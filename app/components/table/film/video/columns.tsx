@@ -13,7 +13,7 @@ export const columns: ColumnDef<
 		header: ({ table }) => (
 			<Checkbox
 				checked={table.getIsAllPageRowsSelected()}
-				onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+				onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
 				aria-label="Select all"
 				className={
 					table.getIsAllPageRowsSelected()
@@ -25,7 +25,7 @@ export const columns: ColumnDef<
 		cell: ({ row }) => (
 			<Checkbox
 				checked={row.getIsSelected()}
-				onCheckedChange={value => row.toggleSelected(!!value)}
+				onCheckedChange={(value) => row.toggleSelected(!!value)}
 				aria-label="Select row"
 				className={
 					row.getIsSelected() ? 'translate-y-[4px]' : '-translate-y-[2px]'
@@ -61,7 +61,7 @@ export const columns: ColumnDef<
 			<DataTableColumnHeader column={column} title="Site" />
 		),
 		cell: ({ row }) => {
-			const site = SITES.find(site => site.value === row.getValue('site'))
+			const site = SITES.find((site) => site.value === row.getValue('site'))
 
 			if (!site) {
 				return null
@@ -79,7 +79,9 @@ export const columns: ColumnDef<
 			<DataTableColumnHeader column={column} title="Type" />
 		),
 		cell: ({ row }) => {
-			const type = VIDEO_TYPES.find(type => type.value === row.getValue('type'))
+			const type = VIDEO_TYPES.find(
+				(type) => type.value === row.getValue('type'),
+			)
 
 			if (!type) {
 				return null
@@ -98,7 +100,7 @@ export const columns: ColumnDef<
 		),
 		cell: ({ row }) => {
 			const quality = QUALITY.find(
-				quality => quality.value === row.getValue('quality'),
+				(quality) => quality.value === row.getValue('quality'),
 			)
 
 			if (!quality) {

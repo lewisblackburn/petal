@@ -22,7 +22,7 @@ export function DataTableToolbar<TData>({
 				<Input
 					placeholder="Filter genres..."
 					value={table.getState().globalFilter ?? ''}
-					onChange={event => table.setGlobalFilter(event.target.value)}
+					onChange={(event) => table.setGlobalFilter(event.target.value)}
 					className="h-8 w-[150px] lg:w-[250px]"
 				/>
 				{isFiltered && (

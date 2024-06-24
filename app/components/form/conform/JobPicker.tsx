@@ -17,7 +17,7 @@ import {
 import { Icon } from '../../ui/icon'
 import { Popover, PopoverTrigger, PopoverContent } from '../../ui/popover'
 
-const jobs = getAllJobs().map(job => ({
+const jobs = getAllJobs().map((job) => ({
 	label: job,
 	value: job,
 }))
@@ -52,7 +52,7 @@ export function JobPickerConform({ meta }: { meta: FieldMetadata<string> }) {
 						)}
 					>
 						{control.value
-							? jobs.find(job => job.value === control.value)?.label
+							? jobs.find((job) => job.value === control.value)?.label
 							: 'Select a job'}
 						<Icon
 							name="caret-sort"
@@ -66,7 +66,7 @@ export function JobPickerConform({ meta }: { meta: FieldMetadata<string> }) {
 						<CommandList>
 							<CommandEmpty>No job found.</CommandEmpty>
 							<CommandGroup>
-								{jobs.map(job => (
+								{jobs.map((job) => (
 									<CommandItem
 										value={job.label}
 										key={job.value}

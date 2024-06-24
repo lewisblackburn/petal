@@ -17,7 +17,7 @@ import {
 import { Icon } from '../../ui/icon'
 import { Popover, PopoverTrigger, PopoverContent } from '../../ui/popover'
 
-const countries = COUNTRIES.map(country => ({
+const countries = COUNTRIES.map((country) => ({
 	label: country.name,
 	value: country.name,
 }))
@@ -56,7 +56,7 @@ export function CountryPickerConform({
 						)}
 					>
 						{control.value
-							? countries.find(country => country.value === control.value)
+							? countries.find((country) => country.value === control.value)
 									?.label
 							: 'Select a country'}
 						<Icon
@@ -71,7 +71,7 @@ export function CountryPickerConform({
 						<CommandList>
 							<CommandEmpty>No country found.</CommandEmpty>
 							<CommandGroup>
-								{countries.map(country => (
+								{countries.map((country) => (
 									<CommandItem
 										value={country.label}
 										key={country.value}

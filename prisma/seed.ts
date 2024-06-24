@@ -102,7 +102,7 @@ async function seed() {
 					},
 				},
 			})
-			.catch(e => {
+			.catch((e) => {
 				console.error('Error creating a user:', e)
 				return null
 			})
@@ -277,7 +277,7 @@ async function seed() {
 					name: GENRES[index],
 				},
 			})
-			.catch(e => {
+			.catch((e) => {
 				console.error('Error creating a genre:', e)
 				return null
 			})
@@ -300,7 +300,7 @@ async function seed() {
 						},
 					},
 					keywords: {
-						connectOrCreate: keywords.map(keyword => ({
+						connectOrCreate: keywords.map((keyword) => ({
 							where: {
 								name: keyword,
 							},
@@ -311,7 +311,7 @@ async function seed() {
 					},
 				},
 			})
-			.catch(e => {
+			.catch((e) => {
 				console.error('Error creating a film:', e)
 				return null
 			})
@@ -329,7 +329,7 @@ async function seed() {
 					...personData,
 				},
 			})
-			.catch(e => {
+			.catch((e) => {
 				console.error('Error creating a person:', e)
 				return null
 			})
@@ -340,7 +340,7 @@ async function seed() {
 }
 
 seed()
-	.catch(e => {
+	.catch((e) => {
 		console.error(e)
 		process.exit(1)
 	})

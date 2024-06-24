@@ -33,7 +33,7 @@ function formatColors() {
 		if (typeof color === 'string') {
 			colors.push(key)
 		} else {
-			const colorGroup = Object.keys(color).map(subKey =>
+			const colorGroup = Object.keys(color).map((subKey) =>
 				subKey === 'DEFAULT' ? '' : subKey,
 			)
 			colors.push({ [key]: colorGroup })
@@ -192,7 +192,7 @@ export function useDelayedIsPending({
 function callAll<Args extends Array<unknown>>(
 	...fns: Array<((...args: Args) => unknown) | undefined>
 ) {
-	return (...args: Args) => fns.forEach(fn => fn?.(...args))
+	return (...args: Args) => fns.forEach((fn) => fn?.(...args))
 }
 
 /**
@@ -213,17 +213,18 @@ export function useDoubleCheck() {
 		const onClick: React.ButtonHTMLAttributes<HTMLButtonElement>['onClick'] =
 			doubleCheck
 				? undefined
-				: e => {
+				: (e) => {
 						e.preventDefault()
 						setDoubleCheck(true)
 					}
 
-		const onKeyUp: React.ButtonHTMLAttributes<HTMLButtonElement>['onKeyUp'] =
-			e => {
-				if (e.key === 'Escape') {
-					setDoubleCheck(false)
-				}
+		const onKeyUp: React.ButtonHTMLAttributes<HTMLButtonElement>['onKeyUp'] = (
+			e,
+		) => {
+			if (e.key === 'Escape') {
+				setDoubleCheck(false)
 			}
+		}
 
 		return {
 			...props,
@@ -360,10 +361,10 @@ export function cosineSimilarity(text1: string, text2: string): number {
 	const uniqueWords = new Set([...words1, ...words2])
 
 	// Create vectors for each text based on word frequency
-	const vector1 = Array.from(uniqueWords).map(word =>
+	const vector1 = Array.from(uniqueWords).map((word) =>
 		words1.includes(word) ? 1 : 0,
 	)
-	const vector2 = Array.from(uniqueWords).map(word =>
+	const vector2 = Array.from(uniqueWords).map((word) =>
 		words2.includes(word) ? 1 : 0,
 	)
 
@@ -406,8 +407,8 @@ export function calculateCategorySimilarity(
 	category1: { name: string }[],
 	category2: { name: string }[],
 ): number {
-	const commonCategories = category1.filter(cat1 =>
-		category2.some(cat2 => cat1.name === cat2.name),
+	const commonCategories = category1.filter((cat1) =>
+		category2.some((cat2) => cat1.name === cat2.name),
 	)
 
 	if (commonCategories.length === 0) return 0
@@ -536,7 +537,7 @@ export async function fetchAndUploadImages(
 	imagePaths: string[],
 	s3UploadHandler: any,
 ) {
-	const uploadPromises = imagePaths.map(async path => {
+	const uploadPromises = imagePaths.map(async (path) => {
 		return fetchAndUploadImage(path, s3UploadHandler)
 	})
 
@@ -548,7 +549,7 @@ export async function fetchWithDelay<T>(
 	options: any,
 	delay: number,
 ): Promise<{ data?: T; error?: Error }> {
-	return new Promise<{ data?: T; error?: Error }>(resolve => {
+	return new Promise<{ data?: T; error?: Error }>((resolve) => {
 		setTimeout(() => {
 			fetch(url, options)
 				.then((res: Response) => {

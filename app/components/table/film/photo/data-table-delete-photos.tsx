@@ -26,7 +26,7 @@ export function DataTableDeletePhotos<TData>({
 	const { filmId } = useParams()
 	const photosSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as FilmPhoto).id)
+		.rows.map((row) => (row.original as FilmPhoto).id)
 	const fetcher = useFetcher<typeof DeleteFilmPhotosAction>()
 	const [open, setOpen] = useState(false)
 

@@ -24,7 +24,7 @@ export function SwitchConform({ meta }: { meta: FieldMetadata<boolean> }) {
 			<Switch
 				ref={switchRef}
 				checked={meta.value === 'on'}
-				onCheckedChange={checked => {
+				onCheckedChange={(checked) => {
 					control.change(checked ? 'on' : '')
 				}}
 				onBlur={control.blur}

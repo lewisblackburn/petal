@@ -31,7 +31,7 @@ export const FilmGenreSearchConform = ({ fields }: { fields: any }) => {
 	const fetcher = useFetcher<typeof loader>()
 
 	const items =
-		fetcher.data?.filmGenres.map(genre => ({
+		fetcher.data?.filmGenres.map((genre) => ({
 			value: genre.id,
 			label: genre.name,
 		})) || []

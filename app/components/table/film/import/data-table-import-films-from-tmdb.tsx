@@ -26,7 +26,7 @@ export function DataTableImportTMDBFilms<TData>({
 	const { filmId } = useParams()
 	const tmdbFilmsSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as TMDBFilm).id)
+		.rows.map((row) => (row.original as TMDBFilm).id)
 	const fetcher = useFetcher<typeof ImportTMDBFilmsAction>()
 
 	const [open, setOpen] = useState(false)

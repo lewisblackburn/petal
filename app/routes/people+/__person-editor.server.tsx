@@ -49,7 +49,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		homepage,
 	} = submission.value
 
-	const updatedPerson = await prisma.$transaction(async $prisma => {
+	const updatedPerson = await prisma.$transaction(async ($prisma) => {
 		const person = await $prisma.person.upsert({
 			select: { id: true },
 			where: { id: personId ?? '__new_pesron__' },

@@ -27,7 +27,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 	invariantResponse(film, 'Not found', { status: 404 })
 
-	const taglines = film.taglines.map(tagline => ({
+	const taglines = film.taglines.map((tagline) => ({
 		id: tagline.id,
 		tagline: tagline.tagline,
 		created: new Date(tagline.createdAt),

@@ -68,7 +68,7 @@ export default function FilmsRoute() {
 			</div>
 			<div className="w-full">
 				<ul className="grid grid-cols-4 gap-5">
-					{combined.map(film => (
+					{combined.map((film) => (
 						<li key={film.id}>
 							<Link to={film.id}>
 								<Image

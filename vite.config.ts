@@ -27,7 +27,7 @@ export default defineConfig({
 		remix({
 			ignoredRouteFiles: ['**/*'],
 			serverModuleFormat: 'esm',
-			routes: async defineRoutes => {
+			routes: async (defineRoutes) => {
 				return flatRoutes('routes', defineRoutes, {
 					ignoredRouteFiles: [
 						'.*',

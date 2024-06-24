@@ -41,7 +41,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 	const { id: reviewId, title, content, rating } = submission.value
 
-	const updatedReview = await prisma.$transaction(async $prisma => {
+	const updatedReview = await prisma.$transaction(async ($prisma) => {
 		await $prisma.filmRating.upsert({
 			where: { filmId_userId: { filmId: params.filmId!, userId } },
 			create: {

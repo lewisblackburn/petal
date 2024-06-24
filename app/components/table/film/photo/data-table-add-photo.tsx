@@ -87,7 +87,7 @@ export function DataTableAddPhoto() {
 							<SelectConform
 								placeholder="Select a photo type"
 								meta={fields.type}
-								items={PHOTO_TYPES.map(photoType => ({
+								items={PHOTO_TYPES.map((photoType) => ({
 									name: photoType.label,
 									value: photoType.value,
 								}))}

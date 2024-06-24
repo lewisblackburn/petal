@@ -26,7 +26,7 @@ export function DataTableDeleteAlternativeTitles<TData>({
 	const { filmId } = useParams()
 	const alternativeTitlesSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as FilmAlternateTitle).id)
+		.rows.map((row) => (row.original as FilmAlternateTitle).id)
 	const fetcher = useFetcher<typeof DeleteFilmAlternativeTitlesAction>()
 	const [open, setOpen] = useState(false)
 

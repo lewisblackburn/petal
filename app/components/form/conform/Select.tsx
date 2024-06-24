@@ -38,7 +38,7 @@ export const SelectConform = ({
 				}}
 			>
 				<option value="" />
-				{items.map(option => (
+				{items.map((option) => (
 					<option key={option.value} value={option.value} />
 				))}
 			</select>
@@ -47,7 +47,7 @@ export const SelectConform = ({
 				{...props}
 				value={control.value ?? ''}
 				onValueChange={control.change}
-				onOpenChange={open => {
+				onOpenChange={(open) => {
 					if (!open) {
 						control.blur()
 					}
@@ -57,7 +57,7 @@ export const SelectConform = ({
 					<SelectValue placeholder={placeholder} />
 				</SelectTrigger>
 				<SelectContent>
-					{items.map(item => {
+					{items.map((item) => {
 						return (
 							<SelectItem key={item.value} value={item.value}>
 								{item.name}

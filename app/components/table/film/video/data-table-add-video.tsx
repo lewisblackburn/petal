@@ -91,7 +91,7 @@ export function DataTableAddVideo() {
 							<SelectConform
 								placeholder="Select a site"
 								meta={fields.site}
-								items={SITES.map(site => ({
+								items={SITES.map((site) => ({
 									name: site.label,
 									value: site.value,
 								}))}
@@ -105,7 +105,7 @@ export function DataTableAddVideo() {
 							<SelectConform
 								placeholder="Select a type"
 								meta={fields.type}
-								items={VIDEO_TYPES.map(type => ({
+								items={VIDEO_TYPES.map((type) => ({
 									name: type.label,
 									value: type.value,
 								}))}
@@ -119,7 +119,7 @@ export function DataTableAddVideo() {
 							<SelectConform
 								placeholder="Select quality"
 								meta={fields.quality}
-								items={QUALITY.map(quality => ({
+								items={QUALITY.map((quality) => ({
 									name: quality.label,
 									value: quality.value,
 								}))}

@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client'
 import { format } from 'date-fns'
 import { formatRuntime } from '../misc'
 
-export const film = Prisma.defineExtension(client => {
+export const film = Prisma.defineExtension((client) => {
 	return client.$extends({
 		result: {
 			film: {

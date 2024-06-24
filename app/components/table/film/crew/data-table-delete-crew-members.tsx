@@ -26,7 +26,7 @@ export function DataTableDeleteCrewMembers<TData>({
 	const { filmId } = useParams()
 	const peopleSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as FilmCrewMember).id)
+		.rows.map((row) => (row.original as FilmCrewMember).id)
 	const fetcher = useFetcher<typeof DeleteFilmCrewMembersAction>()
 	const [open, setOpen] = useState(false)
 

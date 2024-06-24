@@ -33,7 +33,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		where: { id: filmId },
 		data: {
 			productionCompanies: {
-				disconnect: parsedIds.map(id => ({ id })),
+				disconnect: parsedIds.map((id) => ({ id })),
 			},
 		},
 	})

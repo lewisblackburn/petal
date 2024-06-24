@@ -61,7 +61,7 @@ export default function PeopleRoute() {
 			</div>
 			<div className="w-full">
 				<ul className="grid grid-cols-4 gap-5">
-					{combined.map(person => (
+					{combined.map((person) => (
 						<li key={person.id}>
 							<Link to={person.id}>
 								<Image

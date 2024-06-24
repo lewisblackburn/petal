@@ -2472,8 +2472,8 @@ type Role = {
 
 export function getAllJobs() {
 	const jobs: Role['jobs'] = []
-	ROLES.forEach(department => {
-		department.jobs.forEach(job => {
+	ROLES.forEach((department) => {
+		department.jobs.forEach((job) => {
 			jobs.push(job)
 		})
 	})

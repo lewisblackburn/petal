@@ -26,7 +26,7 @@ export function DataTableDeleteKeywords<TData>({
 	const { filmId } = useParams()
 	const keywordsSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as FilmKeyword).name)
+		.rows.map((row) => (row.original as FilmKeyword).name)
 	const fetcher = useFetcher<typeof DeleteFilmKeywordsAction>()
 	const [open, setOpen] = useState(false)
 

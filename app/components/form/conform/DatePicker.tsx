@@ -51,7 +51,7 @@ export function DatePickerConform({ meta }: { meta: FieldMetadata<Date> }) {
 					<Calendar
 						mode="single"
 						selected={new Date(control.value ?? '')}
-						onSelect={value => control.change(value?.toISOString() ?? '')}
+						onSelect={(value) => control.change(value?.toISOString() ?? '')}
 						initialFocus
 					/>
 				</PopoverContent>

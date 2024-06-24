@@ -27,7 +27,7 @@ export function InfiniteScroll<Data>(props: InfiniteScrollProps<Data>) {
 
 	const { ref } = useInView({
 		threshold: 1,
-		onChange: inView => {
+		onChange: (inView) => {
 			if (inView) handleSetPage(currentPage + 1)
 		},
 	})

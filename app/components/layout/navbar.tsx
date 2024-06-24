@@ -160,7 +160,7 @@ function NavigationMenuDemo() {
 	return (
 		<NavigationMenu className="[&>.absolute]:-right-3 [&>.absolute]:left-auto [&>.absolute]:mt-5">
 			<NavigationMenuList>
-				{links.map(link => {
+				{links.map((link) => {
 					if (link.admin && !userIsAdmin) return null
 
 					return (
@@ -183,7 +183,7 @@ function NavigationMenuDemo() {
 									{link.components && (
 										<NavigationMenuContent>
 											<ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-												{link.components.map(component => (
+												{link.components.map((component) => (
 													<ListItem
 														key={component.title}
 														title={component.title}
@@ -243,7 +243,7 @@ export function UserDropdown() {
 					<Link
 						to={`/users/${user.username}`}
 						// this is for progressive enhancement
-						onClick={e => e.preventDefault()}
+						onClick={(e) => e.preventDefault()}
 						className="flex items-center gap-2"
 					>
 						<Avatar className="h-8 w-8">
@@ -306,7 +306,7 @@ export function UserDropdown() {
 				<Form action="/logout" method="POST" ref={formRef}>
 					<DropdownMenuItem
 						// this prevents the menu from closing before the form submission is completed
-						onSelect={event => {
+						onSelect={(event) => {
 							event.preventDefault()
 							submit(formRef.current)
 						}}

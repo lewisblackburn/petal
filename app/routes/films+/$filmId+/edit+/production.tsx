@@ -108,7 +108,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 	invariantResponse(film, 'Not found', { status: 404 })
 
-	const productionCompanies = film.productionCompanies.map(company => ({
+	const productionCompanies = film.productionCompanies.map((company) => ({
 		id: company.id,
 		company: company.name,
 		logo: company.logo,
@@ -157,7 +157,7 @@ export default function FilmEditProductionInformationRoute() {
 						buttonProps={{
 							...getInputProps(fields.productionCountries, { type: 'text' }),
 						}}
-						options={COUNTRIES.map(country => ({
+						options={COUNTRIES.map((country) => ({
 							label: country.name,
 							value: country.name,
 						}))}

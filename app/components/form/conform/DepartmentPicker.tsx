@@ -17,7 +17,7 @@ import {
 import { Icon } from '../../ui/icon'
 import { Popover, PopoverTrigger, PopoverContent } from '../../ui/popover'
 
-const departments = ROLES.map(role => ({
+const departments = ROLES.map((role) => ({
 	label: role.department,
 	value: role.department,
 }))
@@ -57,7 +57,7 @@ export function DepartmentPickerConform({
 					>
 						{control.value
 							? departments.find(
-									department => department.value === control.value,
+									(department) => department.value === control.value,
 								)?.label
 							: 'Select a deparment'}
 						<Icon
@@ -72,7 +72,7 @@ export function DepartmentPickerConform({
 						<CommandList>
 							<CommandEmpty>No department found.</CommandEmpty>
 							<CommandGroup>
-								{departments.map(department => (
+								{departments.map((department) => (
 									<CommandItem
 										value={department.label}
 										key={department.value}

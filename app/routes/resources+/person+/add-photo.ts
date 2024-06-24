@@ -14,7 +14,7 @@ import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const AddPersonImageSchema = z.object({
 	personId: z.string(),
-	image: z.instanceof(File, { message: 'Image is required' }).refine(file => {
+	image: z.instanceof(File, { message: 'Image is required' }).refine((file) => {
 		return file.size <= MAX_SIZE
 	}, 'Image size must be less than 3MB'),
 })
@@ -39,7 +39,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	let { personId } = submission.value
 
-	const image = await unstable_parseMultipartFormData(clonedRequest, params =>
+	const image = await unstable_parseMultipartFormData(clonedRequest, (params) =>
 		s3UploadHandler({
 			...params,
 			filename: `people/${personId}/${params.filename}`,

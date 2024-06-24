@@ -26,7 +26,7 @@ export function DataTableDeleteGenres<TData>({
 	const { filmId } = useParams()
 	const genresSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as FilmGenre).id)
+		.rows.map((row) => (row.original as FilmGenre).id)
 	const fetcher = useFetcher<typeof DeleteFilmGenresAction>()
 
 	const [open, setOpen] = useState(false)

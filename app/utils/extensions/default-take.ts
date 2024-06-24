@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 
-export const defaultTake = Prisma.defineExtension(client => {
+export const defaultTake = Prisma.defineExtension((client) => {
 	return client.$extends({
 		query: {
 			$allModels: {

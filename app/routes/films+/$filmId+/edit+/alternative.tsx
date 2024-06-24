@@ -28,7 +28,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 	invariantResponse(film, 'Not found', { status: 404 })
 
-	const alternativeTitles = film.alternativeTitles.map(alternativeTitle => ({
+	const alternativeTitles = film.alternativeTitles.map((alternativeTitle) => ({
 		id: alternativeTitle.id,
 		title: alternativeTitle.title,
 		country: alternativeTitle.country,

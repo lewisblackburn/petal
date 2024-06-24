@@ -56,7 +56,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		where,
 	})
 
-	const formattedFilms = films.map(film => ({
+	const formattedFilms = films.map((film) => ({
 		id: film.id,
 		title: film.title,
 		tagline: film.tagline,

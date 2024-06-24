@@ -28,7 +28,7 @@ export function CheckboxConform({
 				ref={checkboxRef}
 				id={meta.id}
 				checked={control.value === 'on'}
-				onCheckedChange={checked => {
+				onCheckedChange={(checked) => {
 					control.change(checked ? 'on' : '')
 				}}
 				onBlur={control.blur}

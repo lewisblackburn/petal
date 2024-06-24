@@ -24,7 +24,7 @@ export function DataTableToolbar<TData>({
 				<Input
 					placeholder="Filter release information..."
 					value={table.getState().globalFilter ?? ''}
-					onChange={event => table.setGlobalFilter(event.target.value)}
+					onChange={(event) => table.setGlobalFilter(event.target.value)}
 					className="h-8 w-[150px] lg:w-[250px]"
 				/>
 				{/* NOTE: I have decided to keep countries as both in the database
@@ -34,7 +34,7 @@ export function DataTableToolbar<TData>({
 					<DataTableFacetedFilter
 						column={table.getColumn('country')}
 						title="Country"
-						options={COUNTRIES.map(country => ({
+						options={COUNTRIES.map((country) => ({
 							label: country.name,
 							value: country.name,
 						}))}

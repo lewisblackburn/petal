@@ -62,7 +62,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		where,
 	})
 
-	const formattedUsers = users.map(user => ({
+	const formattedUsers = users.map((user) => ({
 		id: user.id,
 		email: user.email,
 		name: user.name,

@@ -12,7 +12,7 @@ export default function ButtonGroup({ pages }: ButtonGroupProps) {
 		<div>
 			{pages.map((page, index) => {
 				let className = ''
-				const active = matches.some(match => {
+				const active = matches.some((match) => {
 					if (match.pathname === '/') return page.path === '/'
 					const path = match.pathname
 					const last = path.lastIndexOf('/')

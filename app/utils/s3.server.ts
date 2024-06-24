@@ -70,7 +70,7 @@ const deleteFromS3 = async (keys: string[]) => {
 		region: STORAGE_REGION,
 	})
 
-	const deletePromises = keys.map(async key => {
+	const deletePromises = keys.map(async (key) => {
 		const params = {
 			Bucket: STORAGE_BUCKET,
 			Key: key,

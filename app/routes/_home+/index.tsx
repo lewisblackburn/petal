@@ -61,7 +61,7 @@ export default function Index() {
 			{popularFilms.length > 0 && (
 				<Carousel
 					title="Popular Films"
-					items={popularFilms.map(film => {
+					items={popularFilms.map((film) => {
 						return {
 							id: film.id!,
 							title: film.title!,
@@ -74,7 +74,7 @@ export default function Index() {
 			{trendingFilms.length > 0 && (
 				<Carousel
 					title="Trending Films"
-					items={trendingFilms.map(film => {
+					items={trendingFilms.map((film) => {
 						return {
 							id: film.id!,
 							title: film.title!,

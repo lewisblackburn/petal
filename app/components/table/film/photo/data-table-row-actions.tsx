@@ -87,7 +87,7 @@ export function DataTableRowActions<TData>({
 							<SelectConform
 								placeholder="Select a type"
 								meta={fields.type}
-								items={PHOTO_TYPES.map(type => ({
+								items={PHOTO_TYPES.map((type) => ({
 									name: type.label,
 									value: type.value,
 								}))}

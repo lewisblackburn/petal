@@ -13,7 +13,7 @@ export function ErrorList({
 	if (!errorsToRender?.length) return null
 	return (
 		<ul id={id} className="flex flex-col gap-1">
-			{errorsToRender.map(e => (
+			{errorsToRender.map((e) => (
 				<FieldError key={e}>{e}</FieldError>
 			))}
 		</ul>

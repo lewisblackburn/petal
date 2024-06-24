@@ -120,7 +120,7 @@ export function PersonEditor({
 						<SelectConform
 							placeholder="Select a gender"
 							meta={fields.gender}
-							items={GENDERS.map(gender => ({
+							items={GENDERS.map((gender) => ({
 								name: gender.label,
 								value: gender.value,
 							}))}

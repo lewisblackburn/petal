@@ -487,7 +487,7 @@ export class TMDB extends Importer {
 				},
 			},
 			0,
-		).then(response => response.data)
+		).then((response) => response.data)
 	}
 }
 

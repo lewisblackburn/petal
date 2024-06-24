@@ -25,7 +25,7 @@ export function DataTableDeleteUsers<TData>({
 }: DataTableDeleteUsers<TData>) {
 	const usersSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as User).id)
+		.rows.map((row) => (row.original as User).id)
 	const fetcher = useFetcher<typeof DeleteUsersAction>()
 	const [open, setOpen] = useState(false)
 

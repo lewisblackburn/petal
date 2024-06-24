@@ -5,7 +5,7 @@ interface SidebarStore {
 	toggle: () => void
 }
 
-export const useSidebar = create<SidebarStore>(set => ({
+export const useSidebar = create<SidebarStore>((set) => ({
 	isOpen: true,
-	toggle: () => set(state => ({ isOpen: !state.isOpen })),
+	toggle: () => set((state) => ({ isOpen: !state.isOpen })),
 }))

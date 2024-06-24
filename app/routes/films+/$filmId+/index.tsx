@@ -36,8 +36,8 @@ import {
 } from '#app/utils/permissions.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { useOptionalUser, userHasPermission } from '#app/utils/user.ts'
-import { type IconName } from '@/icon-name'
 import { type loader as filmsLoader } from './index.tsx'
+import { type IconName } from '@/icon-name'
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
 	const userId = await getUserId(request)
@@ -270,7 +270,7 @@ export default function FilmRoute() {
 						<Status
 							title="Status"
 							icon={
-								(STATUSES.find(status => status.name === data.film.status)
+								(STATUSES.find((status) => status.name === data.film.status)
 									?.icon as IconName) ?? 'question-mark'
 							}
 						>
@@ -285,7 +285,7 @@ export default function FilmRoute() {
 						<p className="text-base font-normal">{data.film.overview}</p>
 					</div>
 					<div className="flex gap-10">
-						{data.film.crew.map(crewMember => (
+						{data.film.crew.map((crewMember) => (
 							<div key={crewMember.id} className="flex flex-col space-y-1">
 								<h3 className="text-md font-semibold">
 									{crewMember.person.name}
@@ -300,7 +300,7 @@ export default function FilmRoute() {
 						<h2 className="text-xl font-bold">Cast</h2>
 						<Slider
 							items={data.film.cast
-								.map(castMember => {
+								.map((castMember) => {
 									return {
 										to: `/people/${castMember.person.id}`,
 										image: castMember.person.image ?? '',
@@ -330,7 +330,7 @@ export default function FilmRoute() {
 						<h2 className="text-xl font-bold">Recommendations</h2>
 						{data.film.recommendations.length > 0 ? (
 							<ul className="grid grid-cols-5 gap-5">
-								{data.film.recommendations.map(recommendation => (
+								{data.film.recommendations.map((recommendation) => (
 									<li key={recommendation.film.id}>
 										<Link to={`/films/${recommendation.film.id}`}>
 											<Image
@@ -386,7 +386,7 @@ export default function FilmRoute() {
 						<h2 className="text-xl font-bold">Genres</h2>
 						<Separator />
 						<div className="grid grid-cols-2 gap-5">
-							{data.film.genres.map(genre => (
+							{data.film.genres.map((genre) => (
 								<Badge
 									key={genre.id}
 									className="rounded-md p-2"
@@ -399,7 +399,7 @@ export default function FilmRoute() {
 						<h2 className="text-xl font-bold">Keywords</h2>
 						<Separator />
 						<div className="flex flex-wrap gap-5">
-							{data.film.keywords.map(keyword => (
+							{data.film.keywords.map((keyword) => (
 								<Badge
 									key={keyword.name}
 									className="rounded-md p-2"

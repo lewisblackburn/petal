@@ -36,7 +36,7 @@ export function SliderConform({
 					ref={sliderRef}
 					aria-invalid={!!meta.errors}
 					value={[parseFloat(control.value ?? '0')]}
-					onValueChange={value => {
+					onValueChange={(value) => {
 						control.change(value[0].toString())
 					}}
 					onBlur={control.blur}

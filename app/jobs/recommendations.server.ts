@@ -84,8 +84,8 @@ const calculateFilmSimilarity = (
 				weighting: 0.55,
 			},
 			{
-				categories1: film1.cast.map(cast => ({ name: cast.person.name })),
-				categories2: film2.cast.map(cast => ({ name: cast.person.name })),
+				categories1: film1.cast.map((cast) => ({ name: cast.person.name })),
+				categories2: film2.cast.map((cast) => ({ name: cast.person.name })),
 				weighting: 0.3,
 			},
 		],
@@ -128,7 +128,7 @@ export async function generateFilmRecommendations(
 	})
 
 	// NOTE: Finds updated films within the last {time period} provided.
-	const updatedOrNewFilms = existingFilms.filter(film => {
+	const updatedOrNewFilms = existingFilms.filter((film) => {
 		return (
 			film.createdAt >= updatedOrCreatedFilmFromDate ||
 			film.updatedAt >= updatedOrCreatedFilmFromDate
@@ -137,11 +137,11 @@ export async function generateFilmRecommendations(
 
 	for (const updatedOrNewFilm of updatedOrNewFilms) {
 		const recommendedFilms = existingFilms
-			.map(existingFilm => ({
+			.map((existingFilm) => ({
 				...existingFilm,
 				similarity: calculateFilmSimilarity(updatedOrNewFilm, existingFilm),
 			}))
-			.filter(film => film.id !== updatedOrNewFilm.id) // Exclude the input film
+			.filter((film) => film.id !== updatedOrNewFilm.id) // Exclude the input film
 			.sort((a, b) => b.similarity - a.similarity) // Sort in descending order
 			.slice(0, 5) // Only keep the top 5 most similar films
 
@@ -155,7 +155,7 @@ export async function generateFilmRecommendations(
 				recommendations: {
 					// Delete previous recommended films
 					deleteMany: {},
-					create: recommendedFilms.map(film => ({
+					create: recommendedFilms.map((film) => ({
 						film: {
 							connect: {
 								id: film.id,
@@ -170,11 +170,11 @@ export async function generateFilmRecommendations(
 
 		for (const recommendedFilm of recommendedFilms) {
 			const recommendedRecommendedFilms = existingFilms
-				.map(existingFilm => ({
+				.map((existingFilm) => ({
 					...existingFilm,
 					similarity: calculateFilmSimilarity(recommendedFilm, existingFilm),
 				}))
-				.filter(film => film.id !== recommendedFilm.id) // Exclude the input film
+				.filter((film) => film.id !== recommendedFilm.id) // Exclude the input film
 				.sort((a, b) => b.similarity - a.similarity) // Sort in descending order
 				.slice(0, 5) // Only keep the top 5 most similar films
 
@@ -186,7 +186,7 @@ export async function generateFilmRecommendations(
 					recommendations: {
 						// Delete previous recommended films
 						deleteMany: {},
-						create: recommendedRecommendedFilms.map(film => ({
+						create: recommendedRecommendedFilms.map((film) => ({
 							film: {
 								connect: {
 									id: film.id,

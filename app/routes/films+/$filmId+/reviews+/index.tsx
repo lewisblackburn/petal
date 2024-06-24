@@ -73,7 +73,7 @@ export default function FilmsRoute() {
 					</Button>
 				</Link>
 				<ul className="flex w-full flex-col gap-5 ">
-					{combined.map(filmReview => (
+					{combined.map((filmReview) => (
 						<ReviewCard
 							filmId={filmReview.filmId}
 							key={filmReview.id}

@@ -26,13 +26,13 @@ export const FilmEditorSchema = z.object({
 	runtime: z.number().min(1).max(500).nullable(),
 	releaseDate: z.date().optional(),
 	language: z
-		.enum(LANGUAGES.map(language => language.name) as [string, ...string[]])
+		.enum(LANGUAGES.map((language) => language.name) as [string, ...string[]])
 		.optional(),
 	ageRating: z
-		.enum(AGE_RATINGS.map(rating => rating.value) as [string, ...string[]])
+		.enum(AGE_RATINGS.map((rating) => rating.value) as [string, ...string[]])
 		.optional(),
 	status: z
-		.enum(STATUSES.map(status => status.name) as [string, ...string[]])
+		.enum(STATUSES.map((status) => status.name) as [string, ...string[]])
 		.optional(),
 	budget: z.number().positive().optional(),
 	revenue: z.number().positive().optional(),
@@ -140,7 +140,7 @@ export function FilmEditor({
 						<SelectConform
 							placeholder="Select an age rating"
 							meta={fields.ageRating}
-							items={AGE_RATINGS.map(ageRating => ({
+							items={AGE_RATINGS.map((ageRating) => ({
 								name: ageRating.label,
 								value: ageRating.value,
 							}))}
@@ -154,7 +154,7 @@ export function FilmEditor({
 						<SelectConform
 							placeholder="Select a status"
 							meta={fields.status}
-							items={STATUSES.map(status => ({
+							items={STATUSES.map((status) => ({
 								name: status.name,
 								value: status.name,
 							}))}

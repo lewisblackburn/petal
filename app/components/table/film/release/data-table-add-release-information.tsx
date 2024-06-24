@@ -106,7 +106,7 @@ export function DataTableAddReleaseInformation() {
 							<SelectConform
 								placeholder="Select a type"
 								meta={fields.type}
-								items={FILM_RELEASE_TYPES.map(releaseType => ({
+								items={FILM_RELEASE_TYPES.map((releaseType) => ({
 									name: releaseType.label,
 									value: releaseType.value,
 								}))}

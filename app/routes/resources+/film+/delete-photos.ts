@@ -1,6 +1,6 @@
 import { parse as parseURL } from 'path'
 import { parseWithZod } from '@conform-to/zod'
-import { type ActionFunctionArgs , json } from '@remix-run/node'
+import { type ActionFunctionArgs, json } from '@remix-run/node'
 import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
@@ -45,7 +45,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	})
 
 	s3DeleteHandler(
-		images.map(image => {
+		images.map((image) => {
 			const { base: filename } = parseURL(image.filename)
 			return filename
 		}),

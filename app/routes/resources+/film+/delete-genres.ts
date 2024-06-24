@@ -1,5 +1,5 @@
 import { parseWithZod } from '@conform-to/zod'
-import { type ActionFunctionArgs , json } from '@remix-run/node'
+import { type ActionFunctionArgs, json } from '@remix-run/node'
 import { z } from 'zod'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
@@ -37,7 +37,7 @@ export async function action({ request }: ActionFunctionArgs) {
 				data: {
 					genres: {
 						// NOTE: In this we case we want to disconnect no deleteMany
-						disconnect: parsedIds.map(id => ({ id })),
+						disconnect: parsedIds.map((id) => ({ id })),
 					},
 				},
 			},

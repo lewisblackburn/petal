@@ -106,7 +106,7 @@ export default function FilmEditLogsRoute() {
 				<p className="text-muted-foreground">Edits made to the film.</p>
 			</div>
 			<main className="flex flex-col gap-5">
-				{Object.keys(groupedEdits).map(date => (
+				{Object.keys(groupedEdits).map((date) => (
 					<Card key={date} className="bg-secondary">
 						<CardHeader>
 							<CardTitle className="text-md">

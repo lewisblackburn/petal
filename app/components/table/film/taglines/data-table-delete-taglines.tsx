@@ -26,7 +26,7 @@ export function DataTableDeleteTaglines<TData>({
 	const { filmId } = useParams()
 	const taglinesSelected = table
 		.getSelectedRowModel()
-		.rows.map(row => (row.original as FilmTagline).id)
+		.rows.map((row) => (row.original as FilmTagline).id)
 	const fetcher = useFetcher<typeof DeleteFilmTaglinesAction>()
 	const [open, setOpen] = useState(false)
 

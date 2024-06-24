@@ -114,8 +114,9 @@ export default function PersonRoute() {
 						<div>
 							<h2 className="font-bold">Gender</h2>
 							{
-								GENDERS.filter(gender => gender.value === data.person.gender)[0]
-									.label
+								GENDERS.filter(
+									(gender) => gender.value === data.person.gender,
+								)[0].label
 							}
 						</div>
 					)}
@@ -154,7 +155,7 @@ export default function PersonRoute() {
 					{knownForItems.length > 0 && (
 						<Slider
 							title="Known For"
-							items={knownForItems.map(credit => {
+							items={knownForItems.map((credit) => {
 								return {
 									to: `/films/${credit.film.id}`,
 									image: credit.film.poster ?? '',

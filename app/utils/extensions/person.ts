@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { formatDistanceToNow } from 'date-fns'
 
-export const person = Prisma.defineExtension(client => {
+export const person = Prisma.defineExtension((client) => {
 	return client.$extends({
 		result: {
 			person: {

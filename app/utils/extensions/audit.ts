@@ -61,7 +61,7 @@ const getOldValue = async (client: any, params: any) => {
 	return {}
 }
 
-export const auditLog = Prisma.defineExtension(client => {
+export const auditLog = Prisma.defineExtension((client) => {
 	return client.$extends({
 		query: {
 			async $allOperations(props) {
@@ -97,7 +97,7 @@ export const auditLog = Prisma.defineExtension(client => {
 				const after = result
 
 				const hasNestedFields = Object.keys(args).some(
-					key => typeof args[key] === 'object',
+					(key) => typeof args[key] === 'object',
 				)
 
 				// If the old and new values are the same, then we don't need to create an audit log (e.g. no changes were made)
@@ -118,7 +118,7 @@ export const auditLog = Prisma.defineExtension(client => {
 					for (const key in args.data) {
 						if (nestedOperationsToInclude.includes(key)) {
 							if (
-								nestedCreateOperations.some(operation =>
+								nestedCreateOperations.some((operation) =>
 									args.data[key].hasOwnProperty(operation),
 								)
 							) {
@@ -131,7 +131,7 @@ export const auditLog = Prisma.defineExtension(client => {
 				}
 
 				try {
-					await client.$transaction(async $prisma => {
+					await client.$transaction(async ($prisma) => {
 						await $prisma.filmEdit.create({
 							data: {
 								model: model || 'Unknown',

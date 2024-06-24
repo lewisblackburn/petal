@@ -14,7 +14,7 @@ import { createToastHeaders } from '#app/utils/toast.server.ts'
 
 export const AddFilmPhotoSchema = z.object({
 	filmId: z.string(),
-	image: z.instanceof(File, { message: 'Image is required' }).refine(file => {
+	image: z.instanceof(File, { message: 'Image is required' }).refine((file) => {
 		return file.size <= MAX_SIZE
 	}, 'Image size must be less than 3MB'),
 	type: z.enum(['poster', 'backdrop']),
@@ -41,11 +41,14 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	let { filmId, type, language } = submission.value
 
-	const image = await unstable_parseMultipartFormData(clonedRequest, params => {
-		return s3UploadHandler({
-			...params,
-		})
-	})
+	const image = await unstable_parseMultipartFormData(
+		clonedRequest,
+		(params) => {
+			return s3UploadHandler({
+				...params,
+			})
+		},
+	)
 
 	const parsedImage = parseWithZod(image, { schema: z.any() })
 

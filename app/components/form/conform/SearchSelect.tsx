@@ -34,7 +34,10 @@ export function SearchSelectConform({
 	const control = useControl(meta)
 
 	// if selectedItem and is not already in items, add it
-	if (selectedItem && !items.find(item => item.value === selectedItem.value)) {
+	if (
+		selectedItem &&
+		!items.find((item) => item.value === selectedItem.value)
+	) {
 		items.push(selectedItem)
 	}
 
@@ -64,7 +67,7 @@ export function SearchSelectConform({
 						)}
 					>
 						{control.value
-							? items.find(item => item.value === control.value)?.label
+							? items.find((item) => item.value === control.value)?.label
 							: 'Select item'}
 						<Icon
 							name="caret-sort"
@@ -82,7 +85,7 @@ export function SearchSelectConform({
 						<CommandList>
 							<CommandEmpty>No item found.</CommandEmpty>
 							<CommandGroup>
-								{items.map(item => (
+								{items.map((item) => (
 									<CommandItem
 										value={item.label}
 										key={item.value}

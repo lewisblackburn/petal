@@ -20,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 	invariantResponse(film, 'Not found', { status: 404 })
 
-	const keywords = film.keywords.map(keyword => ({
+	const keywords = film.keywords.map((keyword) => ({
 		name: keyword.name,
 		created: new Date(keyword.createdAt),
 		updated: new Date(keyword.updatedAt),
