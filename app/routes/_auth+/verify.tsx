@@ -99,9 +99,9 @@ export default function VerifyRoute() {
 							<InputOTPConform
 								meta={fields[codeQueryParam]}
 								length={6}
-								autoFocus
 								autoComplete="one-time-code"
 								autoCapitalise
+								autoFocus
 							/>
 							{fields[codeQueryParam].errors && (
 								<FieldError>{fields[codeQueryParam].errors}</FieldError>
