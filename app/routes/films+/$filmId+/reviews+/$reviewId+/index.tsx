@@ -112,7 +112,7 @@ export default function FilmReviewRoute() {
 	return (
 		<div className="flex flex-col gap-10">
 			{data.filmReview.film.ratings.length > 0 &&
-				data.filmReview.film.ratings[0].value}
+				data.filmReview.film.ratings[0]!.value}
 			<h1>{data.filmReview.title}</h1>
 			<p>{data.filmReview.content}</p>
 			<div className="flex gap-5">

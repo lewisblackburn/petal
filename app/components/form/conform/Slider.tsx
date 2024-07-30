@@ -37,7 +37,9 @@ export function SliderConform({
 					aria-invalid={!!meta.errors}
 					value={[parseFloat(control.value ?? '0')]}
 					onValueChange={(value) => {
+						if(value[0] !== undefined) {
 						control.change(value[0].toString())
+						}
 					}}
 					onBlur={control.blur}
 					className="w-[280px]"

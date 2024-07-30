@@ -44,18 +44,23 @@ export function createFilm() {
 	const overview = faker.lorem.paragraphs()
 	const runtime = faker.number.int({ min: 60, max: 180 })
 	const releaseDate = new Date(faker.date.past())
+
 	const ageRating = AGE_RATINGS.sort(() => Math.random() - Math.random()).slice(
 		0,
 		1,
-	)[0].value
-	const language = LANGUAGES.sort(() => Math.random() - Math.random()).slice(
+	)[0]?.value
+
+	const selectedLanguage = LANGUAGES.sort(() => Math.random() - Math.random()).slice(
 		0,
 		1,
-	)[0].name
+	)[0];
+	
+	const language = selectedLanguage ? selectedLanguage.name : '';
 	const status = STATUSES.sort(() => Math.random() - Math.random()).slice(
 		0,
 		1,
-	)[0].name
+	)[0]?.name || ''
+
 	const contentScore = faker.number.float({ min: 0, max: 100, multipleOf: 0.1 })
 	const budget = faker.number.int({ min: 0, max: 1000000000 })
 	const revenue = faker.number.int({ min: 0, max: 1000000000 })

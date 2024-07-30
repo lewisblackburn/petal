@@ -88,9 +88,12 @@ export default function FilmEditLogsRoute() {
 	const groupedEdits: { [key: string]: any[] } = data.edits.reduce(
 		(groups, edit) => {
 			const date = new Date(edit.createdAt).toISOString().split('T')[0] // Get the date part of the timestamp
+			// @ts-ignore
 			if (!groups[date]) {
+			// @ts-ignore
 				groups[date] = []
 			}
+			// @ts-ignore
 			groups[date].push(edit)
 			return groups
 		},
@@ -113,6 +116,7 @@ export default function FilmEditLogsRoute() {
 								{format(new Date(date), 'dd MMMM yyyy')}
 							</CardTitle>
 						</CardHeader>
+						{/* @ts-ignore */}
 						{groupedEdits[date].map((edit: (typeof data.edits)[0]) => {
 							return (
 								<div key={edit.id}>

@@ -370,6 +370,7 @@ export function cosineSimilarity(text1: string, text2: string): number {
 
 	// Calculate cosine similarity
 	const dotProduct = vector1.reduce(
+		// @ts-ignore
 		(sum: number, value, index) => sum + value * vector2[index],
 		0,
 	)
@@ -508,6 +509,7 @@ export async function getImageData(url: string): Promise<ImageData> {
 			},
 		}
 
+		// @ts-ignore
 		return { type, data: asyncIterable, contentType, filename }
 	} catch (error) {
 		console.error('Error fetching image data:', error)
@@ -567,6 +569,7 @@ export async function fetchWithDelay<T>(
 export function extractFileName(url: string): string {
 	const parts: string[] = url.split('/')
 
+	// @ts-ignore
 	const fileName: string = parts[parts.length - 1]
 
 	const urlObject = new URL(url)

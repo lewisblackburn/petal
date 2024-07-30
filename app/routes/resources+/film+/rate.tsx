@@ -120,7 +120,7 @@ export const FilmRatingDropdown = ({
 					value={value}
 					onValueChange={(value: number[]) => {
 						setValue(value)
-						debouncedHandleSetRating(value[0])
+						debouncedHandleSetRating(value[0]!)
 					}}
 				/>
 				<DialogFooter>

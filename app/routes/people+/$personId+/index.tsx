@@ -116,7 +116,7 @@ export default function PersonRoute() {
 							{
 								GENDERS.filter(
 									(gender) => gender.value === data.person.gender,
-								)[0].label
+								)[0]!.label
 							}
 						</div>
 					)}

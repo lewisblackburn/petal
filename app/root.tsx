@@ -75,6 +75,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 					prisma.user.findUniqueOrThrow({
 						select: {
 							id: true,
+							email: true,
 							name: true,
 							username: true,
 							image: { select: { id: true } },

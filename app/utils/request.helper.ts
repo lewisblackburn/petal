@@ -7,8 +7,10 @@ export function getOrderBy(orderBy: string, order: string) {
 	const result = object
 	const arr = orderBy.split('.')
 	for (let i = 0; i < arr.length - 1; i++) {
+		// @ts-ignore
 		object = object[arr[i]] = {}
 	}
+	// @ts-ignore
 	object[arr[arr.length - 1]] = order
 	return result
 }

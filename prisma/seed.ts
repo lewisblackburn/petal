@@ -278,7 +278,7 @@ async function seed() {
 			.create({
 				select: { id: true },
 				data: {
-					name: GENRES[index],
+					name: GENRES[index] || '',
 				},
 			})
 			.catch((e) => {

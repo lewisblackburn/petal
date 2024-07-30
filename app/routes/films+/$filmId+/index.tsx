@@ -221,7 +221,7 @@ export default function FilmRoute() {
 					{/* TODO: Fix nested button error  */}
 					<FilmRatingDropdown
 						filmId={data.film.id}
-						defaultRating={data.film.ratings[0]?.value}
+						defaultRating={data.film.ratings[0]?.value ?? 0}
 					/>
 					<ToggleFavouriteFilm
 						filmId={data.film.id}

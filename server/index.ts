@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 import { createRequestHandler } from '@remix-run/express'
-import { type ServerBuild, installGlobals } from '@remix-run/node'
+import { type ServerBuild } from '@remix-run/node'
 import { ip as ipAddress } from 'address'
 import chalk from 'chalk'
 import closeWithGrace from 'close-with-grace'
@@ -11,15 +11,14 @@ import getPort, { portNumbers } from 'get-port'
 import helmet from 'helmet'
 import morgan from 'morgan'
 
-installGlobals()
-
 const MODE = process.env.NODE_ENV ?? 'development'
 const IS_PROD = MODE === 'production'
 const IS_DEV = MODE === 'development'
 const ALLOW_INDEXING = process.env.ALLOW_INDEXING !== 'false'
 
 if (IS_PROD && process.env.SENTRY_DSN) {
-	import('./utils/monitoring.js').then(({ init }) => init())
+	// @ts-ignore
+	void import('./utils/monitoring.js').then(({ init }) => init())
 }
 
 const viteDevServer = IS_PROD

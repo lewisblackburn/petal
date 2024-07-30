@@ -252,6 +252,7 @@ export function UserDropdown() {
 								src={getUserImgSrc(user.image?.id)}
 								alt={user.name ?? user.username}
 							/>
+							{/* @ts-ignore: initials will exist it just doesn't show in type as it is an extension */}
 							<AvatarFallback>{user.initials}</AvatarFallback>
 						</Avatar>
 						<span className="text-body-sm font-bold">
