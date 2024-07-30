@@ -38,7 +38,7 @@
     "/server-build"
   ],
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.600.0",
+    "@aws-sdk/client-s3": "^3.529.0",
     "@aws-sdk/lib-storage": "^3.600.0",
     "@conform-to/react": "^1.1.5",
     "@conform-to/zod": "^1.1.5",
@@ -102,7 +102,6 @@
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "embla-carousel-react": "^8.1.5",
-    "eslint-plugin-remix-react-routes": "^1.0.5",
     "execa": "^9.3.0",
     "express": "^4.19.2",
     "express-rate-limit": "^7.3.1",
