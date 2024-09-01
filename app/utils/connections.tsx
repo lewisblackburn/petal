@@ -44,6 +44,7 @@ export function ProviderConnectionForm({
 				type="submit"
 				className="w-full"
 				status={isPending ? 'pending' : 'idle'}
+				variant="secondary"
 			>
 				<span className="inline-flex items-center gap-1.5">
 					{providerIcons[providerName]}
