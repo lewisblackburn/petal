@@ -8,6 +8,7 @@ export default function Index() {
 		<main>
 			<Hero />
 			<LogoCloud />
+			<Feature />
 			<FAQ />
 		</main>
 	)
@@ -48,7 +49,6 @@ function Hero() {
 }
 
 const Logos = [
-	// film, song, game, book, people website related lgoo
 	{
 		name: 'TMDB',
 		url: 'https://www.themoviedb.org/',
@@ -78,9 +78,9 @@ const Logos = [
 
 function LogoCloud() {
 	return (
-		<div className="bg-secondary">
+		<div className="hidden bg-secondary lg:block">
 			<div className="mx-auto max-w-7xl px-4 pb-32 pt-12 sm:px-6 lg:px-8">
-				<div className="grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
+				<div className="grid grid-cols-5 gap-8">
 					{Logos.map((logo) => (
 						<div
 							key={logo.name}
@@ -95,6 +95,127 @@ function LogoCloud() {
 							</a>
 						</div>
 					))}
+				</div>
+			</div>
+		</div>
+	)
+}
+
+function Feature() {
+	return (
+		<div className="relative overflow-hidden bg-white py-32">
+			<div className="relative">
+				<div className="lg:mx-auto lg:grid lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-2 lg:gap-24 lg:px-8">
+					<div className="mx-auto max-w-xl px-4 sm:px-6 lg:mx-0 lg:max-w-none lg:px-0 lg:py-16">
+						<div>
+							<div>
+								<span className="flex h-12 w-12 items-center justify-center rounded-md bg-indigo-600">
+									<Icon
+										name="envelope-closed"
+										className="h-6 w-6 text-white"
+										aria-hidden="true"
+									/>
+								</span>
+							</div>
+							<div className="mt-6">
+								<h2 className="text-3xl font-extrabold tracking-tight text-gray-900">
+									Stay on top of your favourite media
+								</h2>
+								<p className="mt-4 text-lg text-gray-500">
+									The Petal database is constantly updated with new information
+									about films, soundtracks, games, books, and people. You can
+									follow your favorite entries to receive notifications when new
+									information is added or updated.
+								</p>
+								<div className="mt-6">
+									<a
+										href="#"
+										className="inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+									>
+										Get started
+									</a>
+								</div>
+							</div>
+						</div>
+						<div className="mt-8 border-t border-gray-200 pt-6">
+							<blockquote>
+								<div>
+									<p className="text-base text-gray-500">
+										&ldquo;I wanted to create a platform where users could
+										explore these connections and discover new ways to enjoy
+										their favorite films, songs, games, and books.&rdquo;
+									</p>
+								</div>
+								<footer className="mt-3">
+									<div className="flex items-center space-x-3">
+										<div className="flex-shrink-0">
+											<img
+												className="h-6 w-6 rounded-full"
+												src="/images/lewis.jpg"
+												alt=""
+											/>
+										</div>
+										<div className="text-base font-medium text-gray-700">
+											Lewis Blackburn, Founder of Petal
+										</div>
+									</div>
+								</footer>
+							</blockquote>
+						</div>
+					</div>
+					<div className="mt-12 sm:mt-16 lg:mt-0">
+						<div className="-mr-48 pl-4 sm:pl-6 md:-mr-16 lg:relative lg:m-0 lg:h-full lg:px-0">
+							<img
+								className="w-full rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 lg:absolute lg:left-0 lg:h-full lg:w-auto lg:max-w-none"
+								src="https://tailwindui.com/img/component-images/inbox-app-screenshot-1.jpg"
+								alt="Inbox user interface"
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="mt-24">
+				<div className="lg:mx-auto lg:grid lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-2 lg:gap-24 lg:px-8">
+					<div className="mx-auto max-w-xl px-4 sm:px-6 lg:col-start-2 lg:mx-0 lg:max-w-none lg:px-0 lg:py-32">
+						<div>
+							<div>
+								<span className="flex h-12 w-12 items-center justify-center rounded-md bg-indigo-600">
+									<Icon
+										name="camera"
+										className="h-6 w-6 text-white"
+										aria-hidden="true"
+									/>
+								</span>
+							</div>
+							<div className="mt-6">
+								<h2 className="text-3xl font-extrabold tracking-tight text-gray-900">
+									Manage your media better
+								</h2>
+								<p className="mt-4 text-lg text-gray-500">
+									The dashboard offers all the tools you need to manage your
+									favorite media, allowing you to edit and create content while
+									keeping you updated with the latest developments.
+								</p>
+								<div className="mt-6">
+									<a
+										href="#"
+										className="inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+									>
+										Get started
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="mt-12 sm:mt-16 lg:col-start-1 lg:mt-0">
+						<div className="-ml-48 pr-4 sm:pr-6 md:-ml-16 lg:relative lg:m-0 lg:h-full lg:px-0">
+							<img
+								className="w-full rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 lg:absolute lg:right-0 lg:h-full lg:w-auto lg:max-w-none"
+								src="https://tailwindui.com/img/component-images/inbox-app-screenshot-2.jpg"
+								alt="Customer profile user interface"
+							/>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
