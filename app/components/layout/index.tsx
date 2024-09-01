@@ -4,6 +4,7 @@ import { type loader as rootLoader } from '#app/root'
 import { ThemeSwitch } from '#app/routes/resources+/theme-switch.js'
 import { Logo } from '../logo'
 import NavigationBar from '../navigation-bar'
+import Footer from '../footer'
 
 export const Layout = () => {
 	const data = useRouteLoaderData<typeof rootLoader>('root')
@@ -17,6 +18,7 @@ export const Layout = () => {
 				<Outlet />
 			</div>
 
+			<Footer />
 			{/* <div className="container flex justify-between py-10">
 				<Logo />
 				<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />

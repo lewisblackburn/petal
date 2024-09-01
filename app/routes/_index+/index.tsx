@@ -8,6 +8,7 @@ export default function Index() {
 		<main>
 			<Hero />
 			<LogoCloud />
+			<FAQ />
 		</main>
 	)
 }
@@ -94,6 +95,62 @@ function LogoCloud() {
 							</a>
 						</div>
 					))}
+				</div>
+			</div>
+		</div>
+	)
+}
+
+const faqs = [
+	{
+		question: 'What is Petal?',
+		answer:
+			'Petal is a comprehensive database that connects and provides detailed information about films, soundtracks, people (actors, artists), games, and books. You can explore connections between various forms of media and discover how they relate to one another.',
+	},
+	{
+		question: 'How can I contribute to Petal?',
+		answer:
+			'You can contribute to Petal by adding new entries, editing existing entries, and connecting entries to show relationships between them. You can also help by adding missing information, such as cast members, release dates, and more.',
+	},
+	{
+		question: 'How do I get started with Petal?',
+		answer:
+			'To get started with Petal, create an account and start exploring the database. You can search for your favorite films, songs, games, books, and people, and discover how they are connected. You can also contribute by adding new entries or editing existing ones.',
+	},
+]
+
+function FAQ() {
+	return (
+		<div className="bg-white">
+			<div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+				<div className="lg:grid lg:grid-cols-3 lg:gap-8">
+					<div>
+						<h2 className="text-3xl font-extrabold text-gray-900">
+							Frequently asked questions
+						</h2>
+						<p className="mt-4 text-lg text-gray-500">
+							Can’t find the answer you’re looking for? Reach out to our{' '}
+							<a
+								href="#"
+								className="font-medium text-indigo-600 hover:text-indigo-500"
+							>
+								customer support
+							</a>{' '}
+							team.
+						</p>
+					</div>
+					<div className="mt-12 lg:col-span-2 lg:mt-0">
+						<dl className="space-y-12">
+							{faqs.map((faq) => (
+								<div key={faq.question}>
+									<dt className="text-lg font-medium leading-6 text-gray-900">
+										{faq.question}
+									</dt>
+									<dd className="mt-2 text-base text-gray-500">{faq.answer}</dd>
+								</div>
+							))}
+						</dl>
+					</div>
 				</div>
 			</div>
 		</div>
