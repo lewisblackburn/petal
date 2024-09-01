@@ -84,7 +84,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const response = await sendEmail({
 		to: submission.value.email,
-		subject: `Epic Notes Email Change Verification`,
+		subject: `Petal Email Change Verification`,
 		react: <EmailChangeEmail verifyUrl={verifyUrl.toString()} otp={otp} />,
 	})
 
@@ -138,7 +138,7 @@ export default function ChangeEmailIndex() {
 					<ErrorList id={form.errorId} errors={form.errors} />
 					<div>
 						<StatusButton
-							status={isPending ? 'pending' : form.status ?? 'idle'}
+							status={isPending ? 'pending' : (form.status ?? 'idle')}
 						>
 							Send Confirmation
 						</StatusButton>
