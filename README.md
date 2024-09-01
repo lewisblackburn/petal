@@ -48,7 +48,12 @@ npm install
 npm run setup
 ```
 
-4. Open your web browser and visit http://localhost:3000 to access Petal.
+4. Run development build:
+```bash
+npm run dev
+```
+
+5. Open your web browser and visit http://localhost:3000 to access Petal.
 
 ## Demo
 
