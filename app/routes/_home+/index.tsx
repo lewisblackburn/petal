@@ -2,6 +2,7 @@ import { type MetaFunction } from '@remix-run/node'
 import { useEffect, useState } from 'react'
 import { Button } from '#app/components/ui/button.js'
 import { Icon } from '#app/components/ui/icon.js'
+import { Link } from '@remix-run/react'
 export const meta: MetaFunction = () => [{ title: 'Petal' }]
 
 export default function HomePage() {
@@ -23,6 +24,7 @@ export default function HomePage() {
 				</div>
 			</div>
 			<Feature />
+			<Statistics />
 			<FAQ />
 		</main>
 	)
@@ -51,9 +53,11 @@ function Hero() {
 						Watch walkthrough
 					</Button>
 
-					<Button variant="default" className="w-48">
-						Start for free
-					</Button>
+					<Link to="/signup">
+						<Button variant="default" className="w-48">
+							Start for free
+						</Button>
+					</Link>
 				</div>
 			</div>
 		</main>
@@ -226,6 +230,58 @@ function Feature() {
 								src="https://tailwindui.com/img/component-images/inbox-app-screenshot-2.jpg"
 								alt="Customer profile user interface"
 							/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+function Statistics() {
+	return (
+		<div className="py-32">
+			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+				<div className="mx-auto max-w-4xl text-center">
+					<h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+						Largest media database on the web
+					</h2>
+					<p className="mt-3 text-xl text-gray-500 sm:mt-4">
+						The Petal database is the largest, most comprehensive collection of
+						media information on the web.
+					</p>
+				</div>
+			</div>
+			<div className="mt-20 bg-white pb-12 sm:pb-16">
+				<div className="relative">
+					<div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+						<div className="mx-auto max-w-4xl">
+							<dl className="rounded-lg bg-white shadow-lg sm:grid sm:grid-cols-3">
+								<div className="flex flex-col border-b border-gray-100 p-6 text-center sm:border-0 sm:border-r">
+									<dt className="order-2 mt-2 text-lg font-medium leading-6 text-gray-500">
+										Up-Time
+									</dt>
+									<dd className="order-1 text-5xl font-extrabold text-indigo-600">
+										100%
+									</dd>
+								</div>
+								<div className="flex flex-col border-b border-t border-gray-100 p-6 text-center sm:border-0 sm:border-l sm:border-r">
+									<dt className="order-2 mt-2 text-lg font-medium leading-6 text-gray-500">
+										Entries
+									</dt>
+									<dd className="order-1 text-5xl font-extrabold text-indigo-600">
+										1M
+									</dd>
+								</div>
+								<div className="flex flex-col border-t border-gray-100 p-6 text-center sm:border-0 sm:border-l">
+									<dt className="order-2 mt-2 text-lg font-medium leading-6 text-gray-500">
+										Users
+									</dt>
+									<dd className="order-1 text-5xl font-extrabold text-indigo-600">
+										100k
+									</dd>
+								</div>
+							</dl>
 						</div>
 					</div>
 				</div>
