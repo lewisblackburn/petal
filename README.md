@@ -1,54 +1,69 @@
-<div align="center">
-  <h1 align="center"><a href="https://www.epicweb.dev/epic-stack">The Epic Stack 🚀</a></h1>
-  <strong align="center">
-    Ditch analysis paralysis and start shipping Epic Web apps.
-  </strong>
-  <p>
-    This is an opinionated project starter and reference that allows teams to
-    ship their ideas to production faster and on a more stable foundation based
-    on the experience of <a href="https://kentcdodds.com">Kent C. Dodds</a> and
-    <a href="https://github.com/epicweb-dev/epic-stack/graphs/contributors">contributors</a>.
-  </p>
-</div>
+# Petal
 
-```sh
-npx create-epic-app@latest
+![Petal Logo](/path/to/logo.png)
+
+Petal is a comprehensive database that brings together information about films,
+TV shows, books, people, and songs, all in one convenient platform. Just like
+popular services like TMDB or IMDb, Petal provides a place for users to
+navigate, create and update their favourite media.
+
+## Features
+
+- **Search and Recommendations**: Use powerful search capabilities to find
+  specific titles or explore personalized recommendations based on your
+  interests.
+
+- **User Reviews and Ratings**: Contribute to the community by leaving your own
+  reviews and ratings for your favorite media content.
+
+## Installation and Usage
+
+### Prerequisites
+
+Before running Petal, ensure you have the following dependencies installed:
+
+- Node.js
+- Fly
+
+### Installation
+
+Follow these steps to set up and run Petal:
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/lewisblackburn/petal.git
+cd petal
 ```
 
-[![The Epic Stack](https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/246885449-1b00286c-aa3d-44b2-9ef2-04f694eb3592.png)](https://www.epicweb.dev/epic-stack)
+2. Install the required packages:
 
-[The Epic Stack](https://www.epicweb.dev/epic-stack)
+```bash
+npm install
+```
 
-<hr />
+3. Set up the database:
 
-## Watch Kent's Introduction to The Epic Stack
+```bash
+npm run setup
+```
 
-[![Epic Stack Talk slide showing Flynn Rider with knives, the text "I've been around and I've got opinions" and Kent speaking in the corner](https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/277818553-47158e68-4efc-43ae-a477-9d1670d4217d.png)](https://www.epicweb.dev/talks/the-epic-stack)
+4. Open your web browser and visit http://localhost:3000 to access Petal.
 
-["The Epic Stack" by Kent C. Dodds](https://www.epicweb.dev/talks/the-epic-stack)
+## Demo
 
-## Docs
+For a live demo of Petal, you can visit [petal.fly.dev](https://petal.fly.dev).
 
-[Read the docs](https://github.com/epicweb-dev/epic-stack/blob/main/docs)
-(please 🙏).
+## Contributing
+
+We welcome contributions to improve Petal! To contribute, please follow the
+guidelines outlined in CONTRIBUTING.md.
 
 ## Support
 
-- 🆘 Join the
-  [discussion on GitHub](https://github.com/epicweb-dev/epic-stack/discussions)
-  and the [KCD Community on Discord](https://kcd.im/discord).
-- 💡 Create an
-  [idea discussion](https://github.com/epicweb-dev/epic-stack/discussions/new?category=ideas)
-  for suggestions.
-- 🐛 Open a [GitHub issue](https://github.com/epicweb-dev/epic-stack/issues) to
-  report a bug.
+For any issues, bug reports, or feature requests, please open a new GitHub
+[issue](https://github.com/lewisblackburn/petal/issues).
 
-## Branding
+## License
 
-Want to talk about the Epic Stack in a blog post or talk? Great! Here are some
-assets you can use in your material:
-[EpicWeb.dev/brand](https://epicweb.dev/brand)
-
-## Thanks
-
-You rock 🪨
+This project is licensed under the [MIT License](LICENSE).
