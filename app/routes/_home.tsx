@@ -7,11 +7,6 @@ import { ThemeSwitch } from '#app/routes/resources+/theme-switch.js'
 import { requireAnonymous } from '#app/utils/auth.server.js'
 import { LoaderFunctionArgs } from '@remix-run/node'
 
-export async function loader({ request }: LoaderFunctionArgs) {
-	await requireAnonymous(request)
-	return json({})
-}
-
 export default function HomePageLayout() {
 	const data = useRouteLoaderData<typeof rootLoader>('root')
 	invariant(data?.requestInfo, 'No requestInfo found in root loader')
