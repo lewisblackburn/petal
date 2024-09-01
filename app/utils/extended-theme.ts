@@ -95,8 +95,13 @@ export const extendedTheme = {
 			'0%,70%,100%': { opacity: '1' },
 			'20%,50%': { opacity: '0' },
 		},
+		fadeIn: {
+			'0%': { opacity: '0' },
+			'100%': { opacity: '1' },
+		},
 	},
 	animation: {
 		'caret-blink': 'caret-blink 1.25s ease-out infinite',
+		'fade-in': 'fadeIn 0.3s ease-out forwards',
 	},
 } satisfies Config['theme']

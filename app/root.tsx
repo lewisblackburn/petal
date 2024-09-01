@@ -8,6 +8,7 @@ import {
 import {
 	Links,
 	Meta,
+	Outlet,
 	Scripts,
 	ScrollRestoration,
 	useLoaderData,
@@ -188,7 +189,7 @@ function App() {
 			allowIndexing={allowIndexing}
 			env={data.ENV}
 		>
-			<Layout />
+			<Outlet />
 			<Banner />
 			<EpicToaster closeButton position="top-center" theme={theme} />
 			<EpicProgress />

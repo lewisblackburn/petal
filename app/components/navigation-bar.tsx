@@ -5,7 +5,7 @@ import { Button } from './ui/button'
 const links = [
 	{
 		name: 'Home',
-		href: '/home',
+		href: '/',
 	},
 	{
 		name: 'Features',
