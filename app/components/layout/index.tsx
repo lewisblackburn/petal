@@ -10,17 +10,17 @@ export const Layout = () => {
 	invariant(data?.requestInfo, 'No requestInfo found in root loader')
 
 	return (
-		<div className="flex min-h-screen flex-col justify-between bg-muted/30">
+		<div className="flex min-h-screen flex-col justify-between">
 			<NavigationBar />
 
-			<div className="container flex-1 py-6">
+			<div className="flex-1">
 				<Outlet />
 			</div>
 
-			<div className="container flex justify-between py-10">
+			{/* <div className="container flex justify-between py-10">
 				<Logo />
 				<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
-			</div>
+			</div> */}
 		</div>
 	)
 }
