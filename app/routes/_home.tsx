@@ -5,7 +5,7 @@ import NavigationBar from '#app/components/navigation-bar.js'
 import { type loader as rootLoader } from '#app/root'
 import { ThemeSwitch } from '#app/routes/resources+/theme-switch.js'
 
-export default function Admin() {
+export default function HomePageLayout() {
 	const data = useRouteLoaderData<typeof rootLoader>('root')
 	invariant(data?.requestInfo, 'No requestInfo found in root loader')
 

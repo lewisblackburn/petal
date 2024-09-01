@@ -40,10 +40,10 @@ export default function NavigationBar() {
 					))}
 				</ul>
 				<div className="hidden justify-end gap-4 xl:flex">
-					<Link to="/">
+					<Link to="/login">
 						<Button variant="outline">Sign in</Button>
 					</Link>
-					<Link to="/">
+					<Link to="/signup">
 						<Button>Start for free</Button>
 					</Link>
 				</div>

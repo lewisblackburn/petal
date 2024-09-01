@@ -4,7 +4,7 @@ import { Button } from '#app/components/ui/button.js'
 import { Icon } from '#app/components/ui/icon.js'
 export const meta: MetaFunction = () => [{ title: 'Petal' }]
 
-export default function Home() {
+export default function HomePage() {
 	const [isVisible, setIsVisible] = useState(false)
 
 	useEffect(() => {

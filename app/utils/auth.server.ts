@@ -53,7 +53,7 @@ export async function requireUserId(
 		redirectTo =
 			redirectTo === null
 				? null
-				: redirectTo ?? `${requestUrl.pathname}${requestUrl.search}`
+				: (redirectTo ?? `${requestUrl.pathname}${requestUrl.search}`)
 		const loginParams = redirectTo ? new URLSearchParams({ redirectTo }) : null
 		const loginRedirect = ['/login', loginParams?.toString()]
 			.filter(Boolean)
@@ -66,7 +66,7 @@ export async function requireUserId(
 export async function requireAnonymous(request: Request) {
 	const userId = await getUserId(request)
 	if (userId) {
-		throw redirect('/')
+		throw redirect('/dashboard')
 	}
 }
 
