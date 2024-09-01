@@ -1,6 +1,16 @@
 import { Link } from '@remix-run/react'
 import { Logo } from './logo'
 import { Button } from './ui/button'
+import { Icon } from './ui/icon'
+import {
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetFooter,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger,
+} from './ui/sheet'
 
 const links = [
 	{
@@ -35,7 +45,7 @@ export default function NavigationBar() {
 				<ul className="hidden justify-center gap-10 text-sm font-semibold xl:flex">
 					{links.map((link) => (
 						<li key={link.href}>
-							<a href={link.href}>{link.name}</a>
+							<Link to={link.href}>{link.name}</Link>
 						</li>
 					))}
 				</ul>
@@ -47,8 +57,43 @@ export default function NavigationBar() {
 						<Button>Start for free</Button>
 					</Link>
 				</div>
-				<div className="flex justify-end xl:hidden">menu</div>
+				<div className="flex justify-end xl:hidden">
+					<MobileNavigation />
+				</div>
 			</div>
 		</nav>
+	)
+}
+
+function MobileNavigation() {
+	return (
+		<Sheet>
+			<SheetTrigger>
+				<Icon name="hamburger-menu" className="h-6 w-6" />
+			</SheetTrigger>
+			<SheetContent className="flex h-full flex-col">
+				{/* Sheet links the same as navbar */}
+				<ul className="flex flex-grow flex-col gap-4">
+					{links.map((link) => (
+						<li key={link.href}>
+							<Link to={link.href}>{link.name}</Link>
+						</li>
+					))}
+				</ul>
+				<SheetFooter className="mt-auto">
+					<div className="grid w-full grid-cols-2 gap-4">
+						<Link to="/login">
+							<Button variant="outline" className="w-full">
+								Sign in
+							</Button>
+						</Link>
+
+						<Link to="/signup">
+							<Button className="w-full">Start for free</Button>
+						</Link>
+					</div>
+				</SheetFooter>
+			</SheetContent>
+		</Sheet>
 	)
 }
