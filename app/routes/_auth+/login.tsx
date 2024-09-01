@@ -102,8 +102,8 @@ export default function LoginPage() {
 	})
 
 	return (
-		<div className="min-h-screen w-full lg:grid lg:grid-cols-2">
-			<div className="flex items-center justify-center py-12">
+		<div className="h-screen w-screen">
+			<div className="flex h-full items-center justify-center py-12">
 				<div className="mx-auto grid w-[350px] gap-6">
 					<div className="grid gap-2 text-center">
 						<h1 className="text-3xl font-bold">Login</h1>
@@ -201,15 +201,6 @@ export default function LoginPage() {
 						</div>
 					</div>
 				</div>
-			</div>
-			<div className="hidden bg-muted lg:block">
-				<img
-					src="/placeholder.svg"
-					alt="Image"
-					width="1920"
-					height="1080"
-					className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-				/>
 			</div>
 		</div>
 	)

@@ -4,6 +4,7 @@ import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import * as E from '@react-email/components'
 import {
 	json,
+	LoaderFunctionArgs,
 	redirect,
 	type ActionFunctionArgs,
 	type MetaFunction,
@@ -24,6 +25,7 @@ import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { EmailSchema } from '#app/utils/user-validation.ts'
 import { prepareVerification } from './verify.server.ts'
+import { requireAnonymous } from '#app/utils/auth.server.js'
 
 export const handle: SEOHandle = {
 	getSitemapEntries: () => null,
@@ -32,6 +34,11 @@ export const handle: SEOHandle = {
 const SignupSchema = z.object({
 	email: EmailSchema,
 })
+
+export async function loader({ request }: LoaderFunctionArgs) {
+	await requireAnonymous(request)
+	return json({})
+}
 
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
