@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker'
 import { type PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { UniqueEnforcer } from 'enforce-unique'
+import { AGE_RATINGS, LANGUAGES, STATUSES } from '#app/utils/constants.js'
 
 const uniqueUsernameEnforcer = new UniqueEnforcer()
 
@@ -133,5 +134,53 @@ export async function cleanupDb(prisma: PrismaClient) {
 		console.error('Error cleaning up database:', error)
 	} finally {
 		await prisma.$executeRawUnsafe(`PRAGMA foreign_keys = ON`)
+	}
+}
+
+export function createFilm() {
+	const title = faker.word.words()
+	const tagline = faker.lorem.sentence()
+	const overview = faker.lorem.paragraphs()
+	const runtime = faker.number.int({ min: 60, max: 180 })
+	const releaseDate = new Date(faker.date.past())
+
+	const ageRating = AGE_RATINGS.sort(() => Math.random() - Math.random()).slice(
+		0,
+		1,
+	)[0]?.value
+
+	const selectedLanguage = LANGUAGES.sort(
+		() => Math.random() - Math.random(),
+	).slice(0, 1)[0]
+
+	const language = selectedLanguage ? selectedLanguage.name : ''
+	const status =
+		STATUSES.sort(() => Math.random() - Math.random()).slice(0, 1)[0]?.name ||
+		''
+
+	const contentScore = faker.number.float({ min: 0, max: 100, multipleOf: 0.1 })
+	const budget = faker.number.int({ min: 0, max: 1000000000 })
+	const revenue = faker.number.int({ min: 0, max: 1000000000 })
+
+	return {
+		title,
+		tagline,
+		overview,
+		runtime,
+		releaseDate,
+		ageRating,
+		language,
+		status,
+		contentScore,
+		budget,
+		revenue,
+	}
+}
+
+export function createPerson() {
+	const name = faker.person.fullName()
+
+	return {
+		name,
 	}
 }
