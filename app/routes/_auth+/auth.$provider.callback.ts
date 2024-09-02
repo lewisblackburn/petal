@@ -111,7 +111,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 	// Connection exists already? Make a new session
 	if (existingConnection) {
-		return makeSession({ request, userId: existingConnection.userId })
+		return makeSession({
+			request,
+			userId: existingConnection.userId,
+			redirectTo,
+		})
 	}
 
 	// if the email matches a user in the db, then link the account and
