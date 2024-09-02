@@ -5,8 +5,8 @@ import {
 	CardTitle,
 	CardContent,
 	CardFooter,
-} from './ui/card'
-import { Progress } from './ui/progress'
+} from '../ui/card'
+import { Progress } from '../ui/progress'
 
 interface StatisticCardProps {
 	title: string
@@ -15,7 +15,7 @@ interface StatisticCardProps {
 	previousPercentage: number
 }
 
-export default function StatisticCard({
+export default function DefaultChart({
 	title,
 	value,
 	percentage,
