@@ -21,6 +21,7 @@ import {
 	AvatarFallback,
 	AvatarImage,
 } from '#app/components/ui/avatar.js'
+import { getUserImgSrc } from '#app/utils/misc.js'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserId(request)
@@ -71,8 +72,6 @@ const links: {
 
 export default function DashboardPageLayout() {
 	const user = useUser()
-	// @ts-expect-error - user initials
-	console.log(user, user.initials)
 
 	return (
 		<div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -168,12 +167,12 @@ export default function DashboardPageLayout() {
 						<DropdownMenuTrigger asChild>
 							<Button variant="secondary" size="icon" className="rounded-full">
 								{user?.image ? (
-									<Avatar>
+									<Avatar className="h-5 w-5">
 										<AvatarImage
-											src={user.image.toString()}
+											src={getUserImgSrc(user.image?.id)}
 											alt={user.name ?? ''}
 										/>
-										<AvatarFallback>{}</AvatarFallback>
+										<AvatarFallback>{user.initials}</AvatarFallback>
 									</Avatar>
 								) : (
 									<Icon name="avatar" className="h-5 w-5" />
@@ -184,7 +183,9 @@ export default function DashboardPageLayout() {
 						<DropdownMenuContent align="end">
 							<DropdownMenuLabel>My Account</DropdownMenuLabel>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem>Settings</DropdownMenuItem>
+							<Link to="/settings/profile">
+								<DropdownMenuItem>Settings</DropdownMenuItem>
+							</Link>
 							<DropdownMenuItem>Support</DropdownMenuItem>
 							<DropdownMenuSeparator />
 							<DropdownMenuItem>Logout</DropdownMenuItem>

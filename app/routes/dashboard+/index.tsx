@@ -9,11 +9,13 @@ import { EditsTable } from './edits-table/data-table'
 export default function DashboardPage() {
 	return (
 		<div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-			<div>{/* <EditsTable columns={columns} data={payments} /> */}</div>
+			<div>
+				<EditsTable columns={columns} data={payments} />
+			</div>
 			<div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-				{/* <GenreChart />
+				<GenreChart />
 				<FilmAndSeriesChart />
-				<DefaultCharts /> */}
+				<DefaultCharts />
 			</div>
 		</div>
 	)
