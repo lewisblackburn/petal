@@ -94,9 +94,10 @@ export default function DashboardPageLayout() {
 										isPending
 											? ''
 											: isActive
-												? 'flex items-center gap-3 rounded-lg px-3 py-2 text-primary transition-all'
+												? 'flex items-center gap-3 rounded-lg px-3 py-2 text-primary transition-colors'
 												: 'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary'
 									}
+									end
 								>
 									<Icon name={link.icon} className="h-4 w-4" />
 									{link.name}
