@@ -11,17 +11,20 @@ import {
 	img,
 } from '#tests/db-utils.ts'
 import { insertGitHubUser } from '#tests/mocks/github.ts'
+import { PETAL_BOT_ID } from '#app/utils/constants.js'
+import { generateApiKey } from '#app/utils/api.server.js'
 
 async function seed() {
 	console.log('🌱 Seeding...')
 	console.time(`🌱 Database has been seeded`)
 
 	console.time('🧹 Cleaned up the database...')
+	// @ts-expect-error - FIXME: prisma has the wrong types due to extensions
 	await cleanupDb(prisma)
 	console.timeEnd('🧹 Cleaned up the database...')
 
 	console.time('🔑 Created permissions...')
-	const entities = ['user', 'note']
+	const entities = ['user', 'note', 'film']
 	const actions = ['create', 'read', 'update', 'delete']
 	const accesses = ['own', 'any'] as const
 
@@ -256,6 +259,28 @@ async function seed() {
 		},
 	})
 	console.timeEnd(`🐨 Created admin user "kody"`)
+
+	console.time(`🤖 Created bot user "bot"`)
+
+	await prisma.user.create({
+		select: { id: true },
+		data: {
+			id: PETAL_BOT_ID,
+			email: 'bot@petal.dev',
+			username: 'petal_bot',
+			name: 'Petal Bot',
+			image: { create: kodyImages.koalaMentor },
+			password: { create: createPassword(process.env.PETAL_BOT_PASSWORD) },
+			roles: { connect: [{ name: 'admin' }, { name: 'user' }] },
+			apiKeys: {
+				create: {
+					key: await generateApiKey(),
+				},
+			},
+		},
+	})
+
+	console.timeEnd(`🤖 Created bot user "bot"`)
 
 	console.timeEnd(`🌱 Database has been seeded`)
 }

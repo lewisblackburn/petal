@@ -19,12 +19,33 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  image       UserImage?
-  password    Password?
-  notes       Note[]
-  roles       Role[]
-  sessions    Session[]
-  connections Connection[]
+  image         UserImage?
+  password      Password?
+  notes         Note[]
+  roles         Role[]
+  sessions      Session[]
+  connections   Connection[]
+  FilmRating    FilmRating[]
+  FilmReview    FilmReview[]
+  FilmFavourite FilmFavourite[]
+  SongFavourite SongFavourite[]
+  SongRating    SongRating[]
+  SongReview    SongReview[]
+  FilmEdit      FilmEdit[]
+
+  apiKeys ApiKey[]
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([key, userId])
+  @@index([key])
 }
 
 model Note {
@@ -166,4 +187,384 @@ model Connection {
   userId String
 
   @@unique([providerName, providerId])
+}
+
+model Person {
+  id                 String    @id @unique @default(cuid())
+  name               String
+  knownForDepartment String?
+  biography          String?
+  birthdate          DateTime?
+  dayOfDeath         DateTime?
+  gender             String?
+  placeOfBirth       String?
+  homepage           String?
+  viewCount          Int       @default(0)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  tmdbID String? @unique
+
+  image String? @default("/img/300x450.png")
+
+  casts  FilmCastMember[]
+  crews  FilmCrewMember[]
+  songs  Artist[]
+  photos PersonImage[]
+}
+
+model PersonImage {
+  id        String   @id @unique @default(cuid())
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  personId  String
+  filename  String
+  url       String
+  primary   Boolean? @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Film {
+  id           String    @id @unique @default(cuid())
+  title        String
+  overview     String
+  releaseDate  DateTime?
+  ageRating    String?
+  runtime      Float?
+  language     String?   @default("English")
+  budget       Float?
+  revenue      Float?
+  status       String?
+  voteAverage  Float     @default(0)
+  voteCount    Int?      @default(0)
+  viewCount    Int?      @default(0)
+  contentScore Float?
+  website      String?
+
+  // external ids
+  facebook  String?
+  instagram String?
+  twitter   String?
+
+  imdbID     String? @unique
+  wikiDataID String? @unique
+  tmdbID     String? @unique
+
+  locked    Boolean? @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Primary images, videos, taglines, etc.
+  poster   String? @default("/img/300x450.png")
+  backdrop String? @default("/img/1920x1080.png")
+  trailer  String? @default("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+  tagline  String?
+
+  cast                FilmCastMember[]
+  crew                FilmCrewMember[]
+  photos              FilmPhoto[]
+  videos              FilmVideo[]
+  taglines            FilmTagline[]
+  genres              FilmGenre[]
+  keywords            FilmKeyword[]
+  ratings             FilmRating[]
+  reviews             FilmReview[]
+  favourited          FilmFavourite[]
+  alternativeTitles   FilmAlternateTitle[]
+  releaseInformation  FilmReleaseInformation[]
+  productionCompanies ProductionCompany[]
+  edits               FilmEdit[]
+  productionCountries String?
+
+  recommendedBy   FilmRecommendation[] @relation("FilmRecommendations")
+  recommendations FilmRecommendation[] @relation("FilmRecommendedBy")
+}
+
+model FilmRecommendation {
+  id                String   @id @unique @default(cuid())
+  film              Film     @relation("FilmRecommendations", fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId            String
+  recommendedFilm   Film     @relation("FilmRecommendedBy", fields: [recommendedFilmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  recommendedFilmId String
+  similarity        Float
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model FilmCastMember {
+  id          String   @id @unique @default(cuid())
+  // NOTE: This is for the order
+  numerator   Int
+  denominator Int
+  character   String
+  film        Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  person      Person   @relation(fields: [personId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  filmId   String
+  personId String
+}
+
+model FilmCrewMember {
+  id         String   @id @unique @default(cuid())
+  film       Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  person     Person   @relation(fields: [personId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  department String
+  job        String
+  featured   Boolean? @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  filmId   String
+  personId String
+}
+
+model FilmPhoto {
+  id       String   @id @unique @default(cuid())
+  film     Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId   String
+  type     String
+  filename String
+  url      String
+  language String?  @default("English")
+  primary  Boolean? @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilmVideo {
+  id       String   @id @unique @default(cuid())
+  film     Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId   String
+  type     String
+  site     String
+  quality  String
+  name     String
+  url      String
+  language String?  @default("English")
+  primary  Boolean? @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilmTagline {
+  id      String @id @unique @default(cuid())
+  film    Film   @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId  String
+  tagline String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilmGenre {
+  id   String @id @unique @default(cuid())
+  name String @unique
+
+  films Film[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilmKeyword {
+  id   String @id @unique @default(cuid())
+  name String @unique
+
+  films Film[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilmRating {
+  film      Film        @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  value     Int         @default(0)
+  review    FilmReview?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([filmId, userId])
+}
+
+model FilmReview {
+  id        String      @id @unique @default(cuid())
+  film      Film        @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  title     String
+  content   String
+  // NOTE: I decided to delete the review if the rating is deleted, but show a message notifying the user before doing so
+  rating    FilmRating? @relation(fields: [filmId, userId], references: [filmId, userId], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([filmId, userId])
+}
+
+model FilmAlternateTitle {
+  id      String   @id @unique @default(cuid())
+  film    Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId  String
+  title   String
+  country String
+  locked  Boolean? @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilmReleaseInformation {
+  id             String   @id @unique @default(cuid())
+  film           Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId         String
+  country        String?
+  language       String?  @default("English")
+  date           DateTime
+  // NOTE: I think I will keep this as a string not an ENUM as there are so many different classificationss per country
+  classification String?
+  // TODO: This will be a table at some point
+  type           String?
+  note           String?
+  locked         Boolean? @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilmEdit {
+  id        Int      @id @default(autoincrement())
+  model     String
+  operation String
+  oldValues String?
+  newValues String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+
+  userId String
+  filmId String
+}
+
+model FilmFavourite {
+  id        String   @id @unique @default(cuid())
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  filmId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([filmId, userId])
+}
+
+model ProductionCompany {
+  id        String   @id @unique @default(cuid())
+  name      String   @unique
+  location  String?
+  country   String?
+  logo      String?  @default("/img/300x450.png")
+  homepage  String?
+  films     Film[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Location {
+  id        String   @id @unique @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Song {
+  id       String   @id @unique @default(cuid())
+  title    String
+  artist   String
+  duration Int
+  locked   Boolean? @default(false)
+
+  favourited SongFavourite[]
+  ratings    SongRating[]
+  reviews    SongReview[]
+
+  album   Album?  @relation(fields: [albumId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  albumId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Album {
+  id     String   @id @unique @default(cuid())
+  title  String
+  year   Int
+  cover  String?  @default("/img/300x450.png")
+  locked Boolean? @default(false)
+
+  songs   Song[]
+  artists Artist[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Artist {
+  id       String   @id @unique @default(cuid())
+  name     String
+  person   Person   @relation(fields: [personId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  personId String
+  locked   Boolean? @default(false)
+
+  albums Album[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SongRating {
+  song      Song        @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  songId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  value     Int         @default(0)
+  review    SongReview?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([songId, userId])
+}
+
+model SongReview {
+  id        String      @id @unique @default(cuid())
+  song      Song        @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  songId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  title     String
+  content   String
+  rating    SongRating? @relation(fields: [songId, userId], references: [songId, userId], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([songId, userId])
+}
+
+model SongFavourite {
+  id        String   @id @unique @default(cuid())
+  song      Song     @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  songId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([songId, userId])
 }
