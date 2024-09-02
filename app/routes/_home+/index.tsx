@@ -53,7 +53,7 @@ function Hero() {
 						Watch walkthrough
 					</Button>
 
-					<Link to="/signup">
+					<Link to="/signup?redirectTo=/dashboard">
 						<Button variant="default" className="w-48">
 							Start for free
 						</Button>
@@ -144,12 +144,12 @@ function Feature() {
 									information is added or updated.
 								</p>
 								<div className="mt-6">
-									<a
-										href="#"
+									<Link
+										to="/signup?redirectTo=/dashboard"
 										className="inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
 									>
 										Get started
-									</a>
+									</Link>
 								</div>
 							</div>
 						</div>
@@ -213,12 +213,12 @@ function Feature() {
 									keeping you updated with the latest developments.
 								</p>
 								<div className="mt-6">
-									<a
-										href="#"
+									<Link
+										to="/signup?redirectTo=/dashboard"
 										className="inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
 									>
 										Get started
-									</a>
+									</Link>
 								</div>
 							</div>
 						</div>

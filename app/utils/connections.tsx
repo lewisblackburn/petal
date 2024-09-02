@@ -31,6 +31,7 @@ export function ProviderConnectionForm({
 	const label = providerLabels[providerName]
 	const formAction = `/auth/${providerName}`
 	const isPending = useIsPending({ formAction })
+
 	return (
 		<Form
 			className="flex items-center justify-center gap-2"

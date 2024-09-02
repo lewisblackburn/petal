@@ -16,7 +16,6 @@ export default function Banner() {
 		}
 
 		setIsBannerSeen(isBannerSeen === 'true')
-		console.log(isBannerSeen)
 	}, [])
 
 	function handleDismiss() {
