@@ -15,6 +15,12 @@ import { Input } from '#app/components/ui/input.js'
 import { Sheet, SheetTrigger, SheetContent } from '#app/components/ui/sheet.js'
 import { requireUserId } from '#app/utils/auth.server.js'
 import { type IconName } from '@/icon-name'
+import { useOptionalUser, useUser } from '#app/utils/user.js'
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from '#app/components/ui/avatar.js'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserId(request)
@@ -64,6 +70,10 @@ const links: {
 ]
 
 export default function DashboardPageLayout() {
+	const user = useUser()
+	// @ts-expect-error - user initials
+	console.log(user, user.initials)
+
 	return (
 		<div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
 			<div className="hidden border-r bg-muted/40 md:block">
@@ -157,7 +167,17 @@ export default function DashboardPageLayout() {
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button variant="secondary" size="icon" className="rounded-full">
-								<Icon name="avatar" className="h-5 w-5" />
+								{user?.image ? (
+									<Avatar>
+										<AvatarImage
+											src={user.image.toString()}
+											alt={user.name ?? ''}
+										/>
+										<AvatarFallback>{}</AvatarFallback>
+									</Avatar>
+								) : (
+									<Icon name="avatar" className="h-5 w-5" />
+								)}
 								<span className="sr-only">Toggle user menu</span>
 							</Button>
 						</DropdownMenuTrigger>

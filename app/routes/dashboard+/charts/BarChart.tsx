@@ -52,7 +52,7 @@ const chartConfig: BarChartConfig = {
 	},
 }
 
-export function TestBarChart() {
+export function FilmAndSeriesChart() {
 	return (
 		<BarChart
 			title="Recently Added"

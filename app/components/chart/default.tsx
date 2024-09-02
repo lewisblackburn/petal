@@ -25,14 +25,6 @@ export default function DefaultChart({
 	const percentageChangeString =
 		percentageChange > 0 ? `+${percentageChange}%` : `${percentageChange}%`
 
-	console.log(
-		title,
-		value,
-		percentage,
-		previousPercentage,
-		percentageChangeString,
-	)
-
 	return (
 		<Card className="w-full">
 			<CardHeader className="pb-2">

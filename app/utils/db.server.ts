@@ -1,6 +1,7 @@
 import { remember } from '@epic-web/remember'
 import { PrismaClient } from '@prisma/client'
 import chalk from 'chalk'
+import { initials } from './extensions/user'
 
 export const prisma = remember('prisma', () => {
 	// NOTE: if you change anything in this function you'll need to restart
@@ -32,5 +33,6 @@ export const prisma = remember('prisma', () => {
 		console.info(`prisma:query - ${dur} - ${e.query}`)
 	})
 	void client.$connect()
+
 	return client
-})
+}).$extends(initials)
