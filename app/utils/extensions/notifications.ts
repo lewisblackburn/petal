@@ -1,20 +1,25 @@
 import { Prisma } from '@prisma/client'
+import { sendNotification } from '../services/notification.service'
 
 export const notifications = Prisma.defineExtension((client) => {
 	return client.$extends({
 		name: 'notifications',
 		query: {
-			user: {
-				async create({ args, query }) {
-					await client.notification.create({
-						data: {
-							title: 'Account Created',
-							content: 'Your account has been created successfully',
-							user: { connect: { id: args.data.id } },
-						},
-					})
+			film: {
+				async create(props) {
+					const { userId, modelId, ...args } = props.args as any
 
-					return query(args)
+					const film = await props.query(args)
+
+					if (userId) {
+						await sendNotification({
+							userId,
+							title: 'Film Added',
+							content: `You added a new film: ${film.title}`,
+						})
+					}
+
+					return film
 				},
 			},
 		},

@@ -8,6 +8,7 @@ import { prisma } from './db.server.ts'
 import { combineHeaders, downloadFile } from './misc.tsx'
 import { type ProviderUser } from './providers/provider.ts'
 import { authSessionStorage } from './session.server.ts'
+import { sendNotification } from './services/notification.service.ts'
 
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
 export const getSessionExpirationDate = () =>
@@ -139,8 +140,16 @@ export async function signup({
 				},
 			},
 		},
-		select: { id: true, expirationDate: true },
+		select: { id: true, expirationDate: true, userId: true },
 	})
+
+	if (session) {
+		await sendNotification({
+			userId: session.userId,
+			title: 'Welcome! ',
+			content: 'Thank you for joining our platform.',
+		})
+	}
 
 	return session
 }

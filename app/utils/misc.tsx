@@ -288,3 +288,19 @@ export async function downloadFile(url: string, retries: number = 0) {
 		return downloadFile(url, retries + 1)
 	}
 }
+
+/**
+ * Adds query context to the arguments.
+ * @param args - The arguments to add query context to.
+ * @param userId - The user ID.
+ * @param modelId - The model ID.
+ * @returns The arguments with query context added.
+ */
+export function withQueryContext<T>(
+	args: T,
+	{ userId, modelId }: { userId: string; modelId: string | null },
+) {
+	;(args as any).userId = userId
+	;(args as any).modelId = modelId
+	return args
+}
