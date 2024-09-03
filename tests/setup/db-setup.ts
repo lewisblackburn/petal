@@ -16,6 +16,7 @@ beforeAll(async () => {
 // before prisma is imported and initialized
 afterEach(async () => {
 	const { prisma } = await import('#app/utils/db.server.ts')
+	// @ts-expect-error - prisma has the wrong types due to extensions
 	await cleanupDb(prisma)
 })
 

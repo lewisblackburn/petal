@@ -44,7 +44,7 @@ export async function action({ request }: ActionFunctionArgs) {
 					overview,
 				},
 			},
-			{ userId, modelId: '' },
+			{ userId, modelId: null },
 		),
 	)
 

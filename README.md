@@ -49,6 +49,7 @@ npm run setup
 ```
 
 4. Run development build:
+
 ```bash
 npm run dev
 ```
