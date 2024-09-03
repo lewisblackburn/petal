@@ -1,6 +1,11 @@
 import { json, type LoaderFunctionArgs } from '@remix-run/node'
 import { Form, Link, NavLink, Outlet } from '@remix-run/react'
 import { Logo } from '#app/components/logo.js'
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from '#app/components/ui/avatar.js'
 import { Button } from '#app/components/ui/button.js'
 import {
 	DropdownMenu,
@@ -14,14 +19,10 @@ import { Icon } from '#app/components/ui/icon.js'
 import { Input } from '#app/components/ui/input.js'
 import { Sheet, SheetTrigger, SheetContent } from '#app/components/ui/sheet.js'
 import { requireUserId } from '#app/utils/auth.server.js'
-import { type IconName } from '@/icon-name'
-import { useOptionalUser, useUser } from '#app/utils/user.js'
-import {
-	Avatar,
-	AvatarFallback,
-	AvatarImage,
-} from '#app/components/ui/avatar.js'
 import { getUserImgSrc } from '#app/utils/misc.js'
+import { useUser } from '#app/utils/user.js'
+import Notifications from './resources+/notifications'
+import { type IconName } from '@/icon-name'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserId(request)
@@ -68,6 +69,11 @@ const links: {
 		href: '/dashboard/games',
 		icon: 'gamepad',
 	},
+	{
+		name: 'Changes',
+		href: '/dashboard/changes',
+		icon: 'clock',
+	},
 ]
 
 export default function DashboardPageLayout() {
@@ -79,10 +85,7 @@ export default function DashboardPageLayout() {
 				<div className="fixed flex h-full max-h-screen flex-col gap-2 md:w-[220px] lg:w-[280px]">
 					<div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
 						<Logo />
-						<Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-							<Icon name="bell" className="h-4 w-4" />
-							<span className="sr-only">Toggle notifications</span>
-						</Button>
+						<Notifications />
 					</div>
 					<div className="flex-1">
 						<nav className="grid items-start px-2 text-sm font-medium lg:px-4">
@@ -99,8 +102,8 @@ export default function DashboardPageLayout() {
 									}
 									end
 								>
-									<Icon name={link.icon} className="h-4 w-4" />
-									{link.name}
+									<Icon name={link.icon} className="mt-1 h-4 w-4" />
+									<span>{link.name}</span>
 								</NavLink>
 							))}
 						</nav>

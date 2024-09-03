@@ -28,7 +28,7 @@ interface DataTableProps<TData, TValue> {
 	data: TData[]
 }
 
-export function EditsTable<TData, TValue>({
+export function ChangesTable<TData, TValue>({
 	columns,
 	data,
 }: DataTableProps<TData, TValue>) {
