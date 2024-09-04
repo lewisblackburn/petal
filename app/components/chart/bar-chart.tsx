@@ -1,5 +1,5 @@
 import React from 'react'
-import { BarChart as ReBarChart, XAxis, Bar, BarProps } from 'recharts'
+import { BarChart as ReBarChart, XAxis, Bar } from 'recharts'
 import {
 	Card,
 	CardHeader,
@@ -7,12 +7,7 @@ import {
 	CardDescription,
 	CardContent,
 } from '../ui/card'
-import {
-	ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from '../ui/chart'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart'
 
 interface ChartData {
 	[key: string]: string | number

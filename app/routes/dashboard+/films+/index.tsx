@@ -1,17 +1,18 @@
-import { getFormProps, getInputProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type ActionFunctionArgs, json } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
 import { z } from 'zod'
-import { requireUserId } from '#app/utils/auth.server.js'
-import { prisma } from '#app/utils/db.server.js'
-import { createToastHeaders } from '#app/utils/toast.server.js'
-import { ErrorList, Field } from '#app/components/forms.js'
-import { Input } from '#app/components/ui/input.js'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { TextareaConform } from '#app/components/form/conform/Textarea.js'
+import { ErrorList } from '#app/components/form/ErrorList.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.js'
+import { requireUserId } from '#app/utils/auth.server.js'
+import { prisma } from '#app/utils/db.server.js'
 import { useIsPending, withQueryContext } from '#app/utils/misc.js'
-import { Prisma } from '@prisma/client'
+import { createToastHeaders } from '#app/utils/toast.server.js'
 
 export const NewFilmSchema = z.object({
 	title: z.string(),
@@ -76,28 +77,21 @@ export default function DashboardFilmsPage() {
 	return (
 		<div>
 			<Form method="POST" {...getFormProps(form)}>
-				<Field
-					labelProps={{
-						htmlFor: fields.title.id,
-						children: 'Title',
-					}}
-					inputProps={{
-						...getInputProps(fields.title, { type: 'text' }),
-						autoFocus: true,
-					}}
-					errors={fields.title.errors}
-				/>
-				<Field
-					labelProps={{
-						htmlFor: fields.overview.id,
-						children: 'Overview',
-					}}
-					inputProps={{
-						...getInputProps(fields.overview, { type: 'text' }),
-						autoFocus: true,
-					}}
-					errors={fields.overview.errors}
-				/>
+				<Field>
+					<Label htmlFor={fields.title.id}>Title</Label>
+					<InputConform meta={fields.title} type="text" autoFocus />
+					{fields.title.errors && (
+						<FieldError>{fields.title.errors}</FieldError>
+					)}
+				</Field>
+				<Field>
+					<Label htmlFor={fields.overview.id}>Overview</Label>
+					<TextareaConform meta={fields.overview} />
+					{fields.overview.errors && (
+						<FieldError>{fields.overview.errors}</FieldError>
+					)}
+				</Field>
+
 				<ErrorList errors={form.errors} id={form.errorId} />
 
 				<StatusButton

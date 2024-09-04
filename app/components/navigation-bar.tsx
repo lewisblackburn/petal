@@ -2,15 +2,7 @@ import { Link } from '@remix-run/react'
 import { Logo } from './logo'
 import { Button } from './ui/button'
 import { Icon } from './ui/icon'
-import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetFooter,
-	SheetHeader,
-	SheetTitle,
-	SheetTrigger,
-} from './ui/sheet'
+import { Sheet, SheetContent, SheetFooter, SheetTrigger } from './ui/sheet'
 
 const links = [
 	{

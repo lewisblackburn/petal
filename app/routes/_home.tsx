@@ -1,11 +1,8 @@
 import { invariant } from '@epic-web/invariant'
-import { json, Outlet, useRouteLoaderData } from '@remix-run/react'
+import { Outlet, useRouteLoaderData } from '@remix-run/react'
 import Footer from '#app/components/footer.js'
 import NavigationBar from '#app/components/navigation-bar.js'
 import { type loader as rootLoader } from '#app/root'
-import { ThemeSwitch } from '#app/routes/resources+/theme-switch.js'
-import { requireAnonymous } from '#app/utils/auth.server.js'
-import { LoaderFunctionArgs } from '@remix-run/node'
 
 export default function HomePageLayout() {
 	const data = useRouteLoaderData<typeof rootLoader>('root')

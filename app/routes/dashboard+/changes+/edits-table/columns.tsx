@@ -1,5 +1,6 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '#app/components/table/data-table-column-header.js'
+import { Badge } from '#app/components/ui/badge.js'
 import { Button } from '#app/components/ui/button.js'
 import { Checkbox } from '#app/components/ui/checkbox.js'
 import {
@@ -11,7 +12,6 @@ import {
 	DropdownMenuSeparator,
 } from '#app/components/ui/dropdown-menu.js'
 import { Icon } from '#app/components/ui/icon.js'
-import { Badge } from '#app/components/ui/badge.js'
 
 export type Payment = {
 	id: string

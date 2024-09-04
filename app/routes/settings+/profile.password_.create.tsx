@@ -1,4 +1,4 @@
-import { getFormProps, getInputProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import {
@@ -8,9 +8,12 @@ import {
 	type ActionFunctionArgs,
 } from '@remix-run/node'
 import { Form, Link, useActionData } from '@remix-run/react'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { ErrorList } from '#app/components/form/ErrorList.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { getPasswordHash, requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
@@ -93,24 +96,29 @@ export default function CreatePasswordRoute() {
 
 	return (
 		<Form method="POST" {...getFormProps(form)} className="mx-auto max-w-md">
-			<Field
-				labelProps={{ children: 'New Password' }}
-				inputProps={{
-					...getInputProps(fields.password, { type: 'password' }),
-					autoComplete: 'new-password',
-				}}
-				errors={fields.password.errors}
-			/>
-			<Field
-				labelProps={{ children: 'Confirm New Password' }}
-				inputProps={{
-					...getInputProps(fields.confirmPassword, {
-						type: 'password',
-					}),
-					autoComplete: 'new-password',
-				}}
-				errors={fields.confirmPassword.errors}
-			/>
+			<Field>
+				<Label htmlFor={fields.password.id}>New Password</Label>
+				<InputConform
+					meta={fields.password}
+					type="text"
+					autoComplete="new-password"
+				/>
+				{fields.password.errors && (
+					<FieldError>{fields.password.errors}</FieldError>
+				)}
+			</Field>
+			<Field>
+				<Label htmlFor={fields.confirmPassword.id}>Confirm New Password</Label>
+				<InputConform
+					meta={fields.confirmPassword}
+					type="text"
+					autoComplete="new-password"
+				/>
+				{fields.confirmPassword.errors && (
+					<FieldError>{fields.confirmPassword.errors}</FieldError>
+				)}
+			</Field>
+
 			<ErrorList id={form.errorId} errors={form.errors} />
 			<div className="grid w-full grid-cols-2 gap-6">
 				<Button variant="secondary" asChild>

@@ -1,4 +1,7 @@
-import { BarChart, BarChartConfig } from '#app/components/chart/bar-chart.js'
+import {
+	BarChart,
+	type BarChartConfig,
+} from '#app/components/chart/bar-chart.js'
 import { Icon } from '#app/components/ui/icon.js'
 
 const chartData = [

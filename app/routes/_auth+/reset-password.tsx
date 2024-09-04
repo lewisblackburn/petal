@@ -1,4 +1,4 @@
-import { getFormProps, getInputProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import {
@@ -10,7 +10,10 @@ import {
 } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { ErrorList } from '#app/components/form/ErrorList.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireAnonymous, resetUserPassword } from '#app/utils/auth.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
@@ -96,29 +99,30 @@ export default function ResetPasswordPage() {
 			</div>
 			<div className="mx-auto mt-16 min-w-full max-w-sm sm:min-w-[368px]">
 				<Form method="POST" {...getFormProps(form)}>
-					<Field
-						labelProps={{
-							htmlFor: fields.password.id,
-							children: 'New Password',
-						}}
-						inputProps={{
-							...getInputProps(fields.password, { type: 'password' }),
-							autoComplete: 'new-password',
-							autoFocus: true,
-						}}
-						errors={fields.password.errors}
-					/>
-					<Field
-						labelProps={{
-							htmlFor: fields.confirmPassword.id,
-							children: 'Confirm Password',
-						}}
-						inputProps={{
-							...getInputProps(fields.confirmPassword, { type: 'password' }),
-							autoComplete: 'new-password',
-						}}
-						errors={fields.confirmPassword.errors}
-					/>
+					<Field>
+						<Label htmlFor={fields.password.id}>New Password</Label>
+						<InputConform
+							meta={fields.password}
+							type="password"
+							autoComplete="new-password"
+							autoFocus
+						/>
+						{fields.password.errors && (
+							<FieldError>{fields.password.errors}</FieldError>
+						)}
+					</Field>
+					<Field>
+						<Label htmlFor={fields.confirmPassword.id}>Confirm Password</Label>
+						<InputConform
+							meta={fields.confirmPassword}
+							type="password"
+							autoComplete="new-password"
+							autoFocus
+						/>
+						{fields.confirmPassword.errors && (
+							<FieldError>{fields.confirmPassword.errors}</FieldError>
+						)}
+					</Field>
 
 					<ErrorList errors={form.errors} id={form.errorId} />
 

@@ -1,20 +1,12 @@
 import React from 'react'
+import { Label, Pie, PieChart as RePieChart } from 'recharts'
+import { Card, CardContent } from '../ui/card'
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '../ui/card'
-import {
-	ChartConfig,
+	type ChartConfig,
 	ChartContainer,
 	ChartTooltip,
 	ChartTooltipContent,
 } from '../ui/chart'
-import { Label, Pie, PieChart as RePieChart } from 'recharts'
-import { Icon } from '../ui/icon'
 
 interface ChartData {
 	[key: string]: string | number

@@ -1,5 +1,5 @@
 import PieChart from '#app/components/chart/pie.js'
-import { ChartConfig } from '#app/components/ui/chart.js'
+import { type ChartConfig } from '#app/components/ui/chart.js'
 
 const chartData = [
 	{ genre: 'Romance', count: 20, fill: 'hsl(var(--chart-1))' },

@@ -1,4 +1,4 @@
-import { getFormProps, getInputProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import {
@@ -9,9 +9,12 @@ import {
 } from '@remix-run/node'
 import { Form, Link, useActionData } from '@remix-run/react'
 import { z } from 'zod'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { ErrorList } from '#app/components/form/ErrorList.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	getPasswordHash,
@@ -134,32 +137,42 @@ export default function ChangePasswordRoute() {
 
 	return (
 		<Form method="POST" {...getFormProps(form)} className="mx-auto max-w-md">
-			<Field
-				labelProps={{ children: 'Current Password' }}
-				inputProps={{
-					...getInputProps(fields.currentPassword, { type: 'password' }),
-					autoComplete: 'current-password',
-				}}
-				errors={fields.currentPassword.errors}
-			/>
-			<Field
-				labelProps={{ children: 'New Password' }}
-				inputProps={{
-					...getInputProps(fields.newPassword, { type: 'password' }),
-					autoComplete: 'new-password',
-				}}
-				errors={fields.newPassword.errors}
-			/>
-			<Field
-				labelProps={{ children: 'Confirm New Password' }}
-				inputProps={{
-					...getInputProps(fields.confirmNewPassword, {
-						type: 'password',
-					}),
-					autoComplete: 'new-password',
-				}}
-				errors={fields.confirmNewPassword.errors}
-			/>
+			<Field>
+				<Label htmlFor={fields.currentPassword.id}>Current Password</Label>
+				<InputConform
+					meta={fields.currentPassword}
+					type="text"
+					autoComplete="current-password"
+				/>
+				{fields.currentPassword.errors && (
+					<FieldError>{fields.currentPassword.errors}</FieldError>
+				)}
+			</Field>
+			<Field>
+				<Label htmlFor={fields.newPassword.id}>New Password</Label>
+				<InputConform
+					meta={fields.newPassword}
+					type="text"
+					autoComplete="new-password"
+				/>
+				{fields.newPassword.errors && (
+					<FieldError>{fields.newPassword.errors}</FieldError>
+				)}
+			</Field>
+			<Field>
+				<Label htmlFor={fields.confirmNewPassword.id}>
+					Confirm New Password
+				</Label>
+				<InputConform
+					meta={fields.confirmNewPassword}
+					type="text"
+					autoComplete="new-password"
+				/>
+				{fields.confirmNewPassword.errors && (
+					<FieldError>{fields.confirmNewPassword.errors}</FieldError>
+				)}
+			</Field>
+
 			<ErrorList id={form.errorId} errors={form.errors} />
 			<div className="grid w-full grid-cols-2 gap-6">
 				<Button variant="secondary" asChild>

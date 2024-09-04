@@ -1,10 +1,10 @@
-import { getFormProps, getInputProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import * as E from '@react-email/components'
 import {
 	json,
-	LoaderFunctionArgs,
+	type LoaderFunctionArgs,
 	redirect,
 	type ActionFunctionArgs,
 	type MetaFunction,
@@ -13,8 +13,12 @@ import { Form, useActionData, useSearchParams } from '@remix-run/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { ErrorList } from '#app/components/form/ErrorList.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { requireAnonymous } from '#app/utils/auth.server.js'
 import {
 	ProviderConnectionForm,
 	providerNames,
@@ -25,7 +29,6 @@ import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { EmailSchema } from '#app/utils/user-validation.ts'
 import { prepareVerification } from './verify.server.ts'
-import { requireAnonymous } from '#app/utils/auth.server.js'
 
 export const handle: SEOHandle = {
 	getSitemapEntries: () => null,
@@ -155,18 +158,19 @@ export default function SignupRoute() {
 			<div className="mx-auto mt-16 min-w-full max-w-sm sm:min-w-[368px]">
 				<Form method="POST" {...getFormProps(form)}>
 					<HoneypotInputs />
-					<Field
-						labelProps={{
-							htmlFor: fields.email.id,
-							children: 'Email',
-						}}
-						inputProps={{
-							...getInputProps(fields.email, { type: 'email' }),
-							autoFocus: true,
-							autoComplete: 'email',
-						}}
-						errors={fields.email.errors}
-					/>
+					<Field>
+						<Label htmlFor={fields.email.id}>Email</Label>
+						<InputConform
+							meta={fields.email}
+							type="text"
+							autoComplete="email"
+							autoFocus
+						/>
+						{fields.email.errors && (
+							<FieldError>{fields.email.errors}</FieldError>
+						)}
+					</Field>
+
 					<ErrorList errors={form.errors} id={form.errorId} />
 					<StatusButton
 						className="w-full"

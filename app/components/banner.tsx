@@ -1,6 +1,6 @@
+import { Link } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { Icon } from './ui/icon'
-import { Link } from '@remix-run/react'
 
 export default function Banner() {
 	// TODO: This should be set back to false if there is a new feature announcement

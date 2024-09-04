@@ -1,4 +1,4 @@
-import { getFormProps, getInputProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
@@ -9,9 +9,12 @@ import {
 } from '@remix-run/node'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { ErrorList } from '#app/components/form/ErrorList.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId, sessionKey } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
@@ -237,21 +240,18 @@ function UpdateProfile() {
 	return (
 		<fetcher.Form method="POST" {...getFormProps(form)}>
 			<div className="grid grid-cols-6 gap-x-10">
-				<Field
-					className="col-span-3"
-					labelProps={{
-						htmlFor: fields.username.id,
-						children: 'Username',
-					}}
-					inputProps={getInputProps(fields.username, { type: 'text' })}
-					errors={fields.username.errors}
-				/>
-				<Field
-					className="col-span-3"
-					labelProps={{ htmlFor: fields.name.id, children: 'Name' }}
-					inputProps={getInputProps(fields.name, { type: 'text' })}
-					errors={fields.name.errors}
-				/>
+				<Field className="col-span-3">
+					<Label htmlFor={fields.username.id}>Username</Label>
+					<InputConform meta={fields.username} type="text" />
+					{fields.username.errors && (
+						<FieldError>{fields.username.errors}</FieldError>
+					)}
+				</Field>
+				<Field className="col-span-3">
+					<Label htmlFor={fields.name.id}>name</Label>
+					<InputConform meta={fields.name} type="text" />
+					{fields.name.errors && <FieldError>{fields.name.errors}</FieldError>}
+				</Field>
 			</div>
 
 			<ErrorList errors={form.errors} id={form.errorId} />

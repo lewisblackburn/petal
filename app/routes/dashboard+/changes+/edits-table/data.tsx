@@ -1,4 +1,4 @@
-import { Payment } from './columns'
+import { type Payment } from './columns'
 
 export const payments: Payment[] = [
 	{

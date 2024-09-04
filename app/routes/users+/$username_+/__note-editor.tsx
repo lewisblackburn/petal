@@ -15,7 +15,10 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { floatingToolbarClassName } from '#app/components/floating-toolbar.tsx'
-import { ErrorList, Field, TextareaField } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { TextareaConform } from '#app/components/form/conform/Textarea.js'
+import { ErrorList } from '#app/components/form/ErrorList.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Label } from '#app/components/ui/label.tsx'
@@ -95,21 +98,20 @@ export function NoteEditor({
 					<button type="submit" className="hidden" />
 					{note ? <input type="hidden" name="id" value={note.id} /> : null}
 					<div className="flex flex-col gap-1">
-						<Field
-							labelProps={{ children: 'Title' }}
-							inputProps={{
-								autoFocus: true,
-								...getInputProps(fields.title, { type: 'text' }),
-							}}
-							errors={fields.title.errors}
-						/>
-						<TextareaField
-							labelProps={{ children: 'Content' }}
-							textareaProps={{
-								...getTextareaProps(fields.content),
-							}}
-							errors={fields.content.errors}
-						/>
+						<Field>
+							<Label htmlFor={fields.title.id}>Title</Label>
+							<InputConform meta={fields.title} type="text" autoFocus />
+							{fields.title.errors && (
+								<FieldError>{fields.title.errors}</FieldError>
+							)}
+						</Field>
+						<Field>
+							<Label htmlFor={fields.content.id}>Content</Label>
+							<TextareaConform meta={fields.content} />
+							{fields.content.errors && (
+								<FieldError>{fields.content.errors}</FieldError>
+							)}
+						</Field>
 						<div>
 							<Label>Images</Label>
 							<ul className="flex flex-col gap-4">

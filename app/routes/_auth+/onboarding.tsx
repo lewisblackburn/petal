@@ -16,8 +16,12 @@ import {
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { safeRedirect } from 'remix-utils/safe-redirect'
 import { z } from 'zod'
-import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
+import { CheckboxConform } from '#app/components/form/conform/Checkbox.js'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { ErrorList } from '#app/components/form/ErrorList.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Spacer } from '#app/components/spacer.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireAnonymous, sessionKey, signup } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
@@ -163,64 +167,72 @@ export default function OnboardingRoute() {
 					{...getFormProps(form)}
 				>
 					<HoneypotInputs />
-					<Field
-						labelProps={{ htmlFor: fields.username.id, children: 'Username' }}
-						inputProps={{
-							...getInputProps(fields.username, { type: 'text' }),
-							autoComplete: 'username',
-							className: 'lowercase',
-						}}
-						errors={fields.username.errors}
-					/>
-					<Field
-						labelProps={{ htmlFor: fields.name.id, children: 'Name' }}
-						inputProps={{
-							...getInputProps(fields.name, { type: 'text' }),
-							autoComplete: 'name',
-						}}
-						errors={fields.name.errors}
-					/>
-					<Field
-						labelProps={{ htmlFor: fields.password.id, children: 'Password' }}
-						inputProps={{
-							...getInputProps(fields.password, { type: 'password' }),
-							autoComplete: 'new-password',
-						}}
-						errors={fields.password.errors}
-					/>
-
-					<Field
-						labelProps={{
-							htmlFor: fields.confirmPassword.id,
-							children: 'Confirm Password',
-						}}
-						inputProps={{
-							...getInputProps(fields.confirmPassword, { type: 'password' }),
-							autoComplete: 'new-password',
-						}}
-						errors={fields.confirmPassword.errors}
-					/>
-
-					<CheckboxField
-						labelProps={{
-							htmlFor: fields.agreeToTermsOfServiceAndPrivacyPolicy.id,
-							children:
-								'Do you agree to our Terms of Service and Privacy Policy?',
-						}}
-						buttonProps={getInputProps(
-							fields.agreeToTermsOfServiceAndPrivacyPolicy,
-							{ type: 'checkbox' },
+					<Field>
+						<Label htmlFor={fields.username.id}>Username</Label>
+						<InputConform
+							meta={fields.username}
+							type="text"
+							className="lowercase"
+							autoComplete="username"
+						/>
+						{fields.username.errors && (
+							<FieldError>{fields.username.errors}</FieldError>
 						)}
-						errors={fields.agreeToTermsOfServiceAndPrivacyPolicy.errors}
-					/>
-					<CheckboxField
-						labelProps={{
-							htmlFor: fields.remember.id,
-							children: 'Remember me',
-						}}
-						buttonProps={getInputProps(fields.remember, { type: 'checkbox' })}
-						errors={fields.remember.errors}
-					/>
+					</Field>
+					<Field>
+						<Label htmlFor={fields.name.id}>Name</Label>
+						<InputConform meta={fields.name} type="text" autoComplete="name" />
+						{fields.name.errors && (
+							<FieldError>{fields.name.errors}</FieldError>
+						)}
+					</Field>
+					<Field>
+						<Label htmlFor={fields.password.id}>Password</Label>
+						<InputConform
+							meta={fields.password}
+							type="password"
+							autoComplete="new-password"
+						/>
+						{fields.password.errors && (
+							<FieldError>{fields.password.errors}</FieldError>
+						)}
+					</Field>
+					<Field>
+						<Label htmlFor={fields.confirmPassword.id}>Confirm Password</Label>
+						<InputConform
+							meta={fields.confirmPassword}
+							type="password"
+							autoComplete="new-password"
+						/>
+						{fields.confirmPassword.errors && (
+							<FieldError>{fields.confirmPassword.errors}</FieldError>
+						)}
+					</Field>
+
+					<Field>
+						<div className="flex items-center gap-2">
+							<CheckboxConform
+								meta={fields.agreeToTermsOfServiceAndPrivacyPolicy}
+							/>
+							<Label htmlFor={fields.agreeToTermsOfServiceAndPrivacyPolicy.id}>
+								Do you agree to our Terms of Service and Privacy Policy?
+							</Label>
+						</div>
+						{fields.agreeToTermsOfServiceAndPrivacyPolicy.errors && (
+							<FieldError>
+								{fields.agreeToTermsOfServiceAndPrivacyPolicy.errors}
+							</FieldError>
+						)}
+					</Field>
+					<Field>
+						<div className="flex items-center gap-2">
+							<CheckboxConform meta={fields.remember} />
+							<Label htmlFor={fields.remember.id}>Remember Me</Label>
+						</div>
+						{fields.remember.errors && (
+							<FieldError>{fields.remember.errors}</FieldError>
+						)}
+					</Field>
 
 					<input {...getInputProps(fields.redirectTo, { type: 'hidden' })} />
 					<ErrorList errors={form.errors} id={form.errorId} />

@@ -1,4 +1,4 @@
-import { getFormProps, getInputProps, useForm } from '@conform-to/react'
+import { getFormProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import {
@@ -9,8 +9,11 @@ import {
 } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
-import { ErrorList, Field } from '#app/components/forms.tsx'
+import { InputConform } from '#app/components/form/conform/Input.js'
+import { ErrorList } from '#app/components/form/ErrorList.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	prepareVerification,
@@ -127,14 +130,17 @@ export default function ChangeEmailIndex() {
 			</p>
 			<div className="mx-auto mt-5 max-w-sm">
 				<Form method="POST" {...getFormProps(form)}>
-					<Field
-						labelProps={{ children: 'New Email' }}
-						inputProps={{
-							...getInputProps(fields.email, { type: 'email' }),
-							autoComplete: 'email',
-						}}
-						errors={fields.email.errors}
-					/>
+					<Field>
+						<Label htmlFor={fields.email.id}>New Email</Label>
+						<InputConform
+							meta={fields.email}
+							type="text"
+							autoComplete="email"
+						/>
+						{fields.email.errors && (
+							<FieldError>{fields.email.errors}</FieldError>
+						)}
+					</Field>
 					<ErrorList id={form.errorId} errors={form.errors} />
 					<div>
 						<StatusButton

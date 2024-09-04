@@ -1,5 +1,6 @@
-import { Table } from '@tanstack/react-table'
+import { type Table } from '@tanstack/react-table'
 import { Button } from '../ui/button'
+import { Icon } from '../ui/icon'
 import {
 	Select,
 	SelectContent,
@@ -7,7 +8,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../ui/select'
-import { Icon } from '../ui/icon'
 
 interface DataTablePaginationProps<TData> {
 	table: Table<TData>

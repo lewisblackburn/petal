@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { type Prisma, type Role, type User } from '@prisma/client'
+import { type Prisma } from '@prisma/client'
 import { promiseHash } from 'remix-utils/promise'
 import { generateApiKey } from '#app/utils/api.server.js'
 import { GENRES, PETAL_BOT_ID } from '#app/utils/constants.js'

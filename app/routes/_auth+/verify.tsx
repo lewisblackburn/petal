@@ -6,8 +6,11 @@ import { Form, useActionData, useSearchParams } from '@remix-run/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
-import { ErrorList, OTPField } from '#app/components/forms.tsx'
+import { InputOTPConform } from '#app/components/form/conform/InputOTP.js'
+import { ErrorList } from '#app/components/form/ErrorList.js'
+import { Field, FieldError } from '#app/components/form/Field.js'
 import { Spacer } from '#app/components/spacer.tsx'
+import { Label } from '#app/components/ui/label.js'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
@@ -101,18 +104,19 @@ export default function VerifyRoute() {
 					<Form method="POST" {...getFormProps(form)} className="flex-1">
 						<HoneypotInputs />
 						<div className="flex items-center justify-center">
-							<OTPField
-								labelProps={{
-									htmlFor: fields[codeQueryParam].id,
-									children: 'Code',
-								}}
-								inputProps={{
-									...getInputProps(fields[codeQueryParam], { type: 'text' }),
-									autoComplete: 'one-time-code',
-									autoFocus: true,
-								}}
-								errors={fields[codeQueryParam].errors}
-							/>
+							<Field>
+								<Label htmlFor={fields[codeQueryParam].id}>Code</Label>
+								<InputOTPConform
+									meta={fields[codeQueryParam]}
+									length={6}
+									autoComplete="one-time-code"
+									autoCapitalise
+									autoFocus
+								/>
+								{fields[codeQueryParam].errors && (
+									<FieldError>{fields[codeQueryParam].errors}</FieldError>
+								)}
+							</Field>
 						</div>
 						<input
 							{...getInputProps(fields[typeQueryParam], { type: 'hidden' })}

@@ -2,8 +2,8 @@
 import { Form, Link } from '@remix-run/react'
 import { type SVGProps } from 'react'
 import { Icon } from './ui/icon'
-import { Label } from './ui/label'
 import { Input } from './ui/input'
+import { Label } from './ui/label'
 
 // Define the navigation types
 type NavigationItem = {
