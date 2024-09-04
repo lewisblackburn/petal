@@ -1,6 +1,7 @@
 import { json, type LoaderFunctionArgs } from '@remix-run/node'
 import { Form, Link, NavLink, Outlet } from '@remix-run/react'
 import { Logo } from '#app/components/logo.js'
+import Search from '#app/routes/resources+/search.js'
 import {
 	Avatar,
 	AvatarFallback,
@@ -16,7 +17,6 @@ import {
 	DropdownMenuItem,
 } from '#app/components/ui/dropdown-menu.js'
 import { Icon } from '#app/components/ui/icon.js'
-import { Input } from '#app/components/ui/input.js'
 import { Sheet, SheetTrigger, SheetContent } from '#app/components/ui/sheet.js'
 import { requireUserId } from '#app/utils/auth.server.js'
 import { getUserImgSrc } from '#app/utils/misc.js'
@@ -153,19 +153,7 @@ export default function DashboardPageLayout() {
 						</SheetContent>
 					</Sheet>
 					<div className="w-full flex-1">
-						<form>
-							<div className="relative">
-								<Icon
-									name="magnifying-glass"
-									className="absolute left-3 top-3 h-4 w-4 text-muted-foreground"
-								/>
-								<Input
-									type="search"
-									placeholder="Search..."
-									className="w-full appearance-none bg-background pl-8 shadow-none"
-								/>
-							</div>
-						</form>
+						<Search />
 					</div>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
