@@ -70,7 +70,7 @@ export default function Search() {
 
 	// NOTE: Load the search results on initial render
 	useEffect(() => {
-		handleFormChange('')
+		fetcher.submit(null, { method: 'GET', action: '/resources/search' })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
