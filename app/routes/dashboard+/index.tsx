@@ -4,7 +4,7 @@ import GenreChart from './charts/GenreChart'
 
 export default function DashboardPage() {
 	return (
-		<div className="grid gap-5">
+		<div className="container grid gap-5">
 			<div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
 				<FilmAndSeriesChart />
 				<FilmAndSeriesChart />

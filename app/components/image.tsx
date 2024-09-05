@@ -13,7 +13,7 @@ function Image({
 	const [imageLoaded, setImageLoaded] = useState(false)
 
 	function onLoad() {
-		console.log('Loaded...')
+		// console.log('Loaded...')
 		setImageLoaded(true)
 	}
 

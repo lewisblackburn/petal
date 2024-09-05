@@ -220,7 +220,7 @@ model Person {
 
   tmdbID String? @unique
 
-  image String? @default("/img/300x450.png")
+  image String? @default("/images/placeholder/300x450.png")
 
   casts  FilmCastMember[]
   crews  FilmCrewMember[]
@@ -270,8 +270,8 @@ model Film {
   updatedAt DateTime @updatedAt
 
   // Primary images, videos, taglines, etc.
-  poster   String? @default("/img/300x450.png")
-  backdrop String? @default("/img/1920x1080.png")
+  poster   String? @default("/images/placeholder/300x450.png")
+  backdrop String? @default("/images/placeholder/1920x1080.png")
   trailer  String? @default("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
   tagline  String?
 
@@ -485,7 +485,7 @@ model ProductionCompany {
   name      String   @unique
   location  String?
   country   String?
-  logo      String?  @default("/img/300x450.png")
+  logo      String?  @default("/images/placeholder/300x450.png")
   homepage  String?
   films     Film[]
   createdAt DateTime @default(now())
@@ -521,7 +521,7 @@ model Album {
   id     String   @id @unique @default(cuid())
   title  String
   year   Int
-  cover  String?  @default("/img/300x450.png")
+  cover  String?  @default("/images/placeholder/300x450.png")
   locked Boolean? @default(false)
 
   songs   Song[]

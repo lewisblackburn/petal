@@ -1,6 +1,7 @@
 import { remember } from '@epic-web/remember'
 import { PrismaClient } from '@prisma/client'
 import chalk from 'chalk'
+import { filmFormatting } from './extensions/film'
 import { notifications } from './extensions/notifications'
 import { initials } from './extensions/user'
 
@@ -39,3 +40,4 @@ export const prisma = remember('prisma', () => {
 })
 	.$extends(initials)
 	.$extends(notifications)
+	.$extends(filmFormatting)

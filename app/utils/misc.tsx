@@ -304,3 +304,32 @@ export function withQueryContext<T>(
 	;(args as any).modelId = modelId
 	return args
 }
+
+/**
+ * Returns a sorted array of objects by a rational property (numerator / denominator)
+ * for ordering with the Stern-Brocot method.
+ *
+ * The Stern-Brocot method is a technique for determining the order of elements
+ * when the standard comparison operators are insufficient for complex sorting rules.
+ *
+ * For more details about the Stern-Brocot method, see:
+ * https://begriffs.com/posts/2018-03-20-user-defined-order.html#approach-3-true-fractions
+ *
+ * @typeparam T The type of objects in the array, must have 'numerator' and 'denominator' properties.
+ * @param array The array of objects to be sorted based on the rational property.
+ * @returns A new array containing the objects sorted by the rational property.
+ */
+type NumericRational = {
+	numerator: number
+	denominator: number
+}
+
+export const orderByRationalProperty = <T extends NumericRational>(
+	array: Array<T>,
+): Array<T> => {
+	return array.sort((a, b) => {
+		const rationalA = a.numerator / a.denominator
+		const rationalB = b.numerator / b.denominator
+		return rationalA - rationalB
+	})
+}

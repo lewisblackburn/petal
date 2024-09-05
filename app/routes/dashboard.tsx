@@ -1,7 +1,6 @@
 import { json, type LoaderFunctionArgs } from '@remix-run/node'
 import { Form, Link, NavLink, Outlet } from '@remix-run/react'
 import { Logo } from '#app/components/logo.js'
-import Search from '#app/routes/resources+/search.js'
 import {
 	Avatar,
 	AvatarFallback,
@@ -18,6 +17,7 @@ import {
 } from '#app/components/ui/dropdown-menu.js'
 import { Icon } from '#app/components/ui/icon.js'
 import { Sheet, SheetTrigger, SheetContent } from '#app/components/ui/sheet.js'
+import Search from '#app/routes/resources+/search.js'
 import { requireUserId } from '#app/utils/auth.server.js'
 import { getUserImgSrc } from '#app/utils/misc.js'
 import { useUser } from '#app/utils/user.js'

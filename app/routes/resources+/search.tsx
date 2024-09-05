@@ -1,6 +1,7 @@
 import { type LoaderFunctionArgs } from '@remix-run/node'
-import { json, useFetcher } from '@remix-run/react'
+import { json, useFetcher, useNavigate } from '@remix-run/react'
 import { useState, useEffect, useRef } from 'react'
+import { useSpinDelay } from 'spin-delay'
 import { z } from 'zod'
 import {
 	Command,
@@ -10,17 +11,21 @@ import {
 	CommandItem,
 	CommandList,
 } from '#app/components/ui/command.js'
-import { Dialog, DialogContent } from '#app/components/ui/dialog.js'
+import {
+	Dialog,
+	DialogContent,
+	DialogTitle,
+} from '#app/components/ui/dialog.js'
 import { prisma } from '#app/utils/db.server.js'
-import { useDebounce, useDelayedIsPending } from '#app/utils/misc.js'
+import { useDebounce } from '#app/utils/misc.js'
 import { Spinner } from '../../components/spinner'
 import { Icon } from '../../components/ui/icon'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
-import { useSpinDelay } from 'spin-delay'
 
 const SearchResultSchema = z.array(
 	z.object({
+		id: z.string(),
 		result: z.string(),
 		model: z.string(),
 	}),
@@ -31,11 +36,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const like = `%${searchTerm ?? ''}%`
 
 	const rawResults = await prisma.$queryRaw`
-        SELECT title AS "result", 'Film' AS "model" FROM Film WHERE title LIKE ${like}
+        SELECT id, title AS "result", 'film' AS "model" FROM Film WHERE title LIKE ${like}
         UNION
-        SELECT title AS "result", 'Song' AS "model" FROM Song WHERE title LIKE ${like}
+        SELECT id, title AS "result", 'song' AS "model" FROM Song WHERE title LIKE ${like}
         UNION
-        SELECT name AS "result", 'Person' AS "model" FROM Person WHERE name LIKE ${like}
+        SELECT id, name AS "result", 'person' AS "model" FROM Person WHERE name LIKE ${like}
         LIMIT 3;
     `
 
@@ -45,6 +50,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Search() {
+	const navigate = useNavigate()
 	const fetcher = useFetcher<typeof loader>()
 	const isPending =
 		fetcher.state === 'submitting' || fetcher.state === 'loading'
@@ -57,6 +63,7 @@ export default function Search() {
 
 	const results =
 		fetcher.data?.results?.map((result) => ({
+			id: result.id,
 			result: result.result,
 			model: result.model,
 		})) || []
@@ -109,6 +116,7 @@ export default function Search() {
 				className="w-full appearance-none bg-background pl-8 shadow-none"
 			/>
 			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogTitle className="hidden"></DialogTitle>
 				<DialogContent className="overflow-hidden p-0 shadow-lg">
 					<Command
 						shouldFilter={false}
@@ -136,11 +144,25 @@ export default function Search() {
 							) : results.length > 0 ? (
 								<CommandGroup>
 									{results.map((result, index) => (
-										<CommandItem key={index}>
-											<span>
-												{result.model === 'Film' ? (
+										<CommandItem
+											key={index}
+											value={result.id}
+											onSelect={(value) => {
+												const modelToPath: { [key: string]: string } = {
+													film: 'films',
+													song: 'songs',
+													person: 'people',
+												}
+												const modelPath = modelToPath[result.model] ?? 'films'
+
+												navigate(`/dashboard/${modelPath}/${value}`)
+												setOpen(false)
+											}}
+										>
+											<span className="mr-1.5 mt-0.5">
+												{result.model === 'film' ? (
 													<Icon name="video" className="h-0 w-0" size="sm" />
-												) : result.model === 'Song' ? (
+												) : result.model === 'song' ? (
 													<Icon
 														name="audio-lines"
 														className="h-1 w-1"

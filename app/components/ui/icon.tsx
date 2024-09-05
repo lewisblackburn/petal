@@ -57,7 +57,7 @@ export function Icon({
 				<Icon
 					name={name}
 					size={size}
-					className={className}
+					className={cn(className)}
 					title={title}
 					{...props}
 				/>
