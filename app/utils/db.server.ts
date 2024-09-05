@@ -4,6 +4,7 @@ import chalk from 'chalk'
 import { filmFormatting } from './extensions/film'
 import { notifications } from './extensions/notifications'
 import { initials } from './extensions/user'
+import { person } from './extensions/person'
 
 export const prisma = remember('prisma', () => {
 	// NOTE: if you change anything in this function you'll need to restart
@@ -41,3 +42,4 @@ export const prisma = remember('prisma', () => {
 	.$extends(initials)
 	.$extends(notifications)
 	.$extends(filmFormatting)
+	.$extends(person)

@@ -319,7 +319,7 @@ export default function FilmRoute() {
 							items={data.film.cast
 								.map((castMember) => {
 									return {
-										to: `/people/${castMember.person.id}`,
+										to: `/dashboard/people/${castMember.person.id}`,
 										image: castMember.person.image ?? '',
 										title: castMember.person.name ?? '',
 										description: castMember.character ?? '',

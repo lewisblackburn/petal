@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 
 export const filmFormatting = Prisma.defineExtension((client) => {
 	return client.$extends({
+		name: 'filmFormatting',
 		result: {
 			film: {
 				formattedReleaseDate: {

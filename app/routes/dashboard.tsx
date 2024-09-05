@@ -20,7 +20,7 @@ import { Sheet, SheetTrigger, SheetContent } from '#app/components/ui/sheet.js'
 import Search from '#app/routes/resources+/search.js'
 import { requireUserId } from '#app/utils/auth.server.js'
 import { getUserImgSrc } from '#app/utils/misc.js'
-import { useUser } from '#app/utils/user.js'
+import { userHasRole, useUser } from '#app/utils/user.js'
 import Notifications from './resources+/notifications'
 import { type IconName } from '@/icon-name'
 import { Fragment } from 'react/jsx-runtime'
@@ -113,6 +113,7 @@ const dropdownLinks = [
 
 export default function DashboardPageLayout() {
 	const user = useUser()
+	const userIsAdmin = userHasRole(user, 'admin')
 
 	return (
 		<div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -208,21 +209,25 @@ export default function DashboardPageLayout() {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end" className="min-w-56">
-							{dropdownLinks.map((group) => (
-								<Fragment key={group.name}>
-									<DropdownMenuLabel>{group.name}</DropdownMenuLabel>
-									<DropdownMenuSeparator />
-									{group.links.map((link) => (
-										<Link key={link.name} to={link.href}>
-											<DropdownMenuItem>{link.name}</DropdownMenuItem>
-										</Link>
-									))}
-									{/* if not last grouping then show separator */}
-									{group !== dropdownLinks[dropdownLinks.length - 1] && (
+							{dropdownLinks.map((group) => {
+								if (group.name === 'Admin' && !userIsAdmin) return null
+
+								return (
+									<Fragment key={group.name}>
+										<DropdownMenuLabel>{group.name}</DropdownMenuLabel>
 										<DropdownMenuSeparator />
-									)}
-								</Fragment>
-							))}
+										{group.links.map((link) => (
+											<Link key={link.name} to={link.href}>
+												<DropdownMenuItem>{link.name}</DropdownMenuItem>
+											</Link>
+										))}
+										{/* if not last grouping then show separator */}
+										{group !== dropdownLinks[dropdownLinks.length - 1] && (
+											<DropdownMenuSeparator />
+										)}
+									</Fragment>
+								)
+							})}
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</header>
