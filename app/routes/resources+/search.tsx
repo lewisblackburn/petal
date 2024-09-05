@@ -1,15 +1,23 @@
 import { type LoaderFunctionArgs } from '@remix-run/node'
-import { json, useFetcher, useSearchParams } from '@remix-run/react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect, useRef, useId } from 'react'
+import { json, useFetcher } from '@remix-run/react'
+import { useState, useEffect, useRef } from 'react'
 import { z } from 'zod'
-import { CardContent } from '#app/components/ui/card.js'
+import {
+	Command,
+	CommandEmpty,
+	CommandGroup,
+	CommandInput,
+	CommandItem,
+	CommandList,
+} from '#app/components/ui/command.js'
+import { Dialog, DialogContent } from '#app/components/ui/dialog.js'
 import { prisma } from '#app/utils/db.server.js'
-import { useDebounce } from '#app/utils/misc.js'
+import { useDebounce, useDelayedIsPending } from '#app/utils/misc.js'
 import { Spinner } from '../../components/spinner'
 import { Icon } from '../../components/ui/icon'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
+import { useSpinDelay } from 'spin-delay'
 
 const SearchResultSchema = z.array(
 	z.object({
@@ -28,7 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         SELECT title AS "result", 'Song' AS "model" FROM Song WHERE title LIKE ${like}
         UNION
         SELECT name AS "result", 'Person' AS "model" FROM Person WHERE name LIKE ${like}
-        LIMIT 10;
+        LIMIT 3;
     `
 
 	const result = SearchResultSchema.safeParse(rawResults)
@@ -38,118 +46,123 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Search() {
 	const fetcher = useFetcher<typeof loader>()
-	const id = useId()
-	const [searchParams] = useSearchParams()
 	const isPending =
 		fetcher.state === 'submitting' || fetcher.state === 'loading'
-	const [isVisible, setIsVisible] = useState(false)
+	const delayedIsPending = useSpinDelay(isPending, {
+		delay: 1000,
+		minDuration: 300,
+	})
+	const [open, setOpen] = useState(false)
 	const searchContainerRef = useRef<HTMLDivElement>(null)
-	const inputRef = useRef<HTMLInputElement>(null)
+
+	const results =
+		fetcher.data?.results?.map((result) => ({
+			result: result.result,
+			model: result.model,
+		})) || []
+
+	// NOTE: Load the search results on initial render
+	useEffect(() => {
+		handleFormChange('')
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	const handleFormChange = useDebounce((search: string) => {
-		if (search) {
-			setIsVisible(true)
-			fetcher.submit({ search }, { method: 'GET', action: '/resources/search' })
-		} else {
-			setIsVisible(false)
-		}
-	}, 300)
+		fetcher.submit({ search }, { method: 'GET', action: '/resources/search' })
+	}, 400)
 
 	useEffect(() => {
-		function handleClickOutside(event: MouseEvent) {
-			if (
-				searchContainerRef.current &&
-				!searchContainerRef.current.contains(event.target as Node)
-			) {
-				setIsVisible(false)
-			}
-		}
-
 		function handleClickInside(event: MouseEvent) {
 			if (
 				searchContainerRef.current &&
 				searchContainerRef.current.contains(event.target as Node)
 			) {
-				setIsVisible(true)
+				setOpen(true)
 			}
 		}
 
 		function handleSlash(event: KeyboardEvent) {
 			if (event.key === '/') {
 				event.preventDefault()
-				setIsVisible(true)
-				inputRef.current?.focus()
+				setOpen(true)
 			}
 		}
 
-		function handleEscape(event: KeyboardEvent) {
-			if (event.key === 'Escape') {
-				setIsVisible(false)
-				inputRef.current?.blur()
-			}
-		}
-
-		document.addEventListener('mousedown', handleClickOutside)
 		document.addEventListener('mousedown', handleClickInside)
 		document.addEventListener('keydown', handleSlash)
-		document.addEventListener('keydown', handleEscape)
 
 		return () => {
-			document.removeEventListener('mousedown', handleClickOutside)
-			document.removeEventListener('keydown', handleEscape)
+			document.removeEventListener('mousedown', handleClickInside)
+			document.removeEventListener('keydown', handleSlash)
 		}
 	}, [])
 
 	return (
 		<div className="relative flex-1" ref={searchContainerRef}>
-			<Label htmlFor={id} className="sr-only">
-				Search
-			</Label>
-			{isPending ? (
-				<Spinner
-					showSpinner={true}
-					className="absolute left-3 top-3 h-4 w-4 text-muted-foreground"
-				/>
-			) : (
-				<Icon
-					name="magnifying-glass"
-					className="absolute left-3 top-3 h-4 w-4 text-muted-foreground"
-				/>
-			)}
+			<Label className="sr-only">Search</Label>
+			<Icon
+				name="magnifying-glass"
+				className="absolute left-3 top-3 h-4 w-4 text-muted-foreground"
+			/>
 			<Input
-				type="search"
-				name="search"
-				id={id}
-				ref={inputRef}
-				defaultValue={searchParams.get('search') ?? ''}
-				onChange={(e) => handleFormChange(e.currentTarget.value)}
 				placeholder="Press / to search"
 				className="w-full appearance-none bg-background pl-8 shadow-none"
-				autoComplete="off"
-				autoCorrect="off"
 			/>
-			<AnimatePresence>
-				{isVisible && (
-					<motion.div
-						initial={{ opacity: 0, y: -10 }}
-						animate={{ opacity: 1, y: 0 }}
-						exit={{ opacity: 0, y: -10 }}
-						transition={{ duration: 0.1 }}
-						className="group absolute z-50 mt-2 w-full cursor-pointer rounded-lg border bg-secondary"
+			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogContent className="overflow-hidden p-0 shadow-lg">
+					<Command
+						shouldFilter={false}
+						className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5"
 					>
-						<CardContent className="flex flex-col p-0">
-							{fetcher.data?.results?.map((result, index) => (
-								<div key={index} className="border-b p-4 hover:bg-card">
-									<span className="text-sm text-muted-foreground">
-										{result.model}
-									</span>
-									<p className="text-lg">{result.result}</p>
+						<CommandInput
+							placeholder="Search..."
+							onInput={(event) => {
+								const inputElement = event.target as HTMLInputElement
+								handleFormChange(inputElement.value)
+							}}
+							onFocus={(event) => {
+								const inputElement = event.target as HTMLInputElement
+								handleFormChange(inputElement.value)
+							}}
+						/>
+						<CommandList>
+							{delayedIsPending ? (
+								<div className="flex w-full items-center justify-center py-6 text-sm">
+									<Spinner
+										showSpinner={true}
+										className="text-muted-foreground"
+									/>
 								</div>
-							))}
-						</CardContent>
-					</motion.div>
-				)}
-			</AnimatePresence>
+							) : results.length > 0 ? (
+								<CommandGroup>
+									{results.map((result, index) => (
+										<CommandItem key={index}>
+											<span>
+												{result.model === 'Film' ? (
+													<Icon name="video" className="h-0 w-0" size="sm" />
+												) : result.model === 'Song' ? (
+													<Icon
+														name="audio-lines"
+														className="h-1 w-1"
+														size="sm"
+													/>
+												) : (
+													<Icon name="user" className="h-1 w-1" size="sm" />
+												)}
+											</span>
+											<span className="ml-1 text-muted-foreground">
+												{result.result}
+											</span>
+										</CommandItem>
+									))}
+								</CommandGroup>
+							) : (
+								<CommandEmpty>No results found.</CommandEmpty>
+							)}
+						</CommandList>
+					</Command>
+				</DialogContent>
+			</Dialog>
 		</div>
 	)
 }
