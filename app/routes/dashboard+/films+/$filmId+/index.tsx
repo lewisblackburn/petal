@@ -230,11 +230,6 @@ export default function FilmRoute() {
 	const user = useOptionalUser()
 	const canDelete = userHasPermission(user, 'delete:film:any')
 
-	console.log(
-		STATUSES.find((status) => status.name === data.film.status)
-			?.icon as IconName,
-	)
-
 	return (
 		<div className="flex flex-col gap-10">
 			<div className="flex items-center justify-between">

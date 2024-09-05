@@ -1,14 +1,14 @@
 import { type Table } from '@tanstack/react-table'
-import { Button } from '../ui/button'
+import { Button } from '../ui/button.tsx'
 import {
 	DropdownMenu,
-	DropdownMenuTrigger,
+	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
-	DropdownMenuCheckboxItem,
-} from '../ui/dropdown-menu'
-import { Icon } from '../ui/icon'
+	DropdownMenuTrigger,
+} from '../ui/dropdown-menu.tsx'
+import { Icon } from '../ui/icon.tsx'
 
 interface DataTableViewOptionsProps<TData> {
 	table: Table<TData>
@@ -18,7 +18,7 @@ export function DataTableViewOptions<TData>({
 	table,
 }: DataTableViewOptionsProps<TData>) {
 	return (
-		<DropdownMenu>
+		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
 				<Button
 					variant="outline"

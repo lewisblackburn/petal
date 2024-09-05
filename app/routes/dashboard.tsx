@@ -23,13 +23,14 @@ import { getUserImgSrc } from '#app/utils/misc.js'
 import { useUser } from '#app/utils/user.js'
 import Notifications from './resources+/notifications'
 import { type IconName } from '@/icon-name'
+import { Fragment } from 'react/jsx-runtime'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserId(request)
 	return json({})
 }
 
-const links: {
+const sidebarLinks: {
 	name: string
 	href: string
 	icon: IconName
@@ -76,6 +77,40 @@ const links: {
 	},
 ]
 
+const dropdownLinks = [
+	{
+		name: 'Admin',
+		links: [
+			{
+				name: 'Import',
+				href: '/dashboard/admin/import',
+			},
+		],
+	},
+	{
+		name: 'Profile',
+		links: [
+			{
+				name: 'Settings',
+				href: '/settings',
+			},
+			{
+				name: 'Support',
+				href: '/support',
+			},
+		],
+	},
+	{
+		name: 'Account',
+		links: [
+			{
+				name: 'Logout',
+				href: '/logout',
+			},
+		],
+	},
+]
+
 export default function DashboardPageLayout() {
 	const user = useUser()
 
@@ -89,7 +124,7 @@ export default function DashboardPageLayout() {
 					</div>
 					<div className="flex-1">
 						<nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-							{links.map((link) => (
+							{sidebarLinks.map((link) => (
 								<NavLink
 									key={link.name}
 									to={link.href}
@@ -130,7 +165,7 @@ export default function DashboardPageLayout() {
 							<nav className="grid gap-2 text-lg font-medium">
 								<Logo />
 								<div className="py-1" />
-								{links.map((link) => (
+								{sidebarLinks.map((link) => (
 									<NavLink
 										key={link.name}
 										to={link.href}
@@ -172,15 +207,22 @@ export default function DashboardPageLayout() {
 								<span className="sr-only">Toggle user menu</span>
 							</Button>
 						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuLabel>My Account</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-							<Link to="/settings/profile">
-								<DropdownMenuItem>Settings</DropdownMenuItem>
-							</Link>
-							<DropdownMenuItem>Support</DropdownMenuItem>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem>Logout</DropdownMenuItem>
+						<DropdownMenuContent align="end" className="min-w-56">
+							{dropdownLinks.map((group) => (
+								<Fragment key={group.name}>
+									<DropdownMenuLabel>{group.name}</DropdownMenuLabel>
+									<DropdownMenuSeparator />
+									{group.links.map((link) => (
+										<Link key={link.name} to={link.href}>
+											<DropdownMenuItem>{link.name}</DropdownMenuItem>
+										</Link>
+									))}
+									{/* if not last grouping then show separator */}
+									{group !== dropdownLinks[dropdownLinks.length - 1] && (
+										<DropdownMenuSeparator />
+									)}
+								</Fragment>
+							))}
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</header>
