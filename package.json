@@ -4,8 +4,8 @@
   "sideEffects": false,
   "license": "MIT",
   "epic-stack": {
-    "head": "1c9607d6c7c42fe23f55e4ed54f6ae569577be9e",
-    "date": "2024-09-04T20:16:49Z"
+    "head": "dfa268dd008fb41cf222e197b9ab00b0da62df7a",
+    "date": "2024-09-05T11:02:15Z"
   },
   "author": "Lewis Blackburn <me@lewisblackburn.me> (https://lewisblackburn.me/)",
   "type": "module",
