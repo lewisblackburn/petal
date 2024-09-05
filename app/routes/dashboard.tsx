@@ -185,7 +185,7 @@ export default function DashboardPageLayout() {
 					</DropdownMenu>
 				</header>
 
-				<main className="p-4 lg:gap-6 lg:p-6">
+				<main className="container py-20">
 					<Outlet />
 				</main>
 			</div>
