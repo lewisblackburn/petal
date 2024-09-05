@@ -1,14 +1,18 @@
 import { invariantResponse } from '@epic-web/invariant'
-import { json, MetaFunction, type LoaderFunctionArgs } from '@remix-run/node'
+import {
+	json,
+	type MetaFunction,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 import { format } from 'date-fns'
+import { GeneralErrorBoundary } from '#app/components/error-boundary.js'
 import Image from '#app/components/image.tsx'
 import { Slider } from '#app/components/slider.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { GENDERS } from '#app/utils/constants.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { GeneralErrorBoundary } from '#app/components/error-boundary.js'
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const person = await prisma.person.update({

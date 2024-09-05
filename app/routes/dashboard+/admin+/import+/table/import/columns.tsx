@@ -1,7 +1,7 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { DataTableColumnHeader } from '#app/components/table/data-table-column-header.js'
 import { Checkbox } from '#app/components/ui/checkbox.tsx'
 import { type TMDBFilm } from '#app/types/tmdb.js'
-import { DataTableColumnHeader } from '#app/components/table/data-table-column-header.js'
 
 export const columns: ColumnDef<Partial<TMDBFilm>>[] = [
 	{

@@ -1,6 +1,3 @@
-import { Prisma, type Film } from '@prisma/client'
-import { prisma } from '../db.server'
-
 export class TMDB {
 	constructor(public language: string = 'en-GB') {
 		this.language = language

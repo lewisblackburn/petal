@@ -1,8 +1,8 @@
 import { type Table } from '@tanstack/react-table'
+import { DataTableViewOptions } from '#app/components/table/data-table-view-options.js'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Input } from '#app/components/ui/input.tsx'
-import { DataTableViewOptions } from '#app/components/table/data-table-view-options.js'
 import { DataTableImport } from './data-table-import'
 
 interface DataTableToolbarProps<TData> {

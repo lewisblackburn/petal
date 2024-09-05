@@ -105,12 +105,12 @@ export class TMDBFilmImporter extends TMDBImporter<Film> {
 		})
 
 		if (film.poster_path) {
-			const posterPath = await this.tmdb.getPosterImage(film.poster_path)
+			// const posterPath = await this.tmdb.getPosterImage(film.poster_path)
 			// Save the posterPath if needed
 		}
 
 		if (film.backdrop_path) {
-			const backdropPath = await this.tmdb.getBackdropImage(film.backdrop_path)
+			// const backdropPath = await this.tmdb.getBackdropImage(film.backdrop_path)
 			// Save the backdropPath if needed
 		}
 

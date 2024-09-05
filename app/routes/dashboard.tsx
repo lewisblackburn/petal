@@ -1,5 +1,6 @@
 import { json, type LoaderFunctionArgs } from '@remix-run/node'
 import { Form, Link, NavLink, Outlet } from '@remix-run/react'
+import { Fragment } from 'react/jsx-runtime'
 import { Logo } from '#app/components/logo.js'
 import {
 	Avatar,
@@ -23,7 +24,6 @@ import { getUserImgSrc } from '#app/utils/misc.js'
 import { userHasRole, useUser } from '#app/utils/user.js'
 import Notifications from './resources+/notifications'
 import { type IconName } from '@/icon-name'
-import { Fragment } from 'react/jsx-runtime'
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserId(request)

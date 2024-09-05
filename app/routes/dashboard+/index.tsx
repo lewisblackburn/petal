@@ -1,8 +1,8 @@
 import { json, useLoaderData } from '@remix-run/react'
 import { Carousel } from '#app/components/carousel.js'
+import { GeneralErrorBoundary } from '#app/components/error-boundary.js'
 import { oneWeekAgo } from '#app/utils/constants.js'
 import { prisma } from '#app/utils/db.server.js'
-import { GeneralErrorBoundary } from '#app/components/error-boundary.js'
 
 export async function loader() {
 	const popularFilms = await prisma.film.findMany({
