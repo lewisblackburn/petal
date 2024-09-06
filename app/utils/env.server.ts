@@ -19,6 +19,11 @@ const schema = z.object({
 	GITHUB_TOKEN: z.string().default('MOCK_GITHUB_TOKEN'),
 	ALLOW_INDEXING: z.enum(['true', 'false']).optional(),
 
+	STORAGE_ACCESS_KEY: z.string(),
+	STORAGE_SECRET: z.string(),
+	STORAGE_REGION: z.string(),
+	STORAGE_BUCKET: z.string(),
+
 	TMDB_ACCESS_TOKEN: z.string(),
 })
 

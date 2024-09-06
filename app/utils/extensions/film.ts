@@ -35,3 +35,5 @@ export const filmFormatting = Prisma.defineExtension((client) => {
 		},
 	})
 })
+
+// TODO: When deleting a film, delete the entire film folder in AWS S3 (The same goes for the rest of the models)

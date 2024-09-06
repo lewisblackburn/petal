@@ -1,7 +1,7 @@
 import { type Film, type Prisma } from '@prisma/client'
 import { type TMDBFilm } from '#app/types/tmdb.js'
 import { prisma } from '#app/utils/db.server.js'
-import { TMDBImporter } from './importer'
+import { TMDB } from '.'
 
 type FilmData =
 	| (Prisma.Without<Prisma.FilmCreateInput, Prisma.FilmUncheckedCreateInput> &
@@ -9,15 +9,11 @@ type FilmData =
 	| (Prisma.Without<Prisma.FilmUncheckedCreateInput, Prisma.FilmCreateInput> &
 			Prisma.FilmCreateInput)
 
-export class TMDBFilmImporter extends TMDBImporter<Film> {
-	async addPosterImage<Film>(): Promise<Film | false> {
-		throw new Error('Method not implemented.')
-	}
-
+export class TMDBFilmImporter extends TMDB {
 	async isExistingEntity(filmId: string): Promise<Film | null> {
 		return prisma.film.findUnique({
 			where: {
-				tmdbID: filmId,
+				tmdbID: filmId.toString(),
 			},
 		})
 	}
@@ -29,10 +25,10 @@ export class TMDBFilmImporter extends TMDBImporter<Film> {
 	}
 
 	async import(filmId: string): Promise<Film | false> {
-		const existingFilm = await this.isExistingEntity(filmId.toString())
+		const existingFilm = await this.isExistingEntity(filmId)
 		if (existingFilm) return existingFilm
 
-		const film = await this.tmdb.getEntity<TMDBFilm>(
+		const film = await this.getEntity<TMDBFilm>(
 			'movie',
 			filmId,
 			'keywords,credits,videos,images',
@@ -104,16 +100,80 @@ export class TMDBFilmImporter extends TMDBImporter<Film> {
 			},
 		})
 
-		if (film.poster_path) {
-			// const posterPath = await this.tmdb.getPosterImage(film.poster_path)
-			// Save the posterPath if needed
-		}
-
-		if (film.backdrop_path) {
-			// const backdropPath = await this.tmdb.getBackdropImage(film.backdrop_path)
-			// Save the backdropPath if needed
-		}
+		await this.uploadAndSaveProfileImage(film.credits.cast)
+		await this.uploadAndSaveProfileImage(film.credits.crew)
+		if (film.poster_path)
+			await this.uploadAndSaveFilmImage(
+				film.poster_path,
+				'poster',
+				importedFilm.id,
+			)
+		if (film.backdrop_path)
+			await this.uploadAndSaveFilmImage(
+				film.backdrop_path,
+				'backdrop',
+				importedFilm.id,
+			)
 
 		return importedFilm
+	}
+
+	private async uploadAndSaveProfileImage(
+		people: TMDBFilm['credits']['cast'] | TMDBFilm['credits']['crew'],
+	) {
+		for (const person of people) {
+			try {
+				const profilePath = await this.uploadImage(
+					this.getProfileImage(person.profile_path ?? ''),
+					`person/${person.id}/profile`,
+					person.profile_path?.replace('/', '') ?? '',
+				)
+				await prisma.person.update({
+					where: { tmdbID: person.id.toString() },
+					data: {
+						tmdbID: person.id.toString(),
+						name: person.name,
+						image: profilePath || '',
+						photos: {
+							create: {
+								url: profilePath || '',
+								filename: person.profile_path?.replace('/', '') ?? '',
+								primary: true,
+							},
+						},
+					},
+				})
+			} catch {}
+		}
+	}
+
+	private async uploadAndSaveFilmImage(
+		path: string,
+		type: 'poster' | 'backdrop',
+		filmId: string,
+	) {
+		try {
+			const imagePath = await this.uploadImage(
+				type === 'poster'
+					? this.getPosterImage(path)
+					: this.getBackdropImage(path),
+				`film/${filmId}/${type}`,
+				path.replace('/', ''),
+			)
+			await prisma.film.update({
+				where: { id: filmId },
+				data: {
+					[type]: imagePath || '',
+					photos: {
+						create: {
+							url: imagePath || '',
+							type,
+							filename: path.replace('/', ''),
+							primary: true,
+						},
+					},
+				},
+			})
+		} catch {}
 	}
 }
