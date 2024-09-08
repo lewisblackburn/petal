@@ -1,4 +1,4 @@
-Copyright © 2023 Kent C. Dodds
+Copyright © 2023 Lewis Blackburn
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the “Software”), to deal in

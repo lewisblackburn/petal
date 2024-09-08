@@ -42,7 +42,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		create: verificationData,
 		update: verificationData,
 	})
-	return redirect('/settings/profile/two-factor/verify')
+	return redirect('/dashboard/settings/profile/two-factor/verify')
 }
 
 export default function TwoFactorRoute() {

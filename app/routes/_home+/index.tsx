@@ -145,7 +145,7 @@ function Feature() {
 								</p>
 								<div className="mt-6">
 									<Link
-										to="/signup?redirectTo=/dashboard"
+										to="/signup"
 										className="inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
 									>
 										Get started
@@ -214,7 +214,7 @@ function Feature() {
 								</p>
 								<div className="mt-6">
 									<Link
-										to="/signup?redirectTo=/dashboard"
+										to="/signup"
 										className="inline-flex rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
 									>
 										Get started

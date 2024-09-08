@@ -74,13 +74,13 @@ function MobileNavigation() {
 				</ul>
 				<SheetFooter className="mt-auto">
 					<div className="grid w-full grid-cols-2 gap-4">
-						<Link to="/login">
+						<Link to="/login?redirectTo=/dashboard">
 							<Button variant="outline" className="w-full">
 								Sign in
 							</Button>
 						</Link>
 
-						<Link to="/signup">
+						<Link to="/signup?redirectTo=/dashboard">
 							<Button className="w-full">Start for free</Button>
 						</Link>
 					</div>

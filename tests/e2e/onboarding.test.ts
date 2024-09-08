@@ -19,6 +19,12 @@ function extractUrl(text: string) {
 	return match?.groups?.url
 }
 
+function urlIgnoringParameters(urlPath: string) {
+	return new RegExp(
+		`^https?:\\/\\/[^\\/]+${urlPath.replace(/\//g, '\\/')}\\?.*$`,
+	)
+}
+
 const test = base.extend<{
 	getOnboardingData(): {
 		username: string
@@ -45,15 +51,15 @@ test('onboarding with link', async ({ page, getOnboardingData }) => {
 
 	await page.goto('/')
 
-	await page.getByRole('link', { name: /log in/i }).click()
-	await expect(page).toHaveURL(`/login`)
+	await page.getByRole('link', { name: /sign in/i }).click()
+	await expect(page).toHaveURL(urlIgnoringParameters(`/login`))
 
 	const createAccountLink = page.getByRole('link', {
 		name: /create an account/i,
 	})
 	await createAccountLink.click()
 
-	await expect(page).toHaveURL(`/signup`)
+	await expect(page).toHaveURL(urlIgnoringParameters(`/signup`))
 
 	const emailTextbox = page.getByRole('textbox', { name: /email/i })
 	await emailTextbox.click()
@@ -81,7 +87,7 @@ test('onboarding with link', async ({ page, getOnboardingData }) => {
 		.getByRole('button', { name: /submit/i })
 		.click()
 
-	await expect(page).toHaveURL(`/onboarding`)
+	await expect(page).toHaveURL(urlIgnoringParameters(`/onboarding`))
 	await page
 		.getByRole('textbox', { name: /^username/i })
 		.fill(onboardingData.username)
@@ -98,14 +104,16 @@ test('onboarding with link', async ({ page, getOnboardingData }) => {
 
 	await page.getByRole('button', { name: /Create an account/i }).click()
 
-	await expect(page).toHaveURL(`/`)
+	await expect(page).toHaveURL(`/dashboard`)
 
-	await page.getByRole('link', { name: onboardingData.name }).click()
+	await page.locator('button[aria-label="Toggle user menu"]').click()
 	await page.getByRole('menuitem', { name: /profile/i }).click()
 
-	await expect(page).toHaveURL(`/users/${onboardingData.username}`)
+	await expect(page).toHaveURL(`/dashboard/settings/profile`)
 
-	await page.getByRole('link', { name: onboardingData.name }).click()
+	await page.waitForTimeout(1000)
+
+	await page.locator('button[aria-label="Toggle user menu"]').click()
 	await page.getByRole('menuitem', { name: /logout/i }).click()
 	await expect(page).toHaveURL(`/`)
 })
@@ -133,10 +141,10 @@ test('onboarding with a short code', async ({ page, getOnboardingData }) => {
 	const codeMatch = email.text.match(CODE_REGEX)
 	const code = codeMatch?.groups?.code
 	invariant(code, 'Onboarding code not found')
-	await page.getByRole('textbox', { name: /code/i }).fill(code)
+	await page.fill('input[name="code"]', code)
 	await page.getByRole('button', { name: /submit/i }).click()
 
-	await expect(page).toHaveURL(`/onboarding`)
+	await expect(page).toHaveURL(urlIgnoringParameters(`/onboarding`))
 })
 
 test('completes onboarding after GitHub OAuth given valid user details', async ({
@@ -177,11 +185,9 @@ test('completes onboarding after GitHub OAuth given valid user details', async (
 		.getByLabel(/do you agree to our terms of service and privacy policy/i)
 		.check()
 	await createAccountButton.click()
-	await expect(page).toHaveURL(/signup/i)
+	await expect(page).toHaveURL(/dashboard/i)
 
-	// we are still on the 'signup' route since that
-	// was the referrer and no 'redirectTo' has been specified
-	await expect(page).toHaveURL('/signup')
+	await expect(page).toHaveURL('/dashboard')
 	await expect(page.getByText(/thanks for signing up/i)).toBeVisible()
 
 	// internally, a user has been created:

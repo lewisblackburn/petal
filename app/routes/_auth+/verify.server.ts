@@ -2,14 +2,14 @@ import { type Submission } from '@conform-to/react'
 import { parseWithZod } from '@conform-to/zod'
 import { json } from '@remix-run/node'
 import { z } from 'zod'
-import { handleVerification as handleChangeEmailVerification } from '#app/routes/settings+/profile.change-email.server.tsx'
-import { twoFAVerificationType } from '#app/routes/settings+/profile.two-factor.tsx'
+import { handleVerification as handleChangeEmailVerification } from '#app/routes/dashboard+/settings+/profile.change-email.server.js'
+import { twoFAVerificationType } from '#app/routes/dashboard+/settings+/profile.two-factor.js'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { getDomainUrl } from '#app/utils/misc.tsx'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { generateTOTP, verifyTOTP } from '#app/utils/totp.server.ts'
-import { type twoFAVerifyVerificationType } from '../settings+/profile.two-factor.verify.tsx'
+import { type twoFAVerifyVerificationType } from '../dashboard+/settings+/profile.two-factor.verify.tsx'
 import {
 	handleVerification as handleLoginTwoFactorVerification,
 	shouldRequestTwoFA,

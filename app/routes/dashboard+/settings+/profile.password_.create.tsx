@@ -34,7 +34,7 @@ async function requireNoPassword(userId: string) {
 		where: { userId },
 	})
 	if (password) {
-		throw redirect('/settings/profile/password')
+		throw redirect('/dashboard/settings/profile/password')
 	}
 }
 

@@ -8,11 +8,11 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 }) => {
 	const password = faker.internet.password()
 	const user = await login({ password })
-	await page.goto('/settings/profile')
+	await page.goto('dashboard/settings/profile')
 
 	await page.getByRole('link', { name: /enable 2fa/i }).click()
 
-	await expect(page).toHaveURL(`/settings/profile/two-factor`)
+	await expect(page).toHaveURL(`dashboard/settings/profile/two-factor`)
 	const main = page.getByRole('main')
 	await main.getByRole('button', { name: /enable 2fa/i }).click()
 	const otpUriString = await main
@@ -22,9 +22,7 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 	const otpUri = new URL(otpUriString)
 	const options = Object.fromEntries(otpUri.searchParams)
 
-	await main
-		.getByRole('textbox', { name: /code/i })
-		.fill(generateTOTP(options).otp)
+	await page.fill('input[name="code-inner"]', generateTOTP(options).otp)
 	await main.getByRole('button', { name: /submit/i }).click()
 
 	await expect(main).toHaveText(/You have enabled two-factor authentication./i)
@@ -40,10 +38,7 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 	await page.getByLabel(/^password$/i).fill(password)
 	await page.getByRole('button', { name: /log in/i }).click()
 
-	await page
-		.getByRole('textbox', { name: /code/i })
-		.fill(generateTOTP(options).otp)
-
+	await page.fill('input[name="code-inner"]', generateTOTP(options).otp)
 	await page.getByRole('button', { name: /submit/i }).click()
 
 	await expect(

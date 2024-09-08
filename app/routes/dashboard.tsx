@@ -88,24 +88,15 @@ const dropdownLinks = [
 		],
 	},
 	{
-		name: 'Profile',
+		name: 'Settings',
 		links: [
 			{
-				name: 'Settings',
-				href: '/settings',
+				name: 'Profile',
+				href: '/dashboard/settings/profile',
 			},
 			{
 				name: 'Support',
 				href: '/support',
-			},
-		],
-	},
-	{
-		name: 'Account',
-		links: [
-			{
-				name: 'Logout',
-				href: '/logout',
 			},
 		],
 	},
@@ -193,18 +184,27 @@ export default function DashboardPageLayout() {
 					</div>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button variant="secondary" size="icon" className="rounded-full">
-								{user?.image ? (
+							<Button
+								variant="secondary"
+								size="icon"
+								className="rounded-full"
+								aria-label="Toggle user menu"
+							>
+								<Link
+									to={`/users/${user.username}`}
+									// NOTE: this is for progressive enhancement
+									onClick={(e) => e.preventDefault()}
+									className="flex items-center gap-2"
+								>
 									<Avatar className="h-5 w-5">
 										<AvatarImage
+											className="object-cover"
 											src={getUserImgSrc(user.image?.id)}
-											alt={user.name ?? ''}
+											alt={user.name ?? user.username}
 										/>
 										<AvatarFallback>{user.initials}</AvatarFallback>
 									</Avatar>
-								) : (
-									<Icon name="avatar" className="h-5 w-5" />
-								)}
+								</Link>
 								<span className="sr-only">Toggle user menu</span>
 							</Button>
 						</DropdownMenuTrigger>
@@ -221,13 +221,18 @@ export default function DashboardPageLayout() {
 												<DropdownMenuItem>{link.name}</DropdownMenuItem>
 											</Link>
 										))}
-										{/* if not last grouping then show separator */}
 										{group !== dropdownLinks[dropdownLinks.length - 1] && (
 											<DropdownMenuSeparator />
 										)}
 									</Fragment>
 								)
 							})}
+							<DropdownMenuSeparator />
+							<Form action="/logout" method="POST">
+								<button type="submit" className="w-full">
+									<DropdownMenuItem>Logout</DropdownMenuItem>
+								</button>
+							</Form>
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</header>

@@ -1,4 +1,4 @@
-import { test as base } from '@playwright/test'
+import { test as base, Page } from '@playwright/test'
 import { type User as UserModel } from '@prisma/client'
 import * as setCookieParser from 'set-cookie-parser'
 import {
@@ -64,10 +64,17 @@ async function getOrInsertUser({
 }
 
 export const test = base.extend<{
+	page: Page
 	insertNewUser(options?: GetOrInsertUserOptions): Promise<User>
 	login(options?: GetOrInsertUserOptions): Promise<User>
 	prepareGitHubUser(): Promise<GitHubUser>
 }>({
+	page: async ({ page }, use) => {
+		// NOTE: This makes sure all tests start with the banner hidden
+		await page.goto('/')
+		await page.evaluate(() => localStorage.setItem('isBannerSeen', 'false'))
+		await use(page)
+	},
 	insertNewUser: async ({}, use) => {
 		let userId: string | undefined = undefined
 		await use(async (options) => {
