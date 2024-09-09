@@ -185,10 +185,10 @@ export default function DashboardPageLayout() {
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button
+								id="user-menu-trigger"
 								variant="secondary"
 								size="icon"
 								className="rounded-full"
-								aria-label="Toggle user menu"
 							>
 								<Link
 									to={`/users/${user.username}`}
