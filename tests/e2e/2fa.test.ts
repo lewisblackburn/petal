@@ -26,6 +26,10 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 	await page.fill('input[name="code-inner"]', generateTOTP(options).otp)
 	await main.getByRole('button', { name: /submit/i }).click()
 
+	await expect(page).toHaveURL(`dashboard/settings/profile/two-factor`)
+
+	// eslint-disable-next-line no-warning-comments
+	// FIXME: For some reason this assertion fails
 	// await expect(main).toHaveText(/You have enabled two-factor authentication./i)
 	await expect(main.getByRole('link', { name: /disable 2fa/i })).toBeVisible()
 
