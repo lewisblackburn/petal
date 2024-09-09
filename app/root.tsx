@@ -15,6 +15,9 @@ import {
 } from '@remix-run/react'
 import { withSentry } from '@sentry/remix'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
+// eslint-disable-next-line no-warning-comments
+// FIXME: This and the file should be removed when sonnerStyles are fixed (https://github.com/epicweb-dev/epic-stack/issues/842)
+import sonnerStyles from '#app/styles/sonner.css?url'
 import appleTouchIconAssetUrl from './assets/favicons/apple-touch-icon.png'
 import faviconAssetUrl from './assets/favicons/favicon.svg'
 import Banner from './components/banner.tsx'
@@ -53,6 +56,7 @@ export const links: LinksFunction = () => {
 			crossOrigin: 'use-credentials',
 		} as const, // necessary to make typescript happy
 		{ rel: 'stylesheet', href: tailwindStyleSheetUrl },
+		{ rel: 'stylesheet', href: sonnerStyles },
 	].filter(Boolean)
 }
 
