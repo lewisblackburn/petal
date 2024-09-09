@@ -43,7 +43,7 @@ test('when auth fails, send the user to login with a toast', async () => {
 		(e) => e,
 	)
 	invariant(response instanceof Response, 'response should be a Response')
-	expect(response).toHaveRedirect('/login')
+	expect(response).toHaveRedirect('/login?redirectTo=/dashboard')
 	await expect(response).toSendToast(
 		expect.objectContaining({
 			title: 'Auth Failed',
