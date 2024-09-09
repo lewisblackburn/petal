@@ -184,12 +184,7 @@ export default function DashboardPageLayout() {
 					</div>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button
-								id="user-menu-trigger"
-								variant="secondary"
-								size="icon"
-								className="rounded-full"
-							>
+							<Button variant="secondary" size="icon" className="rounded-full">
 								<Link
 									to={`/users/${user.username}`}
 									// NOTE: this is for progressive enhancement

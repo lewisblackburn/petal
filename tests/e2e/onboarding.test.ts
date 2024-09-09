@@ -101,7 +101,9 @@ test('onboarding with link', async ({ page, getOnboardingData }) => {
 
 	await expect(page).toHaveURL(`/dashboard`)
 
-	await page.locator('button#user-menu-trigger').click()
+	await page
+		.getByRole('button', { name: `${onboardingData.name} Toggle user` })
+		.click()
 
 	await page.getByRole('menuitem', { name: /profile/i }).click()
 
@@ -109,7 +111,9 @@ test('onboarding with link', async ({ page, getOnboardingData }) => {
 
 	await page.waitForTimeout(1000)
 
-	await page.locator('button#user-menu-trigger').click()
+	await page
+		.getByRole('button', { name: `${onboardingData.name} Toggle user` })
+		.click()
 	await page.getByRole('menuitem', { name: /logout/i }).click()
 	await expect(page).toHaveURL(`/`)
 })
