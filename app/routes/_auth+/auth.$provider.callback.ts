@@ -46,7 +46,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 	if (!authResult.success) {
 		console.error(authResult.error)
 		throw await redirectWithToast(
-			'/login',
+			'/login?redirectTo=/dashboard',
 			{
 				title: 'Auth Failed',
 				description: `There was an error authenticating with ${label}.`,

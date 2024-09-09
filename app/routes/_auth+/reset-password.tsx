@@ -37,7 +37,7 @@ async function requireResetPasswordUsername(request: Request) {
 		resetPasswordUsernameSessionKey,
 	)
 	if (typeof resetPasswordUsername !== 'string' || !resetPasswordUsername) {
-		throw redirect('/login')
+		throw redirect('/login?redirectTo=/dashboard')
 	}
 	return resetPasswordUsername
 }
@@ -63,7 +63,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	await resetUserPassword({ username: resetPasswordUsername, password })
 	const verifySession = await verifySessionStorage.getSession()
-	return redirect('/login', {
+	return redirect('/login?redirectTo=/dashboard', {
 		headers: {
 			'set-cookie': await verifySessionStorage.destroySession(verifySession),
 		},

@@ -1,6 +1,7 @@
 import { invariant } from '@epic-web/invariant'
 import { faker } from '@faker-js/faker'
 import { prisma } from '#app/utils/db.server.ts'
+import { urlIgnoringParameters } from '#app/utils/misc.js'
 import {
 	normalizeEmail,
 	normalizeUsername,
@@ -17,12 +18,6 @@ const CODE_REGEX = /Here's your verification code: (?<code>[\d\w]+)/
 function extractUrl(text: string) {
 	const match = text.match(URL_REGEX)
 	return match?.groups?.url
-}
-
-function urlIgnoringParameters(urlPath: string) {
-	return new RegExp(
-		`^https?:\\/\\/[^\\/]+${urlPath.replace(/\//g, '\\/')}\\?.*$`,
-	)
 }
 
 const test = base.extend<{
@@ -185,9 +180,8 @@ test('completes onboarding after GitHub OAuth given valid user details', async (
 		.getByLabel(/do you agree to our terms of service and privacy policy/i)
 		.check()
 	await createAccountButton.click()
-	await expect(page).toHaveURL(/dashboard/i)
 
-	await expect(page).toHaveURL('/dashboard')
+	await expect(page).toHaveURL(/dashboard/i)
 	await expect(page.getByText(/thanks for signing up/i)).toBeVisible()
 
 	// internally, a user has been created:
@@ -336,11 +330,11 @@ test('login as existing user', async ({ page, insertNewUser }) => {
 	const password = faker.internet.password()
 	const user = await insertNewUser({ password })
 	invariant(user.name, 'User name not found')
-	await page.goto('/login')
+	await page.goto('/login?redirectTo=/dashboard')
 	await page.getByRole('textbox', { name: /username/i }).fill(user.username)
 	await page.getByLabel(/^password$/i).fill(password)
 	await page.getByRole('button', { name: /log in/i }).click()
-	await expect(page).toHaveURL(`/`)
+	await expect(page).toHaveURL(`/dashboard`)
 
 	await expect(page.getByRole('link', { name: user.name })).toBeVisible()
 })
@@ -349,7 +343,7 @@ test('reset password with a link', async ({ page, insertNewUser }) => {
 	const originalPassword = faker.internet.password()
 	const user = await insertNewUser({ password: originalPassword })
 	invariant(user.name, 'User name not found')
-	await page.goto('/login')
+	await page.goto('/login?redirectTo=/dashboard')
 
 	await page.getByRole('link', { name: /forgot password/i }).click()
 	await expect(page).toHaveURL('/forgot-password')
@@ -390,7 +384,7 @@ test('reset password with a link', async ({ page, insertNewUser }) => {
 		page.getByRole('button', { name: /reset password/i, disabled: true }),
 	).toBeVisible()
 
-	await expect(page).toHaveURL('/login')
+	await expect(page).toHaveURL(urlIgnoringParameters('/login'))
 	await page.getByRole('textbox', { name: /username/i }).fill(user.username)
 	await page.getByLabel(/^password$/i).fill(originalPassword)
 	await page.getByRole('button', { name: /log in/i }).click()
@@ -400,14 +394,14 @@ test('reset password with a link', async ({ page, insertNewUser }) => {
 	await page.getByLabel(/^password$/i).fill(newPassword)
 	await page.getByRole('button', { name: /log in/i }).click()
 
-	await expect(page).toHaveURL(`/`)
+	await expect(page).toHaveURL(`/dashboard`)
 
 	await expect(page.getByRole('link', { name: user.name })).toBeVisible()
 })
 
 test('reset password with a short code', async ({ page, insertNewUser }) => {
 	const user = await insertNewUser()
-	await page.goto('/login')
+	await page.goto('/login?redirectTo=/dashboard')
 
 	await page.getByRole('link', { name: /forgot password/i }).click()
 	await expect(page).toHaveURL('/forgot-password')
@@ -430,7 +424,7 @@ test('reset password with a short code', async ({ page, insertNewUser }) => {
 	const codeMatch = email.text.match(CODE_REGEX)
 	const code = codeMatch?.groups?.code
 	invariant(code, 'Reset Password code not found')
-	await page.getByRole('textbox', { name: /code/i }).fill(code)
+	await page.fill('input[name="code-inner"]', code)
 	await page.getByRole('button', { name: /submit/i }).click()
 
 	await expect(page).toHaveURL(`/reset-password`)

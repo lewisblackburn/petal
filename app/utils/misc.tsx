@@ -333,3 +333,15 @@ export const orderByRationalProperty = <T extends NumericRational>(
 		return rationalA - rationalB
 	})
 }
+
+/**
+ * Creates a regular expression pattern that matches a URL ignoring query parameters.
+ *
+ * @param urlPath - The path of the URL to match.
+ * @returns A regular expression pattern that matches the URL ignoring query parameters.
+ */
+export function urlIgnoringParameters(urlPath: string) {
+	return new RegExp(
+		`^https?:\\/\\/[^\\/]+${urlPath.replace(/\//g, '\\/')}\\?.*$`,
+	)
+}

@@ -107,7 +107,7 @@ export async function handleVerification({
 			where: { id: unverifiedSessionId },
 		})
 		if (!session) {
-			throw await redirectWithToast('/login', {
+			throw await redirectWithToast('/login?redirectTo=/dashboard', {
 				type: 'error',
 				title: 'Invalid session',
 				description: 'Could not find session to verify. Please try again.',

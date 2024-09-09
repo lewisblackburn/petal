@@ -6,7 +6,7 @@ import { getReferrerRoute } from '#app/utils/misc.tsx'
 import { getRedirectCookieHeader } from '#app/utils/redirect-cookie.server.ts'
 
 export async function loader() {
-	return redirect('/login')
+	return redirect('/login?redirectTo=/dashboard')
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {

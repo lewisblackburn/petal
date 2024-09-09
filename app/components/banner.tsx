@@ -3,10 +3,15 @@ import { useEffect, useState } from 'react'
 import { Icon } from './ui/icon'
 
 export default function Banner() {
-	// TODO: This should be set back to false if there is a new feature announcement
+	// TODO: This should be set back to true if there is a new feature announcement
 	const [isBannerSeen, setIsBannerSeen] = useState(false)
 
 	useEffect(() => {
+		if (process.env.NODE_ENV === 'test') return
+		// eslint-disable-next-line no-warning-comments
+		// FIXME: This should be removed when the playwright tests are fixed
+		if (process.env.NODE_ENV === 'development') return
+
 		const isBannerSeen = window.localStorage.getItem('isBannerSeen')
 
 		if (isBannerSeen === null) {

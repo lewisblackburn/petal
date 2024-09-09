@@ -191,7 +191,7 @@ function App() {
 		>
 			<Outlet />
 			<Banner />
-			<EpicToaster closeButton position="top-right" theme={theme} />
+			<EpicToaster closeButton position="top-center" theme={theme} />
 			<EpicProgress />
 		</Document>
 	)
