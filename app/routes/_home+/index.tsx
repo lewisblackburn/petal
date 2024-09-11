@@ -1,7 +1,13 @@
 import { type MetaFunction } from '@remix-run/node'
 import { Link } from '@remix-run/react'
+import Autoscroll from 'embla-carousel-auto-scroll'
 import { useEffect, useState } from 'react'
 import { Button } from '#app/components/ui/button.js'
+import {
+	Carousel,
+	CarouselContent,
+	CarouselItem,
+} from '#app/components/ui/carousel.js'
 import { Icon } from '#app/components/ui/icon.js'
 export const meta: MetaFunction = () => [{ title: 'Petal' }]
 
@@ -94,28 +100,63 @@ const Logos = [
 
 function LogoCloud() {
 	return (
-		<div className="hidden bg-secondary lg:block">
-			<div className="mx-auto max-w-7xl px-4 pb-32 pt-12 sm:px-6 lg:px-8">
-				<div className="grid grid-cols-5 gap-8">
-					{Logos.map((logo) => (
-						<div
-							key={logo.name}
-							className="col-span-1 flex justify-center md:col-span-2 lg:col-span-1"
-						>
-							<a href={logo.url}>
-								<img
-									className="h-10 grayscale"
-									src={logo.image}
-									alt={logo.name}
-								/>
-							</a>
-						</div>
-					))}
-				</div>
+		<div className="bg-secondary">
+			<div className="pb-12">
+				<Carousel
+					opts={{
+						align: 'center',
+						watchDrag: () => {}, // Disable drag
+						loop: true,
+					}}
+					plugins={[Autoscroll({ startDelay: 0 })]}
+				>
+					<CarouselContent>
+						{[...Logos, ...Logos, ...Logos].map((logo, index) => (
+							<CarouselItem
+								key={logo.name + index}
+								className="flex basis-1/2 items-center justify-center sm:basis-1/3 md:basis-1/5 lg:basis-1/6 xl:basis-2/12 2xl:basis-1/12"
+							>
+								<a href={logo.url} target="_blank" rel="noopener noreferrer">
+									<img
+										src={logo.image}
+										alt={logo.name}
+										className="h-10 grayscale"
+										draggable={false}
+									/>
+								</a>
+							</CarouselItem>
+						))}
+					</CarouselContent>
+				</Carousel>
 			</div>
 		</div>
 	)
 }
+
+// function LogoCloud() {
+// 	return (
+// 		<div className="hidden bg-secondary lg:block">
+// 			<div className="mx-auto max-w-7xl px-4 pb-32 pt-12 sm:px-6 lg:px-8">
+// 				<div className="grid grid-cols-5 gap-8">
+// 					{Logos.map((logo) => (
+// 						<div
+// 							key={logo.name}
+// 							className="col-span-1 flex justify-center md:col-span-2 lg:col-span-1"
+// 						>
+// 							<a href={logo.url}>
+// 								<img
+// 									className="h-10 grayscale"
+// 									src={logo.image}
+// 									alt={logo.name}
+// 								/>
+// 							</a>
+// 						</div>
+// 					))}
+// 				</div>
+// 			</div>
+// 		</div>
+// 	)
+// }
 
 function Feature() {
 	return (

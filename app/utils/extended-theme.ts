@@ -1,6 +1,9 @@
 import { type Config } from 'tailwindcss'
 
 export const extendedTheme = {
+	screens: {
+		'2xl': `2400px`,
+	},
 	colors: {
 		border: 'hsl(var(--border))',
 		input: {
