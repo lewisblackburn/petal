@@ -1,6 +1,6 @@
 # Metabase
 
-![Metabase Logo](/path/to/logo.png)
+![Metabase OG](/public/images/og/og.png)
 
 Metabase is a comprehensive database that brings together information about
 films, TV shows, books, people, and songs, all in one convenient platform. Just
