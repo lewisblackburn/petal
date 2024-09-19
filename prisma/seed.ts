@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker'
 import { type Prisma } from '@prisma/client'
 import { promiseHash } from 'remix-utils/promise'
 import { generateApiKey } from '#app/utils/api.server.js'
-import { GENRES, PETAL_BOT_ID } from '#app/utils/constants.js'
+import { GENRES, METABASE_BOT_ID } from '#app/utils/constants.js'
 import { prisma } from '#app/utils/db.server.ts'
 import { MOCK_CODE_GITHUB } from '#app/utils/providers/constants'
 import {
@@ -322,13 +322,13 @@ async function createBotUser() {
 	await prisma.user.create({
 		select: { id: true },
 		data: {
-			id: PETAL_BOT_ID,
-			email: 'bot@petal.dev',
-			username: 'petal_bot',
-			name: 'Petal Bot',
+			id: METABASE_BOT_ID,
+			email: 'bot@metabase.dev',
+			username: 'metabase_bot',
+			name: 'Metabase Bot',
 			image: { create: kodyImages.koalaMentor },
 			password: {
-				create: createPassword(process.env.PETAL_BOT_PASSWORD || ''),
+				create: createPassword(process.env.METABASE_BOT_PASSWORD || ''),
 			},
 			roles: { connect: [{ name: 'admin' }, { name: 'user' }] },
 			apiKeys: { create: { key: await generateApiKey() } },

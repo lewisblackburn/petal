@@ -1,10 +1,10 @@
-# Petal
+# Metabase
 
-![Petal Logo](/path/to/logo.png)
+![Metabase Logo](/path/to/logo.png)
 
-Petal is a comprehensive database that brings together information about films,
-TV shows, books, people, and songs, all in one convenient platform. Just like
-popular services like TMDB or IMDb, Petal provides a place for users to
+Metabase is a comprehensive database that brings together information about
+films, TV shows, books, people, and songs, all in one convenient platform. Just
+like popular services like TMDB or IMDb, Metabase provides a place for users to
 navigate, create and update their favourite media.
 
 ## Features
@@ -20,20 +20,20 @@ navigate, create and update their favourite media.
 
 ### Prerequisites
 
-Before running Petal, ensure you have the following dependencies installed:
+Before running Metabase, ensure you have the following dependencies installed:
 
 - Node.js
 - Fly
 
 ### Installation
 
-Follow these steps to set up and run Petal:
+Follow these steps to set up and run Metabase:
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/lewisblackburn/petal.git
-cd petal
+git clone https://github.com/lewisblackburn/metabase.git
+cd metabase
 ```
 
 2. Install the required packages:
@@ -54,21 +54,22 @@ npm run setup
 npm run dev
 ```
 
-5. Open your web browser and visit http://localhost:3000 to access Petal.
+5. Open your web browser and visit http://localhost:3000 to access Metabase.
 
 ## Demo
 
-For a live demo of Petal, you can visit [petal.fly.dev](https://petal.fly.dev).
+For a live demo of Metabase, you can visit
+[metabase.fly.dev](https://metabase.fly.dev).
 
 ## Contributing
 
-We welcome contributions to improve Petal! To contribute, please follow the
+We welcome contributions to improve Metabase! To contribute, please follow the
 guidelines outlined in CONTRIBUTING.md.
 
 ## Support
 
 For any issues, bug reports, or feature requests, please open a new GitHub
-[issue](https://github.com/lewisblackburn/petal/issues).
+[issue](https://github.com/lewisblackburn/metabase/issues).
 
 ## License
 

@@ -160,4 +160,4 @@ export default function DashboardAdminImportPage() {
 	)
 }
 
-export const meta: MetaFunction = () => [{ title: 'Import Media | Petal' }]
+export const meta: MetaFunction = () => [{ title: 'Import Media | Metabase' }]

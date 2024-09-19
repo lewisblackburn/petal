@@ -1,7 +1,7 @@
 import { json, type LoaderFunctionArgs } from '@remix-run/node'
 import { Form, Link, NavLink, Outlet } from '@remix-run/react'
 import { Fragment } from 'react/jsx-runtime'
-import { Logo } from '#app/components/logo.js'
+import { IconLogo, Logo } from '#app/components/logo.js'
 import {
 	Avatar,
 	AvatarFallback,
@@ -35,47 +35,47 @@ const sidebarLinks: {
 	href: string
 	icon: IconName
 }[] = [
-	{
-		name: 'Dashboard',
-		href: '/dashboard',
-		icon: 'home',
-	},
-	{
-		name: 'Films',
-		href: '/dashboard/films',
-		icon: 'video',
-	},
-	{
-		name: 'TV Shows',
-		href: '/dashboard/series',
-		icon: 'tv',
-	},
-	{
-		name: 'People',
-		href: '/dashboard/people',
-		icon: 'users',
-	},
-	{
-		name: 'Books',
-		href: 'dashboard/books',
-		icon: 'book-open',
-	},
-	{
-		name: 'Music',
-		href: '/dashboard/music',
-		icon: 'audio-lines',
-	},
-	{
-		name: 'Games',
-		href: '/dashboard/games',
-		icon: 'gamepad',
-	},
-	{
-		name: 'Changes',
-		href: '/dashboard/changes',
-		icon: 'clock',
-	},
-]
+		{
+			name: 'Dashboard',
+			href: '/dashboard',
+			icon: 'home',
+		},
+		{
+			name: 'Films',
+			href: '/dashboard/films',
+			icon: 'video',
+		},
+		{
+			name: 'TV Shows',
+			href: '/dashboard/series',
+			icon: 'tv',
+		},
+		{
+			name: 'People',
+			href: '/dashboard/people',
+			icon: 'users',
+		},
+		{
+			name: 'Books',
+			href: 'dashboard/books',
+			icon: 'book-open',
+		},
+		{
+			name: 'Music',
+			href: '/dashboard/music',
+			icon: 'audio-lines',
+		},
+		{
+			name: 'Games',
+			href: '/dashboard/games',
+			icon: 'gamepad',
+		},
+		{
+			name: 'Changes',
+			href: '/dashboard/changes',
+			icon: 'clock',
+		},
+	]
 
 const dropdownLinks = [
 	{
@@ -111,7 +111,7 @@ export default function DashboardPageLayout() {
 			<div className="hidden border-r bg-muted/40 md:block">
 				<div className="fixed flex h-full max-h-screen flex-col gap-2 md:w-[220px] lg:w-[280px]">
 					<div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-						<Logo />
+						<IconLogo />
 						<Notifications />
 					</div>
 					<div className="flex-1">
@@ -155,7 +155,7 @@ export default function DashboardPageLayout() {
 						</SheetTrigger>
 						<SheetContent side="left" className="flex flex-col">
 							<nav className="grid gap-2 text-lg font-medium">
-								<Logo />
+								<Logo className="w-40" />
 								<div className="py-1" />
 								{sidebarLinks.map((link) => (
 									<NavLink

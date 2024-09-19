@@ -212,7 +212,8 @@ export default function Footer() {
 						))}
 					</div>
 					<p className="mt-8 text-base text-gray-400 md:order-1 md:mt-0">
-						&copy; {new Date().getFullYear()} Petal, Inc. All rights reserved.
+						&copy; {new Date().getFullYear()} Metabase, Inc. All rights
+						reserved.
 					</p>
 				</div>
 			</div>

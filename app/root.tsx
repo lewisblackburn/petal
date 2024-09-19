@@ -62,7 +62,7 @@ export const links: LinksFunction = () => {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	return [
-		{ title: data ? 'Petal' : 'Error | Petal' },
+		{ title: data ? 'Metabase' : 'Error | Metabase' },
 		{ name: 'description', content: `Your own captain's log` },
 	]
 }
@@ -77,27 +77,27 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	const user = userId
 		? await time(
-				() =>
-					prisma.user.findUniqueOrThrow({
-						select: {
-							id: true,
-							name: true,
-							username: true,
-							image: { select: { id: true } },
-							initials: true,
-							roles: {
-								select: {
-									name: true,
-									permissions: {
-										select: { entity: true, action: true, access: true },
-									},
+			() =>
+				prisma.user.findUniqueOrThrow({
+					select: {
+						id: true,
+						name: true,
+						username: true,
+						image: { select: { id: true } },
+						initials: true,
+						roles: {
+							select: {
+								name: true,
+								permissions: {
+									select: { entity: true, action: true, access: true },
 								},
 							},
 						},
-						where: { id: userId },
-					}),
-				{ timings, type: 'find user', desc: 'find user in root' },
-			)
+					},
+					where: { id: userId },
+				}),
+			{ timings, type: 'find user', desc: 'find user in root' },
+		)
 		: null
 	if (userId && !user) {
 		console.info('something weird happened')

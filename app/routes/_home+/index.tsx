@@ -9,7 +9,7 @@ import {
 	CarouselItem,
 } from '#app/components/ui/carousel.js'
 import { Icon } from '#app/components/ui/icon.js'
-export const meta: MetaFunction = () => [{ title: 'Petal' }]
+export const meta: MetaFunction = () => [{ title: 'Metabase' }]
 
 export default function HomePage() {
 	const [isVisible, setIsVisible] = useState(false)
@@ -105,7 +105,7 @@ function LogoCloud() {
 				<Carousel
 					opts={{
 						align: 'center',
-						watchDrag: () => {}, // Disable drag
+						watchDrag: () => { }, // Disable drag
 						loop: true,
 					}}
 					plugins={[Autoscroll({ startDelay: 0 })]}
@@ -179,10 +179,10 @@ function Feature() {
 									Stay on top of your favourite media
 								</h2>
 								<p className="mt-4 text-lg text-gray-500">
-									The Petal database is constantly updated with new information
-									about films, soundtracks, games, books, and people. You can
-									follow your favorite entries to receive notifications when new
-									information is added or updated.
+									The Metabase database is constantly updated with new
+									information about films, soundtracks, games, books, and
+									people. You can follow your favorite entries to receive
+									notifications when new information is added or updated.
 								</p>
 								<div className="mt-6">
 									<Link
@@ -213,7 +213,7 @@ function Feature() {
 											/>
 										</div>
 										<div className="text-base font-medium text-gray-700">
-											Lewis Blackburn, Founder of Petal
+											Lewis Blackburn, Founder of Metabase
 										</div>
 									</div>
 								</footer>
@@ -288,8 +288,8 @@ function Statistics() {
 						Largest media database on the web
 					</h2>
 					<p className="mt-3 text-xl text-gray-500 sm:mt-4">
-						The Petal database is the largest, most comprehensive collection of
-						media information on the web.
+						The Metabase database is the largest, most comprehensive collection
+						of media information on the web.
 					</p>
 				</div>
 			</div>
@@ -333,19 +333,19 @@ function Statistics() {
 
 const faqs = [
 	{
-		question: 'What is Petal?',
+		question: 'What is Metabase?',
 		answer:
-			'Petal is a comprehensive database that connects and provides detailed information about films, soundtracks, people (actors, artists), games, and books. You can explore connections between various forms of media and discover how they relate to one another.',
+			'Metabase is a comprehensive database that connects and provides detailed information about films, soundtracks, people (actors, artists), games, and books. You can explore connections between various forms of media and discover how they relate to one another.',
 	},
 	{
-		question: 'How can I contribute to Petal?',
+		question: 'How can I contribute to Metabase?',
 		answer:
-			'You can contribute to Petal by adding new entries, editing existing entries, and connecting entries to show relationships between them. You can also help by adding missing information, such as cast members, release dates, and more.',
+			'You can contribute to Metabase by adding new entries, editing existing entries, and connecting entries to show relationships between them. You can also help by adding missing information, such as cast members, release dates, and more.',
 	},
 	{
-		question: 'How do I get started with Petal?',
+		question: 'How do I get started with Metabase?',
 		answer:
-			'To get started with Petal, create an account and start exploring the database. You can search for your favorite films, songs, games, books, and people, and discover how they are connected. You can also contribute by adding new entries or editing existing ones.',
+			'To get started with Metabase, create an account and start exploring the database. You can search for your favorite films, songs, games, books, and people, and discover how they are connected. You can also contribute by adding new entries or editing existing ones.',
 	},
 ]
 

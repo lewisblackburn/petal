@@ -476,7 +476,7 @@ export const meta: MetaFunction<
 			? data?.film.tagline.slice(0, 97) + '...'
 			: 'No content'
 	return [
-		{ title: `${filmTitle} | Petal` },
+		{ title: `${filmTitle} | Metabase` },
 		{
 			name: 'description',
 			content: filmTagline,

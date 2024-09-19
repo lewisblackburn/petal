@@ -81,7 +81,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const response = await sendEmail({
 		to: email,
-		subject: `Welcome to Petal!`,
+		subject: `Welcome to Metabase!`,
 		react: <SignupEmail onboardingUrl={verifyUrl.toString()} otp={otp} />,
 	})
 
@@ -110,7 +110,7 @@ export function SignupEmail({
 		<E.Html lang="en" dir="ltr">
 			<E.Container>
 				<h1>
-					<E.Text>Welcome to Petal!</E.Text>
+					<E.Text>Welcome to Metabase!</E.Text>
 				</h1>
 				<p>
 					<E.Text>
@@ -127,7 +127,7 @@ export function SignupEmail({
 }
 
 export const meta: MetaFunction = () => {
-	return [{ title: 'Sign Up | Petal' }]
+	return [{ title: 'Sign Up | Metabase' }]
 }
 
 export default function SignupRoute() {

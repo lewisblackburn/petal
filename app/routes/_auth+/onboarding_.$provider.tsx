@@ -179,7 +179,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export const meta: MetaFunction = () => {
-	return [{ title: 'Setup Petal Account' }]
+	return [{ title: 'Setup Metabase Account' }]
 }
 
 export default function OnboardingProviderRoute() {

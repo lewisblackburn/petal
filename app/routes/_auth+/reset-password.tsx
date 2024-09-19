@@ -71,7 +71,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export const meta: MetaFunction = () => {
-	return [{ title: 'Reset Password | Petal' }]
+	return [{ title: 'Reset Password | Metabase' }]
 }
 
 export default function ResetPasswordPage() {

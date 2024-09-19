@@ -20,10 +20,10 @@ export const meta: MetaFunction<
 	const noteCount = notesMatch?.data?.owner.notes.length ?? 0
 	const notesText = noteCount === 1 ? 'note' : 'notes'
 	return [
-		{ title: `${displayName}'s Notes | Petal` },
+		{ title: `${displayName}'s Notes | Metabase` },
 		{
 			name: 'description',
-			content: `Checkout ${displayName}'s ${noteCount} ${notesText} on Petal`,
+			content: `Checkout ${displayName}'s ${noteCount} ${notesText} on Metabase`,
 		},
 	]
 }

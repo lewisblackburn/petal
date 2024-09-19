@@ -199,7 +199,7 @@ export const meta: MetaFunction<
 			? data?.note.content.slice(0, 97) + '...'
 			: 'No content'
 	return [
-		{ title: `${noteTitle} | ${displayName}'s Notes | Petal` },
+		{ title: `${noteTitle} | ${displayName}'s Notes | Metabase` },
 		{
 			name: 'description',
 			content: noteContentsSummary,

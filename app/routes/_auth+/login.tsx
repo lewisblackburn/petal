@@ -216,7 +216,7 @@ export default function LoginPage() {
 }
 
 export const meta: MetaFunction = () => {
-	return [{ title: 'Login to Petal' }]
+	return [{ title: 'Login to Metabase' }]
 }
 
 export function ErrorBoundary() {

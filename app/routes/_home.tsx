@@ -17,10 +17,9 @@ export default function HomePageLayout() {
 			</div>
 
 			<Footer />
-			{/* <div className="container flex justify-between py-10">
-				<Logo />
-				<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
-			</div> */}
+			{/* <div className="container flex justify-between py-10"> */}
+			{/* 	<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} /> */}
+			{/* </div> */}
 		</div>
 	)
 }

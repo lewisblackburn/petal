@@ -16,9 +16,9 @@ export default function DashboardAdminPage() {
 }
 
 export const meta: MetaFunction = () => [
-	{ title: 'Import | Petal' },
+	{ title: 'Import | Metabase' },
 	{
 		name: 'description',
-		content: `Import media to Petal`,
+		content: `Import media to Metabase`,
 	},
 ]

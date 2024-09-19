@@ -182,7 +182,7 @@ export const meta: MetaFunction<
 	const personName = data?.person.name ?? 'Person'
 
 	return [
-		{ title: `${personName} | Petal` },
+		{ title: `${personName} | Metabase` },
 		{
 			name: 'description',
 			content: `View information about ${personName}`,

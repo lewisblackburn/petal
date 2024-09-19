@@ -87,7 +87,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const response = await sendEmail({
 		to: submission.value.email,
-		subject: `Petal Email Change Verification`,
+		subject: `Metabase Email Change Verification`,
 		react: <EmailChangeEmail verifyUrl={verifyUrl.toString()} otp={otp} />,
 	})
 

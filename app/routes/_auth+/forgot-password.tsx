@@ -78,7 +78,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const response = await sendEmail({
 		to: user.email,
-		subject: `Petal Password Reset`,
+		subject: `Metabase Password Reset`,
 		react: (
 			<ForgotPasswordEmail onboardingUrl={verifyUrl.toString()} otp={otp} />
 		),
@@ -105,7 +105,7 @@ function ForgotPasswordEmail({
 		<E.Html lang="en" dir="ltr">
 			<E.Container>
 				<h1>
-					<E.Text>Petal Password Reset</E.Text>
+					<E.Text>Metabase Password Reset</E.Text>
 				</h1>
 				<p>
 					<E.Text>
@@ -122,7 +122,7 @@ function ForgotPasswordEmail({
 }
 
 export const meta: MetaFunction = () => {
-	return [{ title: 'Password Recovery for Petal' }]
+	return [{ title: 'Password Recovery for Metabase' }]
 }
 
 export default function ForgotPasswordRoute() {
